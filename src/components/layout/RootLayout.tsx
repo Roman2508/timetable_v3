@@ -1,7 +1,8 @@
 import React from "react";
 
-import { AppSidebar } from "@/components/features/app-sidebar";
+import { AppSidebar } from "@/components/features/app-sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/common/sidebar";
+import Header from "../features/header/header";
 
 interface CustomCSSProperties extends React.CSSProperties {
   "--sidebar-width"?: string;
@@ -9,7 +10,7 @@ interface CustomCSSProperties extends React.CSSProperties {
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   React.useEffect(() => {
     const storedState = localStorage.getItem("sidebar_state");
@@ -32,10 +33,8 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       {/* <SidebarInset> */}
       {/* <main className={isOpen ? "ml-32" : "ml-0"}> */}
       <main className="relative flex w-full flex-1 flex-col bg-background md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow">
-        <div className="pl-[200px]">
-          <SidebarTrigger />
-          {children}
-        </div>
+        <Header />
+        <div className="p-4">{children}</div>
       </main>
       {/* </SidebarInset> */}
     </SidebarProvider>
