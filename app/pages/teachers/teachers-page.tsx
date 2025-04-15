@@ -1,25 +1,27 @@
-import React from 'react'
-import { ListFilter, Plus } from 'lucide-react'
+import React from "react";
+import { ListFilter, Plus } from "lucide-react";
 
-import { Card } from '~/components/ui/common/card'
+import { Card } from "~/components/ui/common/card";
 // import { IconChevronDown } from "@tabler/icons-react";
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown } from "lucide-react";
 
-import { Button } from '~/components/ui/common/button'
-import { Checkbox } from '~/components/ui/common/checkbox'
-import { RootContainer } from '~/components/layouts/root-container'
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/common/tabs'
-import { TeachersList } from '~/components/features/teachers/teachers-list'
-import { CategoryCard } from '~/components/features/category-card/category-card'
-import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/common/popover'
+import { Button } from "~/components/ui/common/button";
+import { Checkbox } from "~/components/ui/common/checkbox";
+import { RootContainer } from "~/components/layouts/root-container";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
+import { CategoryCard } from "~/components/features/category-card/category-card";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
+import { Input } from "~/components/ui/common/input";
+import { InputSearch } from "~/components/ui/custom/input-search";
 
 const cmk = [
-  { id: 1, name: 'Загальноосвітніх дисциплін', count: 12, checked: true },
-  { id: 2, name: 'Фармацевтичних дисциплін', count: 17, checked: false },
-  { id: 3, name: 'Гуманітарних дисциплін', count: 7, checked: true },
-  { id: 4, name: 'Медико-біологічних дисциплін', count: 5, checked: true },
-  { id: 5, name: 'Хімічних дисциплін', count: 10, checked: false },
-]
+  { id: 1, name: "Загальноосвітніх дисциплін", count: 12, checked: true },
+  { id: 2, name: "Фармацевтичних дисциплін", count: 17, checked: false },
+  { id: 3, name: "Гуманітарних дисциплін", count: 7, checked: true },
+  { id: 4, name: "Медико-біологічних дисциплін", count: 5, checked: true },
+  { id: 5, name: "Хімічних дисциплін", count: 10, checked: false },
+];
 
 const TeachersPage = () => {
   return (
@@ -63,7 +65,7 @@ const TeachersPage = () => {
                         ЦК {item.name}
                       </label>
                     </div>
-                  )
+                  );
                 })}
               </div>
             </PopoverContent>
@@ -102,7 +104,6 @@ const TeachersPage = () => {
         </div>
       </div>
 
-      {/* <div className="flex gap-4 flex-wrap mb-10"> */}
       <div className="grid grid-cols-5 gap-4 flex-wrap mb-10">
         {cmk.map((item) => (
           <CategoryCard key={item.id} name={item.name} count={item.count} />
@@ -118,17 +119,19 @@ const TeachersPage = () => {
 
       <h2 className="text-xl mb-4">Склад комісії</h2>
 
-      <Tabs defaultValue="all" className="mb-8">
+      <Tabs defaultValue="all" className="mb-4">
         <TabsList>
-          <TabsTrigger value="all">Всі</TabsTrigger>
-          <TabsTrigger value="active">Активні</TabsTrigger>
-          <TabsTrigger value="archive">Архів</TabsTrigger>
+          <TabsTrigger value="all">Всі (12)</TabsTrigger>
+          <TabsTrigger value="active">Активні (8)</TabsTrigger>
+          <TabsTrigger value="archive">Архів (4)</TabsTrigger>
         </TabsList>
       </Tabs>
 
+      <InputSearch className="mb-8" placeholder="Пошук..." />
+
       <TeachersList />
     </RootContainer>
-  )
-}
+  );
+};
 
-export default TeachersPage
+export default TeachersPage;

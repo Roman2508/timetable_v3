@@ -1,19 +1,19 @@
-import { TeachersList } from '~/components/features/teachers/teachers-list'
+import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
 // import { WideContainer } from '@/components/layouts/wide-container'
-import React from 'react'
-import { Tabs, TabsList, TabsTrigger } from '~/components/ui/common/tabs'
+import React from "react";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '~/components/ui/common/dropdown-menu'
-import { Button } from '~/components/ui/common/button'
+} from "~/components/ui/common/dropdown-menu";
+import { Button } from "~/components/ui/common/button";
 // import { ListFilter } from 'lucide-react'
 // import { IconChevronDown } from '@tabler/icons-react'
 
-import { WideContainer } from '~/components/layouts/wide-container'
-import { ChevronDown } from 'lucide-react'
+import { WideContainer } from "~/components/layouts/wide-container";
+import { ChevronDown } from "lucide-react";
 
 const TimetablePage = () => {
   return (
@@ -22,8 +22,8 @@ const TimetablePage = () => {
         <div className="flex justify-between mb-4">
           <div className="flex gap-3">
             {[...Array(4)].map((_, i) => {
-              const label = i === 0 ? 'Циклова комісія' : i === 1 ? 'Група' : i === 2 ? 'Тиждень' : 'Семестр'
-              const width = i === 0 ? 'min-w-80' : i === 1 ? 'min-w-40' : 'min-w-20'
+              const label = i === 0 ? "Циклова комісія" : i === 1 ? "Група" : i === 2 ? "Тиждень" : "Семестр";
+              const width = i === 0 ? "min-w-80" : i === 1 ? "min-w-40" : "min-w-20";
 
               return (
                 <DropdownMenu key={i}>
@@ -43,8 +43,8 @@ const TimetablePage = () => {
 
                   <DropdownMenuContent align="start" className="w-75">
                     {[
-                      { id: 1, checked: true, name: 'Фармація' },
-                      { id: 2, checked: true, name: 'Лаб. діагностика' },
+                      { id: 1, checked: true, name: "Фармація" },
+                      { id: 2, checked: true, name: "Лаб. діагностика" },
                     ].map((item) => {
                       return (
                         <DropdownMenuCheckboxItem
@@ -57,11 +57,11 @@ const TimetablePage = () => {
                         >
                           ЦК {item.name}
                         </DropdownMenuCheckboxItem>
-                      )
+                      );
                     })}
                   </DropdownMenuContent>
                 </DropdownMenu>
-              )
+              );
             })}
           </div>
 
@@ -104,7 +104,7 @@ const TimetablePage = () => {
                 <div className="h-8 border-t h-[33px]"></div>
                 {[...Array(7)].map((_, i) => (
                   <div
-                    className={i === 6 ? 'text-xs font-bold h-25 p-2 border-y' : 'text-xs font-bold h-25 p-2 border-t'}
+                    className={i === 6 ? "text-xs font-bold h-25 p-2 border-y" : "text-xs font-bold h-25 p-2 border-t"}
                     key={i}
                   >
                     {i + 1}
@@ -133,7 +133,7 @@ const TimetablePage = () => {
         </div>
       </div>
     </WideContainer>
-  )
-}
+  );
+};
 
-export default TimetablePage
+export default TimetablePage;
