@@ -8,20 +8,6 @@ import { Button } from "~/components/ui/common/button";
 import { Badge } from "~/components/ui/common/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/common/tooltip";
 import { Link } from "react-router";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "~/components/ui/common/dropdown-menu";
 import PlanCard from "~/components/features/pages/plans/plan-card";
 
 const plans = [
@@ -36,7 +22,9 @@ export default function PlansPage() {
       <div className="flex justify-between mb-6">
         <h2 className="text-xl">Навчальні плани</h2>
 
-        <div className="flex items-center gap-2"></div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline">Створити новий</Button>
+        </div>
       </div>
 
       {[...Array(4)].map((_, index) => (

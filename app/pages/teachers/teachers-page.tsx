@@ -14,6 +14,7 @@ import { CategoryCard } from "~/components/features/category-card/category-card"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
 import { Input } from "~/components/ui/common/input";
 import { InputSearch } from "~/components/ui/custom/input-search";
+import { TeacherCard } from "~/components/features/pages/teachers/teacher-card";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12, checked: true },
@@ -70,43 +71,12 @@ const TeachersPage = () => {
               </div>
             </PopoverContent>
           </Popover>
-
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="bg-primary hover:bg-primary/90 text-primary-light hover:text-primary-light"
-              >
-                <ListFilter />
-                <span className="hidden lg:inline">Фільтр</span>
-                <span className="lg:hidden">Фільтр</span>
-                <IconChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent align="end" className="w-75">
-              {cmk.map((item) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={item.id}
-                    className="capitalize"
-                    checked={item.checked}
-                    onCheckedChange={(value) => {
-                      //   column.toggleVisibility(!!value)
-                    }}
-                  >
-                    ЦК {item.name}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-            </DropdownMenuContent>
-          </DropdownMenu> */}
         </div>
       </div>
 
       <div className="grid grid-cols-5 gap-4 flex-wrap mb-10">
         {cmk.map((item) => (
-          <CategoryCard key={item.id} name={item.name} count={item.count} />
+          <TeacherCard key={item.id} name={item.name} count={item.count} />
         ))}
 
         <Card className="shadow-none hover:border-primary min-h-[100px] flex items-center justify-center cursor-pointer border-dashed hover:text-primary">

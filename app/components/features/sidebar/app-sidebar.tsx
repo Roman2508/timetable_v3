@@ -1,7 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, BookOpen, Bot, Command, GalleryVerticalEnd, Settings2, SquareTerminal } from "lucide-react";
+import {
+  AudioWaveform,
+  BookOpen,
+  Bot,
+  Command,
+  GalleryVerticalEnd,
+  Settings2,
+  SquareTerminal,
+  Building,
+  User,
+  Calendar,
+  Blocks,
+  Settings,
+} from "lucide-react";
 
 import { NavMain } from "~/components/features/sidebar/nav-main";
 import { NavUser } from "~/components/features/sidebar/nav-user";
@@ -36,7 +49,7 @@ const data = {
     {
       title: "Структура",
       url: "#",
-      icon: SquareTerminal,
+      icon: Blocks,
       isActive: true,
       items: [
         {
@@ -56,7 +69,7 @@ const data = {
     {
       title: "Навантаження",
       url: "#",
-      icon: Bot,
+      icon: BookOpen,
       items: [
         {
           title: "Потоки",
@@ -75,7 +88,7 @@ const data = {
     {
       title: "Облікові записи",
       url: "#",
-      icon: BookOpen,
+      icon: User,
       items: [
         {
           title: "Педагогічний склад",
@@ -94,7 +107,7 @@ const data = {
     {
       title: "Розклад",
       url: "#",
-      icon: Settings2,
+      icon: Calendar,
       items: [
         {
           title: "Редактор розкладу",
@@ -144,7 +157,7 @@ const data = {
     {
       title: "Налаштування",
       url: "#",
-      icon: Settings2,
+      icon: Settings,
       items: [
         {
           title: "Налаштування",
