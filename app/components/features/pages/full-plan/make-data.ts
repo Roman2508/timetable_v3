@@ -1,5 +1,6 @@
 export type Person = {
   name: string;
+  cmk: string;
   totalHours: number;
   semester_1: number;
   semester_2: number;
@@ -18,8 +19,11 @@ const range = (len: number) => {
 };
 
 const newPerson = (): Person => {
+  const cmks = ["ЗД", "ФД", "МБД", "ХД", "ГД"];
+  const index = Math.floor(Math.random() * cmks.length - 1);
   return {
     name: "test lesson name " + Math.floor(Math.random() * 100),
+    cmk: cmks[index],
     totalHours: Math.floor(Math.random() * 100),
     semester_1: Math.floor(Math.random() * 100),
     semester_2: Math.floor(Math.random() * 100),

@@ -1,22 +1,24 @@
 import React from "react";
 
 import {
-  type PaginationState,
+  flexRender,
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
-  type ColumnDef,
-  flexRender,
-  type SortingFn,
-  type SortingState,
   getSortedRowModel,
+  getPaginationRowModel,
+  type SortingFn,
+  type ColumnDef,
+  type SortingState,
+  type PaginationState,
 } from "@tanstack/react-table";
-import { makeData, type Person } from "./make-data";
+import { ArrowDown, ArrowUp, ChevronDown, ListFilter, Plus } from "lucide-react";
+
 import { cn } from "~/lib/utils";
-import { ArrowDown, ArrowUp, ChevronDown, ListFilter } from "lucide-react";
+import { makeData, type Person } from "./make-data";
+import { Button } from "~/components/ui/common/button";
 import { Checkbox } from "~/components/ui/common/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
-import { Button } from "~/components/ui/common/button";
+import { Input } from "~/components/ui/common/input";
 
 // A typical debounced input react component
 function DebouncedInput({
@@ -43,7 +45,8 @@ function DebouncedInput({
     return () => clearTimeout(timeout);
   }, [value]);
 
-  return <input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
+  return <Input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
+  // return <input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
 }
 
 export const FullPlanTable = () => {
@@ -65,6 +68,12 @@ export const FullPlanTable = () => {
         //     footer: (props) => props.column.id,
         //   },
         // ],
+      },
+      {
+        accessorKey: "cmk",
+        header: "ЦК",
+        rowSpan: 3,
+        footer: (props) => props.column.id,
       },
       {
         header: "Всього год.",
@@ -195,10 +204,10 @@ export const FullPlanTable = () => {
   return (
     <>
       <div className="p-2 block max-w-full overflow-x-scroll overflow-y-hidden">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 mb-2">
           <DebouncedInput
             value={globalFilter ?? ""}
-            placeholder="Search all columns..."
+            placeholder="Пошук..."
             className="p-2 font-lg shadow border border-block"
             onChange={(value) => setGlobalFilter(String(value))}
           />
@@ -206,13 +215,11 @@ export const FullPlanTable = () => {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                className="bg-primary hover:bg-primary/90 text-primary-light hover:text-primary-light"
+              // variant="outline"
               >
                 <ListFilter />
                 <span className="hidden lg:inline">Фільтр</span>
                 <span className="lg:hidden">Фільтр</span>
-                {/* <IconChevronDown /> */}
                 <ChevronDown />
               </Button>
             </PopoverTrigger>
@@ -227,6 +234,7 @@ export const FullPlanTable = () => {
                     Всі семестри
                   </label>
                 </div>
+
                 {["1", "2", "3", "4", "5", "6"].map((item) => {
                   return (
                     <div className="flex items-center space-x-2">
@@ -243,6 +251,11 @@ export const FullPlanTable = () => {
               </div>
             </PopoverContent>
           </Popover>
+
+          <Button variant="default">
+            <Plus />
+            <span>Створити</span>
+          </Button>
         </div>
 
         <div className="h-2" />
