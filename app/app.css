@@ -157,6 +157,16 @@ body {
 
   td,
   th {
-    @apply border p-1;
+    /* @apply border p-1; */
+  }
+
+  th {
+    @apply !text-center;
+  }
+}
+
+@layer components {
+  .group-has-focus:has(input:focus) {
+    @apply border-ring ring-ring/50 ring-[3px];
   }
 }

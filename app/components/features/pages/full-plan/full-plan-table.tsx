@@ -11,7 +11,26 @@ import {
   type SortingState,
   type PaginationState,
 } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ChevronDown, ListFilter, Plus } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ListFilter,
+  Plus,
+} from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "~/components/ui/common/pagination";
 
 import { cn } from "~/lib/utils";
 import { makeData, type Person } from "./make-data";
@@ -19,6 +38,9 @@ import { Button } from "~/components/ui/common/button";
 import { Checkbox } from "~/components/ui/common/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
 import { Input } from "~/components/ui/common/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { InputSearch } from "~/components/ui/custom/input-search";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
 
 // A typical debounced input react component
 function DebouncedInput({
@@ -45,8 +67,7 @@ function DebouncedInput({
     return () => clearTimeout(timeout);
   }, [value]);
 
-  return <Input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
-  // return <input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
+  return <InputSearch onChange={(e) => setValue(e.target.value)} placeholder="Пошук..." value={value} {...props} />;
 }
 
 export const FullPlanTable = () => {
@@ -203,13 +224,15 @@ export const FullPlanTable = () => {
 
   return (
     <>
-      <div className="p-2 block max-w-full overflow-x-scroll overflow-y-hidden">
-        <div className="flex items-center gap-4 mb-2">
+      <div className="p-2 block max-w-full">
+        <h1 className="text-2xl mb-4">226 Фармація, промислова фармація ОПС ФМБ (заочна форма навчання) 2024</h1>
+
+        <div className="flex items-center gap-4 mb-8">
           <DebouncedInput
-            value={globalFilter ?? ""}
             placeholder="Пошук..."
-            className="p-2 font-lg shadow border border-block"
+            value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}
+            className="p-2 font-lg shadow border border-block w-full"
           />
 
           <Popover>
@@ -258,14 +281,13 @@ export const FullPlanTable = () => {
           </Button>
         </div>
 
-        <div className="h-2" />
-        <table className="w-full ">
-          <thead>
+        <Table className="w-full ">
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="hover:bg-white">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <th key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan}>
                       {header.isPlaceholder ? null : (
                         <div
                           className={cn(header.column.getCanSort() ? "cursor-pointer select-none" : "")}
@@ -289,12 +311,12 @@ export const FullPlanTable = () => {
                           </p>
                         </div>
                       )}
-                    </th>
+                    </TableHead>
                   );
                 })}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
+          </TableHeader>
           {/* <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -310,83 +332,99 @@ export const FullPlanTable = () => {
               </tr>
             ))}
           </thead> */}
-          <tbody>
+          <TableBody>
             {table.getRowModel().rows.map((row) => {
               return (
-                <tr key={row.id} className="hover:bg-border/40">
+                <TableRow key={row.id} className="hover:bg-border/40">
                   {row.getVisibleCells().map((cell, index) => {
                     return (
-                      <td key={cell.id} className={cn(index === 0 ? "" : "text-center", "hover:bg-border/50")}>
+                      <TableCell key={cell.id} className={cn(index === 0 ? "" : "text-center", "hover:bg-border/50")}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
+                      </TableCell>
                     );
                   })}
-                </tr>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
 
-        <div className="h-2" />
-        <div className="flex items-center gap-2">
-          <button
-            className="border rounded p-1"
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<<"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </button>
-          <button className="border rounded p-1" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            {">"}
-          </button>
-          <button
-            className="border rounded p-1"
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            {">>"}
-          </button>
-          <span className="flex items-center gap-1">
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-            </strong>
-          </span>
-          <span className="flex items-center gap-1">
-            | Go to page:
-            <input
-              type="number"
+        <div className="flex items-center justify-center my-8 gap-8">
+          <Pagination>
+            <PaginationContent className="flex gap-4">
+              <PaginationItem onClick={() => table.setPageIndex(0)}>
+                <PaginationLink isActive={!table.getCanPreviousPage()}>
+                  <Button variant="outline">
+                    <ChevronsLeft />
+                  </Button>
+                </PaginationLink>
+              </PaginationItem>
+
+              <PaginationItem onClick={() => table.previousPage()}>
+                <PaginationLink href="#" isActive={!table.getCanPreviousPage()}>
+                  <Button variant="outline">
+                    <ChevronLeft />
+                  </Button>
+                </PaginationLink>
+              </PaginationItem>
+
+              <PaginationItem onClick={() => table.nextPage()}>
+                <PaginationLink href="#" isActive={!table.getCanNextPage()}>
+                  <Button variant="outline">
+                    <ChevronRight />
+                  </Button>
+                </PaginationLink>
+              </PaginationItem>
+
+              <PaginationItem onClick={() => table.setPageIndex(table.getPageCount() - 1)}>
+                <PaginationLink href="#" isActive={!table.getCanNextPage()}>
+                  <Button variant="outline">
+                    <ChevronsRight />
+                  </Button>
+                </PaginationLink>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+
+          <div className="flex items-center gap-1 select-none">
+            <div>Сторінка</div>
+            <p className="font-bold">{table.getState().pagination.pageIndex + 1}</p>
+            <p>з</p>
+            <p className="font-bold">{table.getPageCount()}</p>
+          </div>
+
+          <div className="flex items-center gap-2 select-none">
+            Перейти на сторінку:
+            <Input
               min="1"
+              type="number"
               max={table.getPageCount()}
               defaultValue={table.getState().pagination.pageIndex + 1}
               onChange={(e) => {
                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                 table.setPageIndex(page);
               }}
-              className="border p-1 rounded w-16"
+              className="w-16"
             />
-          </span>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
+          </div>
+
+          <Select
+            defaultValue={String(table.getState().pagination.pageSize)}
+            // value={String(table.getState().pagination.pageSize)}
+            onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={`На сторінці: ${table.getRowModel().rows.length}`} />
+            </SelectTrigger>
+            <SelectContent>
+              {[10, 20, 30, 50, 75, 100].map((pageSize) => (
+                <SelectItem key={pageSize} value={String(pageSize)}>
+                  На сторінці: {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <div>{table.getRowModel().rows.length} Rows</div>
       </div>
 
       <hr />

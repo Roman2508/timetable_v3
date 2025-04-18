@@ -34,13 +34,12 @@ const TeachersPage = () => {
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
-                className="bg-primary hover:bg-primary/90 text-primary-light hover:text-primary-light"
+              // variant="outline"
+              // className="bg-primary hover:bg-primary/90 text-primary-light hover:text-primary-light"
               >
                 <ListFilter />
                 <span className="hidden lg:inline">Фільтр</span>
                 <span className="lg:hidden">Фільтр</span>
-                {/* <IconChevronDown /> */}
                 <ChevronDown />
               </Button>
             </PopoverTrigger>
