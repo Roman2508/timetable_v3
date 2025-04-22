@@ -1,4 +1,4 @@
-import { GraduationCap, Pencil, Trash, Trash2 } from "lucide-react";
+import { GraduationCap, Package, Pencil, Trash, Trash2 } from "lucide-react";
 
 import { RootContainer } from "~/components/layouts/root-container";
 import { Badge } from "~/components/ui/common/badge";
@@ -25,7 +25,15 @@ const FullGroup = () => {
         </div>
 
         <div className="flex gap-3">
-          <Button variant="outline">Архівувати</Button>
+          <Button variant="outline">
+            <Package />
+            Архівувати
+          </Button>
+
+          <Button>
+            <Pencil />
+            Зберегти зміни
+          </Button>
         </div>
       </div>
 
@@ -75,17 +83,25 @@ const FullGroup = () => {
         ))}
       </Card>
 
-      <div className="flex justify-between items-center mb-10">
-        <Button variant="destructive">
-          <Trash2 />
-          Видалити групу
-        </Button>
+      <Card className="px-10 pb-12 mb-6">
+        <h3 className="text-xl font-semibold mb-5">Видалення групи</h3>
 
-        <Button>
-          <Pencil />
-          Зберегти зміни
-        </Button>
-      </div>
+        <div className="flex flex-col items-start gap-4 mb-4">
+          <div>
+            <p className="text-black/40 text-md">
+              Група, включаючи все навчальне навантаження, розклад та студентів, що зараховані до групи, будуть видалені
+              назавжди.
+            </p>
+            <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
+          </div>
+          {/* Проект, включая все среды и услуги, будет навсегда удален. Это действие не может быть отменено.*/}
+
+          <Button variant="destructive">
+            <Trash2 />
+            Видалити групу
+          </Button>
+        </div>
+      </Card>
     </RootContainer>
   );
 };

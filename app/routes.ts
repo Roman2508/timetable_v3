@@ -14,6 +14,8 @@ export default [
     route("plans", "./routes/plans.tsx"),
     route("plans/:id", "./routes/full-plan.tsx"),
 
+    route("distribution", "./routes/distribution.tsx"),
+
     route("timetable", "./routes/timetable.tsx"),
   ]),
 ] satisfies RouteConfig;

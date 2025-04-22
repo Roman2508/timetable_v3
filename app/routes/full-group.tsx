@@ -1,5 +1,5 @@
 import type { Route } from "./+types/full-group";
-import FullPlanPage from "~/pages/full-group/full-group";
+import FullPlanPage from "~/pages/full-group/full-group-page";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "ЖБФФК | Головна" }, { name: "description", content: "Welcome to React Router!" }];
