@@ -1,9 +1,7 @@
 import React from "react";
-import { ListFilter, Plus } from "lucide-react";
+import { ListFilter, Plus, ChevronDown } from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
-// import { IconChevronDown } from "@tabler/icons-react";
-import { ChevronDown } from "lucide-react";
 
 import { Button } from "~/components/ui/common/button";
 import { Checkbox } from "~/components/ui/common/checkbox";
@@ -26,7 +24,7 @@ const cmk = [
 
 const TeachersPage = () => {
   return (
-    <RootContainer>
+    <RootContainer classNames="mb-10">
       <div className="flex justify-between mb-6">
         <h2 className="text-xl">Циклові комісії</h2>
 

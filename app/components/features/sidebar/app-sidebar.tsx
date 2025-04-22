@@ -26,7 +26,7 @@ const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "./avatars/shadcn.jpg",
   },
   teams: [
     {
@@ -54,15 +54,15 @@ const data = {
       items: [
         {
           title: "Групи",
-          url: "#",
+          url: "/groups",
         },
         {
           title: "Потоки",
-          url: "#",
+          url: "/streams",
         },
         {
           title: "Аудиторії",
-          url: "#",
+          url: "/auditories",
         },
       ],
     },
@@ -72,12 +72,12 @@ const data = {
       icon: BookOpen,
       items: [
         {
-          title: "Потоки",
-          url: "#",
+          title: "Навчальні плани",
+          url: "/plans",
         },
         {
           title: "Розподіл навантаження",
-          url: "#",
+          url: "/distribution",
         },
         {
           title: "Перегляд навантаження",
@@ -92,11 +92,11 @@ const data = {
       items: [
         {
           title: "Педагогічний склад",
-          url: "#",
+          url: "/teachers",
         },
         {
           title: "Здобувачі освіти",
-          url: "#",
+          url: "/students",
         },
         {
           title: "Поділ на підгрупи",
@@ -111,7 +111,7 @@ const data = {
       items: [
         {
           title: "Редактор розкладу",
-          url: "#",
+          url: "/timetable",
         },
         {
           title: "Автоматичне розставлення",
@@ -142,7 +142,7 @@ const data = {
       items: [
         {
           title: "Мій профіль",
-          url: "#",
+          url: "/profile",
         },
         {
           title: "Вибіркові дисципліни",
@@ -161,7 +161,7 @@ const data = {
       items: [
         {
           title: "Налаштування",
-          url: "#",
+          url: "/settings",
         },
         {
           title: "Статистика",
