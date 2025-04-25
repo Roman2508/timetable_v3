@@ -1,12 +1,9 @@
 "use client";
 
 import { ChevronRight, type LucideIcon } from "lucide-react";
+import { Link } from "react-router";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "~/components/ui/common/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -18,31 +15,28 @@ import {
   SidebarMenuSubItem,
 } from "~/components/ui/common/sidebar";
 
-export function NavMain({
-  items,
-}: {
-  items: {
+interface INavMainItem {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  isActive?: boolean;
+  items?: {
     title: string;
     url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
   }[];
-}) {
+}
+
+interface INavMain {
+  items: INavMainItem[];
+}
+
+const NavMain: React.FC<INavMain> = ({ items }) => {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
+          <Collapsible key={item.title} asChild defaultOpen={item.isActive} className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>
@@ -56,9 +50,9 @@ export function NavMain({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                        <Link to={subItem.url}>
                           <span>{subItem.title}</span>
-                        </a>
+                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
@@ -70,4 +64,6 @@ export function NavMain({
       </SidebarMenu>
     </SidebarGroup>
   );
-}
+};
+
+export { NavMain };

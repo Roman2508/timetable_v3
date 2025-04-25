@@ -38,6 +38,9 @@ type ButtonProps = React.ComponentProps<"button"> &
     asChild?: boolean;
   };
 
+export type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>;
+export type ButtonSize = NonNullable<VariantProps<typeof buttonVariants>["size"]>;
+
 function Button({ className, variant, size, asChild = false, ...props }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
 

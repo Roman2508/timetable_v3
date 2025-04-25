@@ -1,18 +1,13 @@
 import React from "react";
-import { ListFilter, Plus, ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
-
-import { Button } from "~/components/ui/common/button";
-import { Checkbox } from "~/components/ui/common/checkbox";
-import { RootContainer } from "~/components/layouts/root-container";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
-import { CategoryCard } from "~/components/features/category-card/category-card";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
-import { Input } from "~/components/ui/common/input";
 import { InputSearch } from "~/components/ui/custom/input-search";
+import { RootContainer } from "~/components/layouts/root-container";
+import { PopoverFilter } from "~/components/ui/custom/popover-filter";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { TeacherCard } from "~/components/features/pages/teachers/teacher-card";
+import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12, checked: true },
@@ -23,51 +18,23 @@ const cmk = [
 ];
 
 const TeachersPage = () => {
+  const [selectedCmk, setSelectedCmk] = React.useState(cmk);
+
   return (
     <RootContainer classNames="mb-10">
       <div className="flex justify-between mb-6">
         <h2 className="text-xl">Циклові комісії</h2>
 
         <div className="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-              // variant="outline"
-              // className="bg-primary hover:bg-primary/90 text-primary-light hover:text-primary-light"
-              >
-                <ListFilter />
-                <span className="hidden lg:inline">Фільтр</span>
-                <span className="lg:hidden">Фільтр</span>
-                <ChevronDown />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="grid gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="all" />
-                  <label
-                    htmlFor="all"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Всі ЦК
-                  </label>
-                </div>
-                {cmk.map((item) => {
-                  return (
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id={item.name} />
-                      <label
-                        htmlFor={item.name}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        ЦК {item.name}
-                      </label>
-                    </div>
-                  );
-                })}
-              </div>
-            </PopoverContent>
-          </Popover>
+          <PopoverFilter
+            items={cmk}
+            itemsPrefix="ЦК"
+            enableSelectAll
+            filterVariant="default"
+            selectedItems={selectedCmk}
+            selectAllLabel="Вибрати всі"
+            setSelectedItems={setSelectedCmk}
+          />
         </div>
       </div>
 
