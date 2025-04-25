@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 
 import Footer from "../features/footer/footer";
 import { TooltipProvider } from "../ui/common/tooltip";
@@ -8,6 +8,10 @@ import { AppSidebar } from "~/components/features/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/common/sidebar";
 
 const RootLayout: React.FC = () => {
+  const { pathname } = useLocation();
+
+  const disableFooterPaths = ["/grade-book", "/timetable"];
+
   return (
     <TooltipProvider>
       <SidebarProvider>
@@ -23,7 +27,7 @@ const RootLayout: React.FC = () => {
             </div>
           </main>
 
-          <Footer />
+          {!disableFooterPaths.includes(pathname) && <Footer />}
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>

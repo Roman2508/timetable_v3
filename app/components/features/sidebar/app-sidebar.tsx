@@ -150,7 +150,7 @@ const data = {
         },
         {
           title: "Електронний журнал",
-          url: "#",
+          url: "/grade-book",
         },
       ],
     },
