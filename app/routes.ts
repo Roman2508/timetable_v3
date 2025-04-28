@@ -19,5 +19,7 @@ export default [
     route("timetable", "./routes/timetable.tsx"),
 
     route("grade-book", "./routes/grade-book.tsx"),
+
+    route("profile", "./routes/profile.tsx"),
   ]),
 ] satisfies RouteConfig;

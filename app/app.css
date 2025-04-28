@@ -33,8 +33,11 @@ body {
   --color-primary-light: var(--primary-light);
   --color-primary-background: var(--primary-light);
 
-  --color-success-text: var(--success-text);
+  --color-success: var(--success);
   --color-success-background: var(--success-background);
+
+  --color-error: var(--error);
+  --color-error-background: var(--error-background);
 
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -80,9 +83,9 @@ body {
   --primary-light: #f4f0ff;
   --primary-background: #f4f0ff;
 
-  --success-text: #006d4c;
+  --success: #006d4c;
   --success-background: #dffeed;
-  --error-text: #af1d27;
+  --error: #af1d27;
   --error-background: #fce9ea;
 
   --aaa: rgb(198 251 157);
