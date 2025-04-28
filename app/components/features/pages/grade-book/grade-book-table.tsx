@@ -6,70 +6,16 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   getPaginationRowModel,
-  type SortingFn,
   type ColumnDef,
   type SortingState,
   type PaginationState,
 } from "@tanstack/react-table";
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  ListFilter,
-  Plus,
-} from "lucide-react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/common/pagination";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { cn } from "~/lib/utils";
 import { makeData, type Person } from "./make-data";
-import { Button } from "~/components/ui/common/button";
-import { Checkbox } from "~/components/ui/common/checkbox";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
-import { Input } from "~/components/ui/common/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
 import AbsentIcon from "~/components/ui/icons/absent-icon";
-
-// A typical debounced input react component
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = React.useState(initialValue);
-
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return <InputSearch onChange={(e) => setValue(e.target.value)} placeholder="Пошук..." value={value} {...props} />;
-}
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 
 export const GradeBookTable = () => {
   const rerender = React.useReducer(() => ({}), {})[1];
@@ -83,13 +29,6 @@ export const GradeBookTable = () => {
         header: "Студент",
         rowSpan: 3,
         footer: (props) => props.column.id,
-        // columns: [
-        //   {
-        //     accessorKey: "name",
-        //     cell: (info) => info.getValue(),
-        //     footer: (props) => props.column.id,
-        //   },
-        // ],
       },
       ...Array(20)
         .fill(null)
@@ -102,8 +41,6 @@ export const GradeBookTable = () => {
     ],
     [],
   );
-
-  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const [data, setData] = React.useState(() => makeData(1000));
   const refreshData = () => setData(() => makeData(1000));

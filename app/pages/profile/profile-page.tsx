@@ -1,39 +1,47 @@
-import React from "react";
 import {
-  Apple,
-  Calendar,
-  Camera,
-  ChevronRight,
-  Chrome,
-  KeyRound,
   Lock,
   Mail,
-  MonitorSmartphone,
-  NotebookPen,
+  User,
+  Apple,
+  Camera,
+  Chrome,
   Palette,
-  Plus,
+  Calendar,
+  KeyRound,
   Settings,
   SwatchBook,
-  User,
+  NotebookPen,
+  ChevronRight,
+  MonitorSmartphone,
+  Award,
+  Info,
+  BookOpenText,
+  BookMarked,
+  ClipboardMinus,
+  NotebookText,
+  Users,
+  BookOpenCheck,
 } from "lucide-react";
+import React from "react";
 
-import { Card } from "~/components/ui/common/card";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import { RootContainer } from "~/components/layouts/root-container";
-import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import { TeacherCard } from "~/components/features/pages/teachers/teacher-card";
-import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
 import { cn } from "~/lib/utils";
 import { Input } from "~/components/ui/common/input";
+import { RootContainer } from "~/components/layouts/root-container";
 import { InputPassword } from "~/components/ui/custom/input-password";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 
 const tabsList = [
   { icon: <User />, label: "Профіль", value: "profile" },
   { icon: <Lock />, label: "Пароль та безпека", value: "security" },
   { icon: <Palette />, label: "Персоналізація", value: "personalization" },
-  { icon: <Lock />, label: "Електронний журнал", value: "grade-book" },
-  { icon: <Lock />, label: "Розклад", value: "timetable" },
+  { icon: <Info />, label: "Загальна інформація", value: "personal" },
+  { icon: <BookMarked />, label: "Видавнича діяльність", value: "printed-works" },
+  { icon: <BookOpenText />, label: "Навчально-методичні комплекси", value: "1" },
+  { icon: <NotebookText />, label: "Індивідуальний план", value: "2" },
+  { icon: <ClipboardMinus />, label: "Звіт викладача", value: "3" },
+  { icon: <Users />, label: "Списки студентів", value: "4" },
+  { icon: <BookOpenCheck />, label: "Електронний журнал", value: "grade-book" },
+  { icon: <Calendar />, label: "Розклад", value: "timetable" },
 ];
 
 const sessions = [
@@ -105,9 +113,19 @@ const ProfileTab = () => {
         <Input className="mt-1 mb-2" />
         <p className="text-sm">По-батькові</p>
         <Input className="mt-1" />
+      </div>
 
-        <h2 className="text-2xl mt-10 text-error">TODO:</h2>
-        <p className="text-xl text-error">Дописати інформації про вчені звання, категорії, посаду і т.д.</p>
+      <hr />
+
+      <div className="my-10">
+        <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
+          <Award className="w-5" /> Наукові досягнення
+        </h2>
+
+        <p className="text-muted-foreground mb-6">Посада, науковий ступінь, вчене звання, кваліфікаційна категорія</p>
+
+        <p className="text-sm">Досягнення</p>
+        <Input className="mt-1" value="Викладач-спеціаліст" readOnly />
       </div>
 
       <hr />
@@ -134,8 +152,8 @@ const ProfileTab = () => {
         </h2>
 
         <p className="text-muted-foreground mb-6">
-          Тут відображається ваш особистий ідентифікатор календаря або календаря вашої групи (для студентів). Ви можете
-          використовувати його для перегляду свого розкладу.
+          Тут відображається ваш особистий ідентифікатор календаря або ідентифікатор календаря вашої групи (для
+          студентів). Ви можете використовувати його для перегляду свого розкладу.
         </p>
 
         <p className="text-sm">Ідентифікатор календаря</p>
