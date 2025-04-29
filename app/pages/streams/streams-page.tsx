@@ -6,7 +6,7 @@ import { Badge } from "~/components/ui/common/badge";
 import { Button } from "~/components/ui/common/button";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
+import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/common/accordion";
 
 const cmk = [
@@ -33,17 +33,17 @@ const StreamsPage = () => {
   const [selectedStreamStatus, setSelectedStreamStatus] = React.useState(streamsStatus);
 
   return (
-    <RootContainer classNames="flex gap-4 !h-[calc(100vh-160px)]">
+    <RootContainer classNames="flex gap-10 !min-h-[calc(100vh-160px)]">
       <div className="flex flex-col flex-1">
         <div className="flex w-full justify-between items-center mb-4">
           <div className="">
             <div className="flex items-center gap-2">
               <GraduationCap className="w-4 text-black/40" />
-              <div className="text-black/40 text-sm">ГРУПА</div>
+              <div className="text-black/40 text-sm">ПОТІК</div>
             </div>
 
             <div className="flex gap-3 items-center">
-              <h2 className="text-2xl font-semibold">PH9-25-1</h2>
+              <h2 className="text-2xl font-semibold">PH9-25-1-3</h2>
               <Badge variant="outline" className="text-primary bg-primary-light border-0">
                 Активна
               </Badge>
@@ -62,12 +62,13 @@ const StreamsPage = () => {
         </div>
 
         <Card className="w-full">
-          <TeachersList />
+          <StreamsLessonsTable />
         </Card>
       </div>
 
-      <div className="w-90 border-l pl-4 h-full">
-        <div className="h-[56px] mb-4 flex justify-between items-center">
+      {/* <div className="w-90 border-l pl-4 h-full"> */}
+      <div className="flex flex-col w-90">
+        <div className="h-[56px] mb-4 flex justify-between items-center w-full">
           <h2 className="text-2xl font-semibold">Потоки:</h2>
           <PopoverFilter
             items={streamsStatus}
@@ -77,39 +78,41 @@ const StreamsPage = () => {
           />
         </div>
 
-        {[...Array(4)].map((_, index) => (
-          <Accordion type="single" key={index} className="mb-4" collapsible>
-            <AccordionItem value={`item-${index}`} className="pb-0">
-              <AccordionTrigger
-                className="p-2 cursor-pointer"
-                actions={
-                  <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                    <Ellipsis className="w-4" />
-                  </Button>
-                }
-              >
-                <div className="flex items-center gap-2">
-                  <p>PH9-24-1-3</p>
-                  <Badge variant="outline" className="text-primary bg-primary-light border-0">
-                    Активний
-                  </Badge>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-0">
-                <div className="">
-                  {[...plans].map((item) => (
-                    <div className="flex justify-between items-center border-t py-2 m-0">
-                      <p>Group Name</p>
-                      <Button variant="outline" className="p-1 h-7 w-7">
-                        <Trash className="!w-3 !h-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        ))}
+        <div className="flex flex-col">
+          {[...Array(4)].map((_, index) => (
+            <Accordion type="single" key={index} className="mb-4 w-full" collapsible>
+              <AccordionItem value={`item-${index}`} className="pb-0">
+                <AccordionTrigger
+                  className="p-2 cursor-pointer"
+                  actions={
+                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
+                      <Ellipsis className="w-4" />
+                    </Button>
+                  }
+                >
+                  <div className="flex items-center gap-2">
+                    <p>PH9-24-1-3</p>
+                    <Badge variant="outline" className="text-primary bg-primary-light border-0">
+                      Активний
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pb-0">
+                  <div className="">
+                    {[...plans].map((item) => (
+                      <div className="flex justify-between items-center border-t py-2 m-0">
+                        <p>Group Name</p>
+                        <Button variant="outline" className="p-1 h-7 w-7">
+                          <Trash className="!w-3 !h-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ))}
+        </div>
       </div>
     </RootContainer>
   );
