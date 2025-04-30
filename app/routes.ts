@@ -4,12 +4,14 @@ export default [
   layout("./components/layouts/root-layout.tsx", [
     index("routes/home.tsx"),
 
-    route("teachers", "./routes/teachers.tsx"),
-
     // route("groups", "./routes/groups.tsx"),
     route("groups/:id", "./routes/full-group.tsx"),
 
     // route("auditories", "./routes/auditories.tsx"),
+
+    route("teachers", "./routes/teachers.tsx"),
+    route("students", "./routes/students-accounts.tsx"),
+    route("students-divide", "./routes/students-divide.tsx"),
 
     route("plans", "./routes/plans.tsx"),
     route("plans/:id", "./routes/full-plan.tsx"),

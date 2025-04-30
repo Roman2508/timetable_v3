@@ -100,7 +100,7 @@ const data = {
         },
         {
           title: "Поділ на підгрупи",
-          url: "#",
+          url: "/students-divide",
         },
       ],
     },
