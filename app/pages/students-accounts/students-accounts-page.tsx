@@ -1,5 +1,18 @@
 import React from "react";
-import { ChevronLeft, CircleX, CopyPlus, CopyX, GraduationCap, Search, SquarePlus } from "lucide-react";
+import {
+  ArrowRightFromLine,
+  ChevronLeft,
+  CircleX,
+  CopyPlus,
+  CopyX,
+  Download,
+  GraduationCap,
+  Import,
+  MessageCircleQuestion,
+  Repeat2,
+  Search,
+  SquarePlus,
+} from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
 import { Badge } from "~/components/ui/common/badge";
@@ -11,6 +24,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/
 import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { StudentsAccountsTable } from "~/components/features/pages/students-accounts/students-accounts-table";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
@@ -94,6 +108,22 @@ const StudentsAccountsPage = () => {
         </div>
 
         <div className="flex gap-3">
+          <Button variant="outline">
+            <MessageCircleQuestion />
+          </Button>
+
+          <Button variant="outline">
+            <ArrowRightFromLine className="rotate-270" />
+          </Button>
+
+          <Button variant="outline">
+            <Download />
+          </Button>
+
+          <Button variant="outline">
+            <Repeat2 />
+          </Button>
+
           <Button>
             <Search />
             Вибрати групу
@@ -101,74 +131,18 @@ const StudentsAccountsPage = () => {
         </div>
       </div>
 
-      <div className="flex w-full gap-3">
-        <Card className="p-3 flex-1">
-          <div className="flex gap-4 justify-between">
-            <InputSearch className="w-full" />
+      <Tabs defaultValue="all" className="mb-4">
+        <TabsList>
+          <TabsTrigger value="all">Всі (12)</TabsTrigger>
+          <TabsTrigger value="study">Навчається (8)</TabsTrigger>
+          <TabsTrigger value="aaa">Відраховано (4)</TabsTrigger>
+          <TabsTrigger value="bbb">Академ.відпустка (4)</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-            <PopoverFilter
-              enableSelectAll
-              items={semesters}
-              itemsPrefix="Семестр"
-              selectAllLabel="Вибрати всі"
-              selectedItems={selectedSemesters}
-              setSelectedItems={setSelectedSemesters}
-            />
-          </div>
+      <InputSearch className="w-full mb-6" />
 
-          <DistributionLessonsTable />
-        </Card>
-
-        <Card className="p-3 flex-1 gap-0">
-          <h3 className="text-md font-semibold text-center pb-3">Інформаційні технології у фармації</h3>
-
-          <div className="flex gap-2 justify-center mb-8 py-2 border-y">
-            <Tabs defaultValue="attach_one">
-              <TabsList>
-                {distributionVariants.map((el) => (
-                  <Tooltip delayDuration={500}>
-                    <TooltipTrigger>
-                      <TabsTrigger key={el.name} value={el.name} className="px-3 py-2">
-                        {el.icon}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>{el.tooltip}</TooltipContent>
-                  </Tooltip>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
-          <div className="">
-            {["ЛК", "ПЗ", "ЛАБ", "СЕМ", "ЕКС", "КОНС"].map((el) => (
-              <div className="flex justify-between items-center gap-4 mb-4">
-                <p className="min-w-30">{el}</p>
-                <Input className="cursor-default" readOnly value="" />
-                <Input className="max-w-20 cursor-default" readOnly value={20} />
-                <Button variant="outline">
-                  <ChevronLeft />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="p-3 flex-1">
-          <div className="flex gap-4 justify-between">
-            <InputSearch className="w-full" />
-
-            <PopoverFilter
-              enableSelectAll
-              items={cmk}
-              itemsPrefix="ЦК"
-              selectAllLabel="Вибрати всі"
-              selectedItems={selectedSmk}
-              setSelectedItems={setSelectedCmk}
-            />
-          </div>
-
-          <DistributionLessonsTable />
-        </Card>
-      </div>
+      <StudentsAccountsTable />
     </RootContainer>
   );
 };
