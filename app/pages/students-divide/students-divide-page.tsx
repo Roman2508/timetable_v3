@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeft, CircleX, CopyPlus, CopyX, GraduationCap, Search, SquarePlus } from "lucide-react";
+import { ChevronLeft, ChevronsUpDown, CircleX, CopyPlus, CopyX, GraduationCap, Search, SquarePlus } from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
 import { Badge } from "~/components/ui/common/badge";
@@ -12,6 +12,8 @@ import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
 import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/common/accordion";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import { cn } from "~/lib/utils";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
@@ -34,7 +36,7 @@ const lessonsTabs = [
   {
     icon: <CopyX />,
     label: "Одна дисципліна",
-    name: "unpin_all",
+    name: "one",
     onClick: () => {},
     disabled: false,
     isActive: false,
@@ -42,7 +44,7 @@ const lessonsTabs = [
   {
     icon: <CircleX />,
     label: "Всі дисципліни",
-    name: "unpin_one",
+    name: "all",
     onClick: () => {},
     disabled: false,
     isActive: false,
@@ -50,8 +52,7 @@ const lessonsTabs = [
 ];
 
 const StudentsDividePage = () => {
-  const [selectedSemesters, setSelectedSemesters] = React.useState(semesters);
-  const [selectedSmk, setSelectedCmk] = React.useState(cmk);
+  const [activeLesson, setActiveLesson] = React.useState("");
 
   return (
     <RootContainer classNames="max-h-[calc(100vh-160px)] overflow-hidden">
@@ -86,40 +87,25 @@ const StudentsDividePage = () => {
         </div>
       </div>
 
-      <div className="flex w-full h-full gap-3">
-        <Card className="p-3 pr-0 flex-1 h-[calc(100vh-240px)]">
-          {/* <div className="flex gap-4 justify-between">
-            <InputSearch className="w-full" />
-
-            <PopoverFilter
-              enableSelectAll
-              items={semesters}
-              itemsPrefix="Семестр"
-              selectAllLabel="Вибрати всі"
-              selectedItems={selectedSemesters}
-              setSelectedItems={setSelectedSemesters}
-            />
-          </div> */}
-
+      <div className="flex w-full gap-3 !h-[calc(100vh-240px)]">
+        <Card className="p-3 pr-0 flex-1">
           <h3 className="font-semibold">Студенти групи PH9-25-1</h3>
 
           <select multiple className="h-full border-0 outline-0">
             {[...Array(30)].map((_, index) => (
-              <option value={index} className="p-1">
+              <option value={index} className="p-1 text-sm">
                 {index + 1}. Test Student Name{index}
               </option>
             ))}
           </select>
         </Card>
 
-        <Card className="t-3 pl-3 flex-1 gap-0 h-[calc(100vh-240px)]">
-          <h3 className="text-md font-semibold text-center pb-3">Дисципліни</h3>
-
-          <div className="flex gap-2 justify-center mb-8 py-2 border-y">
-            <Tabs defaultValue="attach_all">
-              <TabsList>
+        <div className="flex-1">
+          <div className="flex gap-2 mb-3 w-full">
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="w-full">
                 {lessonsTabs.map((el) => (
-                  <TabsTrigger key={el.name} value={el.name} className="px-3 py-2 w-40">
+                  <TabsTrigger key={el.name} value={el.name} className="h-[40px] w-full flex-1">
                     {el.label}
                   </TabsTrigger>
                 ))}
@@ -127,55 +113,61 @@ const StudentsDividePage = () => {
             </Tabs>
           </div>
 
-          <div className="overflow-y-auto pr-3">
-            {[
-              "Інформаційні технології у фармації",
-              "Фармакологія",
-              "Органічна хімія",
-              "Ділова іноземна мова (B1)",
-              "Технологія ліків",
-              "Інформаційні технології у фармації",
-              "Фармакологія",
-              "Органічна хімія",
-              "Ділова іноземна мова (B1)",
-              "Технологія ліків",
-              "Інформаційні технології у фармації",
-              "Фармакологія",
-              "Органічна хімія",
-              "Ділова іноземна мова (B1)",
-              "Технологія ліків",
-            ].map((el) => (
-              <Accordion type="single" className="mb-2" collapsible>
-                <AccordionItem value="item-1">
-                  <AccordionTrigger className="py-1 px-2">{el}</AccordionTrigger>
-                  <AccordionContent className="pb-0">
-                    {["ЛК", "ПЗ", "СЕМ", "ЕКЗ"].map((el) => (
-                      <div className="pb-2 mb-2 border-b">{el} (вся група)</div>
+          <Card className="pt-3 flex-1 h-[calc(100vh-288px)]">
+            <div className="overflow-y-auto overflow-x-hidden pr-3">
+              {[
+                "Інформаційні технології у фармації",
+                "Фармакологія",
+                "Органічна хімія",
+                "Ділова іноземна мова (B1)",
+                "Технологія ліків",
+                "Інформаційні технології у фармації",
+                "Фармакологія",
+                "Органічна хімія",
+                "Ділова іноземна мова (B1)",
+                "Технологія ліків",
+                "Інформаційні технології у фармації",
+                "Фармакологія",
+                "Органічна хімія",
+                "Ділова іноземна мова (B1)",
+                "Технологія ліків",
+              ].map((el) => (
+                <Collapsible className="space-y-2">
+                  <div className="flex items-center justify-between space-x-4 pl-4">
+                    <h4 className="text-sm font-semibold">{el}</h4>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <ChevronsUpDown className="h-4 w-4" />
+                        <span className="sr-only">Toggle</span>
+                      </Button>
+                    </CollapsibleTrigger>
+                  </div>
+
+                  <CollapsibleContent className="space-y-2 mb-4 ml-4">
+                    {["ЛК", "ПЗ", "СЕМ", "ЕКЗ"].map((lessonType) => (
+                      <div
+                        className={cn(
+                          "border px-4 py-2 font-mono text-sm cursor-pointer",
+                          `${el}_${lessonType}` === activeLesson ? "border-primary text-primary" : "",
+                        )}
+                        onClick={() => setActiveLesson(`${el}_${lessonType}`)}
+                      >
+                        {lessonType} (вся група)
+                      </div>
                     ))}
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            ))}
-          </div>
-        </Card>
+                  </CollapsibleContent>
+                </Collapsible>
+              ))}
+            </div>
+          </Card>
+        </div>
 
-        <Card className="p-3 flex-1 h-[calc(100vh-240px)]">
-          {/* <div className="flex gap-4 justify-between">
-            <InputSearch className="w-full" />
-
-            <PopoverFilter
-              enableSelectAll
-              items={cmk}
-              itemsPrefix="ЦК"
-              selectAllLabel="Вибрати всі"
-              selectedItems={selectedSmk}
-              setSelectedItems={setSelectedCmk}
-            />
-          </div> */}
+        <Card className="p-3 pr-0 flex-1">
+          <h3 className="font-semibold">Інформаційні технології у фармації</h3>
 
           <select multiple className="h-full border-0 outline-0">
             {[...Array(30)].map((_, index) => (
-              <option value={index} className="p-1">
+              <option value={index} className="p-1 text-sm">
                 {index + 1}. Abcdefghijklmnstorvwzyz{index}
               </option>
             ))}
