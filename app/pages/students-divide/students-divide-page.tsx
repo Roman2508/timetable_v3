@@ -7,10 +7,11 @@ import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
+import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/common/accordion";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
@@ -29,10 +30,10 @@ const semesters = [
   { id: 6, name: "6" },
 ];
 
-const distributionVariants = [
+const lessonsTabs = [
   {
     icon: <CopyX />,
-    tooltip: "Відкріпити всі",
+    label: "Одна дисципліна",
     name: "unpin_all",
     onClick: () => {},
     disabled: false,
@@ -40,27 +41,11 @@ const distributionVariants = [
   },
   {
     icon: <CircleX />,
-    tooltip: "Відкріпити одного",
+    label: "Всі дисципліни",
     name: "unpin_one",
     onClick: () => {},
     disabled: false,
     isActive: false,
-  },
-  {
-    icon: <CopyPlus />,
-    tooltip: "Прикріпити всі",
-    name: "attach_all",
-    onClick: () => {},
-    disabled: false,
-    isActive: false,
-  },
-  {
-    icon: <SquarePlus />,
-    tooltip: "Прикріпити одного",
-    name: "attach_one",
-    onClick: () => {},
-    disabled: false,
-    isActive: true,
   },
 ];
 
@@ -69,7 +54,7 @@ const StudentsDividePage = () => {
   const [selectedSmk, setSelectedCmk] = React.useState(cmk);
 
   return (
-    <RootContainer>
+    <RootContainer classNames="max-h-[calc(100vh-160px)] overflow-hidden">
       <div className="flex justify-between items-center mb-6">
         <div className="">
           {true ? (
@@ -101,9 +86,9 @@ const StudentsDividePage = () => {
         </div>
       </div>
 
-      <div className="flex w-full gap-3">
-        <Card className="p-3 flex-1">
-          <div className="flex gap-4 justify-between">
+      <div className="flex w-full h-full gap-3">
+        <Card className="p-3 pr-0 flex-1 h-[calc(100vh-240px)]">
+          {/* <div className="flex gap-4 justify-between">
             <InputSearch className="w-full" />
 
             <PopoverFilter
@@ -114,46 +99,68 @@ const StudentsDividePage = () => {
               selectedItems={selectedSemesters}
               setSelectedItems={setSelectedSemesters}
             />
-          </div>
+          </div> */}
 
-          <DistributionLessonsTable />
+          <h3 className="font-semibold">Студенти групи PH9-25-1</h3>
+
+          <select multiple className="h-full border-0 outline-0">
+            {[...Array(30)].map((_, index) => (
+              <option value={index} className="p-1">
+                {index + 1}. Test Student Name{index}
+              </option>
+            ))}
+          </select>
         </Card>
 
-        <Card className="p-3 flex-1 gap-0">
-          <h3 className="text-md font-semibold text-center pb-3">Інформаційні технології у фармації</h3>
+        <Card className="t-3 pl-3 flex-1 gap-0 h-[calc(100vh-240px)]">
+          <h3 className="text-md font-semibold text-center pb-3">Дисципліни</h3>
 
           <div className="flex gap-2 justify-center mb-8 py-2 border-y">
-            <Tabs defaultValue="attach_one">
+            <Tabs defaultValue="attach_all">
               <TabsList>
-                {distributionVariants.map((el) => (
-                  <Tooltip delayDuration={500}>
-                    <TooltipTrigger>
-                      <TabsTrigger key={el.name} value={el.name} className="px-3 py-2">
-                        {el.icon}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>{el.tooltip}</TooltipContent>
-                  </Tooltip>
+                {lessonsTabs.map((el) => (
+                  <TabsTrigger key={el.name} value={el.name} className="px-3 py-2 w-40">
+                    {el.label}
+                  </TabsTrigger>
                 ))}
               </TabsList>
             </Tabs>
           </div>
-          <div className="">
-            {["ЛК", "ПЗ", "ЛАБ", "СЕМ", "ЕКС", "КОНС"].map((el) => (
-              <div className="flex justify-between items-center gap-4 mb-4">
-                <p className="min-w-30">{el}</p>
-                <Input className="cursor-default" readOnly value="" />
-                <Input className="max-w-20 cursor-default" readOnly value={20} />
-                <Button variant="outline">
-                  <ChevronLeft />
-                </Button>
-              </div>
+
+          <div className="overflow-y-auto pr-3">
+            {[
+              "Інформаційні технології у фармації",
+              "Фармакологія",
+              "Органічна хімія",
+              "Ділова іноземна мова (B1)",
+              "Технологія ліків",
+              "Інформаційні технології у фармації",
+              "Фармакологія",
+              "Органічна хімія",
+              "Ділова іноземна мова (B1)",
+              "Технологія ліків",
+              "Інформаційні технології у фармації",
+              "Фармакологія",
+              "Органічна хімія",
+              "Ділова іноземна мова (B1)",
+              "Технологія ліків",
+            ].map((el) => (
+              <Accordion type="single" className="mb-2" collapsible>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="py-1 px-2">{el}</AccordionTrigger>
+                  <AccordionContent className="pb-0">
+                    {["ЛК", "ПЗ", "СЕМ", "ЕКЗ"].map((el) => (
+                      <div className="pb-2 mb-2 border-b">{el} (вся група)</div>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             ))}
           </div>
         </Card>
 
-        <Card className="p-3 flex-1">
-          <div className="flex gap-4 justify-between">
+        <Card className="p-3 flex-1 h-[calc(100vh-240px)]">
+          {/* <div className="flex gap-4 justify-between">
             <InputSearch className="w-full" />
 
             <PopoverFilter
@@ -164,9 +171,15 @@ const StudentsDividePage = () => {
               selectedItems={selectedSmk}
               setSelectedItems={setSelectedCmk}
             />
-          </div>
+          </div> */}
 
-          <DistributionLessonsTable />
+          <select multiple className="h-full border-0 outline-0">
+            {[...Array(30)].map((_, index) => (
+              <option value={index} className="p-1">
+                {index + 1}. Abcdefghijklmnstorvwzyz{index}
+              </option>
+            ))}
+          </select>
         </Card>
       </div>
     </RootContainer>
