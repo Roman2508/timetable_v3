@@ -1,4 +1,16 @@
-import { Ellipsis, PenLine, Plus, Trash, User } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronsUpDown,
+  Ellipsis,
+  GripVertical,
+  Hand,
+  MoveVertical,
+  PenLine,
+  Plus,
+  SeparatorVertical,
+  Trash,
+  User,
+} from "lucide-react";
 import { CategoryCard } from "~/components/features/category-card/category-card";
 import { RootContainer } from "~/components/layouts/root-container";
 import { Card, CardFooter, CardHeader, CardAction, CardDescription } from "~/components/ui/common/card";
@@ -9,6 +21,9 @@ import { Badge } from "~/components/ui/common/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/common/tooltip";
 import { Link } from "react-router";
 import PlanCard from "~/components/features/pages/plans/plan-card";
+import { cn } from "~/lib/utils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import SelectGroupModal from "~/components/features/select-group-modal/select-group-modal";
 
 const plans = [
   { id: 1, name: "Фармація, промислова фармація (денна форма)", count: 12, checked: true },
@@ -24,38 +39,57 @@ export default function PlansPage() {
 
         <div className="flex items-center gap-2">
           <Button variant="outline">Створити новий</Button>
+          <Button>Filters</Button>
+
+          <SelectGroupModal />
         </div>
       </div>
 
-      {[...Array(4)].map((_, index) => (
-        <Accordion type="single" key={index} className="mb-4" collapsible>
-          <AccordionItem value={`item-${index}`}>
-            <AccordionTrigger
-              actions={
-                <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                  <Ellipsis className="w-4" />
-                </Button>
-              }
-            >
-              226 Фармація, промислова фармація ОПС ФМБ (БСО) 2024
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="grid grid-cols-3 gap-4 flex-wrap mb-10">
-                {[...plans, ...plans].map((item) => (
-                  <PlanCard key={item.id} lessonsCount={item.count} groupsCount={item.count - 8} name={item.name} />
-                ))}
+      {[
+        "І8 Фармація 2024",
+        "І6 Технології медичної діагностики та лікування 2024",
+        "І8 Фармація 2025",
+        "І6 Технології медичної діагностики та лікування 2025",
+      ].map((el) => (
+        <Collapsible className="py-2 px-4 border mb-2">
+          <div className="flex items-center justify-between space-x-4">
+            <h4 className="text-sm font-semibold">{el}</h4>
 
-                <Card className="hover:border-primary min-h-[90px] flex items-center justify-center cursor-pointer border-dashed hover:text-primary">
-                  <p className="flex items-center gap-1">
-                    <Plus className="w-4" />
-                    <span className="text-sm">Створити новий</span>
-                  </p>
-                </Card>
+            <div className="flex gap-2">
+              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
+                <Ellipsis className="w-4" />
+              </Button>
+
+              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
+                <GripVertical className="w-4" />
+              </Button>
+
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <ChevronsUpDown className="h-4 w-4" />
+                  <span className="sr-only">Toggle</span>
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+          </div>
+
+          <CollapsibleContent className="py-2 mb-2 ml-4">
+            {[
+              "226 Фармація, промислова фармація ОПС ФМБ (БСО) 2024",
+              "І8 Фармація ОПС ФМБ (БСО) 2024",
+              "І6 Технології медичної діагностики та лікування ОПС ФМБ (БСО) 2024",
+              "226 Фармація, промислова фармація ОПС ФМБ (ПЗСО) 2025",
+            ].map((lessonType) => (
+              <div
+                className={cn(
+                  "border px-4 py-2 mb-2 font-mono text-sm cursor-pointer hover:border-primary hover:text-primary",
+                )}
+              >
+                {lessonType} (вся група)
               </div>
-              {/* <TeachersList /> */}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
       ))}
     </RootContainer>
   );

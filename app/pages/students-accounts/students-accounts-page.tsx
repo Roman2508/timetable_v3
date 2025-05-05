@@ -26,62 +26,7 @@ import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { StudentsAccountsTable } from "~/components/features/pages/students-accounts/students-accounts-table";
 
-const cmk = [
-  { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
-  { id: 2, name: "Фармацевтичних дисциплін", count: 17 },
-  { id: 3, name: "Гуманітарних дисциплін", count: 7 },
-  { id: 4, name: "Медико-біологічних дисциплін", count: 5 },
-  { id: 5, name: "Хімічних дисциплін", count: 10 },
-];
-
-const semesters = [
-  { id: 1, name: "1" },
-  { id: 2, name: "2" },
-  { id: 3, name: "3" },
-  { id: 4, name: "4" },
-  { id: 5, name: "5" },
-  { id: 6, name: "6" },
-];
-
-const distributionVariants = [
-  {
-    icon: <CopyX />,
-    tooltip: "Відкріпити всі",
-    name: "unpin_all",
-    onClick: () => {},
-    disabled: false,
-    isActive: false,
-  },
-  {
-    icon: <CircleX />,
-    tooltip: "Відкріпити одного",
-    name: "unpin_one",
-    onClick: () => {},
-    disabled: false,
-    isActive: false,
-  },
-  {
-    icon: <CopyPlus />,
-    tooltip: "Прикріпити всі",
-    name: "attach_all",
-    onClick: () => {},
-    disabled: false,
-    isActive: false,
-  },
-  {
-    icon: <SquarePlus />,
-    tooltip: "Прикріпити одного",
-    name: "attach_one",
-    onClick: () => {},
-    disabled: false,
-    isActive: true,
-  },
-];
-
 const StudentsAccountsPage = () => {
-  const [selectedSemesters, setSelectedSemesters] = React.useState(semesters);
-  const [selectedSmk, setSelectedCmk] = React.useState(cmk);
-
   return (
     <RootContainer>
       <div className="flex justify-between items-center mb-6">
