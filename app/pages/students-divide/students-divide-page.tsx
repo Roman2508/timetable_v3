@@ -1,5 +1,16 @@
 import React from "react";
-import { ChevronLeft, ChevronsUpDown, CircleX, CopyPlus, CopyX, GraduationCap, Search, SquarePlus } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronsUpDown,
+  CircleX,
+  CopyPlus,
+  CopyX,
+  GraduationCap,
+  Search,
+  SquarePlus,
+  UserMinus,
+  UserPlus,
+} from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
 import { Badge } from "~/components/ui/common/badge";
@@ -21,15 +32,6 @@ const cmk = [
   { id: 3, name: "Гуманітарних дисциплін", count: 7 },
   { id: 4, name: "Медико-біологічних дисциплін", count: 5 },
   { id: 5, name: "Хімічних дисциплін", count: 10 },
-];
-
-const semesters = [
-  { id: 1, name: "1" },
-  { id: 2, name: "2" },
-  { id: 3, name: "3" },
-  { id: 4, name: "4" },
-  { id: 5, name: "5" },
-  { id: 6, name: "6" },
 ];
 
 const lessonsTabs = [
@@ -101,6 +103,28 @@ const StudentsDividePage = () => {
         </Card>
 
         <div className="flex-1">
+          <Card className="mb-3 p-0 gap-2 flex-row justify-center items-center h-10">
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>
+                <Button variant="ghost">
+                  <UserPlus />
+                  Зарахувати
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Зарахувати вибраних студентів на дисципліну</TooltipContent>
+            </Tooltip>
+
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>
+                <Button variant="ghost">
+                  <UserMinus />
+                  Відрахувати
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Відрахувати вибраних студентів з дисципліни</TooltipContent>
+            </Tooltip>
+          </Card>
+
           <div className="flex gap-2 mb-3 w-full">
             <Tabs defaultValue="all" className="w-full">
               <TabsList className="w-full">

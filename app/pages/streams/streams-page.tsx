@@ -1,20 +1,23 @@
 import React from "react";
-import { Ellipsis, GraduationCap, Trash } from "lucide-react";
+import { ChevronsUpDown, Ellipsis, GraduationCap } from "lucide-react";
 
+import { cn } from "~/lib/utils";
 import { Card } from "~/components/ui/common/card";
 import { Badge } from "~/components/ui/common/badge";
 import { Button } from "~/components/ui/common/button";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/common/accordion";
+import { InputSearch } from "~/components/ui/custom/input-search";
+import StreamsListDrawer from "~/components/features/pages/streams/streams-list-drawer";
 
-const cmk = [
-  { id: 1, name: "Загальноосвітніх дисциплін", count: 12, checked: true },
-  { id: 2, name: "Фармацевтичних дисциплін", count: 17, checked: false },
-  { id: 3, name: "Гуманітарних дисциплін", count: 7, checked: true },
-  { id: 4, name: "Медико-біологічних дисциплін", count: 5, checked: true },
-  { id: 5, name: "Хімічних дисциплін", count: 10, checked: false },
+const semesters = [
+  { id: 1, name: "1" },
+  { id: 2, name: "2" },
+  { id: 3, name: "3" },
+  { id: 4, name: "4" },
+  { id: 5, name: "5" },
+  { id: 6, name: "6" },
 ];
 
 const streamsStatus = [
@@ -22,14 +25,8 @@ const streamsStatus = [
   { id: 2, name: "Архів" },
 ];
 
-const plans = [
-  { id: 1, name: "Фармація, промислова фармація (денна форма)", count: 12, checked: true },
-  { id: 2, name: "Технології медичної діагностики та лікування", count: 17, checked: false },
-  { id: 3, name: "Фармація, промислова фармація (заочна форма)", count: 7, checked: true },
-];
-
 const StreamsPage = () => {
-  const [selectedCmk, setSelectedCmk] = React.useState(cmk);
+  const [selectedSemester, setSelectedSemester] = React.useState(semesters);
   const [selectedStreamStatus, setSelectedStreamStatus] = React.useState(streamsStatus);
 
   return (
@@ -50,69 +47,25 @@ const StreamsPage = () => {
             </div>
           </div>
 
-          <PopoverFilter
-            items={cmk}
-            itemsPrefix="ЦК"
-            enableSelectAll
-            filterVariant="default"
-            selectedItems={selectedCmk}
-            selectAllLabel="Вибрати всі"
-            setSelectedItems={setSelectedCmk}
-          />
+          <div className="flex items-center gap-4">
+            <InputSearch placeholder="Знайти..." />
+
+            <PopoverFilter
+              enableSelectAll
+              label="Семестри"
+              items={semesters}
+              itemsPrefix="Семестр"
+              filterVariant="default"
+              selectAllLabel="Вибрати всі"
+              selectedItems={selectedSemester}
+              setSelectedItems={setSelectedSemester}
+            />
+
+            <StreamsListDrawer />
+          </div>
         </div>
 
-        <Card className="w-full">
-          <StreamsLessonsTable />
-        </Card>
-      </div>
-
-      {/* <div className="w-90 border-l pl-4 h-full"> */}
-      <div className="flex flex-col w-90">
-        <div className="h-[56px] mb-4 flex justify-between items-center w-full">
-          <h2 className="text-2xl font-semibold">Потоки:</h2>
-          <PopoverFilter
-            items={streamsStatus}
-            filterVariant="default"
-            selectedItems={selectedStreamStatus}
-            setSelectedItems={setSelectedStreamStatus}
-          />
-        </div>
-
-        <div className="flex flex-col">
-          {[...Array(4)].map((_, index) => (
-            <Accordion type="single" key={index} className="mb-4 w-full" collapsible>
-              <AccordionItem value={`item-${index}`} className="pb-0">
-                <AccordionTrigger
-                  className="p-2 cursor-pointer"
-                  actions={
-                    <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                      <Ellipsis className="w-4" />
-                    </Button>
-                  }
-                >
-                  <div className="flex items-center gap-2">
-                    <p>PH9-24-1-3</p>
-                    <Badge variant="outline" className="text-primary bg-primary-light border-0">
-                      Активний
-                    </Badge>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pb-0">
-                  <div className="">
-                    {[...plans].map((item) => (
-                      <div className="flex justify-between items-center border-t py-2 m-0">
-                        <p>Group Name</p>
-                        <Button variant="outline" className="p-1 h-7 w-7">
-                          <Trash className="!w-3 !h-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          ))}
-        </div>
+        <StreamsLessonsTable />
       </div>
     </RootContainer>
   );

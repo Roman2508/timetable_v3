@@ -1,29 +1,23 @@
 "use client";
 
-import {
-  IconDots,
-  IconFolder,
-  IconShare3,
-  IconTrash,
-  type Icon,
-} from "@tabler/icons-react";
+import { IconDots, IconFolder, IconShare3, IconTrash, type Icon } from "@tabler/icons-react";
 
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
+  DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/common/dropdown-menu";
+  DropdownMenuSeparator,
+} from "~/components/ui/common/dropdown-menu";
 import {
-  SidebarGroup,
-  SidebarGroupLabel,
+  useSidebar,
   SidebarMenu,
+  SidebarGroup,
+  SidebarMenuItem,
+  SidebarGroupLabel,
   SidebarMenuAction,
   SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/common/sidebar";
+} from "~/components/ui/common/sidebar";
 
 export function NavDocuments({
   items,
@@ -50,10 +44,7 @@ export function NavDocuments({
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuAction
-                  showOnHover
-                  className="data-[state=open]:bg-accent rounded-sm"
-                >
+                <SidebarMenuAction showOnHover className="data-[state=open]:bg-accent rounded-sm">
                   <IconDots />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>

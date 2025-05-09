@@ -3,17 +3,16 @@
 import { ChevronRight, type LucideIcon } from "lucide-react";
 import { Link } from "react-router";
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 import {
-  SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarGroup,
   SidebarMenuSub,
-  SidebarMenuSubButton,
+  SidebarMenuItem,
+  SidebarMenuButton,
   SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "~/components/ui/common/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
 interface INavMainItem {
   title: string;

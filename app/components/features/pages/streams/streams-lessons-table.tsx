@@ -167,7 +167,7 @@ export const StreamsLessonsTable = () => {
                 <TableRow key={row.id} className="hover:bg-border/40">
                   {row.getVisibleCells().map((cell, index) => {
                     return (
-                      <TableCell key={cell.id} className={cn(index === 0 ? "" : "text-center", "hover:bg-border/50")}>
+                      <TableCell key={cell.id} className={cn(index === 0 ? "" : "text-center", "")}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     );
