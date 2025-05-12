@@ -1,30 +1,15 @@
 import React from "react";
-import {
-  ChevronLeft,
-  ChevronsUpDown,
-  CircleX,
-  CopyPlus,
-  CopyX,
-  GraduationCap,
-  Search,
-  SquarePlus,
-  UserMinus,
-  UserPlus,
-} from "lucide-react";
+import { ChevronsUpDown, CircleX, CopyX, GraduationCap, UserMinus, UserPlus } from "lucide-react";
 
+import { cn } from "~/lib/utils";
 import { Card } from "~/components/ui/common/card";
 import { Badge } from "~/components/ui/common/badge";
-import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
-import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
-import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import SelectGroupModal from "~/components/features/select-group/select-group-modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/common/accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
-import { cn } from "~/lib/utils";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
@@ -76,16 +61,13 @@ const StudentsDividePage = () => {
             </div>
           ) : (
             <div className="flex items-center h-[56px]">
-              <h2 className="text-lg font-semibold">Виберіть групу для розподілу навантаження</h2>
+              <h2 className="text-lg font-semibold">Виберіть групу для розподілу студентів</h2>
             </div>
           )}
         </div>
 
         <div className="flex gap-3">
-          <Button>
-            <Search />
-            Вибрати групу
-          </Button>
+          <SelectGroupModal />
         </div>
       </div>
 
@@ -103,10 +85,10 @@ const StudentsDividePage = () => {
         </Card>
 
         <div className="flex-1">
-          <Card className="mb-3 p-0 gap-2 flex-row justify-center items-center h-10">
+          <Card className="mb-3 p-0 gap-0 flex-row items-center h-10">
             <Tooltip delayDuration={500}>
-              <TooltipTrigger>
-                <Button variant="ghost">
+              <TooltipTrigger className="flex-1">
+                <Button variant="ghost" className="w-full">
                   <UserPlus />
                   Зарахувати
                 </Button>
@@ -115,8 +97,8 @@ const StudentsDividePage = () => {
             </Tooltip>
 
             <Tooltip delayDuration={500}>
-              <TooltipTrigger>
-                <Button variant="ghost">
+              <TooltipTrigger className="flex-1">
+                <Button variant="ghost" className="w-full">
                   <UserMinus />
                   Відрахувати
                 </Button>

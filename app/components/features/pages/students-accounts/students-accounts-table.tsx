@@ -166,7 +166,7 @@ export const StudentsAccountsTable = () => {
                               : undefined
                           }
                         >
-                          <p className={cn("inline-flex relative text-left opacity-[0.7] font-light uppercase")}>
+                          <p className={cn("inline-flex relative text-left font-mono uppercase")}>
                             {flexRender(header.column.columnDef.header, header.getContext())}
                             {{
                               asc: <ArrowUp className="w-4 absolute right-[-20px]" />,

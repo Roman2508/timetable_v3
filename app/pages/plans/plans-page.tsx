@@ -23,7 +23,7 @@ import { Link } from "react-router";
 import PlanCard from "~/components/features/pages/plans/plan-card";
 import { cn } from "~/lib/utils";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
-import SelectGroupModal from "~/components/features/select-group-modal/select-group-modal";
+import SelectGroupModal from "~/components/features/select-group/select-group-modal";
 
 const plans = [
   { id: 1, name: "Фармація, промислова фармація (денна форма)", count: 12, checked: true },
@@ -39,9 +39,8 @@ export default function PlansPage() {
 
         <div className="flex items-center gap-2">
           <Button variant="outline">Створити новий</Button>
-          <Button>Filters</Button>
 
-          <SelectGroupModal />
+          <Button>Filters</Button>
         </div>
       </div>
 

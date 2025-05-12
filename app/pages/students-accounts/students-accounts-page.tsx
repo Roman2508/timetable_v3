@@ -25,6 +25,7 @@ import { DistributionLessonsTable } from "~/components/features/pages/distributi
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { StudentsAccountsTable } from "~/components/features/pages/students-accounts/students-accounts-table";
+import SelectGroupModal from "~/components/features/select-group/select-group-modal";
 
 const StudentsAccountsPage = () => {
   return (
@@ -69,10 +70,7 @@ const StudentsAccountsPage = () => {
             <Repeat2 />
           </Button>
 
-          <Button>
-            <Search />
-            Вибрати групу
-          </Button>
+          <SelectGroupModal />
         </div>
       </div>
 
@@ -85,7 +83,7 @@ const StudentsAccountsPage = () => {
         </TabsList>
       </Tabs>
 
-      <InputSearch className="w-full mb-6" />
+      <InputSearch className="w-full mb-6" placeholder="Знайти..." />
 
       <StudentsAccountsTable />
     </RootContainer>

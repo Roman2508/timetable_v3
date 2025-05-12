@@ -4,6 +4,7 @@ import { Outlet, useLocation } from "react-router";
 import Footer from "../features/footer/footer";
 import { TooltipProvider } from "../ui/common/tooltip";
 import { Header } from "~/components/features/header/header";
+import { LoadingBar } from "../features/loading-bar/loading-bar";
 import { AppSidebar } from "~/components/features/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/common/sidebar";
 
@@ -17,6 +18,8 @@ const RootLayout: React.FC = () => {
       <SidebarProvider>
         <AppSidebar variant="sidebar" />
         <SidebarInset>
+          <LoadingBar />
+
           <Header />
 
           <main className="flex flex-1 flex-col">

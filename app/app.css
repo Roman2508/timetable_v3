@@ -171,6 +171,10 @@ body {
     background-color: var(--primary-background);
     color: var(--primary);
   }
+
+  #nprogress .bar {
+    @apply !bg-primary !h-1;
+  }
 }
 
 @layer components {
