@@ -136,7 +136,7 @@ export const navData = {
       ],
     },
     {
-      title: "Загальні відомості",
+      title: "Загальне",
       url: "#",
       icon: Settings2,
       items: [

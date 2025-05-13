@@ -1,0 +1,2116 @@
+[
+  {
+    "id": "6682a32298c2f0d8aaed321f",
+    "year": 2023,
+    "semester": 1,
+    "lesson": {
+      "id": 1
+    },
+    "group": {
+      "id": 7,
+      "name": "PH/9-24-1"
+    },
+    "typeRu": "ПЗ",
+    "summary": [
+      {
+        "afterLesson": 5,
+        "type": "MODULE_AVERAGE"
+      },
+      {
+        "afterLesson": 10,
+        "type": "MODULE_AVERAGE"
+      },
+      {
+        "afterLesson": 15,
+        "type": "MODULE_SUM"
+      }
+    ],
+    "grades": [
+      {
+        "id": "6682a322692da07c3c174f20",
+        "student": {
+          "id": "6682a32274d0471f51847559",
+          "name": "Medina Oneal"
+        },
+        "gradeBook": {
+          "id": "6682a322f03e7df73cd0d35b"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 9
+          }
+        ]
+      },
+      {
+        "id": "6682a322d0d08511023da722",
+        "student": {
+          "id": "6682a32258a8d63e1bc062d6",
+          "name": "Rosella Gay"
+        },
+        "gradeBook": {
+          "id": "6682a322ec8f31627cbff2a3"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 15,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 16,
+            "isAbsence": true,
+            "rating": 9
+          }
+        ]
+      },
+      {
+        "id": "6682a3229470a4d334ab944a",
+        "student": {
+          "id": "6682a322852f71792f3ae030",
+          "name": "Flynn Castillo"
+        },
+        "gradeBook": {
+          "id": "6682a32226c342c711d75b6b"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 6
+          }
+        ]
+      },
+      {
+        "id": "6682a322ffd87fd7e774e8de",
+        "student": {
+          "id": "6682a3228b4bc8a9a7223e6d",
+          "name": "Gates Mcgee"
+        },
+        "gradeBook": {
+          "id": "6682a3226a383ca7495a5f97"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 9
+          }
+        ]
+      },
+      {
+        "id": "6682a322e6a1e0247f91dcf9",
+        "student": {
+          "id": "6682a322268e5a1095e2acf1",
+          "name": "Britt Cabrera"
+        },
+        "gradeBook": {
+          "id": "6682a3225a1dee3979871348"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 9
+          }
+        ]
+      },
+      {
+        "id": "6682a322b9e34aaea3abc330",
+        "student": {
+          "id": "6682a3222aafb726195a336b",
+          "name": "Sophie James"
+        },
+        "gradeBook": {
+          "id": "6682a32265f300bf41f181aa"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 11
+          }
+        ]
+      },
+      {
+        "id": "6682a322fb5bf73968e75b45",
+        "student": {
+          "id": "6682a32248aed349349633e8",
+          "name": "Tabitha Turner"
+        },
+        "gradeBook": {
+          "id": "6682a3225b9ea1bdd70dba3d"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 15,
+            "isAbsence": true,
+            "rating": 5
+          }
+        ]
+      },
+      {
+        "id": "6682a3229b88d2c660a1e776",
+        "student": {
+          "id": "6682a32258fa2ab60561bfda",
+          "name": "William Wiley"
+        },
+        "gradeBook": {
+          "id": "6682a32263e9616c1f9a00ea"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": false,
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "id": "6682a322c09487824093f48d",
+        "student": {
+          "id": "6682a322ccfd7e9590fc2721",
+          "name": "Kline Cline"
+        },
+        "gradeBook": {
+          "id": "6682a322a39ac9a373097e65"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": true,
+            "rating": 7
+          }
+        ]
+      },
+      {
+        "id": "6682a3229ee669912af827b0",
+        "student": {
+          "id": "6682a32246530c1a772e5e93",
+          "name": "Sherman Gonzales"
+        },
+        "gradeBook": {
+          "id": "6682a322c87e3cfa9c37494b"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 10
+          }
+        ]
+      },
+      {
+        "id": "6682a322dfbaef05112252b1",
+        "student": {
+          "id": "6682a3221561c388e6b07647",
+          "name": "Lynch Mann"
+        },
+        "gradeBook": {
+          "id": "6682a322aa525f726bc2670e"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 5
+          }
+        ]
+      },
+      {
+        "id": "6682a3227b622e8ae7a09837",
+        "student": {
+          "id": "6682a322cffa8eeee3f1c2ef",
+          "name": "Silva Morris"
+        },
+        "gradeBook": {
+          "id": "6682a3224c46ba8bed8452bc"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 5
+          }
+        ]
+      },
+      {
+        "id": "6682a3229d73cca24ea1f447",
+        "student": {
+          "id": "6682a3229f5b45b1d4c0ce12",
+          "name": "Marisol Munoz"
+        },
+        "gradeBook": {
+          "id": "6682a322139b058395c24c49"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 15,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 16,
+            "isAbsence": true,
+            "rating": 12
+          }
+        ]
+      },
+      {
+        "id": "6682a3226ca8052de05e7daa",
+        "student": {
+          "id": "6682a322e5ddb2a7689036be",
+          "name": "Yolanda Ford"
+        },
+        "gradeBook": {
+          "id": "6682a32278dfa2a814461dcf"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 11
+          }
+        ]
+      },
+      {
+        "id": "6682a322b48e2fab85a0cbcd",
+        "student": {
+          "id": "6682a3221607fcda34628630",
+          "name": "Sanders Osborn"
+        },
+        "gradeBook": {
+          "id": "6682a322c4e7a4c220ea9f5d"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 9
+          }
+        ]
+      },
+      {
+        "id": "6682a3224e7047df10f2ce6e",
+        "student": {
+          "id": "6682a322d865646d57f83a3a",
+          "name": "Kathie Cherry"
+        },
+        "gradeBook": {
+          "id": "6682a322739b4fcd9617cf25"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "id": "6682a322de70d9fe00f8f841",
+        "student": {
+          "id": "6682a3228264ba6d04b249b9",
+          "name": "Casandra Barrera"
+        },
+        "gradeBook": {
+          "id": "6682a322c708d0a828934dbc"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 15,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 16,
+            "isAbsence": true,
+            "rating": 9
+          }
+        ]
+      },
+      {
+        "id": "6682a3229b55f26c7ff1e091",
+        "student": {
+          "id": "6682a32204374470b35dc7e8",
+          "name": "Summers Carrillo"
+        },
+        "gradeBook": {
+          "id": "6682a322e4dfbea6d93d3d45"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": false,
+            "rating": 7
+          }
+        ]
+      },
+      {
+        "id": "6682a3225589afd0c9b220ad",
+        "student": {
+          "id": "6682a3229b6e52d051b61a8a",
+          "name": "Klein Mcintosh"
+        },
+        "gradeBook": {
+          "id": "6682a322dad06c31c6fae9b5"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 12
+          }
+        ]
+      },
+      {
+        "id": "6682a322ef959c2543f6907d",
+        "student": {
+          "id": "6682a32204b1c2b07b33723d",
+          "name": "Vickie Gardner"
+        },
+        "gradeBook": {
+          "id": "6682a3221b444717f3a3e22b"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "id": "6682a3220c38065c33dc1b0b",
+        "student": {
+          "id": "6682a322db3f42a54b9e6790",
+          "name": "Clarke Shields"
+        },
+        "gradeBook": {
+          "id": "6682a32217eee2f27ed1f2a9"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 8
+          }
+        ]
+      },
+      {
+        "id": "6682a3224e6b397ee9edcd29",
+        "student": {
+          "id": "6682a322d746bf3e6d35396b",
+          "name": "Fannie Marshall"
+        },
+        "gradeBook": {
+          "id": "6682a3226a69dffa8ae72d6b"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 15,
+            "isAbsence": false,
+            "rating": 8
+          }
+        ]
+      },
+      {
+        "id": "6682a322d2673a4b83184d7f",
+        "student": {
+          "id": "6682a3221bcbc5fa9b8ea15f",
+          "name": "Flowers Tate"
+        },
+        "gradeBook": {
+          "id": "6682a32224a91187ccea2c47"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 15,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 16,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 17,
+            "isAbsence": false,
+            "rating": 7
+          }
+        ]
+      },
+      {
+        "id": "6682a32207d456632986427c",
+        "student": {
+          "id": "6682a32229b919bd46ceffd2",
+          "name": "Clemons Berger"
+        },
+        "gradeBook": {
+          "id": "6682a322fadde8b2ea1bbbf8"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": false,
+            "rating": 8
+          }
+        ]
+      },
+      {
+        "id": "6682a322788ed970c3cdcdff",
+        "student": {
+          "id": "6682a3223177e640e9885fdb",
+          "name": "Townsend Rojas"
+        },
+        "gradeBook": {
+          "id": "6682a322b77cece7a5f98b0f"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 5
+          }
+        ]
+      },
+      {
+        "id": "6682a3225f1f64a9cc099286",
+        "student": {
+          "id": "6682a322029e6e5d62dfd59f",
+          "name": "Pierce Carter"
+        },
+        "gradeBook": {
+          "id": "6682a3228bb43e498f7f78fb"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": false,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 12,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 13,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 14,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 15,
+            "isAbsence": true,
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "id": "6682a3221a20ba808df2a48d",
+        "student": {
+          "id": "6682a3224d1ed34e62bedb77",
+          "name": "Tanisha Perez"
+        },
+        "gradeBook": {
+          "id": "6682a32242e7c5b9b642aca7"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 11
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 11
+          }
+        ]
+      },
+      {
+        "id": "6682a322f5c23902d9edd832",
+        "student": {
+          "id": "6682a322296c303ac6bc4db6",
+          "name": "Carey Kerr"
+        },
+        "gradeBook": {
+          "id": "6682a322800698856d55d9b7"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": false,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": true,
+            "rating": 7
+          }
+        ]
+      },
+      {
+        "id": "6682a3223539576234982f92",
+        "student": {
+          "id": "6682a322e458b7e7a7b1af9c",
+          "name": "Steele Taylor"
+        },
+        "gradeBook": {
+          "id": "6682a32271cc289f4c478c80"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 7
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 5
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 4
+          }
+        ]
+      },
+      {
+        "id": "6682a322897c35a8099aeca3",
+        "student": {
+          "id": "6682a3220245eebb2a4444df",
+          "name": "Greer Adams"
+        },
+        "gradeBook": {
+          "id": "6682a322f0e3512915872e83"
+        },
+        "grades": [
+          {
+            "lessonNumber": 1,
+            "isAbsence": true,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 2,
+            "isAbsence": true,
+            "rating": 12
+          },
+          {
+            "lessonNumber": 3,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 4,
+            "isAbsence": true,
+            "rating": 10
+          },
+          {
+            "lessonNumber": 5,
+            "isAbsence": false,
+            "rating": 9
+          },
+          {
+            "lessonNumber": 6,
+            "isAbsence": true,
+            "rating": 6
+          },
+          {
+            "lessonNumber": 7,
+            "isAbsence": false,
+            "rating": 4
+          },
+          {
+            "lessonNumber": 8,
+            "isAbsence": false,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 9,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 10,
+            "isAbsence": true,
+            "rating": 8
+          },
+          {
+            "lessonNumber": 11,
+            "isAbsence": false,
+            "rating": 12
+          }
+        ]
+      }
+    ]
+  }
+]

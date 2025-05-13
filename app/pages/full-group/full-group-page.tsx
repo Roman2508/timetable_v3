@@ -1,10 +1,10 @@
-import { GraduationCap, Package, Pencil, Trash, Trash2 } from "lucide-react";
+import { GraduationCap, Package, Pencil, Trash2 } from "lucide-react";
 
-import { RootContainer } from "~/components/layouts/root-container";
-import { Badge } from "~/components/ui/common/badge";
-import { Button } from "~/components/ui/common/button";
 import { Card } from "~/components/ui/common/card";
+import { Badge } from "~/components/ui/common/badge";
 import { Input } from "~/components/ui/common/input";
+import { Button } from "~/components/ui/common/button";
+import { RootContainer } from "~/components/layouts/root-container";
 
 const FullGroup = () => {
   return (
