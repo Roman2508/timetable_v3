@@ -26,4 +26,6 @@ export default [
 
     route("profile", "./routes/profile.tsx"),
   ]),
+
+  route("auth", "./routes/auth.tsx"),
 ] satisfies RouteConfig;
