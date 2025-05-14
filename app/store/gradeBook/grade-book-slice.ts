@@ -4,7 +4,7 @@ import {
   type GetGradesResponceType,
   type AddSummaryResponceType,
   type DeleteGradeBookSummaryPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
 import { type InstructionalMaterialsType } from "../teacher-profile/teacher-profile-types";

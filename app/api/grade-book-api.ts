@@ -1,15 +1,15 @@
 import {
-  GetGradesPayloadType,
-  GetGradesResponceType,
-  AddSummaryResponceType,
-  UpdateGradePayloadType,
-  GetGradeBookPayloadType,
-  UpdateGradesResponceType,
-  AddGradeBookSummaryPayloadType,
-  DeleteGradeBookSummaryPayloadType,
-} from "./apiTypes";
+  type GetGradesPayloadType,
+  type GetGradesResponceType,
+  type AddSummaryResponceType,
+  type UpdateGradePayloadType,
+  type GetGradeBookPayloadType,
+  type UpdateGradesResponceType,
+  type AddGradeBookSummaryPayloadType,
+  type DeleteGradeBookSummaryPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { GradeBookType } from "../store/gradeBook/grade-book-types";
+import { type GradeBookType } from "../store/gradeBook/grade-book-types";
 
 export const gradeBookAPI = {
   get(payload: GetGradeBookPayloadType) {

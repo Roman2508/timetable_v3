@@ -1,11 +1,11 @@
 import {
-  UpdateTeacherPayloadType,
-  CreateTeacherPayloadType,
-  CreateTeacherCategoryPayloadType,
-  UpdateTeacherCategoryPayloadType,
-} from "./apiTypes";
+  type UpdateTeacherPayloadType,
+  type CreateTeacherPayloadType,
+  type CreateTeacherCategoryPayloadType,
+  type UpdateTeacherCategoryPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { TeachersCategoryType } from "../store/teachers/teachers-types";
+import { type TeachersCategoryType } from "../store/teachers/teachers-types";
 
 export const teachersAPI = {
   /* categories */

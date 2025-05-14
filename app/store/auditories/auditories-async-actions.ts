@@ -5,7 +5,7 @@ import {
   type CreateAuditoryPayloadType,
   type UpdateAuditoryPayloadType,
   type UpdateAuditoryCategoryPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { auditoriesAPI } from "../../api/api";
 import { LoadingStatusTypes } from "../app-types";
 import { setLoadingStatus } from "./auditories-slise";

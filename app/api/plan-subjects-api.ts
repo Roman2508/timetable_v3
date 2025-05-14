@@ -1,6 +1,10 @@
+import {
+  type CreateSubjectPayloadType,
+  type UpdateSubjectNamePayloadType,
+  type UpdateSubjectHoursPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { PlanSubjectType } from "../store/plans/plans-types";
-import { CreateSubjectPayloadType, UpdateSubjectHoursPayloadType, UpdateSubjectNamePayloadType } from "./apiTypes";
+import { type PlanSubjectType } from "../store/plans/plans-types";
 
 export const planSubjectsAPI = {
   getPlanSubjects(payload: { id: number; semesters: string }) {

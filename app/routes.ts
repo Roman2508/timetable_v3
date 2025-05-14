@@ -4,7 +4,7 @@ export default [
   layout("./components/layouts/root-layout.tsx", [
     index("routes/home.tsx"),
 
-    // route("groups", "./routes/groups.tsx"),
+    route("groups", "./routes/groups.tsx"),
     route("groups/:id", "./routes/full-group.tsx"),
 
     // route("auditories", "./routes/auditories.tsx"),

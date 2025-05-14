@@ -18,7 +18,7 @@ import {
   type FindLessonsForSchedulePayloadType,
   type DeleteStudentsFromAllGroupLessonsType,
   type FindGroupLoadLessonsByGroupIdAndSemesterPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { LoadingStatusTypes } from "../app-types";
 import { setLoadingStatus } from "./schedule-lessons-slice";
 import { type GroupLoadType } from "../groups/groups-types";

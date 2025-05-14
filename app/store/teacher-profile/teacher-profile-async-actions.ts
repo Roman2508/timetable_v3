@@ -12,11 +12,11 @@ import {
   type UpdateInstructionalMaterialsPayloadType,
   type CreateInstructionalMaterialsPayloadType,
   type ImportInstructionalMaterialsPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { LoadingStatusTypes } from "../app-types";
 import { setLoadingStatus } from "./teacher-profile-slice";
-import { teacherProfileAPI } from "../../api/teacherProfileAPI";
-import { groupLoadLessonsAPI } from "../../api/groupLoadLessonsAPI";
+import { teacherProfileAPI } from "../../api/teacher-profile-api";
+import { groupLoadLessonsAPI } from "../../api/group-load-lessons-api";
 
 /* instructional-materials */
 export const getInstructionalMaterials = createAsyncThunk(

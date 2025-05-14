@@ -1,14 +1,14 @@
 import {
-  AddGroupToStreamPayloadType,
-  UpdateEntityNamePayloadType,
-  AddLessonsToStreamPayloadType,
-  DeleteGroupFromStreamPayloadType,
-  DeleteGroupFromStreamResponseType,
-  DeleteLessonFromStreamPayloadType,
-} from "./apiTypes";
+  type AddGroupToStreamPayloadType,
+  type UpdateEntityNamePayloadType,
+  type AddLessonsToStreamPayloadType,
+  type DeleteGroupFromStreamPayloadType,
+  type DeleteGroupFromStreamResponseType,
+  type DeleteLessonFromStreamPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { GroupLoadType } from "../store/groups/groups-types";
-import { StreamsType } from "../store/streams/streams-types";
+import { type GroupLoadType } from "../store/groups/groups-types";
+import { type StreamsType } from "../store/streams/streams-types";
 
 export const streamsAPI = {
   getStreams() {

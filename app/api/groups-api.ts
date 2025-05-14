@@ -1,12 +1,12 @@
 import {
-  UpdateGroupPayloadType,
-  UpdateEntityNamePayloadType,
-  CreateSpecializationPayloadType,
-  DeleteSpecializationPayloadType,
-  UpdateSpecializationPayloadType,
-} from "./apiTypes";
+  type UpdateGroupPayloadType,
+  type UpdateEntityNamePayloadType,
+  type CreateSpecializationPayloadType,
+  type DeleteSpecializationPayloadType,
+  type UpdateSpecializationPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { GroupCategoriesType, GroupsType } from "../store/groups/groups-types";
+import { type GroupCategoriesType, type GroupsType } from "../store/groups/groups-types";
 
 export const groupsAPI = {
   /* categories */

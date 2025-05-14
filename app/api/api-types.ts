@@ -1,12 +1,24 @@
-import { summaryTypes } from "../components/GradeBookPage/AddSummaryModal";
-import { userRoles, UserRoles, UserType } from "../store/auth/auth-types";
-import { GradeBookSummaryTypes, GradeType } from "../store/gradeBook/grade-book-types";
-import { GroupsType } from "../store/groups/groups-types";
+import type { GroupsType } from "~/store/groups/groups-types";
+// import { summaryTypes } from "../components/GradeBookPage/AddSummaryModal";
+import { userRoles, UserRoles, type UserType } from "../store/auth/auth-types";
+import { GradeBookSummaryTypes, type GradeType } from "../store/gradeBook/grade-book-types";
 import { LessonsTypeRu } from "../store/schedule-lessons/schedule-lessons-types";
-import { IndividualTeacherWordTypes, TeacherReportFileType } from "../store/teacher-profile/teacher-profile-types";
-import { EditorJSItemType, TeachersType } from "../store/teachers/teachers-types";
+import { IndividualTeacherWordTypes, type TeacherReportFileType } from "../store/teacher-profile/teacher-profile-types";
+import { type EditorJSItemType, type TeachersType } from "../store/teachers/teachers-types";
 
 /* Global */
+
+/* Коли буде компонент "../components/GradeBookPage/AddSummaryModal"; це потрібно перенести туди:*/
+export const summaryTypes = [
+  { label: "Тематична оцінка (ср.знач.)", value: "MODULE_AVERAGE" },
+  { label: "Рейтинг з модуля (сума)", value: "MODULE_SUM" },
+  { label: "Семестрова оцінка (ср.знач.)", value: "LESSON_AVERAGE" },
+  { label: "Рейтинг з дисципліни (сума)", value: "LESSON_SUM" },
+  { label: "Модульний контроль", value: "MODULE_TEST" },
+  { label: "Додатковий рейтинг", value: "ADDITIONAL_RATE" },
+  { label: "Поточний рейтинг", value: "CURRENT_RATE" },
+  { label: "Екзамен", value: "EXAM" },
+] as const;
 
 export type UpdateEntityNamePayloadType = {
   id: number;

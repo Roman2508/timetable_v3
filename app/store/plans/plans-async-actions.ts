@@ -5,7 +5,7 @@ import {
   type CreateSubjectPayloadType,
   type UpdateSubjectNamePayloadType,
   type UpdateSubjectHoursPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { setLoadingStatus } from "./plans-slice";
 import { LoadingStatusTypes } from "../app-types";
 import { planSubjectsAPI, plansAPI } from "../../api/api";

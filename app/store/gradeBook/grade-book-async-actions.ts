@@ -7,7 +7,7 @@ import {
   type GetGradeBookPayloadType,
   type AddGradeBookSummaryPayloadType,
   type DeleteGradeBookSummaryPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { LoadingStatusTypes } from "../app-types";
 import { setLoadingStatus } from "./grade-book-slice";
 import { gradeBookAPI, teacherProfileAPI } from "../../api/api";

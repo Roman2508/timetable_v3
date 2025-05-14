@@ -1,22 +1,22 @@
 import {
-  TeacherReportType,
-  IndividualWorkPlanType,
-  InstructionalMaterialsType,
+  type TeacherReportType,
+  type IndividualWorkPlanType,
+  type InstructionalMaterialsType,
 } from "../store/teacher-profile/teacher-profile-types";
 import {
-  GetTeacherReportType,
-  CreateTeacherReportType,
-  UpdateTeacherReportType,
-  TeacherReportDeleteFileType,
-  TeacherReportUploadFileType,
-  CreateIndividualTeacherWorkType,
-  UpdateIndividualTeacherWorkType,
-  TeacherReportDeleteFileResponceType,
-  TeacherReportUploadFileResponceType,
-  CreateInstructionalMaterialsPayloadType,
-  UpdateInstructionalMaterialsPayloadType,
-  ImportInstructionalMaterialsPayloadType,
-} from "./apiTypes";
+  type GetTeacherReportType,
+  type CreateTeacherReportType,
+  type UpdateTeacherReportType,
+  type TeacherReportDeleteFileType,
+  type TeacherReportUploadFileType,
+  type CreateIndividualTeacherWorkType,
+  type UpdateIndividualTeacherWorkType,
+  type TeacherReportDeleteFileResponceType,
+  type TeacherReportUploadFileResponceType,
+  type CreateInstructionalMaterialsPayloadType,
+  type UpdateInstructionalMaterialsPayloadType,
+  type ImportInstructionalMaterialsPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
 
 export const teacherProfileAPI = {

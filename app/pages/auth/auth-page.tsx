@@ -1,7 +1,4 @@
-import { GraduationCap, Package, Pencil, Trash2 } from "lucide-react";
-
 import { Card } from "~/components/ui/common/card";
-import { Badge } from "~/components/ui/common/badge";
 import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
 import { RootContainer } from "~/components/layouts/root-container";

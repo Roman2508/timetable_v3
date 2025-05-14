@@ -13,7 +13,7 @@ import {
 } from "./auth-async-actions";
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
-import { type AuthResponseType } from "../../api/apiTypes";
+import { type AuthResponseType } from "../../api/api-types";
 import { type TeachersType } from "../teachers/teachers-types";
 import { type AuthInitialState, type UserType } from "./auth-types";
 

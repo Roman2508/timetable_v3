@@ -72,14 +72,17 @@ const rootReducer = combineReducers({
 
 // export const persistor = persistStore(store);
 
-export const makeStore = () =>
+export const makeStore = (preloadedState = undefined) =>
   configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: false, // спростимо, можеш додати список винятків
       }),
+    preloadedState,
   });
+
+export const store = makeStore();
 
 // // Infer the `RootState` and `AppDispatch` types from the store itself
 // export type RootState = ReturnType<typeof store.getState>;

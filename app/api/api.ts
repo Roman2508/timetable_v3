@@ -1,50 +1,53 @@
-import axios from 'axios'
-import { getLocalStorageToken, TOKEN_NAME } from '../utils/localStorageToken'
+import axios from "axios";
+// import { getLocalStorageToken, TOKEN_NAME } from "../utils/localStorageToken";
 
-export { plansAPI } from './plansAPI'
-export { groupsAPI } from './groupsAPI'
-export { streamsAPI } from './streamsAPI'
-export { settingsAPI } from './settingsAPI'
-export { teachersAPI } from './teachersAPI'
-export { studentsAPI } from './studentsAPI'
-export { gradeBookAPI } from './gradeBookAPI'
-export { auditoriesAPI } from './auditoriesAPI'
-export { planSubjectsAPI } from './planSubjectsAPI'
-export { teacherProfileAPI } from './teacherProfileAPI'
-export { scheduleLessonsAPI } from './scheduleLessonsAPI'
-export { groupLoadLessonsAPI } from './groupLoadLessonsAPI'
+export { plansAPI } from "./plans-api";
+export { groupsAPI } from "./groups-api";
+export { streamsAPI } from "./streams-api";
+export { settingsAPI } from "./settings-api";
+export { teachersAPI } from "./teachers-api";
+export { studentsAPI } from "./students-api";
+export { gradeBookAPI } from "./grade-book-api";
+export { auditoriesAPI } from "./auditories-api";
+export { planSubjectsAPI } from "./plan-subjects-api";
+export { teacherProfileAPI } from "./teacher-profile-api";
+export { scheduleLessonsAPI } from "./schedule-lessons-api";
+export { groupLoadLessonsAPI } from "./group-load-lessons-api";
 
 export const instanse = axios.create({
-  baseURL: 'http://localhost:7777/',
+  baseURL: "http://localhost:7777/",
   // headers: {
   //   ['Content-Type']: 'application/json',
   //   responseType: 'json',
   // },
   // baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:4444/' : 'https://timetable-server.onrender.com/',
-})
+});
 
 // Якщо є токен, вшиваю його в конфігурацію axios
 instanse.interceptors.request.use((config) => {
   if (config.headers) {
-    const token = getLocalStorageToken()
-    config.headers.Authorization = String(`Bearer ${token}`)
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ3MjMwOTIyLCJleHAiOjE3NDk4MjI5MjJ9.M8YAzLCXG0D_8g6y25YdCQqAieQv6D6zm904Krelp4I";
+    // const token = getLocalStorageToken()
+    config.headers.Authorization = String(`Bearer ${token}`);
+
     // config.headers.Authorization = String(window.localStorage.getItem('token'))
   }
-  return config
-})
+  return config;
+});
 
 instanse.interceptors.response.use(
   (response) => response,
   (error) => {
     // Any status codes that fall outside the range of 2xx trigger this function
     if (error.response && error.response.status === 401) {
-      if (window.location.pathname !== '/auth') {
-        window.location.replace('/auth')
+      if (window.location.pathname !== "/auth") {
+        window.location.replace("/auth");
       }
       // localStorage.removeItem(TOKEN_NAME)
     }
 
     // Return the error to be handled elsewhere (if necessary)
-    return Promise.reject(error)
-  }
-)
+    return Promise.reject(error);
+  },
+);

@@ -5,7 +5,7 @@ import { studentsAPI } from "../../api/api";
 import { LoadingStatusTypes } from "../app-types";
 import { type StudentType } from "./students-types";
 import { setLoadingStatus } from "./students-slice";
-import { type CreateStudentsPayloadType, type UpdateStudentsPayloadType } from "../../api/apiTypes";
+import { type CreateStudentsPayloadType, type UpdateStudentsPayloadType } from "../../api/api-types";
 
 export const getStudentsByGroupId = createAsyncThunk(
   "students/getStudentsByGroupId",

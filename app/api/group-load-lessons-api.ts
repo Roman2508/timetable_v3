@@ -1,18 +1,18 @@
 import {
-  AddStudentToLessonType,
-  AttachTeacherPayloadType,
-  CreateSubgroupsPayloadType,
-  DeleteStudentFromLessonType,
-  AttachSpecializationPayloadType,
-  AddStudentsToAllGroupLessonsType,
-  FindLessonsForSchedulePayloadType,
-  DeleteStudentsFromAllGroupLessonsType,
-  FindGroupLoadLessonsByGroupIdAndSemesterPayloadType,
-} from "./apiTypes";
+  type AddStudentToLessonType,
+  type AttachTeacherPayloadType,
+  type CreateSubgroupsPayloadType,
+  type DeleteStudentFromLessonType,
+  type AttachSpecializationPayloadType,
+  type AddStudentsToAllGroupLessonsType,
+  type FindLessonsForSchedulePayloadType,
+  type DeleteStudentsFromAllGroupLessonsType,
+  type FindGroupLoadLessonsByGroupIdAndSemesterPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { GroupLoadType } from "../store/groups/groups-types";
-import { StudentType } from "../store/students/students-types";
-import { TeachersType } from "../store/teachers/teachers-types";
+import { type GroupLoadType } from "../store/groups/groups-types";
+import { type StudentType } from "../store/students/students-types";
+import { type TeachersType } from "../store/teachers/teachers-types";
 
 export const groupLoadLessonsAPI = {
   /* Specialization */

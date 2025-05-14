@@ -10,8 +10,8 @@ import {
   type UpdateUserPayloadType,
   type CreateUserPayloadType,
   type GoogleLoginPayloadType,
-} from "../../api/apiTypes";
-import { authAPI } from "../../api/authAPI";
+} from "../../api/api-types";
+import { authAPI } from "../../api/auth-api";
 import { setLoadingStatus } from "./auth-slice";
 import { LoadingStatusTypes } from "../app-types";
 

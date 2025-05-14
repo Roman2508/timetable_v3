@@ -33,11 +33,12 @@ import { type GroupLoadType } from "../groups/groups-types";
 import { type StudentType } from "../students/students-types";
 import { type TeachersType } from "../teachers/teachers-types";
 
-const getLocalStorageData = () => {
-  const data = window.localStorage.getItem("persist:scheduleLessons");
-  if (data) return JSON.parse(data);
-  return {};
-};
+// const getLocalStorageData = () => {
+//   if (!window || typeof window === "undefined") return {};
+//   const data = window.localStorage.getItem("persist:scheduleLessons");
+//   if (data) return JSON.parse(data);
+//   return {};
+// };
 
 const scheduleLessonsInitialState: ScheduleLessonInitialStateType = {
   groupLoad: null,
@@ -49,11 +50,16 @@ const scheduleLessonsInitialState: ScheduleLessonInitialStateType = {
 
   lessonStudents: null,
 
-  lastOpenedSemester: getLocalStorageData().lastOpenedSemester || 1,
-  lastOpenedWeek: getLocalStorageData().lastOpenedWeek || 1,
-  lastSelectedItemId: getLocalStorageData().lastSelectedItemId || 1,
-  lastSelectedScheduleType: getLocalStorageData().lastSelectedScheduleType || "group",
-  lastSelectedStructuralUnitId: getLocalStorageData().lastSelectedStructuralUnitId || 1,
+  lastOpenedSemester: 1,
+  lastOpenedWeek: 1,
+  lastSelectedItemId: 1,
+  lastSelectedScheduleType: "group",
+  lastSelectedStructuralUnitId: 1,
+  // lastOpenedSemester: getLocalStorageData().lastOpenedSemester || 1,
+  // lastOpenedWeek: getLocalStorageData().lastOpenedWeek || 1,
+  // lastSelectedItemId: getLocalStorageData().lastSelectedItemId || 1,
+  // lastSelectedScheduleType: getLocalStorageData().lastSelectedScheduleType || "group",
+  // lastSelectedStructuralUnitId: getLocalStorageData().lastSelectedStructuralUnitId || 1,
 
   loadingStatus: LoadingStatusTypes.NEVER,
 };

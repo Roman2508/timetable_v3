@@ -14,7 +14,7 @@ import {
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
 import { type GroupLoadType } from "../groups/groups-types";
-import { type DeleteGroupFromStreamResponseType } from "../../api/apiTypes";
+import { type DeleteGroupFromStreamResponseType } from "../../api/api-types";
 import { type StreamsInitialState, type StreamsType } from "./streams-types";
 
 const plansInitialState: StreamsInitialState = {

@@ -1,16 +1,16 @@
 import {
-  AuthResponseType,
-  LoginPayloadType,
-  RegisterPayloadType,
-  UpdateEditorDataType,
-  GoogleLoginPayloadType,
-  UpdateUserPayloadType,
-  CreateUserPayloadType,
-  GetUsersPayloadType,
-} from "./apiTypes";
+  type AuthResponseType,
+  type LoginPayloadType,
+  type RegisterPayloadType,
+  type GetUsersPayloadType,
+  type UpdateEditorDataType,
+  type CreateUserPayloadType,
+  type UpdateUserPayloadType,
+  type GoogleLoginPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { TeachersType } from "../store/teachers/teachers-types";
-import { UserType } from "../store/auth/auth-types";
+import { type UserType } from "../store/auth/auth-types";
+import { type TeachersType } from "../store/teachers/teachers-types";
 
 export const authAPI = {
   register(payload: RegisterPayloadType) {

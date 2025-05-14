@@ -9,7 +9,7 @@ import {
   type CreateSpecializationPayloadType,
   type DeleteSpecializationPayloadType,
   type UpdateSpecializationPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { setLoadingStatus } from "./groups-slice";
 import { LoadingStatusTypes } from "../app-types";
 import { type GroupCategoriesType } from "./groups-types";

@@ -7,7 +7,7 @@ import {
   type AddLessonsToStreamPayloadType,
   type DeleteGroupFromStreamPayloadType,
   type DeleteLessonFromStreamPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { streamsAPI } from "../../api/api";
 import { LoadingStatusTypes } from "../app-types";
 import { type StreamsType } from "./streams-types";

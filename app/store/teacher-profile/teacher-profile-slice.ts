@@ -29,7 +29,7 @@ import {
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
 import { type GroupLoadType } from "../groups/groups-types";
-import { type TeacherReportUploadFileResponceType } from "../../api/apiTypes";
+import { type TeacherReportUploadFileResponceType } from "../../api/api-types";
 
 const teacherProfileInitialState: TeacherProfileInitialInitialState = {
   report: null,

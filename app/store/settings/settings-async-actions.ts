@@ -5,7 +5,7 @@ import {
   type UpdateColorsPayloadType,
   type UpdateCallSchedulePayloadType,
   type UpdateSemesterTermsPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { settingsAPI } from "../../api/api";
 import { type SettingsType } from "./settings-types";
 import { LoadingStatusTypes } from "../app-types";

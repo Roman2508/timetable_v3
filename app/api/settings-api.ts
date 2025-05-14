@@ -1,6 +1,10 @@
 import { instanse } from "./api";
-import { SettingsType } from "../store/settings/settings-types";
-import { UpdateCallSchedulePayloadType, UpdateColorsPayloadType, UpdateSemesterTermsPayloadType } from "./apiTypes";
+import { type SettingsType } from "../store/settings/settings-types";
+import {
+  type UpdateColorsPayloadType,
+  type UpdateCallSchedulePayloadType,
+  type UpdateSemesterTermsPayloadType,
+} from "./api-types";
 
 export const settingsAPI = {
   getSettings(id: number = 1) {

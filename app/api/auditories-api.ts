@@ -1,6 +1,10 @@
+import {
+  type CreateAuditoryPayloadType,
+  type UpdateAuditoryPayloadType,
+  type UpdateAuditoryCategoryPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { AuditoriesTypes, AuditoryCategoriesTypes } from "../store/auditories/auditories-types";
-import { CreateAuditoryPayloadType, UpdateAuditoryCategoryPayloadType, UpdateAuditoryPayloadType } from "./apiTypes";
+import { type AuditoriesTypes, type AuditoryCategoriesTypes } from "../store/auditories/auditories-types";
 
 export const auditoriesAPI = {
   /* categories */

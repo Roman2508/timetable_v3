@@ -27,7 +27,7 @@ import {
 } from "./groups-types";
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
-import { type AttachSpecializationPayloadType } from "../../api/apiTypes";
+import { type AttachSpecializationPayloadType } from "../../api/api-types";
 
 const groupsInitialState: GroupsInitialState = {
   groupCategories: null,

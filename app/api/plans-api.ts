@@ -1,6 +1,6 @@
 import { instanse } from "./api";
-import { CreatePlanPayloadType } from "./apiTypes";
-import { PlansCategoriesType, PlansType, PlanType } from "../store/plans/plans-types";
+import { type CreatePlanPayloadType } from "./api-types";
+import { type PlansCategoriesType, type PlansType, type PlanType } from "../store/plans/plans-types";
 
 export const plansAPI = {
   /* categories */

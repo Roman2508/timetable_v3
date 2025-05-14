@@ -39,6 +39,8 @@ body {
   --color-error: var(--error);
   --color-error-background: var(--error-background);
 
+  --color-bage: var(--bage);
+
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -88,7 +90,7 @@ body {
   --error: #af1d27;
   --error-background: #fce9ea;
 
-  --aaa: rgb(198 251 157);
+  --bage: rgb(198 251 157);
 
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
@@ -173,7 +175,7 @@ body {
   }
 
   #nprogress .bar {
-    @apply !bg-primary !h-1;
+    @apply !bg-primary !h-1 shadow-[var(--primary)];
   }
 }
 

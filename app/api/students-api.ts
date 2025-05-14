@@ -1,6 +1,6 @@
 import { instanse } from "./api";
-import { StudentType } from "../store/students/students-types";
-import { CreateStudentsPayloadType, UpdateStudentsPayloadType } from "./apiTypes";
+import { type StudentType } from "../store/students/students-types";
+import { type CreateStudentsPayloadType, type UpdateStudentsPayloadType } from "./api-types";
 
 export const studentsAPI = {
   getByGroupId(id: number) {

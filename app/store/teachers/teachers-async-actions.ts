@@ -6,7 +6,7 @@ import {
   type UpdateTeacherPayloadType,
   type CreateTeacherCategoryPayloadType,
   type UpdateTeacherCategoryPayloadType,
-} from "../../api/apiTypes";
+} from "../../api/api-types";
 import { teachersAPI } from "../../api/api";
 import { LoadingStatusTypes } from "../app-types";
 import { setLoadingStatus } from "./teachers-slice";

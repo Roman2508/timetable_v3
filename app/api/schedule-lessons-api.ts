@@ -1,18 +1,18 @@
 import {
-  CopyDaySchedulePayloadType,
-  GetGroupOverlayPayloadType,
-  CopyWeekSchedulePayloadType,
-  CreateReplacementPayloadType,
-  GetAuditoryOverlayPayloadType,
-  GetScheduleLessonsPayloadType,
-  GetTeachersOverlayPayloadType,
-  UpdateScheduleLessonsPayloadType,
-  CreateScheduleLessonsPayloadType,
-  FindAllLessonDatesForTheSemesterPayloadType,
-} from "./apiTypes";
+  type CopyDaySchedulePayloadType,
+  type GetGroupOverlayPayloadType,
+  type CopyWeekSchedulePayloadType,
+  type CreateReplacementPayloadType,
+  type GetAuditoryOverlayPayloadType,
+  type GetScheduleLessonsPayloadType,
+  type GetTeachersOverlayPayloadType,
+  type UpdateScheduleLessonsPayloadType,
+  type CreateScheduleLessonsPayloadType,
+  type FindAllLessonDatesForTheSemesterPayloadType,
+} from "./api-types";
 import { instanse } from "./api";
-import { TeachersType } from "../store/teachers/teachers-types";
-import { ScheduleLessonType } from "../store/schedule-lessons/schedule-lessons-types";
+import { type TeachersType } from "../store/teachers/teachers-types";
+import { type ScheduleLessonType } from "../store/schedule-lessons/schedule-lessons-types";
 
 export const scheduleLessonsAPI = {
   getLessons(payload: GetScheduleLessonsPayloadType) {
