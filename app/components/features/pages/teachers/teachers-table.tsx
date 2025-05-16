@@ -57,7 +57,7 @@ const invoices = [
   },
 ];
 
-const TeachersList = () => {
+const TeachersTable = () => {
   return (
     <Table>
       <TableHeader>
@@ -121,4 +121,4 @@ const TeachersList = () => {
   );
 };
 
-export { TeachersList };
+export { TeachersTable };

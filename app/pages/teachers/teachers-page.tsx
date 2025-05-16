@@ -7,7 +7,7 @@ import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { TeacherCard } from "~/components/features/pages/teachers/teacher-card";
-import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
+import { TeachersTable } from "~/components/features/pages/teachers/teachers-table";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12, checked: true },
@@ -63,7 +63,7 @@ const TeachersPage = () => {
 
       <InputSearch className="mb-8" placeholder="Пошук..." />
 
-      <TeachersList />
+      <TeachersTable />
     </RootContainer>
   );
 };

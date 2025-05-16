@@ -1,8 +1,11 @@
+import React from "react";
+
 import { groupsAPI } from "~/api/groups-api";
 import type { Route } from "./+types/groups";
-
-import GroupsPage from "~/pages/groups/groups-page";
 import { useLoaderData } from "react-router";
+import { useAppDispatch } from "~/store/store";
+import GroupsPage from "~/pages/groups/groups-page";
+import { setGroupCategories } from "~/store/groups/groups-slice";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "ЖБФФК | Групи" }, { name: "description", content: "Welcome to React Router!" }];
@@ -30,13 +33,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Teachers() {
   const { data } = useLoaderData<typeof loader>();
-  console.log("data:", data);
-  return (
-    <>
-      {data[0].name}
-      <GroupsPage />
-    </>
-  );
+
+  const dispatch = useAppDispatch();
+
+  // Перевірити чи не буде викликатись зайві рази
+  const setCategoriesMemorized = React.useCallback(() => dispatch(setGroupCategories(data)), []);
+  setCategoriesMemorized();
+
+  // dispatch(setGroupCategories(data));
+
+  return <GroupsPage />;
 }
 
 /* 

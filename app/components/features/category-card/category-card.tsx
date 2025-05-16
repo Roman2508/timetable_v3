@@ -1,20 +1,22 @@
-import { Ellipsis, User } from 'lucide-react'
+import { Ellipsis, User } from "lucide-react";
 
-import { Badge } from '~/components/ui/common/badge'
-import { Button } from '~/components/ui/common/button'
-import { Card, CardFooter, CardHeader, CardAction, CardDescription } from '~/components/ui/common/card'
+import { Badge } from "~/components/ui/common/badge";
+import { Button } from "~/components/ui/common/button";
+import { Card, CardFooter, CardHeader, CardAction, CardDescription } from "~/components/ui/common/card";
 
 interface ICategoryCardProps {
-  name: string
-  count: number
+  label: string;
+  name: string;
+  count: number;
+  itemsLabel: string;
 }
 
-const CategoryCard: React.FC<ICategoryCardProps> = ({ name, count }) => {
+const CategoryCard: React.FC<ICategoryCardProps> = ({ name, count, label = "", itemsLabel = "" }) => {
   return (
     <Card className="shadow-none hover:border-primary gap-0 min-h-[100px] py-3">
       {/* w-[220px] */}
       <CardHeader className="px-3 flex justify-between items-center">
-        <CardDescription className="whitespace-nowrap">Циклова комісія</CardDescription>
+        <CardDescription className="whitespace-nowrap">{label}</CardDescription>
 
         <CardAction>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -29,13 +31,13 @@ const CategoryCard: React.FC<ICategoryCardProps> = ({ name, count }) => {
 
       <Badge variant="outline" className="mx-3 mt-3">
         <User />
-        {count} викл.
+        {count} {itemsLabel}
       </Badge>
     </Card>
-  )
-}
+  );
+};
 
-export { CategoryCard }
+export { CategoryCard };
 
 /* 
 

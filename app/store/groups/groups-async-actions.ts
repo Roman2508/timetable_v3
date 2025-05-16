@@ -9,6 +9,7 @@ import {
   type CreateSpecializationPayloadType,
   type DeleteSpecializationPayloadType,
   type UpdateSpecializationPayloadType,
+  type CreateCategoryPayloadType,
 } from "../../api/api-types";
 import { setLoadingStatus } from "./groups-slice";
 import { LoadingStatusTypes } from "../app-types";
@@ -17,10 +18,10 @@ import { groupLoadLessonsAPI, groupsAPI } from "../../api/api";
 
 export const getGroupCategories = createAsyncThunk(
   "groups-categories/getGroupCategories",
-  async (isHide: boolean = false, thunkAPI): Promise<GroupCategoriesType[]> => {
+  async (_, thunkAPI): Promise<GroupCategoriesType[]> => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
 
-    const promise = groupsAPI.getGroupsCategories(isHide);
+    const promise = groupsAPI.getGroupsCategories();
 
     toast.promise(promise, {
       // loading: "Завантаження...",
@@ -39,10 +40,10 @@ export const getGroupCategories = createAsyncThunk(
 
 export const createGroupCategory = createAsyncThunk(
   "groups-categories/createGroupCategory",
-  async (name: string, thunkAPI) => {
+  async (payload: CreateCategoryPayloadType, thunkAPI) => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
 
-    const promise = groupsAPI.createGroupCategory(name);
+    const promise = groupsAPI.createGroupCategory(payload);
 
     toast.promise(promise, {
       loading: "Завантаження...",

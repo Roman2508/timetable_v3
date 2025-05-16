@@ -20,6 +20,11 @@ export const summaryTypes = [
   { label: "Екзамен", value: "EXAM" },
 ] as const;
 
+export type CreateCategoryPayloadType = {
+  name: string;
+  shortName: string;
+};
+
 export type UpdateEntityNamePayloadType = {
   id: number;
   name: string;

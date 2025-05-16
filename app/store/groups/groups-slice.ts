@@ -56,6 +56,9 @@ const groupsSlice = createSlice({
     setLoadingStatus(state, action) {
       state.loadingStatus = action.payload;
     },
+    setGroupCategories(state, action) {
+      state.groupCategories = action.payload;
+    },
     clearGroupData(state) {
       state.group = groupsInitialState.group;
     },
@@ -300,6 +303,6 @@ export const groupsListSelector = createSelector(
   },
 );
 
-export const { setLoadingStatus, clearGroupData } = groupsSlice.actions;
+export const { setLoadingStatus, clearGroupData, setGroupCategories } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

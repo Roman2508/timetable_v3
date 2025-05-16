@@ -11,6 +11,7 @@ export type GroupsInitialState = {
 export type GroupCategoriesType = {
   id: number;
   name: string;
+  shortName: string;
   groups: GroupsShortType[];
 };
 
@@ -18,6 +19,7 @@ export type GroupsType = {
   id: number;
   name: string;
   isHide: boolean;
+  status: "Активний" | "Архів";
   students: { id: number; name: string; status: "Навчається" | "Відраховано" | "Академічна відпустка" }[];
   calendarId: string;
   courseNumber: number;
@@ -30,9 +32,13 @@ export type GroupsType = {
   educationPlan: { id: number; name: string } | null;
 };
 
+// export type GroupsShortType = Omit<
+//   GroupsType,
+//   "id" | "name" | "courseNumber" | "yearOfAdmission" | "formOfEducation" | "students" | "isHide" | "status" | "category"
+// >;
 export type GroupsShortType = Pick<
   GroupsType,
-  "id" | "name" | "courseNumber" | "yearOfAdmission" | "students" | "isHide"
+  "id" | "name" | "courseNumber" | "yearOfAdmission" | "formOfEducation" | "students" | "isHide" | "status" | "category"
 >;
 
 export type GroupFormType = {

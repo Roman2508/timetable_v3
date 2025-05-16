@@ -1,4 +1,4 @@
-import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
+import { TeachersList } from "~/components/features/pages/teachers/teachers-table";
 // import { WideContainer } from '@/components/layouts/wide-container'
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";

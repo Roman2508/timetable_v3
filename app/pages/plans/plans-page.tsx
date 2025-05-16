@@ -1,29 +1,9 @@
-import {
-  ArrowUpDown,
-  ChevronsUpDown,
-  Ellipsis,
-  GripVertical,
-  Hand,
-  MoveVertical,
-  PenLine,
-  Plus,
-  SeparatorVertical,
-  Trash,
-  User,
-} from "lucide-react";
-import { CategoryCard } from "~/components/features/category-card/category-card";
-import { RootContainer } from "~/components/layouts/root-container";
-import { Card, CardFooter, CardHeader, CardAction, CardDescription } from "~/components/ui/common/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/common/accordion";
-import { TeachersList } from "~/components/features/pages/teachers/teachers-list";
-import { Button } from "~/components/ui/common/button";
-import { Badge } from "~/components/ui/common/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { Link } from "react-router";
-import PlanCard from "~/components/features/pages/plans/plan-card";
+import { ChevronsUpDown, Ellipsis, GripVertical } from "lucide-react";
+
 import { cn } from "~/lib/utils";
+import { Button } from "~/components/ui/common/button";
+import { RootContainer } from "~/components/layouts/root-container";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
-import SelectGroupModal from "~/components/features/select-group/select-group-modal";
 
 const plans = [
   { id: 1, name: "Фармація, промислова фармація (денна форма)", count: 12, checked: true },
