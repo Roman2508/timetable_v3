@@ -4,12 +4,12 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
   type UpdateGroupPayloadType,
   type CreateSubgroupsPayloadType,
-  type UpdateEntityNamePayloadType,
+  type CreateGroupCategoryPayloadType,
+  type UpdateGroupCategoryPayloadType,
   type AttachSpecializationPayloadType,
   type CreateSpecializationPayloadType,
   type DeleteSpecializationPayloadType,
   type UpdateSpecializationPayloadType,
-  type CreateCategoryPayloadType,
 } from "../../api/api-types";
 import { setLoadingStatus } from "./groups-slice";
 import { LoadingStatusTypes } from "../app-types";
@@ -40,7 +40,7 @@ export const getGroupCategories = createAsyncThunk(
 
 export const createGroupCategory = createAsyncThunk(
   "groups-categories/createGroupCategory",
-  async (payload: CreateCategoryPayloadType, thunkAPI) => {
+  async (payload: CreateGroupCategoryPayloadType, thunkAPI) => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
 
     const promise = groupsAPI.createGroupCategory(payload);
@@ -62,7 +62,7 @@ export const createGroupCategory = createAsyncThunk(
 
 export const updateGroupCategory = createAsyncThunk(
   "group-categories/updateGroupCategory",
-  async (payload: UpdateEntityNamePayloadType, thunkAPI) => {
+  async (payload: UpdateGroupCategoryPayloadType, thunkAPI) => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
 
     const promise = groupsAPI.updateGroupCategory(payload);

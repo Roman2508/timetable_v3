@@ -1,18 +1,20 @@
 import React from "react";
 
-type ItemType = { status: "Активний" | "Архів"; [key: string]: any };
-type GenericObject = Record<string, any>;
+type ItemType = {
+  status: "Активний" | "Архів";
+  [key: string]: any;
+};
 
-export function useItemsByStatus<T extends GenericObject>(items: T[], key: keyof T, status: string): any[] {
-  const [internalItems, setInternalItems] = React.useState<T[]>([]);
+export function useItemsByStatus<T extends Record<string, any>>(
+  items: T[] | null,
+  targetKey: keyof T,
+  status: string,
+): any[] {
+  if (!items) return [];
 
-  React.useEffect(() => {
-    setInternalItems(items);
-  }, [items]);
-
-  const filteredNestedItems = React.useMemo(() => {
-    return internalItems.flatMap((item) => {
-      const nestedArray = item[key];
+  const filteredItems = React.useMemo(() => {
+    return items.flatMap((item) => {
+      const nestedArray = item[targetKey];
       if (!Array.isArray(nestedArray)) return [];
 
       if (status === "Всі") {
@@ -21,7 +23,7 @@ export function useItemsByStatus<T extends GenericObject>(items: T[], key: keyof
 
       return nestedArray.filter((nestedItem: ItemType) => nestedItem?.status === status);
     });
-  }, [internalItems, key, status]);
+  }, [items, targetKey, status]);
 
-  return filteredNestedItems;
+  return filteredItems;
 }

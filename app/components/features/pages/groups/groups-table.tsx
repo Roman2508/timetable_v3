@@ -14,8 +14,8 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { makeData, type Person } from "./make-data";
 import { Badge } from "~/components/ui/common/badge";
+import { ActionsDropdown } from "../../actions-dropdown";
 import type { GroupsShortType } from "~/store/groups/groups-types";
-import { TeacherActionsDropdown } from "../teachers/teacher-actions-dropdown";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 
 interface IGroupsTableProps {
@@ -61,6 +61,12 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="hover:bg-white">
+            <TableHead className="!text-left font-mono">
+              <div className="cursor-pointer select-none text-left">
+                <p className="inline-flex relative uppercase font-mono">№</p>
+              </div>
+            </TableHead>
+
             {headerGroup.headers.map((header) => {
               return (
                 <TableHead key={header.id} colSpan={header.colSpan}>
@@ -95,9 +101,10 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
       </TableHeader>
 
       <TableBody>
-        {groups.map((group) => {
+        {groups.map((group, index) => {
           return (
             <TableRow key={group.id} className="hover:bg-border/40">
+              <TableCell className={cn("truncate max-w-[30px]", "text-left px-2 py-1")}>{index + 1}</TableCell>
               <TableCell className={cn(true ? "truncate max-w-[200px]" : "", "text-left px-2 py-1")}>
                 {group.name}
               </TableCell>
@@ -111,16 +118,14 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
               </TableCell>
 
               <TableCell className={cn(true ? "truncate max-w-[200px]" : "", "text-left px-2 py-1")}>
-                {group.students.length}
+                {group.students?.length ?? 0}
               </TableCell>
 
               <TableCell className={cn(true ? "truncate max-w-[200px]" : "", "text-left px-2 py-1")}>
                 {group.formOfEducation}
               </TableCell>
 
-              <TableCell
-                className={cn(true ? "truncate max-w-[200px]" : "", true ? "!text-right" : "", "text-left px-2 py-1")}
-              >
+              <TableCell className={cn("truncate max-w-[200px] text-left px-2 py-1")}>
                 <Badge
                   variant="outline"
                   className={cn(
@@ -133,10 +138,14 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
                 </Badge>
               </TableCell>
 
-              <TableCell
-                className={cn(true ? "truncate max-w-[200px]" : "", true ? "!text-right" : "", "text-left px-2 py-1")}
-              >
-                <TeacherActionsDropdown />
+              <TableCell className={cn(true ? "truncate max-w-[200px]" : "", "!text-right px-2 py-1")}>
+                <ActionsDropdown
+                  itemId={1}
+                  changeStatusFunction={() => {}}
+                  onClickUpdateFunction={() => {}}
+                  onClickDeleteFunction={() => {}}
+                  changeCategoryFunction={() => {}}
+                />
               </TableCell>
             </TableRow>
           );

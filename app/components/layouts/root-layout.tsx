@@ -9,6 +9,8 @@ import { AppSidebar } from "~/components/features/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "~/components/ui/common/sidebar";
 import { Provider } from "react-redux";
 import { store } from "~/store/store";
+import ConfirmModal from "../features/confirm-modal";
+import AlertModal from "../features/alert-modal";
 
 const RootLayout: React.FC = () => {
   const { pathname } = useLocation();
@@ -21,6 +23,9 @@ const RootLayout: React.FC = () => {
         <SidebarProvider>
           <AppSidebar variant="sidebar" />
           <SidebarInset>
+            <ConfirmModal />
+            <AlertModal />
+
             <LoadingBar />
 
             <Header />

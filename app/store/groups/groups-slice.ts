@@ -39,6 +39,7 @@ const groupsInitialState: GroupsInitialState = {
     students: [],
     isHide: false,
     calendarId: "",
+    status: "Активний",
     formOfEducation: "Денна",
     specializationList: [],
     educationPlan: null,

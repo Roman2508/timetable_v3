@@ -1,29 +1,27 @@
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  Dialog,
-  DialogTitle,
-  DialogFooter,
-  DialogHeader,
-  DialogContent,
-  DialogDescription,
-} from "~/components/ui/common/dialog";
-import { Input } from "~/components/ui/common/input";
-import { Button } from "~/components/ui/common/button";
-import { Form, type ActionFunctionArgs } from "react-router";
-import { Separator } from "~/components/ui/common/separator";
-import type { CategoryFormData, GroupCategoryModalStateType } from "~/components/features/pages/groups/groups-types";
-import { categorySchema } from "./groups-form-schema";
+import type {
+  CategoryFormData,
+  UpdatingCategoryType,
+  GroupCategoryModalStateType,
+} from "~/components/features/pages/groups/groups-types";
 import { useAppDispatch } from "~/store/store";
-import { createGroupCategory } from "~/store/groups/groups-async-actions";
+import { Input } from "~/components/ui/common/input";
+import { categorySchema } from "./groups-form-schema";
+import { Button } from "~/components/ui/common/button";
+import { Separator } from "~/components/ui/common/separator";
+import { createGroupCategory, updateGroupCategory } from "~/store/groups/groups-async-actions";
+import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogDescription } from "~/components/ui/common/dialog";
 
 interface ICategoryActionsModalProps {
   modalData: GroupCategoryModalStateType;
+  updatingCategory: UpdatingCategoryType | null;
   setModalData: React.Dispatch<React.SetStateAction<GroupCategoryModalStateType>>;
 }
 
-const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({ modalData, setModalData }) => {
+const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({ modalData, setModalData, updatingCategory }) => {
   const dispatch = useAppDispatch();
 
   const onOpenChange = (value: boolean) => {
@@ -39,8 +37,8 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({ modalData,
   } = useForm<CategoryFormData>({
     resolver: zodResolver(categorySchema),
     defaultValues: {
-      name: "",
-      shortName: "",
+      name: updatingCategory?.name ?? "",
+      shortName: updatingCategory?.shortName ?? "",
     },
   });
 
@@ -48,27 +46,24 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({ modalData,
     const { name, shortName } = data;
 
     if (modalData.actionType === "create") {
-      // setOpen(false)
       await dispatch(createGroupCategory({ name, shortName }));
-      reset();
-      // setValue("name", "");
-      // setValue("shortName", "");
       setModalData({ isOpen: false, actionType: "create" });
+      reset();
       return;
     }
 
-    if (modalData.actionType === "update" && "activeGroupCategory") {
-      // setOpen(false)
-      // await dispatch(updateGroupCategory({ id: activeGroupCategory.id, name: data.name }))
-      // setActiveGroupCategory((prev) => {
-      //   if (prev) {
-      //     return { ...prev, name: data.name }
-      //   } else {
-      //     return prev
-      //   }
-      // })
+    if (modalData.actionType === "update" && updatingCategory) {
+      await dispatch(updateGroupCategory({ id: updatingCategory.id, name: data.name, shortName: data.shortName }));
+      setModalData({ isOpen: false, actionType: "create" });
+      reset();
     }
   };
+
+  React.useEffect(() => {
+    if (!updatingCategory) return;
+    setValue("name", updatingCategory.name);
+    setValue("shortName", updatingCategory.shortName);
+  }, [updatingCategory]);
 
   return (
     <Dialog open={modalData.isOpen} onOpenChange={onOpenChange}>
@@ -87,13 +82,13 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({ modalData,
             <div className="mb-4 mt-1 flex flex-col gap-1">
               <h5 className="text-md">Назва підрозділу*</h5>
               <Input {...register("name")} className="" />
-              {errors.name?.message && <p>{errors.name.message}</p>}
+              {errors.name?.message && <p className="text-error">{errors.name.message}</p>}
             </div>
 
             <div className="mb-8 mt-1 flex flex-col gap-1">
               <h5 className="text-md">Коротка назва*</h5>
               <Input {...register("shortName")} className="" />
-              {errors.shortName?.message && <p>{errors.shortName.message}</p>}
+              {errors.shortName?.message && <p className="text-error">{errors.shortName.message}</p>}
             </div>
 
             <Separator />

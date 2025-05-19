@@ -3,7 +3,7 @@ import storage from "redux-persist/lib/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 
-import menuSlice from "./menu/menu-slice";
+import generalSlice from "./general/general-slice";
 import authSlice from "./auth/auth-slice";
 import plansSlice from "./plans/plans-slice";
 import groupsSlice from "./groups/groups-slice";
@@ -17,8 +17,8 @@ import auditoriesSlise from "./auditories/auditories-slise";
 import teacherProfileSlice from "./teacher-profile/teacher-profile-slice";
 import scheduleLessonsSlice from "./schedule-lessons/schedule-lessons-slice";
 
-const menuPersistConfig = {
-  key: "menu",
+const generalPersistConfig = {
+  key: "general",
   storage: storage,
   whitelist: ["drawerOpen"],
 };
@@ -53,10 +53,10 @@ const rootReducer = combineReducers({
   auditories: auditoriesSlise,
   teacherProfile: teacherProfileSlice,
   auth: authSlice,
-  menu: menuSlice,
+  general: generalSlice,
   scheduleLessons: scheduleLessonsSlice,
   // auth: persistReducer(authPersistConfig, authSlice),
-  // menu: persistReducer(menuPersistConfig, menuSlice),
+  // general: persistReducer(generalPersistConfig, generalSlice),
   // scheduleLessons: persistReducer(groupsPersistConfig, scheduleLessonsSlice),
 });
 

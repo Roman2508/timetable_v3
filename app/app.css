@@ -10,6 +10,8 @@
 
 html,
 body {
+  pointer-events: auto !important;
+
   @apply bg-white dark:bg-gray-950;
 
   @media (prefers-color-scheme: dark) {

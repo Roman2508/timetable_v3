@@ -1,10 +1,10 @@
 import {
   type UpdateGroupPayloadType,
-  type UpdateEntityNamePayloadType,
+  type CreateGroupCategoryPayloadType,
+  type UpdateGroupCategoryPayloadType,
   type CreateSpecializationPayloadType,
   type DeleteSpecializationPayloadType,
   type UpdateSpecializationPayloadType,
-  type CreateCategoryPayloadType,
 } from "./api-types";
 import { instanse } from "./api";
 import { type GroupCategoriesType, type GroupsType } from "../store/groups/groups-types";
@@ -14,13 +14,12 @@ export const groupsAPI = {
   getGroupsCategories() {
     return instanse.get<GroupCategoriesType[]>(`/group-categories`);
   },
-  createGroupCategory(payload: CreateCategoryPayloadType) {
+  createGroupCategory(payload: CreateGroupCategoryPayloadType) {
     return instanse.post<GroupCategoriesType>("/group-categories", payload);
   },
-  updateGroupCategory(payload: UpdateEntityNamePayloadType) {
-    return instanse.patch<GroupCategoriesType>(`/group-categories/${payload.id}`, {
-      name: payload.name,
-    });
+  updateGroupCategory(payload: UpdateGroupCategoryPayloadType) {
+    const { id, name, shortName } = payload;
+    return instanse.patch<GroupCategoriesType>(`/group-categories/${id}`, { name, shortName });
   },
   deleteGroupCategory(id: number) {
     return instanse.delete<number>(`/group-categories/${id}`);

@@ -1,29 +1,40 @@
 "use client";
 
 import React from "react";
-import { Plus } from "lucide-react";
+import { Plus, User } from "lucide-react";
 import { useSelector } from "react-redux";
 
+import type {
+  UpdatingCategoryType,
+  GroupCategoryModalStateType,
+} from "../../components/features/pages/groups/groups-types";
+import { store, useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";
 import { pluralizeWords } from "~/helpers/pluralize-words";
 import { groupsSelector } from "~/store/groups/groups-slice";
 import { useItemsByStatus } from "~/hooks/use-items-by-status";
 import { InputSearch } from "~/components/ui/custom/input-search";
+import { CategoryCard } from "~/components/features/category-card";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types";
+import { deleteGroupCategory } from "~/store/groups/groups-async-actions";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { GroupsTable } from "~/components/features/pages/groups/groups-table";
-import { CategoryCard } from "~/components/features/category-card/category-card";
+import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types";
 import CategoryActionsModal from "~/components/features/pages/groups/category-actions-modal";
-import type { GroupCategoryModalStateType } from "../../components/features/pages/groups/groups-types";
+import { changeAlertModalStatus, changeConfirmModalStatus, generalSelector } from "~/store/general/general-slice";
+import { onConfirm } from "~/components/features/confirm-modal";
 
 // cookies: categoryFiltes; groupFilters; sort
 
 const GroupsPage = () => {
-  const { groupCategories } = useSelector(groupsSelector);
+  const dispatch = useAppDispatch();
 
+  const { groupCategories } = useSelector(groupsSelector);
+  const { confirmModal } = useSelector(generalSelector);
+
+  const [updatingCategory, setUpdatingCategory] = React.useState<UpdatingCategoryType | null>(null);
   const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">("Всі");
   const [selectedCategories, setSelectedCategories] = React.useState(groupCategories || []);
   const [modalData, setModalData] = React.useState<GroupCategoryModalStateType>({
@@ -31,16 +42,50 @@ const GroupsPage = () => {
     actionType: "create",
   });
   const visibleGroups = useItemsByStatus<GroupCategoriesType>(
-    groupCategories as any,
+    groupCategories,
     "groups",
     activeStatus,
   ) as GroupsShortType[];
 
-  console.log(visibleGroups);
+  const onClickUpdateCategory = (id: number) => {
+    if (!groupCategories) return;
+    const selectedCategory = groupCategories.find((el) => el.id === id);
+    if (!selectedCategory) return;
+    const { name, shortName } = selectedCategory;
+    setUpdatingCategory({ id, name, shortName });
+    setModalData({ isOpen: true, actionType: "update" });
+  };
+
+  const onClickDeleteCategory = async (id: number) => {
+    if (!groupCategories) return;
+    const selectedCategory = groupCategories.find((el) => el.id === id);
+    if (!selectedCategory) return;
+
+    if (selectedCategory.groups.length) {
+      const alertPayload = {
+        isOpen: true,
+        title: "Видалення структурного підрозділу неможливе",
+        text: "Підрозділ не може бути видалений, оскільки він містить пов’язані групи. Перед видаленням структурного підрозділу необхідно спочатку видалити або перемістити всі групи, які до нього належать.",
+      };
+      dispatch(changeAlertModalStatus(alertPayload));
+      return;
+    }
+
+    const confirmPayload = {
+      isOpen: true,
+      title: "Ви дійсно хочете видалити структурний підрозділ?",
+      // itemName: selectedCategory.name,
+    };
+
+    const result = await onConfirm(confirmPayload, dispatch);
+    if (result) {
+      dispatch(deleteGroupCategory(id));
+    }
+  };
 
   return (
     <>
-      <CategoryActionsModal modalData={modalData} setModalData={setModalData} />
+      <CategoryActionsModal updatingCategory={updatingCategory} modalData={modalData} setModalData={setModalData} />
 
       <RootContainer classNames="mb-10">
         <div className="flex justify-between mb-6">
@@ -64,8 +109,12 @@ const GroupsPage = () => {
             <CategoryCard
               key={item.id}
               name={item.name}
+              ItemsIcon={User}
+              itemId={item.id}
               label="Підрозділ"
               count={item.groups.length}
+              onClickUpdateFunction={onClickUpdateCategory}
+              onClickDeleteFunction={onClickDeleteCategory}
               itemsLabel={pluralizeWords(item.groups.length, "group")}
             />
           ))}
@@ -76,7 +125,7 @@ const GroupsPage = () => {
           >
             <p className="flex items-center gap-1">
               <Plus className="w-4" />
-              <span className="text-sm">Створити нову</span>
+              <span className="text-sm">Створити новий</span>
             </p>
           </Card>
         </div>
@@ -97,7 +146,11 @@ const GroupsPage = () => {
 
         <InputSearch className="mb-8" placeholder="Пошук..." />
 
-        <GroupsTable groups={visibleGroups} />
+        {visibleGroups.length ? (
+          <GroupsTable groups={visibleGroups} />
+        ) : (
+          <div className="font-mono text-center">Пусто</div>
+        )}
       </RootContainer>
     </>
   );
