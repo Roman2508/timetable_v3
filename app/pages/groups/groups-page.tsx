@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { NavLink } from "react-router";
 import { Plus, User } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -8,9 +9,11 @@ import type {
   UpdatingCategoryType,
   GroupCategoryModalStateType,
 } from "../../components/features/pages/groups/groups-types";
+import { useCookies } from "react-cookie";
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";
+import { Button } from "~/components/ui/common/button";
 import { pluralizeWords } from "~/helpers/pluralize-words";
 import { groupsSelector } from "~/store/groups/groups-slice";
 import { useItemsByStatus } from "~/hooks/use-items-by-status";
@@ -20,29 +23,28 @@ import { CategoryCard } from "~/components/features/category-card";
 import { useItemsByCategory } from "~/hooks/use-items-by-category";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { COOKIE_MAX_AGE, GROUP_FILTERS } from "~/constants/cookies-keys";
+import { GROUP_FILTERS, GROUP_STATUS } from "~/constants/cookies-keys";
 import { deleteGroupCategory } from "~/store/groups/groups-async-actions";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { GroupsTable } from "~/components/features/pages/groups/groups-table";
 import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types";
-import { changeAlertModalStatus, generalSelector, setGroupFilters } from "~/store/general/general-slice";
 import CategoryActionsModal from "~/components/features/pages/groups/category-actions-modal";
-import { useCookies } from "react-cookie";
-
-// cookies: categoryFiltes; groupFilters; sort
+import { changeAlertModalStatus, generalSelector, setGroupFilters } from "~/store/general/general-slice";
 
 const GroupsPage = () => {
   const dispatch = useAppDispatch();
 
-  const [allCookies, setCookie] = useCookies();
+  const [_, setCookie] = useCookies();
 
   const {
-    groups: { categories: filtredCategories },
+    groups: { categories: filtredCategories, status: defaultStatus },
   } = useSelector(generalSelector);
   const { groupCategories } = useSelector(groupsSelector);
 
   const [updatingCategory, setUpdatingCategory] = React.useState<UpdatingCategoryType | null>(null);
-  const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">("Всі");
+  const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">(
+    defaultStatus ? defaultStatus : "Всі",
+  );
   const [selectedCategories, setSelectedCategories] = React.useState(
     filtredCategories.length ? filtredCategories : groupCategories ? groupCategories.map((el) => ({ id: el.id })) : [],
   );
@@ -50,6 +52,7 @@ const GroupsPage = () => {
     isOpen: false,
     actionType: "create",
   });
+  
   const { filteredItems: visibleGroups, counts } = useItemsByStatus<GroupCategoriesType>(
     groupCategories,
     "groups",
@@ -81,22 +84,28 @@ const GroupsPage = () => {
       return;
     }
 
-    const confirmPayload = { isOpen: true, title: "Ви дійсно хочете видалити структурний підрозділ?" };
+    const confirmPayload = {
+      isOpen: true,
+      title: "Ви дійсно хочете видалити структурний підрозділ?",
+      description: `Структурний підрозділ "${selectedCategory.name}" буде видалено назавжди. Цю дію не можна відмінити.`,
+    };
     const result = await onConfirm(confirmPayload, dispatch);
     if (result) {
       dispatch(deleteGroupCategory(id));
     }
   };
 
+  const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
+    setActiveStatus(value);
+    setCookie(GROUP_STATUS, value);
+  };
+
   React.useEffect(() => {
     if (!selectedCategories.length) return;
     const categoriesIds = selectedCategories.map((el) => el.id);
-    // document.cookie = `${GROUP_FILTERS}=${categoriesIds}; path=/; max-age=${COOKIE_MAX_AGE}`;
     setCookie(GROUP_FILTERS, categoriesIds);
     dispatch(setGroupFilters(selectedCategories));
   }, [selectedCategories]);
-
-  console.log("allCookies", allCookies, "selectedCategories", selectedCategories);
 
   return (
     <>
@@ -107,6 +116,12 @@ const GroupsPage = () => {
           <h2 className="text-xl">Структурні підрозділи</h2>
 
           <div className="flex items-center gap-2">
+            <NavLink to="/groups/create">
+              <Button variant="outline">
+                <Plus /> Створити нову групу
+              </Button>
+            </NavLink>
+
             <PopoverFilter
               itemsPrefix=""
               enableSelectAll
@@ -149,8 +164,8 @@ const GroupsPage = () => {
 
         <Tabs
           className="mb-4"
-          defaultValue="Всі"
-          onValueChange={(value) => setActiveStatus(value as "Всі" | "Активний" | "Архів")}
+          defaultValue={activeStatus}
+          onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
         >
           <TabsList>
             <TabsTrigger value="Всі">Всі ({counts.all})</TabsTrigger>

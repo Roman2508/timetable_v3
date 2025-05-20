@@ -27,7 +27,7 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const columns = React.useMemo<ColumnDef<Person>[]>(
+  const columns = React.useMemo<ColumnDef<GroupsShortType>[]>(
     () => [
       { accessorKey: "name", header: "Група", footer: (props) => props.column.id },
       { accessorKey: "category", header: "Підрозділ", footer: (props) => props.column.id },
@@ -40,10 +40,24 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
     [],
   );
 
+  // const groupsData = React.useMemo(() => {
+  //  return groups.map((group) => ({
+  //   id: group.id,
+  //   name: group.name,
+  //   courseNumber: group.courseNumber,
+  //   yearOfAdmission: group.yearOfAdmission,
+  //   formOfEducation: group.formOfEducation,
+  //   isHide: group.isHide,
+  //   status: group.status,
+  //   categoryName: group.category?.name ?? "",
+  //   studentsCount: group.students?.length ?? 0,
+  // }));
+  // }, [groups]);
+
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const [data, setData] = React.useState(() => makeData(100));
-  const refreshData = () => setData(() => makeData(100));
+  const [data, setData] = React.useState(groups);
+  const refreshData = () => setData(() => groups);
 
   const table = useReactTable({
     data,
@@ -101,11 +115,54 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
       </TableHeader>
 
       <TableBody>
-        {groups.map((group, index) => {
+        {/* {groups.map((group, index) => { */}
+        {table.getRowModel().rows.map((groupData, index) => {
+          const group = groupData.original;
+          console.log(groupData.getVisibleCells());
           return (
             <TableRow key={group.id} className="hover:bg-border/40">
               <TableCell className={cn("truncate max-w-[30px]", "text-left px-2 py-1")}>{index + 1}</TableCell>
-              <TableCell className={cn(true ? "truncate max-w-[200px]" : "", "text-left px-2 py-1")}>
+
+              {groupData.getVisibleCells().map((cell, index) => {
+                const textContent = flexRender(cell.column.columnDef.cell, cell.getContext());
+                const isStatusCol = index === groupData.getVisibleCells().length - 2;
+                const isActionsCol = index === groupData.getVisibleCells().length - 1;
+                let bageClassName = "text-success bg-success-background border-0";
+
+                if (isStatusCol && textContent?.props.row.original.status === "Архів") {
+                  bageClassName = "text-error bg-error-background border-0";
+                }
+
+                return (
+                  <TableCell
+                    key={cell.id}
+                    className={cn(
+                      index === 0 ? "truncate max-w-[200px]" : "",
+                      isActionsCol ? "!text-right" : "",
+                      "text-left px-2 py-1",
+                    )}
+                  >
+                    {!isStatusCol && !isActionsCol && textContent}
+
+                    {isActionsCol && (
+                      <ActionsDropdown
+                        itemId={1}
+                        changeStatusFunction={() => {}}
+                        onClickUpdateFunction={() => {}}
+                        onClickDeleteFunction={() => {}}
+                        changeCategoryFunction={() => {}}
+                      />
+                    )}
+
+                    {isStatusCol && (
+                      <Badge variant="outline" className={bageClassName}>
+                        {textContent}
+                      </Badge>
+                    )}
+                  </TableCell>
+                );
+              })}
+              {/* <TableCell className={cn(true ? "truncate max-w-[200px]" : "", "text-left px-2 py-1")}>
                 {group.name}
               </TableCell>
 
@@ -146,7 +203,7 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups }) => {
                   onClickDeleteFunction={() => {}}
                   changeCategoryFunction={() => {}}
                 />
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           );
         })}

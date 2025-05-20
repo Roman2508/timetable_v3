@@ -9,3 +9,4 @@ export const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 export const EXPANDED_SIDEBAR_ITEMS = "expanded_sidebar_items";
 
 export const GROUP_FILTERS = "group_filters";
+export const GROUP_STATUS = "group_status";

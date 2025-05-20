@@ -12,8 +12,13 @@ import { TooltipProvider } from "../ui/common/tooltip";
 import { makeStore, type RootState } from "~/store/store";
 import { Header } from "~/components/features/header/header";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
-import { EXPANDED_SIDEBAR_ITEMS, GROUP_FILTERS, SIDEBAR_COOKIE_NAME } from "~/constants/cookies-keys";
-import { setGroupFilters, setSidebarState, toggleExpandedSidebarItems } from "~/store/general/general-slice";
+import { EXPANDED_SIDEBAR_ITEMS, GROUP_FILTERS, GROUP_STATUS, SIDEBAR_COOKIE_NAME } from "~/constants/cookies-keys";
+import {
+  setGroupFilters,
+  setGroupStatus,
+  setSidebarState,
+  toggleExpandedSidebarItems,
+} from "~/store/general/general-slice";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -27,14 +32,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const expandedSidebarItems = (cookies[EXPANDED_SIDEBAR_ITEMS] ?? "").split(",");
   store.dispatch(toggleExpandedSidebarItems(expandedSidebarItems));
 
-  const groupFilters = cookies[GROUP_FILTERS] ?? "";
-  console.log("cookies[GROUP_FILTERS]", JSON.parse(cookies[GROUP_FILTERS]));
-  console.log("groupFilters", groupFilters);
-  const categories = JSON.parse(groupFilters)
-    .filter((el) => typeof Number(el) === "number")
-    .map((el: any) => ({ id: Number(el) }));
-  console.log("categories", categories);
-  store.dispatch(setGroupFilters(categories));
+  const groupFilters = JSON.parse(cookies[GROUP_FILTERS] ?? "");
+  const categoriesIds = groupFilters.filter((el: string) => Number(el)).map((el: any) => ({ id: Number(el) }));
+  store.dispatch(setGroupFilters(categoriesIds));
+
+  const groupStatus = (cookies[GROUP_STATUS] ?? "Всі") as "Всі" | "Активний" | "Архів";
+  store.dispatch(setGroupStatus(groupStatus));
 
   return {
     preloadedState: store.getState(),

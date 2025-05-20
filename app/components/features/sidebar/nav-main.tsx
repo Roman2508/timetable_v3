@@ -1,7 +1,8 @@
 "use client";
 
-import { Link, useLocation } from "react-router";
 import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
+import { Link, useLocation } from "react-router";
 import { ChevronRight, type LucideIcon } from "lucide-react";
 
 import {
@@ -15,7 +16,7 @@ import {
 } from "~/components/ui/common/sidebar";
 import { cn } from "~/lib/utils";
 import { useAppDispatch } from "~/store/store";
-import { COOKIE_MAX_AGE, EXPANDED_SIDEBAR_ITEMS } from "~/constants/cookies-keys";
+import { EXPANDED_SIDEBAR_ITEMS } from "~/constants/cookies-keys";
 import { changeExpandSidebarItems, generalSelector } from "~/store/general/general-slice";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
@@ -37,6 +38,8 @@ interface INavMain {
 const NavMain: React.FC<INavMain> = ({ items }) => {
   const { pathname } = useLocation();
 
+  const [_, setCookie] = useCookies();
+
   const dispatch = useAppDispatch();
 
   const { sidebar } = useSelector(generalSelector);
@@ -52,7 +55,8 @@ const NavMain: React.FC<INavMain> = ({ items }) => {
 
   const onChangeExpanded = (item: string) => {
     dispatch(changeExpandSidebarItems(item));
-    document.cookie = `${EXPANDED_SIDEBAR_ITEMS}=${getExpanded(item)}; path=/; max-age=${COOKIE_MAX_AGE}`;
+    const expandedItemsStr = getExpanded(item).join(",");
+    setCookie(EXPANDED_SIDEBAR_ITEMS, expandedItemsStr);
   };
 
   return (

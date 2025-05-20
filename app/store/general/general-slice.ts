@@ -42,7 +42,7 @@ const initialState = {
     expandedItems: ["Структура"],
   },
   groups: {
-    status: "all",
+    status: "Всі" as "Всі" | "Активний" | "Архів",
     categories: [] as { id: number }[],
     orderField: "",
     orderType: "",
@@ -90,13 +90,9 @@ const generalSlice = createSlice({
 
     setGroupFilters(state, action: PayloadAction<{ id: number }[]>) {
       state.groups.categories = action.payload;
-      // const isExist = state.groups.categories.some((el) => el === action.payload);
-      // if (isExist) {
-      //   const newItems = state.groups.categories.filter((el) => el !== action.payload);
-      //   state.groups.categories = newItems;
-      // } else {
-      //   state.groups.categories.push(action.payload);
-      // }
+    },
+    setGroupStatus(state, action: PayloadAction<"Всі" | "Активний" | "Архів">) {
+      state.groups.status = action.payload;
     },
 
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
@@ -128,6 +124,7 @@ export default generalSlice.reducer;
 
 export const {
   activeItem,
+  setGroupStatus,
   setSidebarState,
   setGroupFilters,
   changeAlertModalStatus,
