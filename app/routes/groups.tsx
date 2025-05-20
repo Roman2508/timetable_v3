@@ -12,7 +12,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({}) {
-  const { data } = await groupsAPI.getGroupsCategories(false);
+  const { data } = await groupsAPI.getGroupsCategories();
   // console.log("groups data:", data);
   return { data };
 }
@@ -35,12 +35,7 @@ export default function Teachers() {
   const { data } = useLoaderData<typeof loader>();
 
   const dispatch = useAppDispatch();
-
-  // Перевірити чи не буде викликатись зайві рази
-  const setCategoriesMemorized = React.useCallback(() => dispatch(setGroupCategories(data)), []);
-  setCategoriesMemorized();
-
-  // dispatch(setGroupCategories(data));
+  React.useMemo(() => dispatch(setGroupCategories(data)), []);
 
   return <GroupsPage />;
 }

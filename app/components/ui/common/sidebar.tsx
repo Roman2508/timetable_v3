@@ -2,24 +2,25 @@
 
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { useIsMobile } from "~/hooks/use-mobile";
+import {
+  COOKIE_MAX_AGE,
+  SIDEBAR_WIDTH,
+  SIDEBAR_WIDTH_ICON,
+  SIDEBAR_COOKIE_NAME,
+  SIDEBAR_WIDTH_MOBILE,
+  SIDEBAR_KEYBOARD_SHORTCUT,
+} from "~/constants/cookies-keys";
 import { cn } from "~/lib/utils";
-import { Button } from "~/components/ui/common/button";
+import { useIsMobile } from "~/hooks/use-mobile";
 import { Input } from "~/components/ui/common/input";
-import { Separator } from "~/components/ui/common/separator";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/common/sheet";
+import { Button } from "~/components/ui/common/button";
 import { Skeleton } from "~/components/ui/common/skeleton";
+import { Separator } from "~/components/ui/common/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/common/tooltip";
-
-const SIDEBAR_COOKIE_NAME = "sidebar_state";
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "16rem";
-const SIDEBAR_WIDTH_MOBILE = "18rem";
-const SIDEBAR_WIDTH_ICON = "3rem";
-const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "~/components/ui/common/sheet";
 
 type SidebarContextProps = {
   state: "expanded" | "collapsed";
@@ -72,7 +73,7 @@ function SidebarProvider({
       }
 
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${COOKIE_MAX_AGE}`;
     },
     [setOpenProp, open],
   );

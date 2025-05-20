@@ -41,7 +41,7 @@ const authPersistConfig = {
   whitelist: ["user"],
 };
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   plans: plansSlice,
   groups: groupsSlice,
   streams: streamsSlice,
@@ -55,6 +55,7 @@ const rootReducer = combineReducers({
   auth: authSlice,
   general: generalSlice,
   scheduleLessons: scheduleLessonsSlice,
+
   // auth: persistReducer(authPersistConfig, authSlice),
   // general: persistReducer(generalPersistConfig, generalSlice),
   // scheduleLessons: persistReducer(groupsPersistConfig, scheduleLessonsSlice),
@@ -72,17 +73,28 @@ const rootReducer = combineReducers({
 
 // export const persistor = persistStore(store);
 
-export const makeStore = (preloadedState = undefined) =>
+export const makeStore = (preloadedState: any = undefined) =>
   configureStore({
     reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        serializableCheck: false, // спростимо, можеш додати список винятків
-      }),
+    // middleware: (getDefaultMiddleware) =>
+    //   getDefaultMiddleware({
+    //     serializableCheck: false,
+    //   }),
     preloadedState,
   });
 
 export const store = makeStore();
+
+// export function getServerStore(preloadedState?: any) {
+//   return configureStore({
+//     reducer: rootReducer,
+//     middleware: (getDefaultMiddleware) =>
+//       getDefaultMiddleware({
+//         serializableCheck: false, // спростимо, можеш додати список винятків
+//       }),
+//     preloadedState,
+//   });
+// }
 
 // // Infer the `RootState` and `AppDispatch` types from the store itself
 // export type RootState = ReturnType<typeof store.getState>;

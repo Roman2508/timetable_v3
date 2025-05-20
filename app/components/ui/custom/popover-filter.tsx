@@ -37,12 +37,12 @@ export const PopoverFilter: React.FC<IPopoverFilterProps> = ({
     setSelectedItems((prev) => {
       const isItemSelected = prev.some((el) => el.id === id);
       if (isItemSelected) {
-        return prev.filter((el) => el.id !== id);
+        return prev.filter((el) => el.id !== id).map((el) => ({ id: el.id }));
       }
 
       const newItem = items.find((el) => el.id === id);
       if (newItem) {
-        return [...prev, newItem];
+        return [...prev, { id: newItem.id }];
       }
 
       return prev;
@@ -95,7 +95,7 @@ export const PopoverFilter: React.FC<IPopoverFilterProps> = ({
                 <Checkbox id={item.id} checked={checkIsSelected(item.id)} onClick={() => handleSelected(item.id)} />
                 <label
                   htmlFor={item.id}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none"
                 >
                   {itemsPrefix} {item.name}
                 </label>

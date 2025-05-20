@@ -1,28 +1,58 @@
 import React from "react";
-import { Outlet, useLocation } from "react-router";
+import cookie from "cookie";
+import { Provider } from "react-redux";
+import { Outlet, useLoaderData, useLocation, type LoaderFunctionArgs } from "react-router";
 
+import SidebarLayout from "./sidebar-layout";
 import Footer from "../features/footer/footer";
+import { CookiesProvider } from "react-cookie";
+import AlertModal from "../features/alert-modal";
+import ConfirmModal from "../features/confirm-modal";
 import { TooltipProvider } from "../ui/common/tooltip";
+import { makeStore, type RootState } from "~/store/store";
 import { Header } from "~/components/features/header/header";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
-import { AppSidebar } from "~/components/features/sidebar/app-sidebar";
-import { SidebarInset, SidebarProvider } from "~/components/ui/common/sidebar";
-import { Provider } from "react-redux";
-import { store } from "~/store/store";
-import ConfirmModal from "../features/confirm-modal";
-import AlertModal from "../features/alert-modal";
+import { EXPANDED_SIDEBAR_ITEMS, GROUP_FILTERS, SIDEBAR_COOKIE_NAME } from "~/constants/cookies-keys";
+import { setGroupFilters, setSidebarState, toggleExpandedSidebarItems } from "~/store/general/general-slice";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const store = makeStore();
+
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const cookies = cookie.parse(cookieHeader);
+
+  const isSidebarOpen = cookies[SIDEBAR_COOKIE_NAME] === "true";
+  store.dispatch(setSidebarState(isSidebarOpen));
+
+  const expandedSidebarItems = (cookies[EXPANDED_SIDEBAR_ITEMS] ?? "").split(",");
+  store.dispatch(toggleExpandedSidebarItems(expandedSidebarItems));
+
+  const groupFilters = cookies[GROUP_FILTERS] ?? "";
+  console.log("cookies[GROUP_FILTERS]", JSON.parse(cookies[GROUP_FILTERS]));
+  console.log("groupFilters", groupFilters);
+  const categories = JSON.parse(groupFilters)
+    .filter((el) => typeof Number(el) === "number")
+    .map((el: any) => ({ id: Number(el) }));
+  console.log("categories", categories);
+  store.dispatch(setGroupFilters(categories));
+
+  return {
+    preloadedState: store.getState(),
+  };
+}
 
 const RootLayout: React.FC = () => {
   const { pathname } = useLocation();
-
   const disableFooterPaths = ["/grade-book", "/timetable"];
 
+  const { preloadedState } = useLoaderData() as { preloadedState: RootState };
+  const store = React.useMemo(() => makeStore(preloadedState), [preloadedState]);
+
   return (
-    <Provider store={store}>
-      <TooltipProvider>
-        <SidebarProvider>
-          <AppSidebar variant="sidebar" />
-          <SidebarInset>
+    <CookiesProvider defaultSetOptions={{ path: "/" }}>
+      <Provider store={store}>
+        <TooltipProvider>
+          <SidebarLayout>
             <ConfirmModal />
             <AlertModal />
 
@@ -39,10 +69,10 @@ const RootLayout: React.FC = () => {
             </main>
 
             {!disableFooterPaths.includes(pathname) && <Footer />}
-          </SidebarInset>
-        </SidebarProvider>
-      </TooltipProvider>
-    </Provider>
+          </SidebarLayout>
+        </TooltipProvider>
+      </Provider>
+    </CookiesProvider>
   );
 };
 

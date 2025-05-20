@@ -37,10 +37,17 @@ const persist = {
 };
 
 const initialState = {
-  openItem: ["dashboard"],
-  // defaultId: 'dashboard',
-  // openComponent: 'buttons',
-  drawerOpen: false,
+  sidebar: {
+    open: true,
+    expandedItems: ["Структура"],
+  },
+  groups: {
+    status: "all",
+    categories: [] as { id: number }[],
+    orderField: "",
+    orderType: "",
+  },
+
   confirmModal: {
     isOpen: false,
     title: "",
@@ -54,7 +61,6 @@ const initialState = {
     title: "",
     text: "",
   },
-  // componentDrawerOpen: true,
 };
 
 const generalSlice = createSlice({
@@ -62,20 +68,36 @@ const generalSlice = createSlice({
   initialState,
   reducers: {
     activeItem(state, action) {
-      state.openItem = action.payload.openItem;
+      // state.openItems = action.payload.openItem;
     },
 
-    // activeComponent(state, action) {
-    //   state.openComponent = action.payload.openComponent
-    // },
+    changeExpandSidebarItems(state, action: PayloadAction<string>) {
+      const isExpanded = state.sidebar.expandedItems.some((el) => el === action.payload);
 
-    openDrawer(state, action) {
-      state.drawerOpen = action.payload.drawerOpen;
+      if (isExpanded) {
+        const newItems = state.sidebar.expandedItems.filter((el) => el !== action.payload);
+        state.sidebar.expandedItems = newItems;
+      } else {
+        state.sidebar.expandedItems.push(action.payload);
+      }
+    },
+    toggleExpandedSidebarItems(state, action: PayloadAction<string[]>) {
+      state.sidebar.expandedItems = action.payload;
+    },
+    setSidebarState(state, action) {
+      state.sidebar.open = action.payload;
     },
 
-    // openComponentDrawer(state, action) {
-    //   state.componentDrawerOpen = action.payload.componentDrawerOpen
-    // },
+    setGroupFilters(state, action: PayloadAction<{ id: number }[]>) {
+      state.groups.categories = action.payload;
+      // const isExist = state.groups.categories.some((el) => el === action.payload);
+      // if (isExist) {
+      //   const newItems = state.groups.categories.filter((el) => el !== action.payload);
+      //   state.groups.categories = newItems;
+      // } else {
+      //   state.groups.categories.push(action.payload);
+      // }
+    },
 
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
       const keys = Object.keys(action.payload);
@@ -104,6 +126,12 @@ export const generalSelector = (state: RootState) => state.general;
 
 export default generalSlice.reducer;
 
-export const { activeItem, /* activeComponent, */ openDrawer, changeConfirmModalStatus, changeAlertModalStatus } =
-  generalSlice.actions;
-// export const { activeItem, activeComponent, openDrawer, openComponentDrawer } = menuSlice.actions
+export const {
+  activeItem,
+  setSidebarState,
+  setGroupFilters,
+  changeAlertModalStatus,
+  changeConfirmModalStatus,
+  changeExpandSidebarItems,
+  toggleExpandedSidebarItems,
+} = generalSlice.actions;
