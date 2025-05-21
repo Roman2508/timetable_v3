@@ -10,3 +10,5 @@ export const EXPANDED_SIDEBAR_ITEMS = "expanded_sidebar_items";
 
 export const GROUP_FILTERS = "group_filters";
 export const GROUP_STATUS = "group_status";
+export const GROUP_SORT_KEY = "group_sort_key";
+export const GROUP_SORT_TYPE = "group_sort_type";

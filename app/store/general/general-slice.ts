@@ -45,7 +45,7 @@ const initialState = {
     status: "Всі" as "Всі" | "Активний" | "Архів",
     categories: [] as { id: number }[],
     orderField: "",
-    orderType: "",
+    isOrderDesc: false,
   },
 
   confirmModal: {
@@ -67,10 +67,6 @@ const generalSlice = createSlice({
   name: "general",
   initialState,
   reducers: {
-    activeItem(state, action) {
-      // state.openItems = action.payload.openItem;
-    },
-
     changeExpandSidebarItems(state, action: PayloadAction<string>) {
       const isExpanded = state.sidebar.expandedItems.some((el) => el === action.payload);
 
@@ -93,6 +89,10 @@ const generalSlice = createSlice({
     },
     setGroupStatus(state, action: PayloadAction<"Всі" | "Активний" | "Архів">) {
       state.groups.status = action.payload;
+    },
+    setGroupsOrder(state, action: PayloadAction<{ id: string; desc: boolean }>) {
+      state.groups.orderField = action.payload.id;
+      state.groups.isOrderDesc = action.payload.desc;
     },
 
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
@@ -123,8 +123,8 @@ export const generalSelector = (state: RootState) => state.general;
 export default generalSlice.reducer;
 
 export const {
-  activeItem,
   setGroupStatus,
+  setGroupsOrder,
   setSidebarState,
   setGroupFilters,
   changeAlertModalStatus,

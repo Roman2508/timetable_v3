@@ -1,4 +1,3 @@
-import { TeachersList } from "~/components/features/pages/teachers/teachers-table";
 // import { WideContainer } from '@/components/layouts/wide-container'
 import React from "react";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
@@ -76,7 +75,8 @@ const TimetablePage = () => {
 
         <div className="flex gap-4 items-start">
           <div className="w-90 border">
-            <TeachersList />
+            {/* <TeachersList /> */}
+            table
           </div>
 
           <div className="flex-1 border-t">

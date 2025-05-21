@@ -26,6 +26,7 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({ modalData,
 
   const onOpenChange = (value: boolean) => {
     setModalData((prev) => ({ ...prev, isOpen: value }));
+    if (!value) reset();
   };
 
   const {

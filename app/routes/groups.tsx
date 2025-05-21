@@ -12,9 +12,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({}) {
-  const { data } = await groupsAPI.getGroupsCategories();
+  // const { data } = await groupsAPI.getGroupsCategories();
   // console.log("groups data:", data);
-  return { data };
+  // return { data };
 }
 /* 
 // Функція для завантаження даних на сервері - SSR
@@ -32,11 +32,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 */
 
 export default function Teachers() {
-  const { data } = useLoaderData<typeof loader>();
-
-  const dispatch = useAppDispatch();
-  React.useMemo(() => dispatch(setGroupCategories(data)), []);
-
   return <GroupsPage />;
 }
 

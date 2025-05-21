@@ -41,6 +41,7 @@ const GroupsPage = () => {
   } = useSelector(generalSelector);
   const { groupCategories } = useSelector(groupsSelector);
 
+  const [globalSearch, setGlobalSearch] = React.useState("");
   const [updatingCategory, setUpdatingCategory] = React.useState<UpdatingCategoryType | null>(null);
   const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">(
     defaultStatus ? defaultStatus : "Всі",
@@ -52,7 +53,7 @@ const GroupsPage = () => {
     isOpen: false,
     actionType: "create",
   });
-  
+
   const { filteredItems: visibleGroups, counts } = useItemsByStatus<GroupCategoriesType>(
     groupCategories,
     "groups",
@@ -174,10 +175,15 @@ const GroupsPage = () => {
           </TabsList>
         </Tabs>
 
-        <InputSearch className="mb-8" placeholder="Пошук..." />
+        <InputSearch
+          className="mb-8"
+          value={globalSearch}
+          placeholder="Пошук..."
+          onChange={(e) => setGlobalSearch(e.target.value)}
+        />
 
         {filteredItems.length ? (
-          <GroupsTable groups={filteredItems} />
+          <GroupsTable groups={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
         ) : (
           <div className="font-mono text-center">Пусто</div>
         )}

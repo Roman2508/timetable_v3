@@ -10,7 +10,7 @@
 
 html,
 body {
-  pointer-events: auto !important;
+  /* pointer-events: auto !important; */
 
   @apply bg-white dark:bg-gray-950;
 
