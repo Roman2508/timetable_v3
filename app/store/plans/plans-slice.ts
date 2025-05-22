@@ -7,7 +7,6 @@ import {
   type PlansInitialState,
   type PlansCategoriesType,
 } from "./plans-types";
-import { LoadingStatusTypes } from "../app-types";
 import {
   createPlan,
   updatePlan,
@@ -24,6 +23,7 @@ import {
   updatePlanSubjectsHours,
 } from "./plans-async-actions";
 import { type RootState } from "../store";
+import { LoadingStatusTypes } from "../app-types";
 
 const plansInitialState: PlansInitialState = {
   plansCategories: null,

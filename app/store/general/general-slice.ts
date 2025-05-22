@@ -1,49 +1,20 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import { type RootState } from "../store";
-import type { ChangeAlertDialogStateType, ChangeConfirmDialogStateType } from "./general-types";
+import type {
+  ChangeAlertDialogStateType,
+  ChangeConfirmDialogStateType,
+  GeneralSliceInitialState,
+} from "./general-types";
+import type { RootState } from "../store";
 
-const persist = {
-  global: {
-    drawerOpen: false,
-    expandedNavGroups: ["/groups", "/plans"],
-  },
-  auth: {
-    login: "aaa.aaa",
-    email: "aaa@mail.com",
-    avatar: "https://api.com/asdsdwdqw",
-  },
-  groups: {
-    status: "all",
-    categories: ["sadidjq83enfew", "dsofoi3fmrjngjn", "sadidjq83enfew", "dsofoi3fmrjngjn"],
-    orderField: "",
-    orderType: "",
-  },
-  teachers: {
-    status: "all",
-    categories: ["sadidjq83enfew", "dsofoi3fmrjngjn", "sadidjq83enfew", "dsofoi3fmrjngjn"],
-    orderField: "",
-    orderType: "",
-  },
-  auditories: {
-    status: "all",
-    categories: ["sadidjq83enfew", "dsofoi3fmrjngjn", "sadidjq83enfew", "dsofoi3fmrjngjn"],
-    orderField: "",
-    orderType: "",
-  },
-  plans: {},
-  scheduleLessons: {},
-  groupLoadLessons: {},
-};
-
-const initialState = {
+const generalInitialState: GeneralSliceInitialState = {
   sidebar: {
     open: true,
     expandedItems: ["Структура"],
   },
   groups: {
-    status: "Всі" as "Всі" | "Активний" | "Архів",
-    categories: [] as { id: number }[],
+    status: "Всі",
+    categories: [],
     orderField: "",
     isOrderDesc: false,
   },
@@ -65,7 +36,7 @@ const initialState = {
 
 const generalSlice = createSlice({
   name: "general",
-  initialState,
+  initialState: generalInitialState,
   reducers: {
     changeExpandSidebarItems(state, action: PayloadAction<string>) {
       const isExpanded = state.sidebar.expandedItems.some((el) => el === action.payload);
@@ -118,10 +89,6 @@ const generalSlice = createSlice({
   },
 });
 
-export const generalSelector = (state: RootState) => state.general;
-
-export default generalSlice.reducer;
-
 export const {
   setGroupStatus,
   setGroupsOrder,
@@ -132,3 +99,7 @@ export const {
   changeExpandSidebarItems,
   toggleExpandedSidebarItems,
 } = generalSlice.actions;
+
+export const generalSelector = (state: RootState) => state.general;
+
+export default generalSlice.reducer;

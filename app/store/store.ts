@@ -1,106 +1,41 @@
 import { useDispatch } from "react-redux";
-import storage from "redux-persist/lib/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 
-import generalSlice from "./general/general-slice";
-import authSlice from "./auth/auth-slice";
-import plansSlice from "./plans/plans-slice";
-import groupsSlice from "./groups/groups-slice";
-import streamsSlice from "./streams/streams-slice";
-import teachersSlice from "./teachers/teachers-slice";
-import settingsSlice from "./settings/settings-slice";
-import studentsSlice from "./students/students-slice";
-import appStatusSlice from "./app-status/app-status-slice";
-import gradeBookSlice from "./gradeBook/grade-book-slice";
-import auditoriesSlise from "./auditories/auditories-slise";
-import teacherProfileSlice from "./teacher-profile/teacher-profile-slice";
-import scheduleLessonsSlice from "./schedule-lessons/schedule-lessons-slice";
-
-const generalPersistConfig = {
-  key: "general",
-  storage: storage,
-  whitelist: ["drawerOpen"],
-};
-
-const groupsPersistConfig = {
-  key: "scheduleLessons",
-  storage: storage,
-  whitelist: [
-    "lastOpenedWeek",
-    "lastOpenedSemester",
-    "lastSelectedItemId",
-    "lastSelectedScheduleType",
-    "lastSelectedStructuralUnitId",
-  ],
-};
-
-const authPersistConfig = {
-  key: "auth",
-  storage: storage,
-  whitelist: ["user"],
-};
+import authReducer from "./auth/auth-slice";
+import plansReducer from "./plans/plans-slice";
+import groupsReducer from "./groups/groups-slice";
+import streamsReducer from "./streams/streams-slice";
+import generalReducer from "./general/general-slice";
+import teachersReducer from "./teachers/teachers-slice";
+import settingsReducer from "./settings/settings-slice";
+import studentsReducer from "./students/students-slice";
+import gradeBookReducer from "./gradeBook/grade-book-slice";
+import appStatusReducer from "./app-status/app-status-slice";
+import auditoriesReducer from "./auditories/auditories-slise";
+import teacherProfileReducer from "./teacher-profile/teacher-profile-slice";
+import scheduleLessonsReducer from "./schedule-lessons/schedule-lessons-slice";
 
 export const rootReducer = combineReducers({
-  plans: plansSlice,
-  groups: groupsSlice,
-  streams: streamsSlice,
-  students: studentsSlice,
-  teachers: teachersSlice,
-  settings: settingsSlice,
-  appStatus: appStatusSlice,
-  gradeBook: gradeBookSlice,
-  auditories: auditoriesSlise,
-  teacherProfile: teacherProfileSlice,
-  auth: authSlice,
-  general: generalSlice,
-  scheduleLessons: scheduleLessonsSlice,
-
-  // auth: persistReducer(authPersistConfig, authSlice),
-  // general: persistReducer(generalPersistConfig, generalSlice),
-  // scheduleLessons: persistReducer(groupsPersistConfig, scheduleLessonsSlice),
+  auth: authReducer,
+  plans: plansReducer,
+  groups: groupsReducer,
+  streams: streamsReducer,
+  general: generalReducer,
+  students: studentsReducer,
+  teachers: teachersReducer,
+  settings: settingsReducer,
+  appStatus: appStatusReducer,
+  gradeBook: gradeBookReducer,
+  auditories: auditoriesReducer,
+  teacherProfile: teacherProfileReducer,
+  scheduleLessons: scheduleLessonsReducer,
 });
 
-// export const store = configureStore({
-//   reducer: rootReducer,
-//   middleware: (getDefaultMiddleware) =>
-//     getDefaultMiddleware({
-//       serializableCheck: {
-//         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-//       },
-//     }),
-// });
-
-// export const persistor = persistStore(store);
-
-export const makeStore = (preloadedState: any = undefined) =>
-  configureStore({
-    reducer: rootReducer,
-    // middleware: (getDefaultMiddleware) =>
-    //   getDefaultMiddleware({
-    //     serializableCheck: false,
-    //   }),
-    preloadedState,
-  });
+export const makeStore = (preloadedState: any = undefined) => {
+  return configureStore({ reducer: rootReducer, preloadedState });
+};
 
 export const store = makeStore();
-
-// export function getServerStore(preloadedState?: any) {
-//   return configureStore({
-//     reducer: rootReducer,
-//     middleware: (getDefaultMiddleware) =>
-//       getDefaultMiddleware({
-//         serializableCheck: false, // спростимо, можеш додати список винятків
-//       }),
-//     preloadedState,
-//   });
-// }
-
-// // Infer the `RootState` and `AppDispatch` types from the store itself
-// export type RootState = ReturnType<typeof store.getState>;
-// // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-// export type AppDispatch = typeof store.dispatch;
-// export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore["getState"]>;

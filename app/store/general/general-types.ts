@@ -1,14 +1,30 @@
-export type ChangeConfirmDialogStateType = {
-  isOpen?: boolean;
-  answer?: boolean;
-  title?: string;
-  itemName?: string;
-  description?: string;
-  onConfirm?: () => void;
+export type GeneralSliceInitialState = {
+  sidebar: {
+    open: boolean;
+    expandedItems: string[];
+  };
+
+  groups: {
+    status: "Всі" | "Активний" | "Архів";
+    categories: { id: number }[];
+    orderField: string;
+    isOrderDesc: boolean;
+  };
+
+  confirmModal: {
+    isOpen: boolean;
+    answer: boolean;
+    title: string;
+    itemName: string;
+    description: string;
+    onConfirm: () => void;
+  };
+  alertModal: {
+    isOpen: boolean;
+    title: string;
+    text: string;
+  };
 };
 
-export type ChangeAlertDialogStateType = {
-  isOpen?: boolean;
-  title?: string;
-  text?: string;
-};
+export type ChangeConfirmDialogStateType = Partial<GeneralSliceInitialState["confirmModal"]>;
+export type ChangeAlertDialogStateType = Partial<GeneralSliceInitialState["alertModal"]>;

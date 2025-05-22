@@ -4,14 +4,13 @@ import { useSelector } from "react-redux";
 import { GraduationCap, Package, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
-import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
 import { groupsSelector } from "~/store/groups/groups-slice";
+import EntityField from "~/components/features/entity-field";
 import EntityHeader from "~/components/features/entity-header";
 import { RootContainer } from "~/components/layouts/root-container";
-import EntitiesDropdown from "~/components/features/entities-dropdown";
-import EntityField from "~/components/features/entity-field";
+import ChangePlanModal from "~/components/features/pages/full-group/change-plan-modal";
 
 interface IFullGroupProps {
   groupId: string;
@@ -191,6 +190,8 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
     [plansCategories],
   );
 
+  const [openedModalName, setOpenedModalName] = React.useState("plan");
+
   const [userFormData, setUserFormData] = React.useState<Partial<GroupFormData>>({});
   const [showErrors, setShowErrors] = React.useState(false);
   const [isPending, setIsPanding] = React.useState(false);
@@ -229,93 +230,97 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
   };
 
   return (
-    <RootContainer>
-      <form onSubmit={handleSubmit}>
-        <div className="flex justify-between items-center mb-6">
-          {isUpdate ? (
-            <EntityHeader Icon={GraduationCap} label="ГРУПА" name="PH9-25-1" status="Активна" />
-          ) : (
-            <h2 className="flex items-center h-14 text-2xl font-semibold">Створити групу</h2>
-          )}
+    <>
+      <ChangePlanModal isOpen={openedModalName === "plan"} setOpenedModalName={setOpenedModalName} />
 
-          <div className="flex gap-3">
-            {isUpdate && (
-              <Button variant="outline" type="button">
-                <Package />
-                Архівувати
-              </Button>
-            )}
-
+      <RootContainer>
+        <form onSubmit={handleSubmit}>
+          <div className="flex justify-between items-center mb-6">
             {isUpdate ? (
-              <Button type="submit" disabled={!!errors || isPending}>
-                <Pencil />
-                Зберегти зміни
-              </Button>
+              <EntityHeader Icon={GraduationCap} label="ГРУПА" name="PH9-25-1" status="Активна" />
             ) : (
-              <Button type="submit" disabled={!!errors || isPending}>
-                <Plus />
-                Створити групу
-              </Button>
+              <h2 className="flex items-center h-14 text-2xl font-semibold">Створити групу</h2>
             )}
-          </div>
-        </div>
 
-        <Card className="px-10 pb-12 mb-10">
-          <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
-          {generalInformationFields.map((input) => {
-            const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData];
-            return (
-              <EntityField
-                {...input}
-                errors={errors}
-                inputKey={input.key}
-                currentValue={currentValue}
-                setUserFormData={setUserFormData}
-                variant={input.variant as "input" | "select" | "button"}
-              />
-            );
-          })}
-        </Card>
+            <div className="flex gap-3">
+              {isUpdate && (
+                <Button variant="outline" type="button">
+                  <Package />
+                  Архівувати
+                </Button>
+              )}
 
-        <Card className="px-10 pb-12 mb-6">
-          <h3 className="text-xl font-semibold mb-5">Навантаження групи</h3>
-          {educationLoadFormFields.map((input) => {
-            const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData];
-            return (
-              <EntityField
-                {...input}
-                errors={errors}
-                inputKey={input.key}
-                currentValue={currentValue}
-                setUserFormData={setUserFormData}
-                variant={input.variant as "input" | "select" | "button"}
-              />
-            );
-          })}
-        </Card>
-      </form>
-
-      {isUpdate && (
-        <Card className="px-10 pb-12 mb-6">
-          <h3 className="text-xl font-semibold mb-5">Видалення групи</h3>
-
-          <div className="flex flex-col items-start gap-4 mb-4">
-            <div>
-              <p className="text-black/40 text-md">
-                Група, включаючи все навчальне навантаження, розклад та студентів, що зараховані до групи, будуть
-                видалені назавжди.
-              </p>
-              <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
+              {isUpdate ? (
+                <Button type="submit" disabled={!!errors || isPending}>
+                  <Pencil />
+                  Зберегти зміни
+                </Button>
+              ) : (
+                <Button type="submit" disabled={!!errors || isPending}>
+                  <Plus />
+                  Створити групу
+                </Button>
+              )}
             </div>
-
-            <Button variant="destructive">
-              <Trash2 />
-              Видалити групу
-            </Button>
           </div>
-        </Card>
-      )}
-    </RootContainer>
+
+          <Card className="px-10 pb-12 mb-10">
+            <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
+            {generalInformationFields.map((input) => {
+              const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData];
+              return (
+                <EntityField
+                  {...input}
+                  errors={errors}
+                  inputKey={input.key}
+                  currentValue={currentValue}
+                  setUserFormData={setUserFormData}
+                  variant={input.variant as "input" | "select" | "button"}
+                />
+              );
+            })}
+          </Card>
+
+          <Card className="px-10 pb-12 mb-6">
+            <h3 className="text-xl font-semibold mb-5">Навантаження групи</h3>
+            {educationLoadFormFields.map((input) => {
+              const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData];
+              return (
+                <EntityField
+                  {...input}
+                  errors={errors}
+                  inputKey={input.key}
+                  currentValue={currentValue}
+                  setUserFormData={setUserFormData}
+                  variant={input.variant as "input" | "select" | "button"}
+                />
+              );
+            })}
+          </Card>
+        </form>
+
+        {isUpdate && (
+          <Card className="px-10 pb-12 mb-6">
+            <h3 className="text-xl font-semibold mb-5">Видалення групи</h3>
+
+            <div className="flex flex-col items-start gap-4 mb-4">
+              <div>
+                <p className="text-black/40 text-md">
+                  Група, включаючи все навчальне навантаження, розклад та студентів, що зараховані до групи, будуть
+                  видалені назавжди.
+                </p>
+                <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
+              </div>
+
+              <Button variant="destructive">
+                <Trash2 />
+                Видалити групу
+              </Button>
+            </div>
+          </Card>
+        )}
+      </RootContainer>
+    </>
   );
 };
 

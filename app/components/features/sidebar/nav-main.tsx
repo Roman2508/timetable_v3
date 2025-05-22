@@ -21,14 +21,11 @@ import { changeExpandSidebarItems, generalSelector } from "~/store/general/gener
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
 interface INavMainItem {
-  title: string;
   key: string;
+  title: string;
   icon?: LucideIcon;
   isActive?: boolean;
-  items?: {
-    title: string;
-    url: string;
-  }[];
+  items?: { title: string; url: string }[];
 }
 
 interface INavMain {

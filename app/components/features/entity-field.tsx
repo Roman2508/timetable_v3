@@ -1,12 +1,12 @@
 import React from "react";
 import { Maximize2 } from "lucide-react";
+import type { ZodFormattedError } from "zod";
 
 import { cn } from "~/lib/utils";
 import { Input } from "../ui/common/input";
 import { Button } from "../ui/common/button";
 import EntitiesDropdown from "./entities-dropdown";
 import type { GroupFormData } from "~/pages/full-group/full-group-page";
-import type { ZodFormattedError } from "zod";
 
 type ItemType = {
   id: number | string;
@@ -93,7 +93,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
         </div>
 
         <div className="w-full">
-          <Button className="w-full border !justify-between px-3 bg-sidebar" variant="secondary">
+          <Button className="w-full border !justify-between px-3 bg-sidebar" variant="secondary" type="button">
             Редагувати
             <Maximize2 />
           </Button>

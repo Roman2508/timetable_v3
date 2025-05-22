@@ -1,6 +1,6 @@
 import React from "react";
 import cookie from "cookie";
-import { Provider } from "react-redux";
+import { Provider as ReduxProvider } from "react-redux";
 import { Outlet, useLoaderData, useLocation, type LoaderFunctionArgs } from "react-router";
 
 import {
@@ -34,6 +34,9 @@ import { setGroupCategories } from "~/store/groups/groups-slice";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
+  console.log("STORE:==================================================");
+  console.log(store.getState());
+  console.log("==================================================");
 
   const cookieHeader = request.headers.get("cookie") ?? "";
   const cookies = cookie.parse(cookieHeader);
@@ -50,7 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   store.dispatch(setGroupCategories(groupsCategories));
 
   // groups-cookies
-  const groupFilters = JSON.parse(cookies[GROUP_FILTERS] ?? "");
+  const groupFilters = JSON.parse(cookies[GROUP_FILTERS] ?? "[]");
   const categoriesIds = groupFilters.filter((el: string) => Number(el)).map((el: any) => ({ id: Number(el) }));
   store.dispatch(setGroupFilters(categoriesIds));
 
@@ -67,6 +70,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { data: planCategories } = await plansAPI.getPlansCategories();
   store.dispatch(setPlanCategories(planCategories));
 
+  // console.log("store.getState()", store.getState());
+
   return {
     preloadedState: store.getState(),
   };
@@ -81,7 +86,7 @@ const RootLayout: React.FC = () => {
 
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
-      <Provider store={store}>
+      <ReduxProvider store={store}>
         <TooltipProvider>
           <SidebarLayout>
             <ConfirmModal />
@@ -102,7 +107,7 @@ const RootLayout: React.FC = () => {
             {!disableFooterPaths.includes(pathname) && <Footer />}
           </SidebarLayout>
         </TooltipProvider>
-      </Provider>
+      </ReduxProvider>
     </CookiesProvider>
   );
 };
