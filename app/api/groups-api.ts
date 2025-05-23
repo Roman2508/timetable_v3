@@ -5,6 +5,7 @@ import {
   type CreateSpecializationPayloadType,
   type DeleteSpecializationPayloadType,
   type UpdateSpecializationPayloadType,
+  type CreateGroupPayloadType,
 } from "./api-types";
 import { instanse } from "./api";
 import { type GroupCategoriesType, type GroupsType } from "../store/groups/groups-types";
@@ -30,7 +31,7 @@ export const groupsAPI = {
     return instanse.get<GroupsType>(`/groups/${id}`);
   },
 
-  createGroup(payload: UpdateGroupPayloadType) {
+  createGroup(payload: CreateGroupPayloadType) {
     return instanse.post<GroupsType>("/groups", payload);
   },
   updateGroup(payload: UpdateGroupPayloadType) {

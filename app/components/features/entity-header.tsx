@@ -7,7 +7,7 @@ import { Badge } from "../ui/common/badge";
 interface IEntityHeaderProps {
   name: string;
   label: string;
-  status: "Активна" | "Архів";
+  status: "Активний" | "Архів";
   Icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
 }
 
@@ -24,7 +24,7 @@ const EntityHeader: React.FC<IEntityHeaderProps> = ({ label, name, status, Icon 
         <Badge
           variant="outline"
           className={cn(
-            status === "Активна"
+            status === "Активний"
               ? "text-success bg-success-background border-0"
               : "text-error bg-error-background border-0",
           )}

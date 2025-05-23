@@ -34,9 +34,6 @@ import { setGroupCategories } from "~/store/groups/groups-slice";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
-  console.log("STORE:==================================================");
-  console.log(store.getState());
-  console.log("==================================================");
 
   const cookieHeader = request.headers.get("cookie") ?? "";
   const cookies = cookie.parse(cookieHeader);
@@ -70,7 +67,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { data: planCategories } = await plansAPI.getPlansCategories();
   store.dispatch(setPlanCategories(planCategories));
 
-  // console.log("store.getState()", store.getState());
 
   return {
     preloadedState: store.getState(),

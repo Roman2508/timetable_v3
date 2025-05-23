@@ -90,6 +90,8 @@ export type UpdateGroupPayloadType = Pick<
   "id" | "name" | "courseNumber" | "yearOfAdmission" | "formOfEducation"
 > & { educationPlan: number; category: number };
 
+export type CreateGroupPayloadType = Omit<UpdateGroupPayloadType, "id">;
+
 /* Groups-load */
 
 export type FindLessonsForSchedulePayloadType = {

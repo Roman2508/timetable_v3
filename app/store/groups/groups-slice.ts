@@ -29,24 +29,26 @@ import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
 import { type AttachSpecializationPayloadType } from "../../api/api-types";
 
+const emptyGroupData: GroupsInitialState["group"] = {
+  id: 0,
+  name: "",
+  courseNumber: 1,
+  yearOfAdmission: Number(new Date().getFullYear().toString()),
+  students: [],
+  isHide: false,
+  calendarId: "",
+  status: "Активний",
+  formOfEducation: "Денна",
+  specializationList: [],
+  educationPlan: null,
+  groupLoad: null,
+  category: null,
+  stream: [],
+};
+
 const groupsInitialState: GroupsInitialState = {
   groupCategories: null,
-  group: {
-    id: 0,
-    name: "",
-    courseNumber: 1,
-    yearOfAdmission: Number(new Date().getFullYear().toString()),
-    students: [],
-    isHide: false,
-    calendarId: "",
-    status: "Активний",
-    formOfEducation: "Денна",
-    specializationList: [],
-    educationPlan: null,
-    groupLoad: null,
-    category: null,
-    stream: [],
-  },
+  group: emptyGroupData,
   loadingStatus: LoadingStatusTypes.NEVER,
 };
 
@@ -182,6 +184,7 @@ const groupsSlice = createSlice({
         return { ...el, groups: newGroups };
       });
 
+      state.group = emptyGroupData;
       state.groupCategories = updatedCategories;
     });
 

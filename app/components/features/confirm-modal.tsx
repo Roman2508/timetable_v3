@@ -12,21 +12,17 @@ import {
   AlertDialogDescription,
 } from "~/components/ui/common/alert-dialog";
 import { useAppDispatch } from "~/store/store";
-import { changeConfirmModalStatus, generalSelector } from "~/store/general/general-slice";
 import type { ChangeConfirmDialogStateType } from "~/store/general/general-types";
+import { changeConfirmModalStatus, generalSelector } from "~/store/general/general-slice";
 
 export const onConfirm = (options: ChangeConfirmDialogStateType, dispatch: any) => {
   return new Promise((resolve) => {
-    dispatch(
-      changeConfirmModalStatus({
-        ...options,
-        onConfirm: () => {
-          resolve(true);
-        },
-      }),
-    );
+    const payload = { ...options, onConfirm: () => resolve(true) };
+    dispatch(changeConfirmModalStatus(payload));
   });
 };
+
+const defaultValues = { title: "", itemName: "", description: "", isOpen: false };
 
 const ConfirmModal = () => {
   const dispatch = useAppDispatch();
@@ -34,13 +30,13 @@ const ConfirmModal = () => {
   const { confirmModal } = useSelector(generalSelector);
 
   const accept = () => {
-    const newData = { title: "", itemName: "", description: "", answer: true, isOpen: false };
+    const newData = { ...defaultValues, answer: true };
     dispatch(changeConfirmModalStatus(newData));
     confirmModal.onConfirm && confirmModal.onConfirm();
   };
 
   const reject = () => {
-    const newData = { title: "", itemName: "", description: "", answer: false, isOpen: false };
+    const newData = { ...defaultValues, answer: false };
     dispatch(changeConfirmModalStatus(newData));
   };
 
@@ -62,7 +58,9 @@ const ConfirmModal = () => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={reject}>Закрити</AlertDialogCancel>
-          <AlertDialogAction onClick={accept}>Продовжити</AlertDialogAction>
+          <AlertDialogAction onClick={accept} className="bg-destructive">
+            Продовжити
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

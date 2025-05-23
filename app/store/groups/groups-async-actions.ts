@@ -10,6 +10,7 @@ import {
   type CreateSpecializationPayloadType,
   type DeleteSpecializationPayloadType,
   type UpdateSpecializationPayloadType,
+  type CreateGroupPayloadType,
 } from "../../api/api-types";
 import { setLoadingStatus } from "./groups-slice";
 import { LoadingStatusTypes } from "../app-types";
@@ -124,7 +125,7 @@ export const getGroup = createAsyncThunk("group/getGroup", async (id: string, th
   return data;
 });
 
-export const createGroup = createAsyncThunk("group/createGroup", async (payload: UpdateGroupPayloadType, thunkAPI) => {
+export const createGroup = createAsyncThunk("group/createGroup", async (payload: CreateGroupPayloadType, thunkAPI) => {
   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
 
   const promise = groupsAPI.createGroup(payload);

@@ -1,19 +1,27 @@
 import z from "zod";
 import React from "react";
 import { useSelector } from "react-redux";
-import { GraduationCap, Package, Pencil, Plus, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router";
+import { GraduationCap, Pencil, Plus, Trash2 } from "lucide-react";
 
+import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
 import { groupsSelector } from "~/store/groups/groups-slice";
 import EntityField from "~/components/features/entity-field";
+import type { GroupsType } from "~/store/groups/groups-types";
 import EntityHeader from "~/components/features/entity-header";
+import { onConfirm } from "~/components/features/confirm-modal";
 import { RootContainer } from "~/components/layouts/root-container";
-import ChangePlanModal from "~/components/features/pages/full-group/change-plan-modal";
+import SelectPlanModal from "~/components/features/select-plan/select-plan-modal";
+import SubgroupsModal from "~/components/features/pages/full-group/subgroups-modal";
+import { createGroup, deleteGroup, updateGroup } from "~/store/groups/groups-async-actions";
+import SpecializationModal from "~/components/features/pages/full-group/specialization-modal";
 
 interface IFullGroupProps {
   groupId: string;
+  group: GroupsType;
 }
 
 const initialFormState = {
@@ -26,35 +34,30 @@ const initialFormState = {
   educationPlan: "",
   status: "Активна",
   calendarId: "",
-  // name: "",
-  // yearOfAdmission: new Date().getFullYear(),
-  // courseNumber: 1,
-  // students: "",
-  // formOfEducation: "Денна",
-  // category: 0,
-  // educationPlan: 0,
-  // status: "Активна",
-  // calendarId: "",
 };
 
 const formSchema = z.object({
-  name: z.string().min(3),
-  yearOfAdmission: z.number().min(4).max(4),
-  courseNumber: z.number().min(1).max(4),
-  students: z.number(),
-  formOfEducation: z.string(),
-  category: z.number(),
-  educationPlan: z.number(),
-  status: z.string(),
-  calendarId: z.string(),
+  name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
+  yearOfAdmission: z.number().refine((num) => num.toString().length === 4, {
+    message: "Не вірно вказано рік початку навчання",
+  }),
+  courseNumber: z.number({ message: "Це поле обов'язкове" }).min(1).max(4),
+  students: z.number().optional(),
+  formOfEducation: z.enum(["Денна", "Заочна"], { message: "Це поле обов'язкове" }),
+  category: z.number({ message: "Це поле обов'язкове" }),
+  educationPlan: z.number({ message: "Це поле обов'язкове" }),
+  status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }),
+  calendarId: z.string().optional(),
 });
 
 export type GroupFormData = z.infer<typeof formSchema>;
 
-const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
+const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
   const isUpdate = !isNaN(Number(groupId));
 
-  const { group } = useSelector(groupsSelector);
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
 
   const { plansCategories } = useSelector(plansSelector);
   const { groupCategories } = useSelector(groupsSelector);
@@ -199,6 +202,7 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
   const formData = {
     ...initialFormState,
     ...group,
+    students: group?.students.length || 0,
     ...userFormData,
   };
 
@@ -211,6 +215,12 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
   const errors = showErrors ? validate() : undefined;
 
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
+    const excludedKeys = ["groupLoad", "isHide", "specializationList", "stream", "id"];
+    // Виключаю зайві ключі з об'єкта нової групи
+    const groupData = Object.fromEntries(
+      Object.entries(formData).filter(([key]) => !excludedKeys.includes(key)),
+    ) as GroupFormData;
+
     try {
       e.preventDefault();
       setIsPanding(true);
@@ -219,37 +229,60 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
         setShowErrors(true);
         return;
       }
+
       if (isUpdate) {
-        // await dispatch(updateGroup({ ...formData, id: groupId }))
+        await dispatch(updateGroup({ ...groupData, id: Number(groupId) }));
         return;
       }
-      // await dispatch(createGroup(formData))
+
+      await dispatch(createGroup(groupData));
+      navigate("/groups");
     } finally {
       setIsPanding(false);
     }
   };
 
+  const onDeleteGroup = async () => {
+    if (!isUpdate) return;
+
+    const title = `Ви впевнені, що хочете видалити групу: ${group.name}?`;
+    const description =
+      "Група, включаючи все навчальне навантаження, розклад та студентів, що зараховані до групи, будуть видалені назавжди. Цю дію не можна відмінити.";
+
+    const result = await onConfirm({ isOpen: true, title, description }, dispatch);
+
+    if (result) {
+      await dispatch(deleteGroup(Number(groupId)));
+      navigate("/groups");
+    }
+  };
+
   return (
     <>
-      <ChangePlanModal isOpen={openedModalName === "plan"} setOpenedModalName={setOpenedModalName} />
+      <SelectPlanModal
+        setUserFormData={setUserFormData}
+        setOpenedModalName={setOpenedModalName}
+        isOpen={openedModalName === "educationPlan"}
+      />
+
+      <SubgroupsModal
+        groupLoad={group.groupLoad}
+        setOpenedModalName={setOpenedModalName}
+        isOpen={openedModalName === "subgroups"}
+      />
+
+      <SpecializationModal setOpenedModalName={setOpenedModalName} isOpen={openedModalName === "specialization"} />
 
       <RootContainer>
         <form onSubmit={handleSubmit}>
           <div className="flex justify-between items-center mb-6">
             {isUpdate ? (
-              <EntityHeader Icon={GraduationCap} label="ГРУПА" name="PH9-25-1" status="Активна" />
+              <EntityHeader Icon={GraduationCap} label="ГРУПА" name={group.name} status={group.status} />
             ) : (
               <h2 className="flex items-center h-14 text-2xl font-semibold">Створити групу</h2>
             )}
 
             <div className="flex gap-3">
-              {isUpdate && (
-                <Button variant="outline" type="button">
-                  <Package />
-                  Архівувати
-                </Button>
-              )}
-
               {isUpdate ? (
                 <Button type="submit" disabled={!!errors || isPending}>
                   <Pencil />
@@ -272,16 +305,18 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
                 <EntityField
                   {...input}
                   errors={errors}
+                  isUpdate={isUpdate}
                   inputKey={input.key}
                   currentValue={currentValue}
                   setUserFormData={setUserFormData}
+                  inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}
                 />
               );
             })}
           </Card>
 
-          <Card className="px-10 pb-12 mb-6">
+          <Card className="px-10 pb-12 mb-10">
             <h3 className="text-xl font-semibold mb-5">Навантаження групи</h3>
             {educationLoadFormFields.map((input) => {
               const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData];
@@ -289,9 +324,12 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
                 <EntityField
                   {...input}
                   errors={errors}
+                  isUpdate={isUpdate}
                   inputKey={input.key}
                   currentValue={currentValue}
                   setUserFormData={setUserFormData}
+                  setOpenedModalName={setOpenedModalName}
+                  inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}
                 />
               );
@@ -312,7 +350,7 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId }) => {
                 <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
               </div>
 
-              <Button variant="destructive">
+              <Button variant="destructive" onClick={onDeleteGroup}>
                 <Trash2 />
                 Видалити групу
               </Button>

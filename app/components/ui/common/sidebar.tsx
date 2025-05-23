@@ -117,6 +117,7 @@ function SidebarProvider({
     <SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
         <div
+          id="fullscreen-target"
           data-slot="sidebar-wrapper"
           style={
             {
@@ -125,7 +126,10 @@ function SidebarProvider({
               ...style,
             } as React.CSSProperties
           }
-          className={cn("group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full", className)}
+          className={cn(
+            "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full overflow-y-auto overflow-auto h-[100%]",
+            className,
+          )}
           {...props}
         >
           {children}
