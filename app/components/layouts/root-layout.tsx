@@ -67,7 +67,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { data: planCategories } = await plansAPI.getPlansCategories();
   store.dispatch(setPlanCategories(planCategories));
 
-
   return {
     preloadedState: store.getState(),
   };

@@ -17,6 +17,7 @@ type ItemType = {
 
 interface IEntitiesDropdownProps {
   items: ItemType[];
+  disabled?: boolean;
   itemPrefix?: string;
   activeItem?: ItemType;
   onChangeSelected: (id: number | string) => void;
@@ -26,6 +27,7 @@ const EntitiesDropdown: React.FC<IEntitiesDropdownProps> = ({
   items,
   activeItem,
   onChangeSelected,
+  disabled = false,
   itemPrefix = "",
 }) => {
   const triggerRef = React.useRef<HTMLButtonElement>(null);
@@ -33,7 +35,12 @@ const EntitiesDropdown: React.FC<IEntitiesDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button ref={triggerRef} variant="outline" className={`flex justify-between w-full shadow-0 bg-sidebar`}>
+        <Button
+          ref={triggerRef}
+          variant="outline"
+          disabled={disabled}
+          className={`flex justify-between w-full shadow-0 bg-sidebar`}
+        >
           <span className="lg:inline">{activeItem ? activeItem.name : ""}</span>
           <ChevronDown />
         </Button>

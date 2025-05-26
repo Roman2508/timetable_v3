@@ -59,8 +59,11 @@ const groupsSlice = createSlice({
     setLoadingStatus(state, action) {
       state.loadingStatus = action.payload;
     },
-    setGroupCategories(state, action) {
+    setGroupCategories(state, action: PayloadAction<GroupCategoriesType[]>) {
       state.groupCategories = action.payload;
+    },
+    setGroup(state, action: PayloadAction<GroupsType>) {
+      state.group = action.payload;
     },
     clearGroupData(state) {
       state.group = groupsInitialState.group;
@@ -220,19 +223,16 @@ const groupsSlice = createSlice({
 
     /* createSpecialization */
     builder.addCase(createSpecialization.fulfilled, (state, action: PayloadAction<string[]>) => {
-      if (!state.group) return;
       state.group.specializationList = action.payload;
     });
 
     /* updateSpecialization */
     builder.addCase(updateSpecialization.fulfilled, (state, action: PayloadAction<string[]>) => {
-      if (!state.group) return;
       state.group.specializationList = action.payload;
     });
 
     /* deleteSpecialization */
     builder.addCase(deleteSpecialization.fulfilled, (state, action: PayloadAction<string[]>) => {
-      if (!state.group) return;
       state.group.specializationList = action.payload;
     });
 
@@ -253,7 +253,8 @@ const groupsSlice = createSlice({
 
         return !bool;
       });
-
+      console.log([...lessons, ...action.payload]);
+      console.log(JSON.stringify([...lessons, ...action.payload]));
       state.group.groupLoad = [...lessons, ...action.payload];
     });
 
@@ -307,6 +308,6 @@ export const groupsListSelector = createSelector(
   },
 );
 
-export const { setLoadingStatus, clearGroupData, setGroupCategories } = groupsSlice.actions;
+export const { setLoadingStatus, clearGroupData, setGroupCategories, setGroup } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

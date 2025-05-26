@@ -12,12 +12,9 @@ export type SubgroupsLessonsType = {
   exams: null | number;
 };
 
-type LessonTypeKey = "lectures" | "practical" | "laboratory" | "seminars" | "exams" | "examsConsulation";
-
 /**
  * Групує дисципліни за name+semester, потім всередині кожної групи залишає записи з найбільшим номером підгрупи (subgroupNumber)
  */
-// export const groupLessonByNameSubgroupsAndSemester = (lessons: GroupLoadType[]): GroupLoadType[][] => {
 export const groupLessonByNameSubgroupsAndSemester = (lessons: GroupLoadType[]): SubgroupsLessonsType[] => {
   // Створюємо об’єкт для групування предметів за назвою + семестром
   const groupedLessons: Record<string, GroupLoadType[]> = {};
@@ -92,61 +89,3 @@ export const groupLessonByNameSubgroupsAndSemester = (lessons: GroupLoadType[]):
     return lesson;
   });
 };
-
-// /**
-//  * Групує дисципліни за name+semester, потім всередині кожної групи залишає записи з найбільшим номером підгрупи (subgroupNumber)
-//  */
-// export const groupLessonByNameSubgroupsAndSemester = (lessons: GroupLoadType[]): GroupLoadType[][] => {
-//   // Створюємо об’єкт для групування предметів за назвою + семестром
-//   const groupedLessons: Record<string, GroupLoadType[]> = {};
-
-//   // Групуємо усі записи по ключу: назва предмета + семестр
-//   lessons.forEach((subject) => {
-//     const subjectKey = subject.name + subject.semester;
-
-//     if (!groupedLessons[subjectKey]) {
-//       groupedLessons[subjectKey] = [];
-//     }
-
-//     groupedLessons[subjectKey].push(subject);
-//   });
-
-//   // Перетворюємо об’єкт груп у масив
-//   const lessonsArr = Object.values(groupedLessons);
-
-//   // Обробляємо кожну групу окремо
-//   const filteredLessons = lessonsArr.map((group) => {
-//     // Групуємо за унікальною комбінацією: назва предмета + тип занять
-//     const uniqueValues: Record<string, GroupLoadType[]> = {};
-
-//     group.forEach((el) => {
-//       const subjectAlias = el.name + el.typeEn;
-
-//       if (!uniqueValues[subjectAlias]) {
-//         uniqueValues[subjectAlias] = [];
-//       }
-
-//       uniqueValues[subjectAlias].push(el);
-//     });
-
-//     // Для кожної унікальної комбінації обираємо лише ті елементи, які мають максимальний номер підгрупи
-//     const filtred = Object.values(uniqueValues).map((el) => {
-//       const maxSubgroupNumber = Math.max(...el.map((subject) => subject.subgroupNumber));
-
-//       // Відкидаємо ті, що мають менший номер підгрупи
-//       return el.filter((f) => {
-//         if (f.subgroupNumber < maxSubgroupNumber) {
-//           return false;
-//         } else {
-//           return true;
-//         }
-//       });
-//     });
-
-//     // Повертаємо всі елементи з усіх унікальних груп в одній групі
-//     return filtred.flatMap((array) => array);
-//   });
-
-//   // Повертаємо масив відфільтрованих груп (по назві + семестру)
-//   return filteredLessons;
-// };

@@ -27,7 +27,7 @@ export const instanse = axios.create({
 instanse.interceptors.request.use((config) => {
   if (config.headers) {
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ3MjMwOTIyLCJleHAiOjE3NDk4MjI5MjJ9.M8YAzLCXG0D_8g6y25YdCQqAieQv6D6zm904Krelp4I";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ4MjQ2MTU1LCJleHAiOjE3NTA4MzgxNTV9.17zxUWB0r8uAgi10EyXPQIUZr0VPZbhhhTgKaX2c0-Q";
     // const token = getLocalStorageToken()
     config.headers.Authorization = String(`Bearer ${token}`);
 

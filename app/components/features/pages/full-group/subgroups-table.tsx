@@ -21,14 +21,6 @@ import { cn } from "~/lib/utils";
 import type { GroupLoadType } from "~/store/groups/groups-types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 
-interface ISubgroupsTableProps {
-  globalSearch: string;
-  groupLoad: GroupLoadType[];
-  selectedLesson: SubgroupsLessonsType | null;
-  setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedLesson: React.Dispatch<React.SetStateAction<SubgroupsLessonsType | null>>;
-}
-
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
   addMeta({ itemRank });
@@ -40,6 +32,14 @@ const getItemKey = (item: any) => {
   return `${item.groupId}_${item.planSubjectId}_${item.name}_${item.semester}`;
 };
 
+interface ISubgroupsTableProps {
+  globalSearch: string;
+  groupLoad: GroupLoadType[];
+  selectedLesson: SubgroupsLessonsType | null;
+  setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedLesson: React.Dispatch<React.SetStateAction<SubgroupsLessonsType | null>>;
+}
+
 export const SubgroupsTable: React.FC<ISubgroupsTableProps> = ({
   groupLoad,
   globalSearch,
@@ -49,7 +49,7 @@ export const SubgroupsTable: React.FC<ISubgroupsTableProps> = ({
 }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const lessons = groupLoad ? groupLessonByNameSubgroupsAndSemester(groupLoad) : [];
+  const lessons = React.useMemo(() => (groupLoad ? groupLessonByNameSubgroupsAndSemester(groupLoad) : []), [groupLoad]);
 
   const columnHelper = createColumnHelper<SubgroupsLessonsType>();
   const columns = React.useMemo(

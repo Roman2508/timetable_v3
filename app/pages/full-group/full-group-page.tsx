@@ -8,12 +8,12 @@ import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
-import { groupsSelector } from "~/store/groups/groups-slice";
 import EntityField from "~/components/features/entity-field";
 import type { GroupsType } from "~/store/groups/groups-types";
 import EntityHeader from "~/components/features/entity-header";
 import { onConfirm } from "~/components/features/confirm-modal";
 import { RootContainer } from "~/components/layouts/root-container";
+import { groupsSelector, setGroup } from "~/store/groups/groups-slice";
 import SelectPlanModal from "~/components/features/select-plan/select-plan-modal";
 import SubgroupsModal from "~/components/features/pages/full-group/subgroups-modal";
 import { createGroup, deleteGroup, updateGroup } from "~/store/groups/groups-async-actions";
@@ -56,6 +56,10 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
   const isUpdate = !isNaN(Number(groupId));
 
   const dispatch = useAppDispatch();
+
+  const {
+    group: { groupLoad },
+  } = useSelector(groupsSelector);
 
   const navigate = useNavigate();
 
@@ -257,6 +261,110 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
     }
   };
 
+  React.useEffect(() => {
+    if (!group) return;
+    dispatch(setGroup(group));
+  }, [groupId]);
+
+  // const groupLoad = [
+  //   {
+  //     id: 5,
+  //     name: "Фармакологія",
+  //     semester: 1,
+  //     specialization: null,
+  //     typeRu: "ЕКЗ",
+  //     typeEn: "exams",
+  //     hours: 2,
+  //     subgroupNumber: null,
+  //     group: { id: 1, name: "PH9-25-1" },
+  //     planSubjectId: { id: 1 },
+  //     plan: { id: 1 },
+  //     stream: null,
+  //     cmk: { id: 1 },
+  //     teacher: null,
+  //   },
+  //   {
+  //     id: 1,
+  //     name: "Ділова іноземна мова (B2)",
+  //     semester: 1,
+  //     specialization: null,
+  //     typeRu: "ЛК",
+  //     typeEn: "lectures",
+  //     hours: 24,
+  //     subgroupNumber: null,
+  //     group: { id: 1, name: "PH9-25-1" },
+  //     planSubjectId: { id: 2 },
+  //     plan: { id: 1 },
+  //     stream: null,
+  //     cmk: { id: 1 },
+  //     teacher: null,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Ділова іноземна мова (B2)",
+  //     semester: 1,
+  //     specialization: null,
+  //     typeRu: "ПЗ",
+  //     typeEn: "practical",
+  //     hours: 36,
+  //     subgroupNumber: null,
+  //     group: { id: 1, name: "PH9-25-1" },
+  //     planSubjectId: { id: 2 },
+  //     plan: { id: 1 },
+  //     stream: null,
+  //     cmk: { id: 1 },
+  //     teacher: null,
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Фармакологія",
+  //     semester: 1,
+  //     specialization: null,
+  //     typeRu: "ЛК",
+  //     typeEn: "lectures",
+  //     hours: 10,
+  //     subgroupNumber: null,
+  //     group: { id: 1, name: "PH9-25-1" },
+  //     planSubjectId: { id: 1 },
+  //     plan: { id: 1 },
+  //     stream: null,
+  //     cmk: { id: 1 },
+  //     teacher: null,
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Фармакологія",
+  //     semester: 1,
+  //     specialization: null,
+  //     typeRu: "ПЗ",
+  //     typeEn: "practical",
+  //     hours: 30,
+  //     subgroupNumber: 1,
+  //     group: { id: 1, name: "PH9-25-1" },
+  //     planSubjectId: { id: 1 },
+  //     plan: { id: 1 },
+  //     stream: null,
+  //     cmk: { id: 1 },
+  //     teacher: null,
+  //   },
+  //   {
+  //     id: 14,
+  //     name: "Фармакологія",
+  //     semester: 1,
+  //     specialization: null,
+  //     typeRu: "ПЗ",
+  //     typeEn: "practical",
+  //     hours: 30,
+  //     subgroupNumber: 2,
+  //     group: { id: 1, name: "PH9-25-1" },
+  //     planSubjectId: { id: 1 },
+  //     plan: { id: 1 },
+  //     stream: null,
+  //     cmk: { id: 1 },
+  //     teacher: null,
+  //   },
+  // ];
+
   return (
     <>
       <SelectPlanModal
@@ -266,12 +374,16 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
       />
 
       <SubgroupsModal
-        groupLoad={group.groupLoad}
         setOpenedModalName={setOpenedModalName}
         isOpen={openedModalName === "subgroups"}
       />
 
-      <SpecializationModal setOpenedModalName={setOpenedModalName} isOpen={openedModalName === "specialization"} />
+      <SpecializationModal
+        groupId={groupId}
+        setOpenedModalName={setOpenedModalName}
+        isOpen={openedModalName === "specialities"}
+        specializationList={group.specializationList}
+      />
 
       <RootContainer>
         <form onSubmit={handleSubmit}>
