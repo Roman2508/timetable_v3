@@ -2,6 +2,7 @@ import {
   type CreateAuditoryPayloadType,
   type UpdateAuditoryPayloadType,
   type UpdateAuditoryCategoryPayloadType,
+  type CreateAuditoryCategoryPayloadType,
 } from "./api-types";
 import { instanse } from "./api";
 import { type AuditoriesTypes, type AuditoryCategoriesTypes } from "../store/auditories/auditories-types";
@@ -11,9 +12,9 @@ export const auditoriesAPI = {
   getAuditoryCategories() {
     return instanse.get<AuditoryCategoriesTypes[]>("/auditory-categories");
   },
-  createAuditoryCategory(name: string) {
+  createAuditoryCategory(payload: CreateAuditoryCategoryPayloadType) {
     return instanse.post<AuditoryCategoriesTypes>("/auditory-categories", {
-      name,
+      payload,
     });
   },
   updateAuditoryCategory(payload: UpdateAuditoryCategoryPayloadType) {

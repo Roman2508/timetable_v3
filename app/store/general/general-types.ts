@@ -1,15 +1,19 @@
+type ItemFilterType = {
+  status: "Всі" | "Активний" | "Архів";
+  categories: { id: number }[];
+  orderField: string;
+  isOrderDesc: boolean;
+};
+
 export type GeneralSliceInitialState = {
   sidebar: {
     open: boolean;
     expandedItems: string[];
   };
 
-  groups: {
-    status: "Всі" | "Активний" | "Архів";
-    categories: { id: number }[];
-    orderField: string;
-    isOrderDesc: boolean;
-  };
+  groups: ItemFilterType;
+  auditories: ItemFilterType;
+  teachers: ItemFilterType;
 
   confirmModal: {
     isOpen: boolean;

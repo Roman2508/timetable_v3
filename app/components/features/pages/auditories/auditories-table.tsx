@@ -10,17 +10,24 @@ import {
   type FilterFn,
   type SortingState,
 } from "@tanstack/react-table";
+import { useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { rankItem } from "@tanstack/match-sorter-utils";
 
-import {
-  groupLessonForSpecialization,
-  type SpecializationLessonsType,
-} from "~/helpers/group-lessons-for-specialization";
 import { cn } from "~/lib/utils";
-import SpecializationDropdown from "./specialization-dropdown";
-import type { GroupLoadType } from "~/store/groups/groups-types";
+import AuditoriesActions from "./auditories-action";
+import { Badge } from "~/components/ui/common/badge";
+import { generalSelector } from "~/store/general/general-slice";
+import { AUDITORY_SORT_KEY, AUDITORY_SORT_TYPE } from "~/constants/cookies-keys";
+import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+
+interface IAuditoriesTableProps {
+  globalSearch: string;
+  auditories: AuditoriesTypes[];
+  setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
+}
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -28,59 +35,55 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-const getItemKey = (item: any) => {
-  if (!item) return "";
-  return `${item.groupId}_${item.planSubjectId}_${item.name}_${item.semester}`;
-};
+export const AuditoriesTable: React.FC<IAuditoriesTableProps> = ({ auditories, globalSearch, setGlobalSearch }) => {
+  const [_, setCookie] = useCookies();
 
-interface ISpecializationTableProps {
-  globalSearch: string;
-  groupLoad: GroupLoadType[];
-  specializationList: string[];
-  setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
-}
+  const {
+    auditories: { isOrderDesc, orderField },
+  } = useSelector(generalSelector);
 
-export const SpecializationTable: React.FC<ISpecializationTableProps> = ({
-  groupLoad,
-  globalSearch,
-  setGlobalSearch,
-  specializationList,
-}) => {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>(orderField ? [{ id: orderField, desc: isOrderDesc }] : []);
 
-  const lessons = React.useMemo(() => (groupLoad ? groupLessonForSpecialization(groupLoad) : []), [groupLoad]);
-
-  const columnHelper = createColumnHelper<SpecializationLessonsType>();
+  const columnHelper = createColumnHelper<AuditoriesTypes>();
   const columns = React.useMemo(
     () => [
-      columnHelper.accessor("name", { header: "Дисципліна" }),
-      columnHelper.accessor("semester", { header: "Семестр" }),
+      columnHelper.accessor("name", { header: "Аудиторія" }),
+      columnHelper.accessor((row) => row.category?.name ?? "", {
+        id: "category",
+        header: "Підрозділ",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("seatsNumber", { header: "Кількість місць" }),
       columnHelper.display({
-        id: "specialization",
-        header: "Спец. підгрупа",
+        id: "status",
+        header: "Статус",
         cell: ({ row }) => {
-          const currentValue = row.original.specialization ?? "-";
+          let isStatusActive = true;
+          if (row.original.status === "Архів") isStatusActive = false;
           return (
-            <SpecializationDropdown
-              currentValue={currentValue}
-              groupId={row.original.groupId}
-              specializationList={specializationList}
-              planSubjectId={row.original.planSubjectId}
-            />
+            <Badge
+              variant="outline"
+              className={cn(
+                "border-0",
+                isStatusActive ? "text-success bg-success-background" : "text-error bg-error-background",
+              )}
+            >
+              {row.original.status}
+            </Badge>
           );
         },
       }),
-      columnHelper.accessor("lectures", { header: "Лекції" }),
-      columnHelper.accessor("practical", { header: "Практичні" }),
-      columnHelper.accessor("laboratory", { header: "Лабораторні" }),
-      columnHelper.accessor("seminars", { header: "Семінари" }),
-      columnHelper.accessor("exams", { header: "Екзамени" }),
+      columnHelper.display({
+        id: "actions",
+        header: "Дії",
+        cell: ({ row }) => <AuditoriesActions id={row.original.id} />,
+      }),
     ],
     [],
   );
 
   const table = useReactTable({
-    data: lessons,
+    data: auditories,
     columns,
     state: { sorting, globalFilter: globalSearch },
     onSortingChange: setSorting,
@@ -93,8 +96,18 @@ export const SpecializationTable: React.FC<ISpecializationTableProps> = ({
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  React.useEffect(() => {
+    if (sorting.length) {
+      setCookie(AUDITORY_SORT_KEY, sorting[0].id);
+      setCookie(AUDITORY_SORT_TYPE, sorting[0].desc);
+    } else {
+      setCookie(AUDITORY_SORT_KEY, "");
+      setCookie(AUDITORY_SORT_TYPE, false);
+    }
+  }, [sorting]);
+
   return (
-    <Table className="w-full mb-8">
+    <Table className="w-full">
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="hover:bg-white">
@@ -109,7 +122,7 @@ export const SpecializationTable: React.FC<ISpecializationTableProps> = ({
                 <TableHead key={header.id} colSpan={header.colSpan}>
                   {header.isPlaceholder ? null : (
                     <div
-                      className={cn(index !== 7 ? "cursor-pointer select-none text-left" : "text-right")}
+                      className={cn(index !== 4 ? "cursor-pointer select-none text-left" : "text-right")}
                       onClick={header.column.getToggleSortingHandler()}
                       title={
                         header.column.getCanSort()
@@ -138,28 +151,24 @@ export const SpecializationTable: React.FC<ISpecializationTableProps> = ({
       </TableHeader>
 
       <TableBody>
-        {table.getRowModel().rows.map((lessonData, index) => {
-          const key = getItemKey(lessonData.original);
-          const isNotStudied = lessonData.original.specialization === "Не вивчається";
-
+        {table.getRowModel().rows.map((groupData, index) => {
+          const group = groupData.original;
           return (
-            <TableRow key={key} className={cn("hover:bg-border/40", isNotStudied ? "opacity-[0.4]" : "")}>
+            <TableRow key={group.id} className="hover:bg-border/40">
               <TableCell className={cn("truncate max-w-[30px]", "text-left px-2 py-1")}>{index + 1}</TableCell>
 
-              {lessonData.getVisibleCells().map((cell, index) => {
-                const isLastCol = index === lessonData.getVisibleCells().length - 1;
-
+              {groupData.getVisibleCells().map((cell, index) => {
+                const isActionsCol = index === groupData.getVisibleCells().length - 1;
                 return (
                   <TableCell
                     key={cell.id}
                     className={cn(
                       "text-left px-2 py-1",
-                      isLastCol ? "!text-right" : "",
+                      isActionsCol ? "!text-right" : "",
                       index === 0 ? "truncate max-w-[200px]" : "",
-                      index === 2 ? "!w-40 !min-w-40 !max-w-40 truncate overflow-hidden" : "",
                     )}
                   >
-                    {cell.getValue() !== null ? flexRender(cell.column.columnDef.cell, cell.getContext()) : "-"}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 );
               })}

@@ -6,39 +6,6 @@ import { Button } from "~/components/ui/common/button";
 import type { PlansCategoriesType } from "~/store/plans/plans-types";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
-const PLANS = [
-  {
-    id: 1,
-    name: "І8 Фармація. Денна форма",
-    plans: [
-      { id: 1, name: "І8 Фармація 2024 (1)" },
-      { id: 2, name: "І6 Технології медичної діагностики та лікування 2024 (1)" },
-      { id: 3, name: "І8 Фармація 2025 (1)" },
-      { id: 4, name: "І6 Технології медичної діагностики та лікування 2025 (1)" },
-    ],
-  },
-  {
-    id: 2,
-    name: "І8 Фармація. Заочна форма",
-    plans: [
-      { id: 5, name: "І8 Фармація 2024 (2)" },
-      { id: 6, name: "І6 Технології медичної діагностики та лікування 2024 (2)" },
-      { id: 7, name: "І8 Фармація 2025 (2)" },
-      { id: 8, name: "І6 Технології медичної діагностики та лікування 2025 (2)" },
-    ],
-  },
-  {
-    id: 3,
-    name: "І6 Технології медичної діагностики та лікування",
-    plans: [
-      { id: 9, name: "І8 Фармація 2024 (3)" },
-      { id: 10, name: "І6 Технології медичної діагностики та лікування 2024 (3)" },
-      { id: 11, name: "І8 Фармація 2025 (3)" },
-      { id: 12, name: "І6 Технології медичної діагностики та лікування 2025 (3)" },
-    ],
-  },
-];
-
 interface ISelectPlanTableProps {
   searchValue: string;
   plansCategories: PlansCategoriesType[];
@@ -55,7 +22,8 @@ export const SelectPlanTable: React.FC<ISelectPlanTableProps> = ({
   const [filteredPlanIds, setFilteredPlanIds] = React.useState<number[]>([]);
 
   const onSearchChange = () => {
-    const filteredByName = PLANS.flatMap((el) => el.plans)
+    const filteredByName = plansCategories
+      .flatMap((el) => el.plans)
       .filter((el) => el.name.includes(searchValue))
       .map((el) => el.id);
 
@@ -70,7 +38,7 @@ export const SelectPlanTable: React.FC<ISelectPlanTableProps> = ({
 
   return (
     <div className="min-h-[40vh] max-h-[50vh] overflow-y-auto px-4">
-      {PLANS.map((el) => {
+      {plansCategories.map((el) => {
         let filteredPlans: any[] = [];
 
         if (searchValue) {

@@ -5,6 +5,7 @@ import {
   type CreateAuditoryPayloadType,
   type UpdateAuditoryPayloadType,
   type UpdateAuditoryCategoryPayloadType,
+  type CreateAuditoryCategoryPayloadType,
 } from "../../api/api-types";
 import { auditoriesAPI } from "../../api/api";
 import { LoadingStatusTypes } from "../app-types";
@@ -35,7 +36,7 @@ export const getAuditoryCategories = createAsyncThunk(
 
 export const createAuditoryCategory = createAsyncThunk(
   "auditory-categories/createAuditoryCategory",
-  async (name: string, thunkAPI) => {
+  async (name: CreateAuditoryCategoryPayloadType, thunkAPI) => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
 
     const promise = auditoriesAPI.createAuditoryCategory(name);

@@ -25,6 +25,9 @@ const auditoriesSlice = createSlice({
     setLoadingStatus(state, action) {
       state.loadingStatus = action.payload;
     },
+    setAuditoryCategories(state, action: PayloadAction<AuditoryCategoriesTypes[]>) {
+      state.auditoriCategories = action.payload;
+    },
   },
   extraReducers: (builder) => {
     /* --- categories --- */
@@ -144,6 +147,6 @@ const auditoriesSlice = createSlice({
 
 export const auditoriesSelector = (state: RootState) => state.auditories;
 
-export const { setLoadingStatus } = auditoriesSlice.actions;
+export const { setLoadingStatus, setAuditoryCategories } = auditoriesSlice.actions;
 
 export default auditoriesSlice.reducer;

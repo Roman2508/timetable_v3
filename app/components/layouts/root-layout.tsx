@@ -8,6 +8,10 @@ import {
   GROUP_FILTERS,
   GROUP_SORT_KEY,
   GROUP_SORT_TYPE,
+  AUDITORY_STATUS,
+  AUDITORY_FILTERS,
+  AUDITORY_SORT_KEY,
+  AUDITORY_SORT_TYPE,
   SIDEBAR_COOKIE_NAME,
   EXPANDED_SIDEBAR_ITEMS,
 } from "~/constants/cookies-keys";
@@ -16,6 +20,9 @@ import {
   setGroupStatus,
   setSidebarState,
   setGroupFilters,
+  setAuditoryOrder,
+  setAuditoryStatus,
+  setAuditoryFilters,
   toggleExpandedSidebarItems,
 } from "~/store/general/general-slice";
 import { plansAPI } from "~/api/plans-api";
@@ -25,12 +32,14 @@ import Footer from "../features/footer/footer";
 import { CookiesProvider } from "react-cookie";
 import AlertModal from "../features/alert-modal";
 import ConfirmModal from "../features/confirm-modal";
+import { auditoriesAPI } from "~/api/auditories-api";
 import { TooltipProvider } from "../ui/common/tooltip";
 import { makeStore, type RootState } from "~/store/store";
 import { Header } from "~/components/features/header/header";
 import { setPlanCategories } from "~/store/plans/plans-slice";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
 import { setGroupCategories } from "~/store/groups/groups-slice";
+import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -51,8 +60,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // groups-cookies
   const groupFilters = JSON.parse(cookies[GROUP_FILTERS] ?? "[]");
-  const categoriesIds = groupFilters.filter((el: string) => Number(el)).map((el: any) => ({ id: Number(el) }));
-  store.dispatch(setGroupFilters(categoriesIds));
+  const groupCategoriesIds = groupFilters.filter((el: string) => Number(el)).map((el: any) => ({ id: Number(el) }));
+  store.dispatch(setGroupFilters(groupCategoriesIds));
 
   const groupStatus = (cookies[GROUP_STATUS] ?? "Всі") as "Всі" | "Активний" | "Архів";
   store.dispatch(setGroupStatus(groupStatus));
@@ -66,6 +75,26 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // plans
   const { data: planCategories } = await plansAPI.getPlansCategories();
   store.dispatch(setPlanCategories(planCategories));
+
+  // auditories
+  const { data: auditoryCategories } = await auditoriesAPI.getAuditoryCategories();
+  store.dispatch(setAuditoryCategories(auditoryCategories));
+
+  // auditories-cookies
+  const auditoryFilters = JSON.parse(cookies[AUDITORY_FILTERS] ?? "[]");
+  const auditoryCategoriesIds = auditoryFilters
+    .filter((el: string) => Number(el))
+    .map((el: any) => ({ id: Number(el) }));
+  store.dispatch(setAuditoryFilters(auditoryCategoriesIds));
+
+  const auditoryStatus = (cookies[AUDITORY_STATUS] ?? "Всі") as "Всі" | "Активний" | "Архів";
+  store.dispatch(setAuditoryStatus(auditoryStatus));
+
+  const auditoryOrderField = cookies[AUDITORY_SORT_KEY] ?? "";
+  const auditoryOrderType = cookies[AUDITORY_SORT_TYPE] === "true";
+  if (auditoryOrderField) {
+    store.dispatch(setAuditoryOrder({ id: auditoryOrderField, desc: auditoryOrderType }));
+  }
 
   return {
     preloadedState: store.getState(),

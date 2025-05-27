@@ -16,31 +16,24 @@ import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
 import { Separator } from "~/components/ui/common/separator";
 import { SpecializationTable } from "./specialization-table";
-import type { GroupLoadType } from "~/store/groups/groups-types";
+import { groupsSelector } from "~/store/groups/groups-slice";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
 import { createSpecialization, deleteSpecialization, updateSpecialization } from "~/store/groups/groups-async-actions";
-import { groupsSelector } from "~/store/groups/groups-slice";
 
 interface ISpecializationModalProps {
   isOpen: boolean;
   groupId: string;
-  specializationList: string[];
   setOpenedModalName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const MODAL_NAME = "specialities";
 
-const SpecializationModal: React.FC<ISpecializationModalProps> = ({
-  isOpen,
-  groupId,
-  specializationList,
-  setOpenedModalName,
-}) => {
+const SpecializationModal: React.FC<ISpecializationModalProps> = ({ isOpen, groupId, setOpenedModalName }) => {
   const dispatch = useAppDispatch();
 
   const {
-    group: { groupLoad },
+    group: { groupLoad, specializationList },
   } = useSelector(groupsSelector);
   const { plansCategories } = useSelector(plansSelector);
 
@@ -127,6 +120,7 @@ const SpecializationModal: React.FC<ISpecializationModalProps> = ({
                   groupLoad={groupLoad}
                   globalSearch={globalSearch}
                   setGlobalSearch={setGlobalSearch}
+                  specializationList={specializationList}
                 />
               ) : (
                 <div className="flex flex-col justify-center items-center h-[50%]">

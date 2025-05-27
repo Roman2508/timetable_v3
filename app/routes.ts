@@ -7,7 +7,7 @@ export default [
     route("groups", "./routes/groups.tsx"),
     route("groups/:id", "./routes/full-group.tsx"),
 
-    // route("auditories", "./routes/auditories.tsx"),
+    route("auditories", "./routes/auditories.tsx"),
 
     route("teachers", "./routes/teachers.tsx"),
     route("students", "./routes/students-accounts.tsx"),

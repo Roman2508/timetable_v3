@@ -1,10 +1,10 @@
 import type { GroupsType } from "~/store/groups/groups-types";
 // import { summaryTypes } from "../components/GradeBookPage/AddSummaryModal";
 import { userRoles, UserRoles, type UserType } from "../store/auth/auth-types";
-import { GradeBookSummaryTypes, type GradeType } from "../store/gradeBook/grade-book-types";
 import { LessonsTypeRu } from "../store/schedule-lessons/schedule-lessons-types";
-import { IndividualTeacherWordTypes, type TeacherReportFileType } from "../store/teacher-profile/teacher-profile-types";
 import { type EditorJSItemType, type TeachersType } from "../store/teachers/teachers-types";
+import { GradeBookSummaryTypes, type GradeType } from "../store/gradeBook/grade-book-types";
+import { IndividualTeacherWordTypes, type TeacherReportFileType } from "../store/teacher-profile/teacher-profile-types";
 
 /* Global */
 
@@ -37,13 +37,20 @@ export type CreateEntityPayloadType = {
 
 export type CreateAuditoryPayloadType = {
   name: string;
+  status: "Активний" | "Архів";
   seatsNumber: number;
   category: number;
+};
+
+export type CreateAuditoryCategoryPayloadType = {
+  name: string;
+  shortName: string;
 };
 
 export type UpdateAuditoryCategoryPayloadType = {
   id: number;
   name: string;
+  shortName: string;
 };
 
 export type UpdateAuditoryPayloadType = {

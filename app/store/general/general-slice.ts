@@ -18,6 +18,18 @@ const generalInitialState: GeneralSliceInitialState = {
     orderField: "",
     isOrderDesc: false,
   },
+  auditories: {
+    status: "Всі",
+    categories: [],
+    orderField: "",
+    isOrderDesc: false,
+  },
+  teachers: {
+    status: "Всі",
+    categories: [],
+    orderField: "",
+    isOrderDesc: false,
+  },
 
   confirmModal: {
     isOpen: false,
@@ -66,6 +78,17 @@ const generalSlice = createSlice({
       state.groups.isOrderDesc = action.payload.desc;
     },
 
+    setAuditoryFilters(state, action: PayloadAction<{ id: number }[]>) {
+      state.auditories.categories = action.payload;
+    },
+    setAuditoryStatus(state, action: PayloadAction<"Всі" | "Активний" | "Архів">) {
+      state.auditories.status = action.payload;
+    },
+    setAuditoryOrder(state, action: PayloadAction<{ id: string; desc: boolean }>) {
+      state.auditories.orderField = action.payload.id;
+      state.auditories.isOrderDesc = action.payload.desc;
+    },
+
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
       const keys = Object.keys(action.payload);
       const { isOpen, answer, title, itemName, description, onConfirm } = action.payload;
@@ -94,6 +117,9 @@ export const {
   setGroupsOrder,
   setSidebarState,
   setGroupFilters,
+  setAuditoryOrder,
+  setAuditoryStatus,
+  setAuditoryFilters,
   changeAlertModalStatus,
   changeConfirmModalStatus,
   changeExpandSidebarItems,

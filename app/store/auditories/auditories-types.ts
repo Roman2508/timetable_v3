@@ -8,6 +8,7 @@ export type AuditoriesInitialState = {
 export type AuditoryCategoriesTypes = {
   id: number;
   name: string;
+  shortName: string;
   auditories: AuditoriesTypes[];
 };
 
@@ -15,5 +16,6 @@ export type AuditoriesTypes = {
   id: number;
   name: string;
   seatsNumber: number;
+  status: "Активний" | "Архів";
   category: { id: number; name: string };
 };

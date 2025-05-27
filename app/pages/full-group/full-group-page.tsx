@@ -56,11 +56,6 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
   const isUpdate = !isNaN(Number(groupId));
 
   const dispatch = useAppDispatch();
-
-  const {
-    group: { groupLoad },
-  } = useSelector(groupsSelector);
-
   const navigate = useNavigate();
 
   const { plansCategories } = useSelector(plansSelector);
@@ -266,104 +261,25 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
     dispatch(setGroup(group));
   }, [groupId]);
 
-  // const groupLoad = [
-  //   {
-  //     id: 5,
-  //     name: "Фармакологія",
-  //     semester: 1,
-  //     specialization: null,
-  //     typeRu: "ЕКЗ",
-  //     typeEn: "exams",
-  //     hours: 2,
-  //     subgroupNumber: null,
-  //     group: { id: 1, name: "PH9-25-1" },
-  //     planSubjectId: { id: 1 },
-  //     plan: { id: 1 },
-  //     stream: null,
-  //     cmk: { id: 1 },
-  //     teacher: null,
-  //   },
-  //   {
-  //     id: 1,
-  //     name: "Ділова іноземна мова (B2)",
-  //     semester: 1,
-  //     specialization: null,
-  //     typeRu: "ЛК",
-  //     typeEn: "lectures",
-  //     hours: 24,
-  //     subgroupNumber: null,
-  //     group: { id: 1, name: "PH9-25-1" },
-  //     planSubjectId: { id: 2 },
-  //     plan: { id: 1 },
-  //     stream: null,
-  //     cmk: { id: 1 },
-  //     teacher: null,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Ділова іноземна мова (B2)",
-  //     semester: 1,
-  //     specialization: null,
-  //     typeRu: "ПЗ",
-  //     typeEn: "practical",
-  //     hours: 36,
-  //     subgroupNumber: null,
-  //     group: { id: 1, name: "PH9-25-1" },
-  //     planSubjectId: { id: 2 },
-  //     plan: { id: 1 },
-  //     stream: null,
-  //     cmk: { id: 1 },
-  //     teacher: null,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Фармакологія",
-  //     semester: 1,
-  //     specialization: null,
-  //     typeRu: "ЛК",
-  //     typeEn: "lectures",
-  //     hours: 10,
-  //     subgroupNumber: null,
-  //     group: { id: 1, name: "PH9-25-1" },
-  //     planSubjectId: { id: 1 },
-  //     plan: { id: 1 },
-  //     stream: null,
-  //     cmk: { id: 1 },
-  //     teacher: null,
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Фармакологія",
-  //     semester: 1,
-  //     specialization: null,
-  //     typeRu: "ПЗ",
-  //     typeEn: "practical",
-  //     hours: 30,
-  //     subgroupNumber: 1,
-  //     group: { id: 1, name: "PH9-25-1" },
-  //     planSubjectId: { id: 1 },
-  //     plan: { id: 1 },
-  //     stream: null,
-  //     cmk: { id: 1 },
-  //     teacher: null,
-  //   },
-  //   {
-  //     id: 14,
-  //     name: "Фармакологія",
-  //     semester: 1,
-  //     specialization: null,
-  //     typeRu: "ПЗ",
-  //     typeEn: "practical",
-  //     hours: 30,
-  //     subgroupNumber: 2,
-  //     group: { id: 1, name: "PH9-25-1" },
-  //     planSubjectId: { id: 1 },
-  //     plan: { id: 1 },
-  //     stream: null,
-  //     cmk: { id: 1 },
-  //     teacher: null,
-  //   },
-  // ];
+  React.useEffect(() => {
+    if (openedModalName === "stream") {
+      const onGoToStreams = async () => {
+        setOpenedModalName("");
+        const payload = {
+          isOpen: true,
+          title: "Редагування потоків",
+          description: 'Ви дійсно хочете перейти на сторінку "Потоки"? Всі внесені зміни не буде збережено',
+        };
+        const result = await onConfirm(payload, dispatch);
+
+        if (result) {
+          navigate("/streams");
+        }
+      };
+
+      onGoToStreams();
+    }
+  }, [openedModalName]);
 
   return (
     <>
@@ -374,6 +290,7 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
       />
 
       <SubgroupsModal
+        /*  */
         setOpenedModalName={setOpenedModalName}
         isOpen={openedModalName === "subgroups"}
       />
@@ -382,7 +299,6 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
         groupId={groupId}
         setOpenedModalName={setOpenedModalName}
         isOpen={openedModalName === "specialities"}
-        specializationList={group.specializationList}
       />
 
       <RootContainer>
