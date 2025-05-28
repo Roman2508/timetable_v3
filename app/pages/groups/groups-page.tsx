@@ -5,11 +5,14 @@ import { NavLink } from "react-router";
 import { Plus, User } from "lucide-react";
 import { useSelector } from "react-redux";
 
-import type {
-  UpdatingCategoryType,
-  GroupCategoryModalStateType,
-} from "../../components/features/pages/groups/groups-types";
+import CategoryActionsModal, {
+  type FormData,
+} from "~/components/features/category-actions-modal/category-actions-modal";
 import { useCookies } from "react-cookie";
+import type {
+  CategoryModalStateType,
+  UpdatingCategoryType,
+} from "~/components/features/category-actions-modal/category-actions-modal-types";
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";
@@ -24,12 +27,11 @@ import { useItemsByCategory } from "~/hooks/use-items-by-category";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { GROUP_FILTERS, GROUP_STATUS } from "~/constants/cookies-keys";
-import { deleteGroupCategory } from "~/store/groups/groups-async-actions";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { GroupsTable } from "~/components/features/pages/groups/groups-table";
 import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types";
-import CategoryActionsModal from "~/components/features/pages/groups/category-actions-modal";
 import { changeAlertModalStatus, generalSelector, setGroupFilters } from "~/store/general/general-slice";
+import { createGroupCategory, deleteGroupCategory, updateGroupCategory } from "~/store/groups/groups-async-actions";
 
 const GroupsPage = () => {
   const dispatch = useAppDispatch();
@@ -49,7 +51,7 @@ const GroupsPage = () => {
   const [selectedCategories, setSelectedCategories] = React.useState(
     filtredCategories.length ? filtredCategories : groupCategories ? groupCategories.map((el) => ({ id: el.id })) : [],
   );
-  const [modalData, setModalData] = React.useState<GroupCategoryModalStateType>({
+  const [modalData, setModalData] = React.useState<CategoryModalStateType>({
     isOpen: false,
     actionType: "create",
   });
@@ -101,6 +103,14 @@ const GroupsPage = () => {
     setCookie(GROUP_STATUS, value);
   };
 
+  const onCreateCategory = async (data: FormData) => {
+    await dispatch(createGroupCategory(data));
+  };
+
+  const onUpdateCategory = async (data: FormData & { id: number }) => {
+    await dispatch(updateGroupCategory(data));
+  };
+
   React.useEffect(() => {
     if (!selectedCategories.length) return;
     const categoriesIds = selectedCategories.map((el) => el.id);
@@ -110,7 +120,14 @@ const GroupsPage = () => {
 
   return (
     <>
-      <CategoryActionsModal updatingCategory={updatingCategory} modalData={modalData} setModalData={setModalData} />
+      <CategoryActionsModal
+        modalData={modalData}
+        setModalData={setModalData}
+        updatingCategory={updatingCategory}
+        onUpdateCategory={onUpdateCategory}
+        onCreateCategory={onCreateCategory}
+        setUpdatingCategory={setUpdatingCategory}
+      />
 
       <RootContainer classNames="mb-10">
         <div className="flex justify-between mb-6">
@@ -141,8 +158,8 @@ const GroupsPage = () => {
               key={item.id}
               name={item.name}
               ItemsIcon={User}
-              itemId={item.id}
               label="Підрозділ"
+              itemId={Number(item.id)}
               count={item.groups.length}
               onClickUpdateFunction={onClickUpdateCategory}
               onClickDeleteFunction={onClickDeleteCategory}

@@ -14,6 +14,10 @@ import {
   AUDITORY_SORT_TYPE,
   SIDEBAR_COOKIE_NAME,
   EXPANDED_SIDEBAR_ITEMS,
+  TEACHER_FILTERS,
+  TEACHER_STATUS,
+  TEACHER_SORT_KEY,
+  TEACHER_SORT_TYPE,
 } from "~/constants/cookies-keys";
 import {
   setGroupsOrder,
@@ -24,6 +28,9 @@ import {
   setAuditoryStatus,
   setAuditoryFilters,
   toggleExpandedSidebarItems,
+  setTeacherFilters,
+  setTeacherOrder,
+  setTeacherStatus,
 } from "~/store/general/general-slice";
 import { plansAPI } from "~/api/plans-api";
 import { groupsAPI } from "~/api/groups-api";
@@ -40,6 +47,8 @@ import { setPlanCategories } from "~/store/plans/plans-slice";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
 import { setGroupCategories } from "~/store/groups/groups-slice";
 import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
+import { teachersAPI } from "~/api/teachers-api";
+import { setTeacherCategories } from "~/store/teachers/teachers-slice";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -94,6 +103,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const auditoryOrderType = cookies[AUDITORY_SORT_TYPE] === "true";
   if (auditoryOrderField) {
     store.dispatch(setAuditoryOrder({ id: auditoryOrderField, desc: auditoryOrderType }));
+  }
+
+  // teachers
+  const { data: teacherCategories } = await teachersAPI.getTeachersCategories();
+  store.dispatch(setTeacherCategories(teacherCategories));
+
+  // teachers-cookies
+  const teacherFilters = JSON.parse(cookies[TEACHER_FILTERS] ?? "[]");
+  const teacherCategoriesIds = teacherFilters.filter((el: string) => Number(el)).map((el: any) => ({ id: Number(el) }));
+  store.dispatch(setTeacherFilters(teacherCategoriesIds));
+
+  const teacherStatus = (cookies[TEACHER_STATUS] ?? "Всі") as "Всі" | "Активний" | "Архів";
+  store.dispatch(setTeacherStatus(teacherStatus));
+
+  const teacherOrderField = cookies[TEACHER_SORT_KEY] ?? "";
+  const teacherOrderType = cookies[TEACHER_SORT_TYPE] === "true";
+  if (teacherOrderField) {
+    store.dispatch(setTeacherOrder({ id: teacherOrderField, desc: teacherOrderType }));
   }
 
   return {

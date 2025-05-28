@@ -4,11 +4,11 @@ import {
   createTeacher,
   deleteTeacher,
   updateTeacher,
+  handleTeacherVisible,
   createTeacherCategory,
   deleteTeacherCategory,
   getTeachersCategories,
   updateTeacherCategory,
-  handleTeacherVisible,
 } from "./teachers-async-actions";
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
@@ -29,6 +29,9 @@ const teachersSlice = createSlice({
     clearTeachers(state) {
       state.teachersCategories = null;
       state.loadingStatus = LoadingStatusTypes.LOADING;
+    },
+    setTeacherCategories(state, action: PayloadAction<TeachersCategoryType[]>) {
+      state.teachersCategories = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -160,7 +163,7 @@ const teachersSlice = createSlice({
   },
 });
 
-export const { setLoadingStatus, clearTeachers } = teachersSlice.actions;
+export const { setLoadingStatus, clearTeachers, setTeacherCategories } = teachersSlice.actions;
 
 export default teachersSlice.reducer;
 

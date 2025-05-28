@@ -5,10 +5,15 @@ import { NavLink } from "react-router";
 import { Plus, User } from "lucide-react";
 import { useSelector } from "react-redux";
 
+import {
+  createAuditoryCategory,
+  deleteAuditoryCategory,
+  updateAuditoryCategory,
+} from "~/store/auditories/auditories-async-actions";
 import type {
   UpdatingCategoryType,
-  GroupCategoryModalStateType,
-} from "../../components/features/pages/groups/groups-types";
+  CategoryModalStateType,
+} from "~/components/features/category-actions-modal/category-actions-modal-types";
 import { useCookies } from "react-cookie";
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
@@ -23,13 +28,13 @@ import { useItemsByCategory } from "~/hooks/use-items-by-category";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { auditoriesSelector } from "~/store/auditories/auditories-slise";
-import { deleteGroupCategory } from "~/store/groups/groups-async-actions";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { AUDITORY_FILTERS, AUDITORY_STATUS } from "~/constants/cookies-keys";
-import { generalSelector, setGroupFilters } from "~/store/general/general-slice";
+import { changeAlertModalStatus, generalSelector, setAuditoryFilters } from "~/store/general/general-slice";
 import { AuditoriesTable } from "~/components/features/pages/auditories/auditories-table";
-import CategoryActionsModal from "~/components/features/pages/groups/category-actions-modal";
 import type { AuditoriesTypes, AuditoryCategoriesTypes } from "~/store/auditories/auditories-types";
+import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal";
+import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal";
 
 const AuditoriesPage = () => {
   const dispatch = useAppDispatch();
@@ -53,17 +58,17 @@ const AuditoriesPage = () => {
       ? auditoriCategories.map((el) => ({ id: el.id }))
       : [],
   );
-  const [modalData, setModalData] = React.useState<GroupCategoryModalStateType>({
+  const [modalData, setModalData] = React.useState<CategoryModalStateType>({
     isOpen: false,
     actionType: "create",
   });
 
-  const { filteredItems: visibleGroups, counts } = useItemsByStatus<AuditoryCategoriesTypes>(
+  const { filteredItems: visibleAuditories, counts } = useItemsByStatus<AuditoryCategoriesTypes>(
     auditoriCategories ?? [],
     "auditories",
     activeStatus,
   ) as { counts: { all: number; active: number; archive: number }; filteredItems: AuditoriesTypes[] };
-  const filteredItems = useItemsByCategory(visibleGroups, selectedCategories);
+  const filteredItems = useItemsByCategory(visibleAuditories, selectedCategories);
 
   const onClickUpdateCategory = (id: number) => {
     if (!auditoriCategories) return;
@@ -82,21 +87,21 @@ const AuditoriesPage = () => {
     if (selectedCategory.auditories.length) {
       const alertPayload = {
         isOpen: true,
-        title: "Видалення структурного підрозділу неможливе",
-        text: "Підрозділ не може бути видалений, оскільки він містить пов’язані групи. Перед видаленням структурного підрозділу необхідно спочатку видалити або перемістити всі групи, які до нього належать.",
+        title: "Видалення категорії неможливе",
+        text: "Категорія не може бути видалена, оскільки вона містить пов’язані аудиторії. Перед видаленням категорії необхідно спочатку видалити або перемістити всі аудиторії, які до неї належать.",
       };
-      //   dispatch(changeAlertModalStatus(alertPayload));
+      dispatch(changeAlertModalStatus(alertPayload));
       return;
     }
 
     const confirmPayload = {
       isOpen: true,
-      title: "Ви дійсно хочете видалити структурний підрозділ?",
-      description: `Структурний підрозділ "${selectedCategory.name}" буде видалено назавжди. Цю дію не можна відмінити.`,
+      title: "Ви дійсно хочете видалити категорію?",
+      description: `Категорія "${selectedCategory.name}" буде видалена назавжди. Цю дію не можна відмінити.`,
     };
     const result = await onConfirm(confirmPayload, dispatch);
     if (result) {
-      dispatch(deleteGroupCategory(id));
+      dispatch(deleteAuditoryCategory(id));
     }
   };
 
@@ -105,25 +110,40 @@ const AuditoriesPage = () => {
     setCookie(AUDITORY_STATUS, value);
   };
 
+  const onCreateCategory = async (data: FormData) => {
+    await dispatch(createAuditoryCategory(data));
+  };
+
+  const onUpdateCategory = async (data: FormData & { id: number }) => {
+    await dispatch(updateAuditoryCategory(data));
+  };
+
   React.useEffect(() => {
     if (!selectedCategories.length) return;
     const categoriesIds = selectedCategories.map((el) => el.id);
     setCookie(AUDITORY_FILTERS, categoriesIds);
-    dispatch(setGroupFilters(selectedCategories));
+    dispatch(setAuditoryFilters(selectedCategories));
   }, [selectedCategories]);
 
   return (
     <>
-      <CategoryActionsModal updatingCategory={updatingCategory} modalData={modalData} setModalData={setModalData} />
+      <CategoryActionsModal
+        modalData={modalData}
+        setModalData={setModalData}
+        updatingCategory={updatingCategory}
+        onCreateCategory={onCreateCategory}
+        onUpdateCategory={onUpdateCategory}
+        setUpdatingCategory={setUpdatingCategory}
+      />
 
       <RootContainer classNames="mb-10">
         <div className="flex justify-between mb-6">
           <h2 className="text-xl">Категорії</h2>
 
           <div className="flex items-center gap-2">
-            <NavLink to="/groups/create">
+            <NavLink to="/auditories/create">
               <Button variant="outline">
-                <Plus /> Створити нову групу
+                <Plus /> Створити нову аудиторію
               </Button>
             </NavLink>
 
@@ -145,8 +165,8 @@ const AuditoriesPage = () => {
               key={item.id}
               name={item.name}
               ItemsIcon={User}
-              itemId={item.id}
               label="Категорія"
+              itemId={Number(item.id)}
               count={item.auditories.length}
               onClickUpdateFunction={onClickUpdateCategory}
               onClickDeleteFunction={onClickDeleteCategory}

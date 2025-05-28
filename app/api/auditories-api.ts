@@ -18,16 +18,17 @@ export const auditoriesAPI = {
     });
   },
   updateAuditoryCategory(payload: UpdateAuditoryCategoryPayloadType) {
-    return instanse.patch<AuditoryCategoriesTypes>(`/auditory-categories/${payload.id}`, {
-      name: payload.name,
-    });
+    const { id, ...data } = payload;
+    return instanse.patch<AuditoryCategoriesTypes>(`/auditory-categories/${id}`, data);
   },
   async deleteAuditoryCategory(id: number) {
     return instanse.delete<number>(`/auditory-categories/${id}`);
   },
 
   /* auditories */
-
+  getAuditory(auditoryId: string) {
+    return instanse.get<AuditoriesTypes>(`/auditories/${auditoryId}`);
+  },
   createAuditory(payload: CreateAuditoryPayloadType) {
     return instanse.post<AuditoriesTypes>("/auditories", payload);
   },

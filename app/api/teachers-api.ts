@@ -9,8 +9,8 @@ import { type TeachersCategoryType } from "../store/teachers/teachers-types";
 
 export const teachersAPI = {
   /* categories */
-  getTeachersCategories(isHide: boolean = false) {
-    return instanse.get<TeachersCategoryType[]>(`/teacher-categories/${isHide}`);
+  getTeachersCategories() {
+    return instanse.get<TeachersCategoryType[]>(`/teacher-categories`);
   },
   createTeacherCategory(payload: CreateTeacherCategoryPayloadType) {
     return instanse.post("/teacher-categories/", { name: payload.name });
@@ -25,6 +25,9 @@ export const teachersAPI = {
   },
 
   /* teachers */
+  getTeacher(id: string) {
+    return instanse.get(`/teachers/${id}`);
+  },
   createTeacher(payload: CreateTeacherPayloadType) {
     return instanse.post("/teachers", payload);
   },

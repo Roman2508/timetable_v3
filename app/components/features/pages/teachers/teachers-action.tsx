@@ -4,13 +4,13 @@ import { useNavigate } from "react-router";
 import { useAppDispatch } from "~/store/store";
 import { onConfirm } from "../../confirm-modal";
 import { ActionsDropdown } from "../../actions-dropdown";
-import { deleteAuditory } from "~/store/auditories/auditories-async-actions";
+import { deleteTeacher } from "~/store/teachers/teachers-async-actions";
 
-interface IAuditoriesActionsProps {
+interface ITeachersActionsProps {
   id: number;
 }
 
-const AuditoriesActions: React.FC<IAuditoriesActionsProps> = ({ id }) => {
+const TeachersActions: React.FC<ITeachersActionsProps> = ({ id }) => {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -20,13 +20,13 @@ const AuditoriesActions: React.FC<IAuditoriesActionsProps> = ({ id }) => {
 
     const confirmPayload = {
       isOpen: true,
-      title: "Ви дійсно хочете видалити аудиторію?",
-      description: `Аудиторія буде видалена назавжди. Цю дію не можна відмінити.`,
+      title: "Ви дійсно хочете видалити викладача?",
+      description: `Викладача буде видалено назавжди. Цю дію не можна відмінити.`,
     };
     const result = await onConfirm(confirmPayload, dispatch);
 
     if (result) {
-      dispatch(deleteAuditory(id));
+      dispatch(deleteTeacher(id));
     }
   };
 
@@ -36,9 +36,9 @@ const AuditoriesActions: React.FC<IAuditoriesActionsProps> = ({ id }) => {
       //   changeStatusFunction={() => {}}
       // changeCategoryFunction={() => {}}
       onClickDeleteFunction={onClickDeleteCategory}
-      onClickUpdateFunction={() => navigate(`/auditories/${id}`)}
+      onClickUpdateFunction={() => navigate(`/teachers/${id}`)}
     />
   );
 };
 
-export default AuditoriesActions;
+export default TeachersActions;

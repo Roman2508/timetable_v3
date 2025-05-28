@@ -1,9 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import type {
+  GeneralSliceInitialState,
   ChangeAlertDialogStateType,
   ChangeConfirmDialogStateType,
-  GeneralSliceInitialState,
 } from "./general-types";
 import type { RootState } from "../store";
 
@@ -89,6 +89,17 @@ const generalSlice = createSlice({
       state.auditories.isOrderDesc = action.payload.desc;
     },
 
+    setTeacherFilters(state, action: PayloadAction<{ id: number }[]>) {
+      state.teachers.categories = action.payload;
+    },
+    setTeacherStatus(state, action: PayloadAction<"Всі" | "Активний" | "Архів">) {
+      state.teachers.status = action.payload;
+    },
+    setTeacherOrder(state, action: PayloadAction<{ id: string; desc: boolean }>) {
+      state.teachers.orderField = action.payload.id;
+      state.teachers.isOrderDesc = action.payload.desc;
+    },
+
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
       const keys = Object.keys(action.payload);
       const { isOpen, answer, title, itemName, description, onConfirm } = action.payload;
@@ -117,7 +128,10 @@ export const {
   setGroupsOrder,
   setSidebarState,
   setGroupFilters,
+  setTeacherOrder,
   setAuditoryOrder,
+  setTeacherStatus,
+  setTeacherFilters,
   setAuditoryStatus,
   setAuditoryFilters,
   changeAlertModalStatus,

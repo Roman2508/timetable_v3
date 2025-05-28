@@ -95,7 +95,12 @@ const EntityField: React.FC<IEntityFieldProps> = ({
           <EntitiesDropdown
             activeItem={activeItem}
             items={items ? items : []}
-            onChangeSelected={(value) => setUserFormData((prev) => ({ ...prev, [inputKey]: Number(value) }))}
+            onChangeSelected={(value) =>
+              setUserFormData((prev) => {
+                const currentValue = inputKey === "status" || inputKey === "status" ? value : Number(value);
+                return { ...prev, [inputKey]: currentValue };
+              })
+            }
           />
           <p className="text-error text-sm mt-1">
             {typeof errors?.[inputKey as keyof typeof errors] === "object" &&

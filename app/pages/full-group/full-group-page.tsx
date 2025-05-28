@@ -26,13 +26,13 @@ interface IFullGroupProps {
 
 const initialFormState = {
   name: "",
-  yearOfAdmission: "",
+  yearOfAdmission: new Date().getFullYear(),
   courseNumber: "",
   students: "",
   formOfEducation: "Денна",
   category: "",
   educationPlan: "",
-  status: "Активна",
+  status: "Активний",
   calendarId: "",
 };
 

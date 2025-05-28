@@ -8,6 +8,7 @@ export type TeachersInitialState = {
 export type TeachersCategoryType = {
   id: number;
   name: string;
+  shortName: string;
   teachers: TeachersType[];
 };
 
@@ -19,10 +20,12 @@ export type TeachersType = {
   calendarId: string;
   folderId: string;
   isHide: boolean;
-  category: { id: number; name: string };
   position: string;
   bio: EditorJSItemType[];
+  status: "Активний" | "Архів";
   printedWorks: EditorJSItemType[];
+  category: { id: number; name: string };
+  user: { id: number; email: string; lastLogin: string };
 };
 
 export type EditorJSItemType = {

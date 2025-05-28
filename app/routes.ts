@@ -8,8 +8,11 @@ export default [
     route("groups/:id", "./routes/full-group.tsx"),
 
     route("auditories", "./routes/auditories.tsx"),
+    route("auditories/:id", "./routes/full-auditory.tsx"),
 
     route("teachers", "./routes/teachers.tsx"),
+    route("teachers/:id", "./routes/full-teacher.tsx"),
+
     route("students", "./routes/students-accounts.tsx"),
     route("students-divide", "./routes/students-divide.tsx"),
 
