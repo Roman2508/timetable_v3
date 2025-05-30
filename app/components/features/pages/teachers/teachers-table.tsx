@@ -9,6 +9,7 @@ import {
   getFilteredRowModel,
   type FilterFn,
   type SortingState,
+  type Row,
 } from "@tanstack/react-table";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
@@ -48,24 +49,23 @@ export const TeachersTable: React.FC<ITeachersTableProps> = ({ teachers, globalS
   const columnHelper = createColumnHelper<TeachersType>();
   const columns = React.useMemo(
     () => [
-      columnHelper.display({
+      columnHelper.accessor((row) => `${row.lastName} ${row.firstName} ${row.middleName}`, {
         id: "name",
         header: "ПІБ",
-        cell: ({ row }) => {
-          return `${row.original.lastName} ${row.original.firstName} ${row.original.middleName}`;
-        },
+        enableSorting: true,
+        enableGlobalFilter: true,
       }),
       columnHelper.accessor((row) => row.category?.name ?? "", {
         id: "category",
         header: "Циклова комісія",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor((row) => row.user.email ?? "", {
+      columnHelper.accessor((row) => row?.user?.email ?? "", {
         id: "email",
         header: "Пошта",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor((row) => formatLastLogin(row.user.lastLogin) ?? "", {
+      columnHelper.accessor((row) => formatLastLogin(row?.user?.lastLogin) ?? "", {
         id: "lastLogin",
         header: "Останній вхід",
         cell: (info) => info.getValue(),
@@ -93,7 +93,7 @@ export const TeachersTable: React.FC<ITeachersTableProps> = ({ teachers, globalS
       columnHelper.display({
         id: "actions",
         header: "Дії",
-        cell: ({ row }) => <TeachersActions id={row.original.id} />,
+        cell: ({ row }) => <TeachersActions {...row.original} />,
       }),
     ],
     [],

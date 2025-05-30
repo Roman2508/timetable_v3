@@ -1,75 +1,242 @@
+import React from "react";
+import { useSelector } from "react-redux";
 import { ChevronsUpDown, Ellipsis, GripVertical } from "lucide-react";
 
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/common/button";
+import { plansSelector } from "~/store/plans/plans-slice";
 import { RootContainer } from "~/components/layouts/root-container";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import { SelectPlanTable } from "~/components/features/select-plan/select-plan-table";
+import type { PlansCategoriesType, PlansType, PlanType } from "~/store/plans/plans-types";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { InputSearch } from "~/components/ui/custom/input-search";
+import { useItemsByStatus } from "~/hooks/use-items-by-status";
+import { useItemsByCategory } from "~/hooks/use-items-by-category";
+import { generalSelector } from "~/store/general/general-slice";
+import { useCookies } from "react-cookie";
+import { PLAN_STATUS } from "~/constants/cookies-keys";
+import { PopoverFilter } from "~/components/ui/custom/popover-filter";
+import { sortByName } from "~/helpers/sort-by-name";
 
-const plans = [
-  { id: 1, name: "Фармація, промислова фармація (денна форма)", count: 12, checked: true },
-  { id: 2, name: "Технології медичної діагностики та лікування", count: 17, checked: false },
-  { id: 3, name: "Фармація, промислова фармація (заочна форма)", count: 7, checked: true },
-];
+//  const plansCategories = [
+//     {
+//       id: 1,
+//       name: "І8 Фармація. Денна форма 2025",
+//       plans: [
+//         {
+//           id: 1,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 2,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 3,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 4,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 5,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//       ],
+//     },
+//     {
+//       id: 2,
+//       name: "І8 Фармація. Денна форма 2025",
+//       plans: [
+//         {
+//           id: 10,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 11,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 11,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 12,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 12,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 13,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 13,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 14,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 14,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 15,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 15,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//       ],
+//     },
+//     {
+//       id: 3,
+//       name: "І8 Фармація. Денна форма 2025",
+//       plans: [
+//         {
+//           id: 1,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 1,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 1,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//         {
+//           id: 1,
+//           name: "І8 Фармація 2025",
+//           category: {
+//             id: 1,
+//             name: "І8 Фармація. Денна форма 2025",
+//           },
+//         },
+//       ],
+//     },
+//   ];
 
 export default function PlansPage() {
+  const [_, setCookie] = useCookies();
+
+  const {
+    plans: { status: defaultStatus },
+  } = useSelector(generalSelector);
+  const { plansCategories } = useSelector(plansSelector);
+
+  const [selectedCategories, setSelectedCategories] = React.useState<any[]>([]);
+  const [selectedPlan, setSelectedPlan] = React.useState<PlansType | null>({ id: 0, name: "" } as PlansType);
+  const [globalSearch, setGlobalSearch] = React.useState("");
+  const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">(
+    defaultStatus ? defaultStatus : "Всі",
+  );
+
+  const { filteredItems: visiblePlans, counts } = useItemsByStatus<PlansCategoriesType>(
+    plansCategories,
+    "plans",
+    activeStatus,
+  );
+
+  const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
+    setActiveStatus(value);
+    setCookie(PLAN_STATUS, value);
+  };
+
   return (
     <RootContainer>
       <div className="flex justify-between mb-6">
         <h2 className="text-xl">Навчальні плани</h2>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline">Створити новий</Button>
+          <Button variant="outline">Створити новий план</Button>
 
-          <Button>Filters</Button>
+          <Button variant="outline">Створити нову категорію</Button>
+
+          <PopoverFilter
+            itemsPrefix=""
+            enableSelectAll
+            filterVariant="default"
+            selectAllLabel="Вибрати всі"
+            selectedItems={selectedCategories}
+            setSelectedItems={setSelectedCategories}
+            items={sortByName(plansCategories) || []}
+          />
         </div>
       </div>
 
-      {[
-        "І8 Фармація 2024",
-        "І6 Технології медичної діагностики та лікування 2024",
-        "І8 Фармація 2025",
-        "І6 Технології медичної діагностики та лікування 2025",
-      ].map((el) => (
-        <Collapsible className="py-2 px-4 border mb-2">
-          <div className="flex items-center justify-between space-x-4">
-            <h4 className="text-sm font-semibold">{el}</h4>
+      <Tabs
+        className="mb-4"
+        defaultValue={activeStatus}
+        onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
+      >
+        <TabsList>
+          <TabsTrigger value="Всі">Всі ({counts.all})</TabsTrigger>
+          <TabsTrigger value="Активний">Активні ({counts.active})</TabsTrigger>
+          <TabsTrigger value="Архів">Архів ({counts.archive})</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-            <div className="flex gap-2">
-              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                <Ellipsis className="w-4" />
-              </Button>
+      <InputSearch
+        className="mb-4"
+        value={globalSearch}
+        placeholder="Пошук..."
+        onChange={(e) => setGlobalSearch(e.target.value)}
+      />
 
-              <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
-                <GripVertical className="w-4" />
-              </Button>
-
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <ChevronsUpDown className="h-4 w-4" />
-                  <span className="sr-only">Toggle</span>
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-          </div>
-
-          <CollapsibleContent className="py-2 mb-2 ml-4">
-            {[
-              "226 Фармація, промислова фармація ОПС ФМБ (БСО) 2024",
-              "І8 Фармація ОПС ФМБ (БСО) 2024",
-              "І6 Технології медичної діагностики та лікування ОПС ФМБ (БСО) 2024",
-              "226 Фармація, промислова фармація ОПС ФМБ (ПЗСО) 2025",
-            ].map((lessonType) => (
-              <div
-                className={cn(
-                  "border px-4 py-2 mb-2 font-mono text-sm cursor-pointer hover:border-primary hover:text-primary",
-                )}
-              >
-                {lessonType} (вся група)
-              </div>
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
-      ))}
+      {plansCategories?.length ? (
+        <SelectPlanTable
+          isEditable
+          searchValue={globalSearch}
+          selectedPlan={selectedPlan}
+          setSelectedPlan={setSelectedPlan}
+          plansCategories={plansCategories ? plansCategories : []}
+        />
+      ) : (
+        <p>Пусто</p>
+      )}
     </RootContainer>
   );
 }

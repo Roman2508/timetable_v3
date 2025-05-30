@@ -30,6 +30,9 @@ const generalInitialState: GeneralSliceInitialState = {
     orderField: "",
     isOrderDesc: false,
   },
+  plans: {
+    status: "Всі",
+  },
 
   confirmModal: {
     isOpen: false,
@@ -100,6 +103,10 @@ const generalSlice = createSlice({
       state.teachers.isOrderDesc = action.payload.desc;
     },
 
+    setPlanStatus(state, action: PayloadAction<"Всі" | "Активний" | "Архів">) {
+      state.teachers.status = action.payload;
+    },
+
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
       const keys = Object.keys(action.payload);
       const { isOpen, answer, title, itemName, description, onConfirm } = action.payload;
@@ -124,6 +131,7 @@ const generalSlice = createSlice({
 });
 
 export const {
+  setPlanStatus,
   setGroupStatus,
   setGroupsOrder,
   setSidebarState,

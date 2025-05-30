@@ -2,7 +2,7 @@ import z from "zod";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { Building2, Pencil, Plus, Trash2, User } from "lucide-react";
+import { Pencil, Plus, Trash2, User } from "lucide-react";
 
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
@@ -14,9 +14,8 @@ import { onConfirm } from "~/components/features/confirm-modal";
 import { RootContainer } from "~/components/layouts/root-container";
 import type { TeachersType } from "~/store/teachers/teachers-types";
 import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
-import { auditoriesSelector } from "~/store/auditories/auditories-slise";
-import { createTeacher, updateTeacher } from "~/store/teachers/teachers-async-actions";
-import { createAuditory, deleteAuditory, updateAuditory } from "~/store/auditories/auditories-async-actions";
+import { teachersSelector } from "~/store/teachers/teachers-slice";
+import { createTeacher, deleteTeacher, updateTeacher } from "~/store/teachers/teachers-async-actions";
 
 interface IFullTeacherProps {
   teacherId: string;
@@ -24,16 +23,23 @@ interface IFullTeacherProps {
 }
 
 const initialFormState = {
-  name: "",
-  seatsNumber: 0,
-  courseNumber: "",
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  calendarId: "",
   category: "",
   status: "Активний",
 };
 
 const formSchema = z.object({
-  name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
-  seatsNumber: z.number({ message: "Це поле обов'язкове" }),
+  firstName: z.string({ message: "Це поле обов'язкове" }),
+  middleName: z.string({ message: "Це поле обов'язкове" }),
+  lastName: z.string({ message: "Це поле обов'язкове" }),
+  email: z.string({ message: "Це поле обов'язкове" }).email({ message: "Не вірний формат пошти" }),
+  password: z.string().optional(),
+  calendarId: z.string().optional(),
   category: z.number({ message: "Це поле обов'язкове" }),
   status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }),
 });
@@ -46,32 +52,68 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { auditoriCategories } = useSelector(auditoriesSelector);
+  const { teachersCategories } = useSelector(teachersSelector);
 
   const generalInformationFields = React.useMemo(
     () => [
       {
-        title: "Назва*",
-        key: "name",
-        text: "Назва/номер аудиторії",
+        title: "Прізвище*",
+        key: "lastName",
+        text: "Для відображення у розкладі та списках",
         isEditable: true,
         inputType: "string",
         variant: "input",
         items: [],
       },
       {
-        title: "Кількість місць*",
-        key: "seatsNumber",
-        text: "Кількість посадочних місць в аудиторії",
+        title: "Ім'я*",
+        key: "firstName",
+        text: "Для відображення у розкладі та списках",
         isEditable: true,
-        inputType: "number",
+        inputType: "string",
+        variant: "input",
+        items: [],
+      },
+      {
+        title: "По батькові*",
+        key: "middleName",
+        text: "Для відображення у розкладі та списках",
+        isEditable: true,
+        inputType: "string",
+        variant: "input",
+        items: [],
+      },
+      {
+        title: "Пошта*",
+        key: "email",
+        text: "Використовується для доступу до системи",
+        isEditable: true,
+        inputType: "email",
+        variant: "input",
+        items: [],
+      },
+      {
+        title: "Пароль*",
+        key: "password",
+        text: "Використовується для доступу до системи",
+        isEditable: true,
+        inputType: "string",
+        variant: "input",
+        items: [],
+      },
+      {
+        title: "Календар*",
+        key: "calendarId",
+        text: "Для автоматичного імпорту розкладу занять",
+        isEditable: true,
+        inputType: "string",
         variant: "input",
         items: [],
       },
       {
         title: "Статус*",
         key: "status",
-        text: "Використовується для відображення або приховування аудиторії",
+        text: "Використовується для відображення або приховування викладача",
         isEditable: true,
         inputType: "string",
         variant: "select",
@@ -81,16 +123,16 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
         ],
       },
       {
-        title: "Категорія",
+        title: "Циклова комісія*",
         key: "category",
-        text: "Категорія до якої відноситься аудиторія",
+        text: "Циклова комісія до якої відноситься викладач",
         isEditable: true,
         inputType: "number",
         variant: "select",
-        items: sortByName(auditoriCategories),
+        items: sortByName(teachersCategories),
       },
     ],
-    [auditoriCategories],
+    [teachersCategories],
   );
 
   const [userFormData, setUserFormData] = React.useState<Partial<FormData>>({});
@@ -101,11 +143,23 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
     ...initialFormState,
     ...teacher,
     category: teacher?.category.id,
+    email: teacher?.user.email,
     ...userFormData,
   };
 
+  const conditionalFormSchema = formSchema.superRefine((data, ctx) => {
+    if (!isUpdate && !data.password) {
+      ctx.addIssue({
+        path: ["password"],
+        code: z.ZodIssueCode.custom,
+        message: "Це поле обов'язкове",
+      });
+    }
+  });
+
   const validate = () => {
-    const res = formSchema.safeParse(formData);
+    // const res = formSchema.safeParse(formData);
+    const res = conditionalFormSchema.safeParse(formData);
     if (res.success) return;
     return res.error.format();
   };
@@ -135,15 +189,16 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
     }
   };
 
-  const onDeleteAuditory = async () => {
+  const onDeleteTeacher = async () => {
     if (!isUpdate) return;
 
-    const title = `Ви впевнені, що хочете видалити викладача: ${getTeacherFullname(teacher)}?`;
+    const title = `Ви впевнені, що хочете видалити викладача:`;
     const description = "Викладач, буде видалений назавжди. Цю дію не можна відмінити.";
-    const result = await onConfirm({ isOpen: true, title, description }, dispatch);
+    const itemName = `${getTeacherFullname(teacher)}?`;
+    const result = await onConfirm({ isOpen: true, title, itemName, description }, dispatch);
 
     if (result) {
-      await dispatch(deleteAuditory(Number(teacher)));
+      await dispatch(deleteTeacher(Number(teacher)));
       navigate("/teachers");
     }
   };
@@ -153,14 +208,9 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between items-center mb-6">
           {isUpdate ? (
-            <EntityHeader
-              Icon={User}
-              label="ВИКЛАДАЧ"
-              status={teacher.status}
-              name={getTeacherFullname(teacher)}
-            />
+            <EntityHeader Icon={User} label="ВИКЛАДАЧ" status={teacher.status} name={getTeacherFullname(teacher)} />
           ) : (
-            <h2 className="flex items-center h-14 text-2xl font-semibold">Створити аудиторію</h2>
+            <h2 className="flex items-center h-14 text-2xl font-semibold">Створити викладача</h2>
           )}
 
           <div className="flex gap-3">
@@ -172,7 +222,7 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
             ) : (
               <Button type="submit" disabled={!!errors || isPending}>
                 <Plus />
-                Створити аудиторію
+                Створити викладача
               </Button>
             )}
           </div>
@@ -201,16 +251,19 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
 
       {isUpdate && (
         <Card className="px-10 pb-12 mb-6">
-          <h3 className="text-xl font-semibold mb-5">Видалення аудиторії</h3>
+          <h3 className="text-xl font-semibold mb-5">Видалення викладача</h3>
 
           <div className="flex flex-col items-start gap-4 mb-4">
             <div>
-              <p className="text-black/40 text-md">Аудиторія буде видалена назавжди. Цю дію не можна відмінити.</p>
+              <p className="text-black/40 text-md">
+                Викладач та все педагогічне навантаження пов'язане з ним будуть видалені назавжди.
+              </p>
+              <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
             </div>
 
-            <Button variant="destructive" onClick={onDeleteAuditory}>
+            <Button variant="destructive" onClick={onDeleteTeacher}>
               <Trash2 />
-              Видалити аудиторію
+              Видалити викладача
             </Button>
           </div>
         </Card>

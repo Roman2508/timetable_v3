@@ -201,7 +201,9 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
   const formData = {
     ...initialFormState,
     ...group,
+    category: group?.category?.id || 0,
     students: group?.students.length || 0,
+    educationPlan: group?.educationPlan?.id || 0,
     ...userFormData,
   };
 
@@ -285,6 +287,7 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
     <>
       <SelectPlanModal
         setUserFormData={setUserFormData}
+        defaultValue={formData.educationPlan}
         setOpenedModalName={setOpenedModalName}
         isOpen={openedModalName === "educationPlan"}
       />

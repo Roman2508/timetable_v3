@@ -14,6 +14,9 @@ export type GeneralSliceInitialState = {
   groups: ItemFilterType;
   auditories: ItemFilterType;
   teachers: ItemFilterType;
+  plans: {
+    status: "Всі" | "Активний" | "Архів";
+  };
 
   confirmModal: {
     isOpen: boolean;

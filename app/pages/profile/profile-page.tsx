@@ -1,8 +1,11 @@
 import {
   Lock,
   Mail,
+  Info,
   User,
   Apple,
+  Users,
+  Award,
   Camera,
   Chrome,
   Palette,
@@ -10,17 +13,14 @@ import {
   KeyRound,
   Settings,
   SwatchBook,
+  BookMarked,
   NotebookPen,
   ChevronRight,
-  MonitorSmartphone,
-  Award,
-  Info,
   BookOpenText,
-  BookMarked,
-  ClipboardMinus,
   NotebookText,
-  Users,
   BookOpenCheck,
+  ClipboardMinus,
+  MonitorSmartphone,
 } from "lucide-react";
 import React from "react";
 
@@ -91,7 +91,8 @@ const ProfileTab = () => {
       </h2>
 
       <div className="flex justify-center mb-10">
-        <div className="w-35 h-35 rounded-full hover:bg-secondary bg-secondary/50 flex flex-col justify-center items-center border-2 border-dashed cursor-pointer">
+        {/* rounded-full */}
+        <div className="w-35 h-35 hover:bg-secondary bg-secondary/50 flex flex-col justify-center items-center border-2 border-dashed cursor-pointer">
           <Camera className="relative top-[-5px]" />
           <p className="relative top-[-5px] text-xs text-center">Завантажити фото</p>
         </div>

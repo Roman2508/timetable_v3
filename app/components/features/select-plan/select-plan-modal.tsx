@@ -17,10 +17,12 @@ import { plansSelector } from "~/store/plans/plans-slice";
 import { Separator } from "~/components/ui/common/separator";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import type { GroupFormData } from "~/pages/full-group/full-group-page";
+import type { PlansCategoriesType } from "~/store/plans/plans-types";
 
 interface IChangePlanModalProps {
   isOpen: boolean;
-  defaultValue?: { id: number; name: string };
+  defaultValue?: number;
+  // defaultValue?: { id: number; name: string };
   setOpenedModalName: React.Dispatch<React.SetStateAction<string>>;
   setUserFormData: React.Dispatch<React.SetStateAction<Partial<GroupFormData>>>;
 }
@@ -30,6 +32,15 @@ const CONFIRM_MODAL_DESC =
   "Усі дані попереднього навантаження будуть видалені, і на їх місці буде автоматично згенеровано нове навантаження згідно з обраним навчальним планом.";
 
 const MODAL_NAME = "educationPlan";
+
+const findPlanById = (categories: PlansCategoriesType[] | null, planId?: number) => {
+  if (!planId || !categories) return null;
+  for (const category of categories) {
+    const foundPlan = category.plans.find((plan) => plan.id === planId);
+    if (foundPlan) return foundPlan;
+  }
+  return null;
+};
 
 const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
   isOpen,
@@ -42,7 +53,7 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
   const { plansCategories } = useSelector(plansSelector);
 
   const [searchValue, setSearchValue] = React.useState("");
-  const [selectedPlan, setSelectedPlan] = React.useState(defaultValue ? defaultValue : { id: 0, name: "" });
+  const [selectedPlan, setSelectedPlan] = React.useState(findPlanById(plansCategories, defaultValue));
 
   const onOpenChange = () => {
     setOpenedModalName((prev) => (prev === MODAL_NAME ? "" : MODAL_NAME));
@@ -50,14 +61,15 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
 
   const onClickConfirm = async () => {
     // Якщо раніше був вибраний план - перевіряю чи не вибрано інший
-    if (defaultValue && defaultValue.id !== selectedPlan.id) {
+    if (defaultValue !== selectedPlan?.id) {
       const result = await onConfirm({ title: CONFIRM_MODAL_TITLE, description: CONFIRM_MODAL_DESC }, dispatch);
 
-      if (result) {
+      if (result && selectedPlan) {
         setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
       }
     } else {
       // Якщо раніше плану не було (створення нової групи) - зберігаю вибраний план
+      if (!selectedPlan) return;
       setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
     }
     onOpenChange();
@@ -106,12 +118,12 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
         <Separator />
 
         <DialogFooter className="flex !justify-between items-center pt-2 px-4">
-          <Button disabled={!selectedPlan.id} onClick={() => onClickConfirm()}>
+          <Button disabled={!selectedPlan?.id} onClick={() => onClickConfirm()}>
             Зберегти
           </Button>
 
           <div className="font-mono mr-3 text-right flex flex-col">
-            {selectedPlan.name ? (
+            {selectedPlan?.name ? (
               <>
                 <p className="font-bold leading-5">Вибраний навчальний план:</p>
                 <span className="text-sm">{selectedPlan.name}</span>

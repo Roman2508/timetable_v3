@@ -54,7 +54,6 @@ const EntitiesDropdown: React.FC<IEntitiesDropdownProps> = ({
           return (
             <DropdownMenuCheckboxItem
               key={item.id}
-              className="capitalize"
               checked={item.id === activeItem?.id}
               onCheckedChange={() => {
                 onChangeSelected(item.id);

@@ -4,33 +4,35 @@ import { Provider as ReduxProvider } from "react-redux";
 import { Outlet, useLoaderData, useLocation, type LoaderFunctionArgs } from "react-router";
 
 import {
+  PLAN_STATUS,
   GROUP_STATUS,
   GROUP_FILTERS,
   GROUP_SORT_KEY,
+  TEACHER_STATUS,
   GROUP_SORT_TYPE,
   AUDITORY_STATUS,
+  TEACHER_FILTERS,
+  TEACHER_SORT_KEY,
   AUDITORY_FILTERS,
   AUDITORY_SORT_KEY,
+  TEACHER_SORT_TYPE,
   AUDITORY_SORT_TYPE,
   SIDEBAR_COOKIE_NAME,
   EXPANDED_SIDEBAR_ITEMS,
-  TEACHER_FILTERS,
-  TEACHER_STATUS,
-  TEACHER_SORT_KEY,
-  TEACHER_SORT_TYPE,
 } from "~/constants/cookies-keys";
 import {
+  setPlanStatus,
   setGroupsOrder,
   setGroupStatus,
   setSidebarState,
   setGroupFilters,
+  setTeacherOrder,
   setAuditoryOrder,
+  setTeacherStatus,
   setAuditoryStatus,
+  setTeacherFilters,
   setAuditoryFilters,
   toggleExpandedSidebarItems,
-  setTeacherFilters,
-  setTeacherOrder,
-  setTeacherStatus,
 } from "~/store/general/general-slice";
 import { plansAPI } from "~/api/plans-api";
 import { groupsAPI } from "~/api/groups-api";
@@ -38,6 +40,7 @@ import SidebarLayout from "./sidebar-layout";
 import Footer from "../features/footer/footer";
 import { CookiesProvider } from "react-cookie";
 import AlertModal from "../features/alert-modal";
+import { teachersAPI } from "~/api/teachers-api";
 import ConfirmModal from "../features/confirm-modal";
 import { auditoriesAPI } from "~/api/auditories-api";
 import { TooltipProvider } from "../ui/common/tooltip";
@@ -46,9 +49,8 @@ import { Header } from "~/components/features/header/header";
 import { setPlanCategories } from "~/store/plans/plans-slice";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
 import { setGroupCategories } from "~/store/groups/groups-slice";
-import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
-import { teachersAPI } from "~/api/teachers-api";
 import { setTeacherCategories } from "~/store/teachers/teachers-slice";
+import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -84,6 +86,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // plans
   const { data: planCategories } = await plansAPI.getPlansCategories();
   store.dispatch(setPlanCategories(planCategories));
+
+  // plans-cookies
+  const planStatus = (cookies[PLAN_STATUS] ?? "Всі") as "Всі" | "Активний" | "Архів";
+  store.dispatch(setPlanStatus(planStatus));
 
   // auditories
   const { data: auditoryCategories } = await auditoriesAPI.getAuditoryCategories();
