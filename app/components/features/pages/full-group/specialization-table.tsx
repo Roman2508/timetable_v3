@@ -21,12 +21,7 @@ import { cn } from "~/lib/utils";
 import SpecializationDropdown from "./specialization-dropdown";
 import type { GroupLoadType } from "~/store/groups/groups-types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value);
-  addMeta({ itemRank });
-  return itemRank.passed;
-};
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 
 const getItemKey = (item: any) => {
   if (!item) return "";

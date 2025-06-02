@@ -7,18 +7,16 @@ import {
   getSortedRowModel,
   createColumnHelper,
   getFilteredRowModel,
-  type FilterFn,
   type SortingState,
-  type Row,
 } from "@tanstack/react-table";
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { rankItem } from "@tanstack/match-sorter-utils";
 
 import { cn } from "~/lib/utils";
 import TeachersActions from "./teachers-action";
 import { Badge } from "~/components/ui/common/badge";
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { formatLastLogin } from "~/helpers/format-last-login";
 import { generalSelector } from "~/store/general/general-slice";
 import type { TeachersType } from "~/store/teachers/teachers-types";
@@ -31,15 +29,9 @@ interface ITeachersTableProps {
   setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value);
-  addMeta({ itemRank });
-  return itemRank.passed;
-};
-
 export const TeachersTable: React.FC<ITeachersTableProps> = ({ teachers, globalSearch, setGlobalSearch }) => {
   const [_, setCookie] = useCookies();
-  console.log("teachers", teachers);
+
   const {
     teachers: { isOrderDesc, orderField },
   } = useSelector(generalSelector);

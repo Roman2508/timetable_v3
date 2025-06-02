@@ -22,18 +22,13 @@ import { generalSelector } from "~/store/general/general-slice";
 import type { GroupsShortType } from "~/store/groups/groups-types";
 import { GROUP_SORT_KEY, GROUP_SORT_TYPE } from "~/constants/cookies-keys";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 
 interface IGroupsTableProps {
   globalSearch: string;
   groups: GroupsShortType[];
   setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value);
-  addMeta({ itemRank });
-  return itemRank.passed;
-};
 
 export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch, setGlobalSearch }) => {
   const [_, setCookie] = useCookies();

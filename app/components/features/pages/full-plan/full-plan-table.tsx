@@ -1,142 +1,114 @@
-import React from "react";
-
 import {
   flexRender,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  getPaginationRowModel,
-  type SortingFn,
+  createColumnHelper,
+  getFilteredRowModel,
   type ColumnDef,
   type SortingState,
   type PaginationState,
 } from "@tanstack/react-table";
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  ListFilter,
-  Plus,
-} from "lucide-react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/common/pagination";
+import { useCallback, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
+import { ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 import { cn } from "~/lib/utils";
-import { makeData, type Person } from "./make-data";
-import { Button } from "~/components/ui/common/button";
-import { Checkbox } from "~/components/ui/common/checkbox";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
 import { Input } from "~/components/ui/common/input";
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
+import { Button } from "~/components/ui/common/button";
+import type { PlanSubjectType } from "~/store/plans/plans-types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { InputSearch } from "~/components/ui/custom/input-search";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
+import { groupLessonsByName, type PlanItemType, type SemesterHoursType } from "~/helpers/group-lessons-by-name";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
 
-// A typical debounced input react component
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = React.useState(initialValue);
+const defaultSemesterData = {
+  id: 0,
+  lectures: 0,
+  practical: 0,
+  laboratory: 0,
+  seminars: 0,
+  exams: 0,
+  examsConsulation: 0,
+  metodologicalGuidance: 0,
+  independentWork: 0,
+  totalHours: 0,
+};
 
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return <InputSearch onChange={(e) => setValue(e.target.value)} placeholder="Пошук..." value={value} {...props} />;
+interface IFullPlanTableProps {
+  globalSearch: string;
+  planSubjects: PlanSubjectType[];
+  setGlobalSearch: Dispatch<SetStateAction<string>>;
+  setIsHoursModalOpen: Dispatch<SetStateAction<boolean>>;
+  setIsDetailsModalOpen: Dispatch<SetStateAction<boolean>>;
+  setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>;
 }
 
-export const FullPlanTable = () => {
-  const rerender = React.useReducer(() => ({}), {})[1];
+export const FullPlanTable: FC<IFullPlanTableProps> = ({
+  globalSearch,
+  planSubjects,
+  setGlobalSearch,
+  setIsHoursModalOpen,
+  setIsDetailsModalOpen,
+  setSelectedSemesterHours,
+}) => {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const data = useMemo(() => groupLessonsByName(planSubjects), [planSubjects]);
 
-  const columns = React.useMemo<ColumnDef<Person>[]>(
+  const columnHelper = createColumnHelper<PlanItemType>();
+  const columns = useMemo<ColumnDef<PlanItemType, string>[]>(
     () => [
-      {
-        accessorKey: "name",
+      columnHelper.accessor((row) => row.name, {
+        id: "name",
         header: "Дисципліна",
-        rowSpan: 3,
-        footer: (props) => props.column.id,
-        // columns: [
-        //   {
-        //     accessorKey: "name",
-        //     cell: (info) => info.getValue(),
-        //     footer: (props) => props.column.id,
-        //   },
-        // ],
-      },
-      {
-        accessorKey: "cmk",
+        cell: (info) => info.getValue(),
+        // enableSorting: true,
+        // enableGlobalFilter: true,
+        // rowSpan: 3,
+      }),
+
+      columnHelper.accessor((row) => row.cmk.name, {
+        id: "cmk",
         header: "ЦК",
-        rowSpan: 3,
-        footer: (props) => props.column.id,
-      },
-      {
+        cell: (info) => info.getValue(),
+        // enableSorting: true,
+        // enableGlobalFilter: true,
+        // rowSpan: 3,
+      }),
+
+      columnHelper.accessor((row) => String(row.totalHours), {
+        id: "totalHours",
         header: "Всього год.",
-        accessorKey: "totalHours",
-        footer: (props) => props.column.id,
-        rowSpan: 3,
-        // columns: [
-        //   {
-        //     accessorFn: (row) => row.lastName,
-        //     id: "age",
-        //     cell: (info) => info.getValue(),
-        //     header: () => <span>Last Name</span>,
-        //     footer: (props) => props.column.id,
-        //   },
-        // ],
-      },
+        cell: (info) => info.getValue(),
+        // enableSorting: true,
+        // enableGlobalFilter: true,
+        // rowSpan: 3,
+      }),
+
       {
         header: "Розподіл за курсами та семестрами",
-        footer: (props) => props.column.id,
         rowSpan: 1,
         columns: [
           {
             accessorKey: "course_1",
             header: () => "1 курс",
             rowSpan: 1,
-            footer: (props) => props.column.id,
             columns: [
               {
                 rowSpan: 1,
                 id: "semester_1",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_1,
+                accessorFn: (row) => (row.semester_1 ? row.semester_1.totalHours : ""),
                 header: () => <span>Семестр 1</span>,
-                footer: (props) => props.column.id,
               },
               {
                 rowSpan: 1,
                 id: "semester_2",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_2,
+                accessorFn: (row) => (row.semester_2 ? row.semester_2.totalHours : ""),
                 header: () => <span>Семестр 2</span>,
-                footer: (props) => props.column.id,
               },
             ],
           },
@@ -144,23 +116,20 @@ export const FullPlanTable = () => {
             accessorKey: "course_2",
             header: () => "2 курс",
             rowSpan: 1,
-            footer: (props) => props.column.id,
             columns: [
               {
                 rowSpan: 1,
                 id: "semester_3",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_3,
+                accessorFn: (row) => (row.semester_3 ? row.semester_3.totalHours : ""),
                 header: () => <span>Семестр 3</span>,
-                footer: (props) => props.column.id,
               },
               {
                 rowSpan: 1,
                 id: "semester_4",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_4,
+                accessorFn: (row) => (row.semester_4 ? row.semester_4.totalHours : ""),
                 header: () => <span>Семестр 4</span>,
-                footer: (props) => props.column.id,
               },
             ],
           },
@@ -168,23 +137,20 @@ export const FullPlanTable = () => {
             accessorKey: "progress",
             header: "3 курс",
             rowSpan: 1,
-            footer: (props) => props.column.id,
             columns: [
               {
                 rowSpan: 1,
                 id: "semester_5",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_5,
+                accessorFn: (row) => (row.semester_5 ? row.semester_5.totalHours : ""),
                 header: () => <span>Семестр 5</span>,
-                footer: (props) => props.column.id,
               },
               {
                 rowSpan: 1,
                 id: "semester_6",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_6,
+                accessorFn: (row) => (row.semester_6 ? row.semester_6.totalHours : ""),
                 header: () => <span>Семестр 6</span>,
-                footer: (props) => props.column.id,
               },
             ],
           },
@@ -192,23 +158,21 @@ export const FullPlanTable = () => {
             accessorKey: "progress",
             header: "4 курс",
             rowSpan: 1,
-            footer: (props) => props.column.id,
+
             columns: [
               {
                 rowSpan: 1,
                 id: "semester_7",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_7,
+                accessorFn: (row) => (row.semester_7 ? row.semester_7.totalHours : ""),
                 header: () => <span>Семестр 7</span>,
-                footer: (props) => props.column.id,
               },
               {
                 rowSpan: 1,
                 id: "semester_8",
                 cell: (info) => info.getValue(),
-                accessorFn: (row) => row.semester_8,
+                accessorFn: (row) => (row.semester_8 ? row.semester_8.totalHours : ""),
                 header: () => <span>Семестр 8</span>,
-                footer: (props) => props.column.id,
               },
             ],
           },
@@ -218,247 +182,190 @@ export const FullPlanTable = () => {
     [],
   );
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
-
-  const [data, setData] = React.useState(() => makeData(1000));
-  const refreshData = () => setData(() => makeData(1000));
-
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 20,
-  });
-
   const table = useReactTable({
     data,
     columns,
-    state: {
-      pagination,
-      sorting,
-    },
+    state: { sorting, globalFilter: globalSearch, pagination },
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onPaginationChange: setPagination,
-    // Pipeline
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
+    getSortedRowModel: getSortedRowModel(),
+
+    globalFilterFn: "fuzzy",
+    onPaginationChange: setPagination,
+    filterFns: { fuzzy: fuzzyFilter },
+    onGlobalFilterChange: setGlobalSearch,
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
-  console.log("getHeaderGroups", table.getHeaderGroups());
+  const handleSelectLesson = useCallback((key: string, planItem: PlanItemType) => {
+    const cellData = planItem[key as keyof PlanItemType];
+    const isCellSemester = key.includes("semester_");
+
+    if (isCellSemester && cellData !== null) {
+      setSelectedSemesterHours(cellData as SemesterHoursType);
+      setIsHoursModalOpen(true);
+      return;
+    }
+
+    const semesterNumber = Number(key.slice(key.length - 1));
+    setSelectedSemesterHours({ ...defaultSemesterData, name: planItem.name, semesterNumber, cmk: planItem.cmk });
+    if (isCellSemester) {
+      setIsHoursModalOpen(true);
+      return;
+    }
+
+    setIsDetailsModalOpen(true);
+
+    // if (isCellSemester && cellData !== null) {
+    //   setSelectedSemesterHours(cellData as SemesterHoursType);
+    //   setIsHoursModalOpen(true);
+    //   //
+    // } else if (isCellSemester && cellData === null) {
+    //   const semesterNumber = Number(key.slice(key.length - 1));
+    //   setSelectedSemesterHours({ ...defaultSemesterData, name: planItem.name, semesterNumber, cmk: planItem.cmk });
+    //   setIsHoursModalOpen(true);
+    //   //
+    // } else {
+    //   setIsDetailsModalOpen(true);
+    // }
+  }, []);
 
   return (
     <>
-      <div className="p-2 block max-w-full">
-        <h1 className="text-2xl mb-4">226 Фармація, промислова фармація ОПС ФМБ (заочна форма навчання) 2024</h1>
-
-        <div className="flex items-center gap-4 mb-8">
-          <DebouncedInput
-            placeholder="Пошук..."
-            value={globalFilter ?? ""}
-            onChange={(value) => setGlobalFilter(String(value))}
-            className="p-2 font-lg shadow border border-block w-full"
-          />
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-              // variant="outline"
-              >
-                <ListFilter />
-                <span className="hidden lg:inline">Фільтр</span>
-                <span className="lg:hidden">Фільтр</span>
-                <ChevronDown />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-50">
-              <div className="grid gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="all" />
-                  <label
-                    htmlFor="all"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Всі семестри
-                  </label>
-                </div>
-
-                {["1", "2", "3", "4", "5", "6"].map((item) => {
-                  return (
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id={item} />
-                      <label
-                        htmlFor={item}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      <Table className="w-full border-b">
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id} className="hover:bg-white">
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={cn(header.column.getCanSort() ? "cursor-pointer select-none" : "")}
+                        onClick={header.column.getToggleSortingHandler()}
+                        title={
+                          header.column.getCanSort()
+                            ? header.column.getNextSortingOrder() === "asc"
+                              ? "Sort ascending"
+                              : header.column.getNextSortingOrder() === "desc"
+                              ? "Sort descending"
+                              : "Clear sort"
+                            : undefined
+                        }
                       >
-                        Семестр {item}
-                      </label>
-                    </div>
-                  );
-                })}
-              </div>
-            </PopoverContent>
-          </Popover>
+                        <p className="inline-flex relative">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {{
+                            asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
+                            desc: <ArrowDown className="w-4 absolute right-[-20px]" />,
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </p>
+                      </div>
+                    )}
+                  </TableHead>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableHeader>
 
-          <Button variant="default">
-            <Plus />
-            <span>Створити</span>
-          </Button>
-        </div>
-
-        <Table className="w-full ">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-white">
-                {headerGroup.headers.map((header) => {
+        <TableBody>
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <TableRow key={row.id} className="hover:bg-border/40">
+                {row.getVisibleCells().map((cell, index) => {
                   return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={cn(header.column.getCanSort() ? "cursor-pointer select-none" : "")}
-                          onClick={header.column.getToggleSortingHandler()}
-                          title={
-                            header.column.getCanSort()
-                              ? header.column.getNextSortingOrder() === "asc"
-                                ? "Sort ascending"
-                                : header.column.getNextSortingOrder() === "desc"
-                                ? "Sort descending"
-                                : "Clear sort"
-                              : undefined
-                          }
-                        >
-                          <p className="inline-flex relative">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {{
-                              asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
-                              desc: <ArrowDown className="w-4 absolute right-[-20px]" />,
-                            }[header.column.getIsSorted() as string] ?? null}
-                          </p>
-                        </div>
-                      )}
-                    </TableHead>
+                    <TableCell
+                      key={cell.id}
+                      onClick={() => handleSelectLesson(cell.column.id, row.original)}
+                      className={cn(index < 2 ? "" : "text-center", "hover:bg-border/50 cursor-pointer")}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   );
                 })}
               </TableRow>
-            ))}
-          </TableHeader>
-          {/* <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <th key={header.id} colSpan={header.colSpan} rowSpan={header.rowSpan}>
-                      {header.isPlaceholder ? null : (
-                        <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>
-                      )}
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead> */}
-          <TableBody>
-            {table.getRowModel().rows.map((row) => {
-              return (
-                <TableRow key={row.id} className="hover:bg-border/40">
-                  {row.getVisibleCells().map((cell, index) => {
-                    return (
-                      <TableCell key={cell.id} className={cn(index === 0 ? "" : "text-center", "hover:bg-border/50")}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+            );
+          })}
+        </TableBody>
+      </Table>
 
-        <div className="flex items-center justify-center my-8 gap-8">
-          <Pagination>
-            <PaginationContent className="flex gap-4">
-              <PaginationItem onClick={() => table.setPageIndex(0)}>
-                <PaginationLink isActive={!table.getCanPreviousPage()}>
-                  <Button variant="outline">
-                    <ChevronsLeft />
-                  </Button>
-                </PaginationLink>
-              </PaginationItem>
+      <div className="flex items-center justify-center my-10 gap-8">
+        <Pagination>
+          <PaginationContent className="flex gap-4">
+            <PaginationItem onClick={() => table.setPageIndex(0)}>
+              <PaginationLink isActive={!table.getCanPreviousPage()}>
+                <Button variant="outline">
+                  <ChevronsLeft />
+                </Button>
+              </PaginationLink>
+            </PaginationItem>
 
-              <PaginationItem onClick={() => table.previousPage()}>
-                <PaginationLink href="#" isActive={!table.getCanPreviousPage()}>
-                  <Button variant="outline">
-                    <ChevronLeft />
-                  </Button>
-                </PaginationLink>
-              </PaginationItem>
+            <PaginationItem onClick={() => table.previousPage()}>
+              <PaginationLink href="#" isActive={!table.getCanPreviousPage()}>
+                <Button variant="outline">
+                  <ChevronLeft />
+                </Button>
+              </PaginationLink>
+            </PaginationItem>
 
-              <PaginationItem onClick={() => table.nextPage()}>
-                <PaginationLink href="#" isActive={!table.getCanNextPage()}>
-                  <Button variant="outline">
-                    <ChevronRight />
-                  </Button>
-                </PaginationLink>
-              </PaginationItem>
+            <PaginationItem onClick={() => table.nextPage()}>
+              <PaginationLink href="#" isActive={!table.getCanNextPage()}>
+                <Button variant="outline">
+                  <ChevronRight />
+                </Button>
+              </PaginationLink>
+            </PaginationItem>
 
-              <PaginationItem onClick={() => table.setPageIndex(table.getPageCount() - 1)}>
-                <PaginationLink href="#" isActive={!table.getCanNextPage()}>
-                  <Button variant="outline">
-                    <ChevronsRight />
-                  </Button>
-                </PaginationLink>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+            <PaginationItem onClick={() => table.setPageIndex(table.getPageCount() - 1)}>
+              <PaginationLink href="#" isActive={!table.getCanNextPage()}>
+                <Button variant="outline">
+                  <ChevronsRight />
+                </Button>
+              </PaginationLink>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
 
-          <div className="flex items-center gap-1 select-none">
-            <div>Сторінка</div>
-            <p className="font-bold">{table.getState().pagination.pageIndex + 1}</p>
-            <p>з</p>
-            <p className="font-bold">{table.getPageCount()}</p>
-          </div>
-
-          <div className="flex items-center gap-2 select-none">
-            Перейти на сторінку:
-            <Input
-              min="1"
-              type="number"
-              max={table.getPageCount()}
-              defaultValue={table.getState().pagination.pageIndex + 1}
-              onChange={(e) => {
-                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                table.setPageIndex(page);
-              }}
-              className="w-16"
-            />
-          </div>
-
-          <Select
-            defaultValue={String(table.getState().pagination.pageSize)}
-            // value={String(table.getState().pagination.pageSize)}
-            onValueChange={(value) => table.setPageSize(Number(value))}
-          >
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder={`На сторінці: ${table.getRowModel().rows.length}`} />
-            </SelectTrigger>
-            <SelectContent>
-              {[10, 20, 30, 50, 75, 100].map((pageSize) => (
-                <SelectItem key={pageSize} value={String(pageSize)}>
-                  На сторінці: {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex items-center gap-1 select-none">
+          <div>Сторінка</div>
+          <p className="font-bold">{table.getState().pagination.pageIndex + 1}</p>
+          <p>з</p>
+          <p className="font-bold">{table.getPageCount()}</p>
         </div>
-      </div>
 
-      <hr />
-      <div>
-        <button onClick={() => rerender()}>Force Rerender</button>
+        <div className="flex items-center gap-2 select-none">
+          Перейти на сторінку:
+          <Input
+            min="1"
+            type="number"
+            max={table.getPageCount()}
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              table.setPageIndex(page);
+            }}
+            className="w-16"
+          />
+        </div>
+
+        <Select
+          defaultValue={String(table.getState().pagination.pageSize)}
+          // value={String(table.getState().pagination.pageSize)}
+          onValueChange={(value) => table.setPageSize(Number(value))}
+        >
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder={`На сторінці: ${table.getRowModel().rows.length}`} />
+          </SelectTrigger>
+          <SelectContent>
+            {[10, 20, 30, 50, 75, 100].map((pageSize) => (
+              <SelectItem key={pageSize} value={String(pageSize)}>
+                На сторінці: {pageSize}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-      <div>
-        <button onClick={() => refreshData()}>Refresh Data</button>
-      </div>
-      <pre>{JSON.stringify(pagination, null, 2)}</pre>
     </>
   );
 };

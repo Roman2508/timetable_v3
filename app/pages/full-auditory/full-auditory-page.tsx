@@ -46,7 +46,7 @@ const FullAuditory: React.FC<IFullAuditoryProps> = ({ auditoryId, auditory }) =>
 
   const { auditoriCategories } = useSelector(auditoriesSelector);
 
-  const generalInformationFields = React.useMemo(
+  const formFields = React.useMemo(
     () => [
       {
         title: "Назва*",
@@ -173,7 +173,7 @@ const FullAuditory: React.FC<IFullAuditoryProps> = ({ auditoryId, auditory }) =>
 
         <Card className="px-10 pb-12 mb-10">
           <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
-          {generalInformationFields.map((input) => {
+          {formFields.map((input) => {
             const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData];
 
             return (

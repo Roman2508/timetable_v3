@@ -1,13 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { ChevronsUpDown, Ellipsis, GripVertical } from "lucide-react";
 
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
 import { RootContainer } from "~/components/layouts/root-container";
 import { SelectPlanTable } from "~/components/features/select-plan/select-plan-table";
-import type { PlansCategoriesType, PlansType, PlanType } from "~/store/plans/plans-types";
+import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { useItemsByStatus } from "~/hooks/use-items-by-status";

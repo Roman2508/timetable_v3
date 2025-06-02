@@ -19,7 +19,9 @@ interface IEntityFieldProps {
   title: string;
   inputKey: string;
   isUpdate: boolean;
+  classNames?: string;
   isEditable: boolean;
+  labelClassNames?: string;
   items: ItemType[] | null;
   inputType: "string" | "number";
   variant: "input" | "select" | "button";
@@ -39,8 +41,10 @@ const EntityField: React.FC<IEntityFieldProps> = ({
   isUpdate,
   inputType,
   isEditable,
+  classNames,
   currentValue,
   setUserFormData,
+  labelClassNames,
   setOpenedModalName,
 }) => {
   const disabledWhenCreateKeys = ["students", "stream", "subgroups", "specialities", "calendarId"];
@@ -48,8 +52,8 @@ const EntityField: React.FC<IEntityFieldProps> = ({
 
   if (variant === "input") {
     return (
-      <div className="flex items-start gap-4 mb-4" key={title}>
-        <div className="min-w-90">
+      <div className={cn("flex items-start gap-4 mb-4", classNames)} key={title}>
+        <div className={cn("min-w-90", labelClassNames)}>
           <h5 className="font-semibold text-md">{title}</h5>
           <p className="text-black/40 text-sm">{text}</p>
         </div>
@@ -85,8 +89,8 @@ const EntityField: React.FC<IEntityFieldProps> = ({
       : { name: "", id: "" };
 
     return (
-      <div className="flex items-start gap-4 mb-4">
-        <div className="min-w-90">
+      <div className={cn("flex items-start gap-4 mb-4", classNames)}>
+        <div className={cn("min-w-90", labelClassNames)}>
           <h5 className="font-semibold text-md">{title}</h5>
           <p className="text-black/40 text-sm">{text}</p>
         </div>
@@ -117,8 +121,8 @@ const EntityField: React.FC<IEntityFieldProps> = ({
     const buttonText = inputKey === "educationPlan" ? (selectedPlan ? selectedPlan.name : "Редагувати") : "Редагувати";
 
     return (
-      <div className="flex items-start gap-4 mb-4" key={title}>
-        <div className="min-w-90">
+      <div className={cn("flex items-start gap-4 mb-4", classNames)} key={title}>
+        <div className={cn("min-w-90", labelClassNames)}>
           <h5 className="font-semibold text-md">{title}</h5>
           <p className="text-black/40 text-sm">{text}</p>
         </div>

@@ -22,18 +22,13 @@ import { generalSelector } from "~/store/general/general-slice";
 import { AUDITORY_SORT_KEY, AUDITORY_SORT_TYPE } from "~/constants/cookies-keys";
 import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 
 interface IAuditoriesTableProps {
   globalSearch: string;
   auditories: AuditoriesTypes[];
   setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value);
-  addMeta({ itemRank });
-  return itemRank.passed;
-};
 
 export const AuditoriesTable: React.FC<IAuditoriesTableProps> = ({ auditories, globalSearch, setGlobalSearch }) => {
   const [_, setCookie] = useCookies();
