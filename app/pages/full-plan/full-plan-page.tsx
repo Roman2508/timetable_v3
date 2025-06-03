@@ -1,26 +1,46 @@
-import React, { useState, type FC } from "react";
+import { useSelector } from "react-redux";
+import { useState, type FC, type KeyboardEvent } from "react";
 import { ChevronDown, ListFilter, PenLine, Plus } from "lucide-react";
 
+import { useAppDispatch } from "~/store/store";
+import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
+import { plansSelector } from "~/store/plans/plans-slice";
 import { Checkbox } from "~/components/ui/common/checkbox";
-import type { PlanSubjectType } from "~/store/plans/plans-types";
+import { updatePlan } from "~/store/plans/plans-async-actions";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
-import type { PlanItemType, SemesterHoursType } from "~/helpers/group-lessons-by-name";
+import type { SemesterHoursType } from "~/helpers/group-lessons-by-name";
 import { FullPlanTable } from "~/components/features/pages/full-plan/full-plan-table";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
 import SemesterHoursModal from "~/components/features/pages/full-plan/semester-hours-modal";
 import SemesterDetailsModal from "~/components/features/pages/full-plan/semester-details-modal";
 
-interface IFullPlanPageProps {
-  planSubjects: PlanSubjectType[];
-}
+const FullPlanPage: FC = ({}) => {
+  const dispatch = useAppDispatch();
 
-const FullPlanPage: FC<IFullPlanPageProps> = ({ planSubjects }) => {
+  const { plan } = useSelector(plansSelector);
+
+  const [isEditMode, setEditMode] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
+  const [planName, setPlanName] = useState(plan?.name ?? "");
   const [isHoursModalOpen, setIsHoursModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = React.useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [detailsModalType, setDetailsModalType] = useState<"create" | "update">("update");
   const [selectedSemesterHours, setSelectedSemesterHours] = useState<SemesterHoursType | null>(null);
+
+  const handleChangeEditMode = () => {
+    setEditMode((prev) => !prev);
+    setPlanName(plan?.name ?? "");
+  };
+
+  const onChangePlanName = async (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      if (!plan) return;
+      await dispatch(updatePlan({ ...plan, name: planName }));
+      setEditMode(false);
+    }
+  };
 
   return (
     <>
@@ -32,6 +52,8 @@ const FullPlanPage: FC<IFullPlanPageProps> = ({ planSubjects }) => {
       />
 
       <SemesterDetailsModal
+        detailsModalType={detailsModalType}
+        setDetailsModalType={setDetailsModalType}
         isOpen={isDetailsModalOpen}
         setIsOpen={setIsDetailsModalOpen}
         selectedSemesterHours={selectedSemesterHours}
@@ -41,8 +63,18 @@ const FullPlanPage: FC<IFullPlanPageProps> = ({ planSubjects }) => {
       <RootContainer>
         <div>
           <h1 className="text-2xl mb-4 flex items-center gap-1">
-            <span>I8 Фармація, промислова фармація ОПС ФМБ (заочна форма навчання) 2024</span>
-            <Button variant="ghost">
+            {isEditMode ? (
+              <Input
+                value={planName}
+                onChange={(e) => setPlanName(e.target.value)}
+                onKeyDown={onChangePlanName}
+                title="Для збереження змін натисніть кнопку 'Enter'"
+              />
+            ) : (
+              <span>{plan?.name}</span>
+            )}
+            {/* <span>I8 Фармація, промислова фармація ОПС ФМБ (заочна форма навчання) 2024</span> */}
+            <Button variant="ghost" onClick={handleChangeEditMode}>
               <PenLine />
             </Button>
           </h1>
@@ -92,7 +124,14 @@ const FullPlanPage: FC<IFullPlanPageProps> = ({ planSubjects }) => {
                 </div>
               </PopoverContent>
             </Popover>
-            <Button variant="default">
+
+            <Button
+              variant="default"
+              onClick={() => {
+                setDetailsModalType("create");
+                setIsDetailsModalOpen(true);
+              }}
+            >
               <Plus />
               <span>Створити</span>
             </Button>
@@ -100,7 +139,6 @@ const FullPlanPage: FC<IFullPlanPageProps> = ({ planSubjects }) => {
 
           <FullPlanTable
             globalSearch={globalSearch}
-            planSubjects={planSubjects}
             setGlobalSearch={setGlobalSearch}
             setIsHoursModalOpen={setIsHoursModalOpen}
             setIsDetailsModalOpen={setIsDetailsModalOpen}

@@ -18,7 +18,7 @@ import { Button } from "~/components/ui/common/button";
 import { Separator } from "~/components/ui/common/separator";
 import { teachersSelector } from "~/store/teachers/teachers-slice";
 import type { SemesterHoursType } from "~/helpers/group-lessons-by-name";
-import { updatePlanSubjectsName } from "~/store/plans/plans-async-actions";
+import { createPlanSubjects, updatePlanSubjectsName } from "~/store/plans/plans-async-actions";
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }),
@@ -29,14 +29,18 @@ export type FormData = z.infer<typeof formSchema>;
 
 interface ISemesterDetailsModalProps {
   isOpen: boolean;
+  detailsModalType: "create" | "update";
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   selectedSemesterHours: SemesterHoursType | null;
+  setDetailsModalType: Dispatch<SetStateAction<"create" | "update">>;
   setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>;
 }
 
 const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
   isOpen,
   setIsOpen,
+  detailsModalType,
+  setDetailsModalType,
   selectedSemesterHours,
   setSelectedSemesterHours,
 }) => {
@@ -92,11 +96,13 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
 
   const onOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if (!open) setSelectedSemesterHours(null);
+    if (!open) {
+      setSelectedSemesterHours(null);
+      setDetailsModalType("update");
+    }
   };
 
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
-    if (!selectedSemesterHours) return;
     try {
       e.preventDefault();
       setIsPending(true);
@@ -106,14 +112,24 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
         return;
       }
 
-      const payload = {
-        cmk: formData.cmk,
-        newName: formData.name,
-        planId: Number(planId),
-        oldName: selectedSemesterHours.name,
-      };
+      if (detailsModalType === "create") {
+        const payload = { name: formData.name, cmk: formData.cmk, planId: Number(planId) };
+        await dispatch(createPlanSubjects(payload));
+        onOpenChange(false);
+        return;
+      }
 
-      await dispatch(updatePlanSubjectsName(payload));
+      if (detailsModalType === "update" && selectedSemesterHours) {
+        const payload = {
+          cmk: formData.cmk,
+          newName: formData.name,
+          planId: Number(planId),
+          oldName: selectedSemesterHours.name,
+        };
+
+        await dispatch(updatePlanSubjectsName(payload));
+        onOpenChange(false);
+      }
     } finally {
       setIsPending(false);
     }
@@ -140,13 +156,14 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
     // onOpenChange();
   };
 
-  if (!selectedSemesterHours) return;
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="px-0 !py-4 max-w-[600px] gap-0">
         <DialogHeader className="px-4 pb-4">
-          <DialogTitle className="flex items-center gap-1">{selectedSemesterHours.name}</DialogTitle>
+          <DialogTitle className="flex items-center gap-1">
+            {selectedSemesterHours && detailsModalType === "update" && selectedSemesterHours.name}
+            {detailsModalType === "create" && "Нова дисципліна"}
+          </DialogTitle>
 
           <div className="flex justify-between items-center leading-[1.25] opacity-[.6] text-sm">
             <p>{selectedSemesterHours ? `ЦК ${selectedSemesterHours.cmk.name}` : ""}</p>
@@ -186,9 +203,12 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
           <Button disabled={isPending} onClick={onSubmitClick}>
             Зберегти
           </Button>
-          <Button disabled={isPending} onClick={deleteSemesterConfirmation} variant="destructive">
-            Видалити
-          </Button>
+
+          {detailsModalType === "update" && (
+            <Button disabled={isPending} onClick={deleteSemesterConfirmation} variant="destructive">
+              Видалити
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

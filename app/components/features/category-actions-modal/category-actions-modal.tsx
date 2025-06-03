@@ -1,11 +1,10 @@
 import z from "zod";
-import React from "react";
+import { useState } from "react";
 
 import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
 import { Separator } from "~/components/ui/common/separator";
-import type { CategoryModalStateType } from "./category-actions-modal-types";
-import type { UpdatingCategoryType } from "~/components/features/pages/groups/groups-types";
+import type { CategoryModalStateType, UpdatingCategoryType } from "./category-actions-modal-types";
 import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogDescription } from "~/components/ui/common/dialog";
 
 interface ICategoryActionsModalProps {
@@ -34,9 +33,9 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({
   onUpdateCategory,
   setUpdatingCategory,
 }) => {
-  const [isPending, setIsPending] = React.useState(false);
-  const [showErrors, setShowErrors] = React.useState(false);
-  const [userFormData, setUserFormData] = React.useState<Partial<FormData>>({});
+  const [isPending, setIsPending] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
 
   const formData = {
     ...initialFormData,

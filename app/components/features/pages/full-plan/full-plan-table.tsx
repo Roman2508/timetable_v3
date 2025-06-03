@@ -21,6 +21,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
 import { groupLessonsByName, type PlanItemType, type SemesterHoursType } from "~/helpers/group-lessons-by-name";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
+import { useSelector } from "react-redux";
+import { plansSelector } from "~/store/plans/plans-slice";
 
 const defaultSemesterData = {
   id: 0,
@@ -37,7 +39,6 @@ const defaultSemesterData = {
 
 interface IFullPlanTableProps {
   globalSearch: string;
-  planSubjects: PlanSubjectType[];
   setGlobalSearch: Dispatch<SetStateAction<string>>;
   setIsHoursModalOpen: Dispatch<SetStateAction<boolean>>;
   setIsDetailsModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -46,16 +47,17 @@ interface IFullPlanTableProps {
 
 export const FullPlanTable: FC<IFullPlanTableProps> = ({
   globalSearch,
-  planSubjects,
   setGlobalSearch,
   setIsHoursModalOpen,
   setIsDetailsModalOpen,
   setSelectedSemesterHours,
 }) => {
+  const { planSubjects } = useSelector(plansSelector);
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
 
-  const data = useMemo(() => groupLessonsByName(planSubjects), [planSubjects]);
+  const data = useMemo(() => groupLessonsByName(planSubjects ?? []), [planSubjects]);
 
   const columnHelper = createColumnHelper<PlanItemType>();
   const columns = useMemo<ColumnDef<PlanItemType, string>[]>(
@@ -200,6 +202,9 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
   const handleSelectLesson = useCallback((key: string, planItem: PlanItemType) => {
     const cellData = planItem[key as keyof PlanItemType];
     const isCellSemester = key.includes("semester_");
+    const isClickDisabled = key === "totalHours";
+
+    if (isClickDisabled) return;
 
     if (isCellSemester && cellData !== null) {
       setSelectedSemesterHours(cellData as SemesterHoursType);
@@ -215,19 +220,6 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
     }
 
     setIsDetailsModalOpen(true);
-
-    // if (isCellSemester && cellData !== null) {
-    //   setSelectedSemesterHours(cellData as SemesterHoursType);
-    //   setIsHoursModalOpen(true);
-    //   //
-    // } else if (isCellSemester && cellData === null) {
-    //   const semesterNumber = Number(key.slice(key.length - 1));
-    //   setSelectedSemesterHours({ ...defaultSemesterData, name: planItem.name, semesterNumber, cmk: planItem.cmk });
-    //   setIsHoursModalOpen(true);
-    //   //
-    // } else {
-    //   setIsDetailsModalOpen(true);
-    // }
   }, []);
 
   return (
@@ -270,23 +262,35 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
         </TableHeader>
 
         <TableBody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <TableRow key={row.id} className="hover:bg-border/40">
-                {row.getVisibleCells().map((cell, index) => {
-                  return (
-                    <TableCell
-                      key={cell.id}
-                      onClick={() => handleSelectLesson(cell.column.id, row.original)}
-                      className={cn(index < 2 ? "" : "text-center", "hover:bg-border/50 cursor-pointer")}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
+          {!planSubjects?.length ? (
+            <TableRow className="hover:bg-white">
+              <TableCell colSpan={11} className="text-center py-10 font-mono">
+                Пусто
+              </TableCell>
+            </TableRow>
+          ) : (
+            table.getRowModel().rows.map((row) => {
+              return (
+                <TableRow key={row.id} className="hover:bg-border/40">
+                  {row.getVisibleCells().map((cell, index) => {
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        onClick={() => handleSelectLesson(cell.column.id, row.original)}
+                        className={cn(
+                          index < 2 ? "" : "text-center",
+                          "hover:bg-border/50 cursor-pointer",
+                          index === 2 ? "!cursor-default hover:!bg-border/0" : "",
+                        )}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
 

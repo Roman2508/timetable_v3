@@ -1,28 +1,37 @@
-import React from "react";
+import { useNavigate } from "react-router";
 import { ChevronsUpDown } from "lucide-react";
+import React, { useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import { cn } from "~/lib/utils";
 import { ActionsDropdown } from "../actions-dropdown";
 import { Button } from "~/components/ui/common/button";
 import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions";
+import { useAppDispatch } from "~/store/store";
+import { onConfirm } from "../confirm-modal";
+import { changeAlertModalStatus } from "~/store/general/general-slice";
 
 interface ISelectPlanTableProps {
   searchValue: string;
   isEditable?: boolean;
   plansCategories: PlansCategoriesType[];
   selectedPlan: PlansType | null;
-  setSelectedPlan: React.Dispatch<React.SetStateAction<PlansType | null>>;
+  setSelectedPlan: Dispatch<SetStateAction<PlansType | null>>;
 }
 
-export const SelectPlanTable: React.FC<ISelectPlanTableProps> = ({
+export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   searchValue,
   selectedPlan,
   setSelectedPlan,
   plansCategories,
   isEditable = false,
 }) => {
-  const [filteredPlanIds, setFilteredPlanIds] = React.useState<number[]>([]);
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
+  const [filteredPlanIds, setFilteredPlanIds] = useState<number[]>([]);
 
   const onSearchChange = React.useCallback(() => {
     const filteredByName = plansCategories
@@ -33,13 +42,57 @@ export const SelectPlanTable: React.FC<ISelectPlanTableProps> = ({
     setFilteredPlanIds(filteredByName);
   }, [plansCategories, searchValue]);
 
-  const onClickCategoryUpdateFunction = () => {};
+  const onClickCategoryUpdateFunction = (id: number) => {
+    //
+  };
 
-  const onClickCategoryDeleteFunction = () => {};
+  const onClickCategoryDeleteFunction = async (id: number) => {
+    if (!id) return;
 
-  const onClickUpdateFunction = () => {};
+    const confirmPayload = {
+      isOpen: true,
+      title: "Ви дійсно хочете видалити категорію?",
+      description: `Категорія, буде видалена назавжди. Цю дію не можна відмінити.`,
+    };
+    const result = await onConfirm(confirmPayload, dispatch);
 
-  const onClickDeleteFunction = () => {};
+    if (!result) return;
+
+    const selectedCategory = plansCategories.find((el) => el.id === id);
+
+    if (!selectedCategory) return;
+
+    if (selectedCategory.plans.length > 0) {
+      const alertPayload = {
+        isOpen: true,
+        title: "Видалення категорії неможливе",
+        text: "Категорія не може бути видалена, оскільки вона містить пов’язані навчальні плани. Перед видаленням категорії необхідно спочатку видалити або перемістити всі навчальні плани, які до неї належать.",
+      };
+      dispatch(changeAlertModalStatus(alertPayload));
+      return;
+    }
+
+    dispatch(deletePlanCategory(id));
+  };
+
+  const onClickUpdateFunction = (id: number) => {
+    navigate(`/plans/${id}`);
+  };
+
+  const onClickDeleteFunction = async (id: number) => {
+    if (!id) return;
+
+    const confirmPayload = {
+      isOpen: true,
+      title: `Ви дійсно хочете видалити навчальний план ${name}?`,
+      description: `Навчальний план, буде видалений назавжди. Цю дію не можна відмінити.`,
+    };
+    const result = await onConfirm(confirmPayload, dispatch);
+
+    if (result) {
+      dispatch(deletePlan(id));
+    }
+  };
 
   React.useEffect(() => {
     if (searchValue) {
@@ -68,7 +121,7 @@ export const SelectPlanTable: React.FC<ISelectPlanTableProps> = ({
               <div className="flex gap-1">
                 {isEditable && (
                   <ActionsDropdown
-                    itemId={1}
+                    itemId={el.id}
                     onClickUpdateFunction={onClickCategoryUpdateFunction}
                     onClickDeleteFunction={onClickCategoryDeleteFunction}
                   />
@@ -104,7 +157,11 @@ export const SelectPlanTable: React.FC<ISelectPlanTableProps> = ({
                           <>
                             <div
                               key={plan.id}
-                              onClick={() => setSelectedPlan({ name: plan.name, id: plan.id } as PlansType)}
+                              onClick={() => {
+                                setSelectedPlan({ name: plan.name, id: plan.id } as PlansType);
+                                // fix prevent default
+                                // onClickUpdateFunction(plan.id);
+                              }}
                               className={cn(
                                 "hover:border hover:border-primary cursor-pointer flex items-center px-4 py-1 border border-white border-t-border",
                               )}

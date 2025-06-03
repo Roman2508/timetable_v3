@@ -1,7 +1,7 @@
 import z from "zod";
-import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { useState, useMemo, type FC } from "react";
 import { Building2, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { useAppDispatch } from "~/store/store";
@@ -38,7 +38,7 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>;
 
-const FullAuditory: React.FC<IFullAuditoryProps> = ({ auditoryId, auditory }) => {
+const FullAuditory: FC<IFullAuditoryProps> = ({ auditoryId, auditory }) => {
   const isUpdate = !isNaN(Number(auditoryId));
 
   const dispatch = useAppDispatch();
@@ -46,7 +46,7 @@ const FullAuditory: React.FC<IFullAuditoryProps> = ({ auditoryId, auditory }) =>
 
   const { auditoriCategories } = useSelector(auditoriesSelector);
 
-  const formFields = React.useMemo(
+  const formFields = useMemo(
     () => [
       {
         title: "Назва*",
@@ -91,9 +91,9 @@ const FullAuditory: React.FC<IFullAuditoryProps> = ({ auditoryId, auditory }) =>
     [auditoriCategories],
   );
 
-  const [userFormData, setUserFormData] = React.useState<Partial<FormData>>({});
-  const [showErrors, setShowErrors] = React.useState(false);
-  const [isPending, setIsPanding] = React.useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
+  const [showErrors, setShowErrors] = useState(false);
+  const [isPending, setIsPanding] = useState(false);
 
   const formData = {
     ...initialFormState,

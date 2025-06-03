@@ -46,6 +46,12 @@ const plansSlice = createSlice({
     setPlanCategories(state, action: PayloadAction<PlansCategoriesType[]>) {
       state.plansCategories = action.payload;
     },
+    setPlan(state, action: PayloadAction<PlanType>) {
+      state.plan = action.payload;
+    },
+    setPlanSubjects(state, action: PayloadAction<PlanSubjectType[]>) {
+      state.planSubjects = action.payload;
+    },
   },
   extraReducers: (builder) => {
     /* --- categories --- */
@@ -122,6 +128,7 @@ const plansSlice = createSlice({
         return el;
       });
 
+      state.plan = action.payload;
       state.plansCategories = newPlansCategories;
     });
 
@@ -203,7 +210,7 @@ const plansSlice = createSlice({
   },
 });
 
-export const { setLoadingStatus, clearPlan, setPlanCategories } = plansSlice.actions;
+export const { setLoadingStatus, clearPlan, setPlanCategories, setPlan, setPlanSubjects } = plansSlice.actions;
 
 export default plansSlice.reducer;
 
