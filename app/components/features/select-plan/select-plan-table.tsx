@@ -1,31 +1,36 @@
 import { useNavigate } from "react-router";
 import { ChevronsUpDown } from "lucide-react";
-import React, { useState, type Dispatch, type FC, type SetStateAction } from "react";
+import { useCallback, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import { cn } from "~/lib/utils";
+import { onConfirm } from "../confirm-modal";
+import { useAppDispatch } from "~/store/store";
 import { ActionsDropdown } from "../actions-dropdown";
 import { Button } from "~/components/ui/common/button";
-import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
-import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions";
-import { useAppDispatch } from "~/store/store";
-import { onConfirm } from "../confirm-modal";
+import type { PlanActionModalType } from "~/pages/plans/plans-page";
 import { changeAlertModalStatus } from "~/store/general/general-slice";
+import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
+import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
 interface ISelectPlanTableProps {
   searchValue: string;
   isEditable?: boolean;
+  selectedPlan?: PlansType | null;
   plansCategories: PlansCategoriesType[];
-  selectedPlan: PlansType | null;
-  setSelectedPlan: Dispatch<SetStateAction<PlansType | null>>;
+  setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>;
+  setModalData: React.Dispatch<React.SetStateAction<PlanActionModalType>>;
+  setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>;
 }
 
 export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   searchValue,
   selectedPlan,
+  setModalData,
   setSelectedPlan,
   plansCategories,
   isEditable = false,
+  setEditableCategory,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -33,7 +38,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
 
   const [filteredPlanIds, setFilteredPlanIds] = useState<number[]>([]);
 
-  const onSearchChange = React.useCallback(() => {
+  const onSearchChange = useCallback(() => {
     const filteredByName = plansCategories
       .flatMap((el) => el.plans)
       .filter((el) => el.name.includes(searchValue))
@@ -43,7 +48,11 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   }, [plansCategories, searchValue]);
 
   const onClickCategoryUpdateFunction = (id: number) => {
-    //
+    setModalData({ isOpen: true, type: "update-category" });
+    const editableCategory = plansCategories.find((el) => el.id === id);
+    if (editableCategory && setEditableCategory) {
+      setEditableCategory({ id, name: editableCategory.name });
+    }
   };
 
   const onClickCategoryDeleteFunction = async (id: number) => {
@@ -94,7 +103,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (searchValue) {
       onSearchChange();
     }
@@ -158,7 +167,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                             <div
                               key={plan.id}
                               onClick={() => {
-                                setSelectedPlan({ name: plan.name, id: plan.id } as PlansType);
+                                setSelectedPlan && setSelectedPlan({ name: plan.name, id: plan.id } as PlansType);
                                 // fix prevent default
                                 // onClickUpdateFunction(plan.id);
                               }}
@@ -167,7 +176,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                               )}
                             >
                               <div className="flex-5">{plan.name}</div>
-                              <div className="flex-1">11</div>
+                              <div className="flex-1">11111111111</div>
                               <div className="flex-1 text-end">
                                 <ActionsDropdown
                                   itemId={plan.id}
@@ -182,7 +191,9 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                         return (
                           <div
                             key={plan.id}
-                            onClick={() => setSelectedPlan({ name: plan.name, id: plan.id } as PlansType)}
+                            onClick={() =>
+                              setSelectedPlan && setSelectedPlan({ name: plan.name, id: plan.id } as PlansType)
+                            }
                             className={cn(
                               "hover:border hover:border-primary cursor-pointer flex px-4 py-2 border border-white border-t-border",
                               plan.id === selectedPlan?.id &&

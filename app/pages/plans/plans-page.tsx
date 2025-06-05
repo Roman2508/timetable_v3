@@ -13,7 +13,13 @@ import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
+import PlanActionsModal from "~/components/features/pages/plans/plan-actions-modal";
 import { SelectPlanTable } from "~/components/features/select-plan/select-plan-table";
+
+export type PlanActionModalType = {
+  isOpen: boolean;
+  type: "create-category" | "update-category" | "create-plan";
+};
 
 export default function PlansPage() {
   const [_, setCookie] = useCookies();
@@ -23,9 +29,12 @@ export default function PlansPage() {
   } = useSelector(generalSelector);
   const { plansCategories } = useSelector(plansSelector);
 
-  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
-  const [selectedPlan, setSelectedPlan] = useState<PlansType | null>({ id: 0, name: "" } as PlansType);
   const [globalSearch, setGlobalSearch] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+  const [updatingCategory, setUpdatingCategory] = useState<{ id: number; name: string } | null>(null);
+  const [editableCategory, setEditableCategory] = useState<{ id: number; name: string } | null>(null);
+  // const [selectedPlan, setSelectedPlan] = useState<PlansType | null>({ id: 0, name: "" } as PlansType);
+  const [modalData, setModalData] = useState<PlanActionModalType>({ isOpen: false, type: "create-plan" });
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі");
 
   const { filteredItems: visiblePlans, counts } = useItemsByStatus<PlansCategoriesType>(
@@ -41,14 +50,25 @@ export default function PlansPage() {
 
   return (
     <>
+      <PlanActionsModal
+        modalData={modalData}
+        setModalData={setModalData}
+        editableCategory={editableCategory}
+        setEditableCategory={setEditableCategory}
+      />
+
       <RootContainer>
         <div className="flex justify-between mb-6">
           <h2 className="text-xl">Навчальні плани</h2>
 
           <div className="flex items-center gap-2">
-            <Button variant="outline">Створити новий план</Button>
+            <Button variant="outline" onClick={() => setModalData({ isOpen: true, type: "create-plan" })}>
+              Створити новий план
+            </Button>
 
-            <Button variant="outline">Створити нову категорію</Button>
+            <Button variant="outline" onClick={() => setModalData({ isOpen: true, type: "create-category" })}>
+              Створити нову категорію
+            </Button>
 
             <PopoverFilter
               itemsPrefix=""
@@ -85,8 +105,8 @@ export default function PlansPage() {
           <SelectPlanTable
             isEditable
             searchValue={globalSearch}
-            selectedPlan={selectedPlan}
-            setSelectedPlan={setSelectedPlan}
+            setModalData={setModalData}
+            setEditableCategory={setEditableCategory}
             plansCategories={plansCategories ? plansCategories : []}
           />
         ) : (
