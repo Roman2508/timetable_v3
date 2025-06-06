@@ -32,6 +32,8 @@ const generalInitialState: GeneralSliceInitialState = {
   },
   plans: {
     status: "Всі",
+    categories: [],
+    expanded: [],
   },
 
   confirmModal: {
@@ -106,6 +108,12 @@ const generalSlice = createSlice({
     setPlanStatus(state, action: PayloadAction<"Всі" | "Активний" | "Архів">) {
       state.teachers.status = action.payload;
     },
+    setPlanFilters(state, action: PayloadAction<{ id: number }[]>) {
+      state.plans.categories = action.payload;
+    },
+    setPlanExpanded(state, action: PayloadAction<{ id: number }[]>) {
+      state.plans.expanded = action.payload;
+    },
 
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
       const keys = Object.keys(action.payload);
@@ -134,8 +142,10 @@ export const {
   setPlanStatus,
   setGroupStatus,
   setGroupsOrder,
+  setPlanFilters,
   setSidebarState,
   setGroupFilters,
+  setPlanExpanded,
   setTeacherOrder,
   setAuditoryOrder,
   setTeacherStatus,

@@ -24,3 +24,5 @@ export const TEACHER_SORT_KEY = "teacher_sort_key";
 export const TEACHER_SORT_TYPE = "teacher_sort_type";
 
 export const PLAN_STATUS = "plan_status";
+export const PLAN_FILTERS = "plan_filters";
+export const PLAN_EXPANDED = "plan_expanded";

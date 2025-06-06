@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { ChevronsUpDown } from "lucide-react";
+import { AlignRight, ChevronsUpDown, Edit, PenLine } from "lucide-react";
 import { useCallback, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import { cn } from "~/lib/utils";
@@ -12,14 +12,16 @@ import { changeAlertModalStatus } from "~/store/general/general-slice";
 import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
 import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import { Badge } from "~/components/ui/common/badge";
 
 interface ISelectPlanTableProps {
   searchValue: string;
   isEditable?: boolean;
   selectedPlan?: PlansType | null;
   plansCategories: PlansCategoriesType[];
+  setModalData: Dispatch<SetStateAction<PlanActionModalType>>;
   setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>;
-  setModalData: React.Dispatch<React.SetStateAction<PlanActionModalType>>;
+  setEditablePlan?: React.Dispatch<React.SetStateAction<PlansType | null>>;
   setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>;
 }
 
@@ -28,6 +30,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   selectedPlan,
   setModalData,
   setSelectedPlan,
+  setEditablePlan,
   plansCategories,
   isEditable = false,
   setEditableCategory,
@@ -85,6 +88,14 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   };
 
   const onClickUpdateFunction = (id: number) => {
+    if (!plansCategories) return;
+    const selectedPlan = plansCategories.flatMap((el) => el.plans).find((el) => el.id === id);
+    if (!selectedPlan) return;
+    setEditablePlan && setEditablePlan(selectedPlan);
+    setModalData({ isOpen: true, type: "update-plan" });
+  };
+
+  const onClickReviewFunction = (id: number) => {
     navigate(`/plans/${id}`);
   };
 
@@ -151,6 +162,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                     <>
                       <div className="flex-5 uppercase opacity-[0.9] font-mono cursor-default">НАЗВА</div>
                       <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default">ДИСЦИПЛІН</div>
+                      <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default">СТАТУС</div>
                       <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default text-end">ДІЇ</div>
                     </>
                   ) : (
@@ -162,6 +174,9 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                   {filteredPlans.length ? (
                     filteredPlans.map((plan) => {
                       if (isEditable) {
+                        let isStatusActive = true;
+                        if (plan.status === "Архів") isStatusActive = false;
+
                         return (
                           <>
                             <div
@@ -176,11 +191,35 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                               )}
                             >
                               <div className="flex-5">{plan.name}</div>
-                              <div className="flex-1">11111111111</div>
+                              <div className="flex-1">{plan.subjectsCount}</div>
+                              <div className="flex-1">
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    "border-0",
+                                    isStatusActive
+                                      ? "text-success bg-success-background"
+                                      : "text-error bg-error-background",
+                                  )}
+                                >
+                                  {plan.status}
+                                </Badge>
+                              </div>
                               <div className="flex-1 text-end">
                                 <ActionsDropdown
                                   itemId={plan.id}
-                                  onClickUpdateFunction={onClickUpdateFunction}
+                                  additionalItems={[
+                                    {
+                                      label: "Переглянути",
+                                      icon: <AlignRight />,
+                                      onClick: () => onClickReviewFunction(el.id),
+                                    },
+                                    {
+                                      label: "Редагувати",
+                                      icon: <PenLine />,
+                                      onClick: () => onClickUpdateFunction(el.id),
+                                    },
+                                  ]}
                                   onClickDeleteFunction={onClickDeleteFunction}
                                 />
                               </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 
@@ -18,22 +18,26 @@ import { SelectPlanTable } from "~/components/features/select-plan/select-plan-t
 
 export type PlanActionModalType = {
   isOpen: boolean;
-  type: "create-category" | "update-category" | "create-plan";
+  type: "create-category" | "update-category" | "create-plan" | "update-plan";
 };
 
 export default function PlansPage() {
   const [_, setCookie] = useCookies();
-
+  /* 
   const {
-    plans: { status: defaultStatus },
+    groups: { categories: filtredCategories, status: defaultStatus },
+  } = useSelector(generalSelector); */
+  const {
+    plans: { status: defaultStatus, categories: filtredCategories },
   } = useSelector(generalSelector);
   const { plansCategories } = useSelector(plansSelector);
 
   const [globalSearch, setGlobalSearch] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
-  const [updatingCategory, setUpdatingCategory] = useState<{ id: number; name: string } | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState(
+    filtredCategories.length ? filtredCategories : plansCategories ? plansCategories.map((el) => ({ id: el.id })) : [],
+  );
+  const [editablePlan, setEditablePlan] = useState<PlansType | null>(null);
   const [editableCategory, setEditableCategory] = useState<{ id: number; name: string } | null>(null);
-  // const [selectedPlan, setSelectedPlan] = useState<PlansType | null>({ id: 0, name: "" } as PlansType);
   const [modalData, setModalData] = useState<PlanActionModalType>({ isOpen: false, type: "create-plan" });
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі");
 
@@ -48,11 +52,21 @@ export default function PlansPage() {
     setCookie(PLAN_STATUS, value);
   };
 
+  useEffect(() => {
+    if (!selectedCategories.length) return;
+    // const categoriesIds = selectedCategories.map((el) => el.id);
+    // setCookie(GROUP_FILTERS, categoriesIds);
+    // dispatch(setGroupFilters(selectedCategories));
+  }, [selectedCategories]);
+
+  console.log(visiblePlans);
+
   return (
     <>
       <PlanActionsModal
         modalData={modalData}
         setModalData={setModalData}
+        editablePlan={editablePlan}
         editableCategory={editableCategory}
         setEditableCategory={setEditableCategory}
       />
@@ -76,8 +90,9 @@ export default function PlansPage() {
               filterVariant="default"
               selectAllLabel="Вибрати всі"
               selectedItems={selectedCategories}
+              // @ts-ignore
+              items={sortByName(visiblePlans) || []}
               setSelectedItems={setSelectedCategories}
-              items={sortByName(plansCategories) || []}
             />
           </div>
         </div>
@@ -106,6 +121,7 @@ export default function PlansPage() {
             isEditable
             searchValue={globalSearch}
             setModalData={setModalData}
+            setEditablePlan={setEditablePlan}
             setEditableCategory={setEditableCategory}
             plansCategories={plansCategories ? plansCategories : []}
           />

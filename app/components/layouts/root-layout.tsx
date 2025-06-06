@@ -19,6 +19,8 @@ import {
   AUDITORY_SORT_TYPE,
   SIDEBAR_COOKIE_NAME,
   EXPANDED_SIDEBAR_ITEMS,
+  PLAN_FILTERS,
+  PLAN_EXPANDED,
 } from "~/constants/cookies-keys";
 import {
   setPlanStatus,
@@ -33,6 +35,8 @@ import {
   setTeacherFilters,
   setAuditoryFilters,
   toggleExpandedSidebarItems,
+  setPlanFilters,
+  setPlanExpanded,
 } from "~/store/general/general-slice";
 import { plansAPI } from "~/api/plans-api";
 import { groupsAPI } from "~/api/groups-api";
@@ -90,6 +94,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // plans-cookies
   const planStatus = (cookies[PLAN_STATUS] ?? "Всі") as "Всі" | "Активний" | "Архів";
   store.dispatch(setPlanStatus(planStatus));
+
+  const planFilters = JSON.parse(cookies[PLAN_FILTERS] ?? "[]");
+  const planCategoriesIds = planFilters.filter((el: string) => Number(el)).map((el: any) => ({ id: Number(el) }));
+  store.dispatch(setPlanFilters(planCategoriesIds));
+
+  const planExpanded = JSON.parse(cookies[PLAN_EXPANDED] ?? "[]");
+  const planExpandedIds = planExpanded.filter((el: string) => Number(el)).map((el: any) => ({ id: Number(el) }));
+  store.dispatch(setPlanExpanded(planExpandedIds));
 
   // auditories
   const { data: auditoryCategories } = await auditoriesAPI.getAuditoryCategories();

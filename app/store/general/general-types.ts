@@ -16,6 +16,8 @@ export type GeneralSliceInitialState = {
   teachers: ItemFilterType;
   plans: {
     status: "Всі" | "Активний" | "Архів";
+    categories: { id: number }[];
+    expanded: { id: number }[];
   };
 
   confirmModal: {

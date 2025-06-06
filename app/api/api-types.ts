@@ -90,6 +90,13 @@ export type CreatePlanPayloadType = {
   categoryId: number;
 };
 
+export type UpdatePlanPayloadType = {
+  id: number;
+  name: string;
+  categoryId: number;
+  status: "Активний" | "Архів";
+};
+
 /* Groups */
 
 export type UpdateGroupPayloadType = Pick<

@@ -9,6 +9,7 @@ import {
   type SortingState,
   type PaginationState,
 } from "@tanstack/react-table";
+import { useSelector } from "react-redux";
 import { useCallback, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
 import { ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
@@ -16,13 +17,11 @@ import { cn } from "~/lib/utils";
 import { Input } from "~/components/ui/common/input";
 import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { Button } from "~/components/ui/common/button";
-import type { PlanSubjectType } from "~/store/plans/plans-types";
+import { plansSelector } from "~/store/plans/plans-slice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
 import { groupLessonsByName, type PlanItemType, type SemesterHoursType } from "~/helpers/group-lessons-by-name";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
-import { useSelector } from "react-redux";
-import { plansSelector } from "~/store/plans/plans-slice";
 
 const defaultSemesterData = {
   id: 0,

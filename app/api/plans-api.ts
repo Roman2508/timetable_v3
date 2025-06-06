@@ -1,5 +1,5 @@
 import { instanse } from "./api";
-import { type CreatePlanPayloadType } from "./api-types";
+import { type CreatePlanPayloadType, type UpdatePlanPayloadType } from "./api-types";
 import { type PlansCategoriesType, type PlansType, type PlanType } from "../store/plans/plans-types";
 
 export const plansAPI = {
@@ -26,10 +26,9 @@ export const plansAPI = {
   createPlan(payload: CreatePlanPayloadType) {
     return instanse.post<PlansType>("/plans", payload);
   },
-  updatePlan(payload: { name: string; id: number }) {
-    return instanse.patch<PlansType>(`/plans/${payload.id}`, {
-      name: payload.name,
-    });
+  updatePlan(payload: UpdatePlanPayloadType) {
+    const { id, ...rest } = payload;
+    return instanse.patch<PlansType>(`/plans/${id}`, rest);
   },
   deletePlan(id: number) {
     return instanse.delete<number>(`/plans/${id}`);

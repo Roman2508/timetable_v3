@@ -14,6 +14,12 @@ import {
 } from "~/components/ui/common/dropdown-menu";
 import { Button } from "~/components/ui/common/button";
 
+type AdditionalDropdownItemsType = {
+  label: string;
+  onClick: (id: number) => void;
+  icon?: React.ReactNode;
+};
+
 type CategoriesType = {
   id: number;
   name: string;
@@ -28,6 +34,7 @@ interface IActionsDropdownProps {
   onClickUpdateFunction?: (id: number) => void;
   onClickDeleteFunction?: (id: number) => void;
   changeStatusFunction?: (id: number) => void;
+  additionalItems?: AdditionalDropdownItemsType[];
   changeCategoryFunction?: (id: number, categoryId: number) => void;
 }
 
@@ -35,6 +42,7 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
   itemId,
   categoryPrefix,
   categoriesList,
+  additionalItems,
   changeStatusFunction,
   onClickUpdateFunction,
   onClickDeleteFunction,
@@ -55,6 +63,14 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
             Оновити
           </DropdownMenuItem>
         )}
+
+        {additionalItems?.length &&
+          additionalItems.map((item) => (
+            <DropdownMenuItem key={item.label} className="cursor-pointer" onClick={() => item.onClick(itemId)}>
+              {item.icon}
+              {item.label}
+            </DropdownMenuItem>
+          ))}
 
         {changeCategoryFunction && !!categoriesList?.length && (
           <DropdownMenuGroup className="cursor-pointer">

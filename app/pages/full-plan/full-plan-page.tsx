@@ -52,10 +52,10 @@ const FullPlanPage: FC = ({}) => {
       />
 
       <SemesterDetailsModal
-        detailsModalType={detailsModalType}
-        setDetailsModalType={setDetailsModalType}
         isOpen={isDetailsModalOpen}
         setIsOpen={setIsDetailsModalOpen}
+        detailsModalType={detailsModalType}
+        setDetailsModalType={setDetailsModalType}
         selectedSemesterHours={selectedSemesterHours}
         setSelectedSemesterHours={setSelectedSemesterHours}
       />

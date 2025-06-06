@@ -5,6 +5,7 @@ import {
   type CreateSubjectPayloadType,
   type UpdateSubjectNamePayloadType,
   type UpdateSubjectHoursPayloadType,
+  type UpdatePlanPayloadType,
 } from "../../api/api-types";
 import { setLoadingStatus } from "./plans-slice";
 import { LoadingStatusTypes } from "../app-types";
@@ -118,27 +119,24 @@ export const createPlan = createAsyncThunk(
   },
 );
 
-export const updatePlan = createAsyncThunk(
-  "plans/updatePlan",
-  async (payload: { name: string; id: number }, thunkAPI) => {
-    thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
+export const updatePlan = createAsyncThunk("plans/updatePlan", async (payload: UpdatePlanPayloadType, thunkAPI) => {
+  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
 
-    const promise = plansAPI.updatePlan(payload);
+  const promise = plansAPI.updatePlan(payload);
 
-    toast.promise(promise, {
-      loading: "Завантаження...",
-      success: "План оновлено",
-      error: (error) => {
-        thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR));
-        return (error as any)?.response?.data?.message || error.message;
-      },
-    });
+  toast.promise(promise, {
+    loading: "Завантаження...",
+    success: "План оновлено",
+    error: (error) => {
+      thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR));
+      return (error as any)?.response?.data?.message || error.message;
+    },
+  });
 
-    const { data } = await promise;
-    thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS));
-    return data;
-  },
-);
+  const { data } = await promise;
+  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS));
+  return data;
+});
 
 export const deletePlan = createAsyncThunk("plans/deletePlan", async (id: number, thunkAPI) => {
   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
