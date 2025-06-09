@@ -106,7 +106,7 @@ const generalSlice = createSlice({
     },
 
     setPlanStatus(state, action: PayloadAction<"Всі" | "Активний" | "Архів">) {
-      state.teachers.status = action.payload;
+      state.plans.status = action.payload;
     },
     setPlanFilters(state, action: PayloadAction<{ id: number }[]>) {
       state.plans.categories = action.payload;

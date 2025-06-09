@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router";
-import { AlignRight, ChevronsUpDown, Edit, PenLine } from "lucide-react";
+import { AlignRight, ChevronsUpDown, PenLine } from "lucide-react";
 import { useCallback, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import { cn } from "~/lib/utils";
 import { onConfirm } from "../confirm-modal";
 import { useAppDispatch } from "~/store/store";
+import { Badge } from "~/components/ui/common/badge";
 import { ActionsDropdown } from "../actions-dropdown";
 import { Button } from "~/components/ui/common/button";
 import type { PlanActionModalType } from "~/pages/plans/plans-page";
@@ -12,14 +13,13 @@ import { changeAlertModalStatus } from "~/store/general/general-slice";
 import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
 import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
-import { Badge } from "~/components/ui/common/badge";
 
 interface ISelectPlanTableProps {
   searchValue: string;
   isEditable?: boolean;
   selectedPlan?: PlansType | null;
   plansCategories: PlansCategoriesType[];
-  setModalData: Dispatch<SetStateAction<PlanActionModalType>>;
+  setModalData?: Dispatch<SetStateAction<PlanActionModalType>>;
   setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>;
   setEditablePlan?: React.Dispatch<React.SetStateAction<PlansType | null>>;
   setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>;
@@ -51,7 +51,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   }, [plansCategories, searchValue]);
 
   const onClickCategoryUpdateFunction = (id: number) => {
-    setModalData({ isOpen: true, type: "update-category" });
+    setModalData && setModalData({ isOpen: true, type: "update-category" });
     const editableCategory = plansCategories.find((el) => el.id === id);
     if (editableCategory && setEditableCategory) {
       setEditableCategory({ id, name: editableCategory.name });
@@ -92,7 +92,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
     const selectedPlan = plansCategories.flatMap((el) => el.plans).find((el) => el.id === id);
     if (!selectedPlan) return;
     setEditablePlan && setEditablePlan(selectedPlan);
-    setModalData({ isOpen: true, type: "update-plan" });
+    setModalData && setModalData({ isOpen: true, type: "update-plan" });
   };
 
   const onClickReviewFunction = (id: number) => {
@@ -183,15 +183,16 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                               key={plan.id}
                               onClick={() => {
                                 setSelectedPlan && setSelectedPlan({ name: plan.name, id: plan.id } as PlansType);
-                                // fix prevent default
-                                // onClickUpdateFunction(plan.id);
+                                onClickReviewFunction(plan.id);
                               }}
                               className={cn(
                                 "hover:border hover:border-primary cursor-pointer flex items-center px-4 py-1 border border-white border-t-border",
                               )}
                             >
                               <div className="flex-5">{plan.name}</div>
-                              <div className="flex-1">{plan.subjectsCount}</div>
+                              <div className="flex-1">
+                                {plan.subjectsCount > 2 ? plan.subjectsCount - 1 : plan.subjectsCount}
+                              </div>
                               <div className="flex-1">
                                 <Badge
                                   variant="outline"

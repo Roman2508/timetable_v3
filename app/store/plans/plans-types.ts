@@ -24,6 +24,7 @@ export type PlansType = {
 export type PlanType = {
   id: number;
   name: string;
+  status: "Активний" | "Архів";
   category: { id: number };
   subjects: PlanSubjectType[];
 };

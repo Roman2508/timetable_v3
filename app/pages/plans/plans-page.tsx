@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
+import { useEffect, useMemo, useState } from "react";
 
+import { useAppDispatch } from "~/store/store";
 import { sortByName } from "~/helpers/sort-by-name";
 import { Button } from "~/components/ui/common/button";
-import { PLAN_STATUS } from "~/constants/cookies-keys";
 import { plansSelector } from "~/store/plans/plans-slice";
-import { useItemsByStatus } from "~/hooks/use-items-by-status";
-import { generalSelector } from "~/store/general/general-slice";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
+import { PLAN_FILTERS, PLAN_STATUS } from "~/constants/cookies-keys";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { useItemsByStatus, type ItemType } from "~/hooks/use-items-by-status";
+import { generalSelector, setPlanFilters } from "~/store/general/general-slice";
 import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
 import PlanActionsModal from "~/components/features/pages/plans/plan-actions-modal";
 import { SelectPlanTable } from "~/components/features/select-plan/select-plan-table";
@@ -21,12 +22,30 @@ export type PlanActionModalType = {
   type: "create-category" | "update-category" | "create-plan" | "update-plan";
 };
 
+const getVisiblePlanCategories = (
+  plansCategories: PlansCategoriesType[] | null,
+  selectedCategories: { id: number }[],
+  filteredItems: ItemType[],
+) => {
+  if (!plansCategories) return [];
+  const selectedPlanCategories = plansCategories.filter((category) => {
+    return selectedCategories.some((el) => el.id === category.id);
+  });
+
+  const visiblePlans = selectedPlanCategories.map((category: PlansCategoriesType) => {
+    const plans = filteredItems.filter((plan) => plan.category.id === category.id);
+    return { ...category, plans };
+  }) as PlansCategoriesType[];
+
+  return visiblePlans;
+};
+
 export default function PlansPage() {
+  const dispatch = useAppDispatch();
+
   const [_, setCookie] = useCookies();
-  /* 
-  const {
-    groups: { categories: filtredCategories, status: defaultStatus },
-  } = useSelector(generalSelector); */
+
+  // !!! Доробити expanded:
   const {
     plans: { status: defaultStatus, categories: filtredCategories },
   } = useSelector(generalSelector);
@@ -41,10 +60,10 @@ export default function PlansPage() {
   const [modalData, setModalData] = useState<PlanActionModalType>({ isOpen: false, type: "create-plan" });
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі");
 
-  const { filteredItems: visiblePlans, counts } = useItemsByStatus<PlansCategoriesType>(
-    plansCategories,
-    "plans",
-    activeStatus,
+  const { filteredItems, counts } = useItemsByStatus<PlansCategoriesType>(plansCategories, "plans", activeStatus);
+  const visiblePlans = useMemo(
+    () => getVisiblePlanCategories(plansCategories, selectedCategories, filteredItems),
+    [plansCategories, selectedCategories, filteredItems],
   );
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
@@ -54,12 +73,10 @@ export default function PlansPage() {
 
   useEffect(() => {
     if (!selectedCategories.length) return;
-    // const categoriesIds = selectedCategories.map((el) => el.id);
-    // setCookie(GROUP_FILTERS, categoriesIds);
-    // dispatch(setGroupFilters(selectedCategories));
+    const categoriesIds = selectedCategories.map((el) => el.id);
+    setCookie(PLAN_FILTERS, categoriesIds);
+    dispatch(setPlanFilters(selectedCategories));
   }, [selectedCategories]);
-
-  console.log(visiblePlans);
 
   return (
     <>
@@ -90,9 +107,8 @@ export default function PlansPage() {
               filterVariant="default"
               selectAllLabel="Вибрати всі"
               selectedItems={selectedCategories}
-              // @ts-ignore
-              items={sortByName(visiblePlans) || []}
               setSelectedItems={setSelectedCategories}
+              items={sortByName(plansCategories) || []}
             />
           </div>
         </div>
@@ -123,7 +139,7 @@ export default function PlansPage() {
             setModalData={setModalData}
             setEditablePlan={setEditablePlan}
             setEditableCategory={setEditableCategory}
-            plansCategories={plansCategories ? plansCategories : []}
+            plansCategories={visiblePlans ? visiblePlans : []}
           />
         ) : (
           <p>Пусто</p>

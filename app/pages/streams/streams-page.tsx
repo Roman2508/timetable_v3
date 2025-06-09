@@ -1,15 +1,13 @@
-import React from "react";
-import { ChevronsUpDown, Ellipsis, GraduationCap } from "lucide-react";
+import { useState } from "react";
+import { GraduationCap } from "lucide-react";
 
-import { cn } from "~/lib/utils";
-import { Card } from "~/components/ui/common/card";
-import { Badge } from "~/components/ui/common/badge";
-import { Button } from "~/components/ui/common/button";
+import EntityHeader from "~/components/features/entity-header";
+import type { StreamsType } from "~/store/streams/streams-types";
+import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
-import { InputSearch } from "~/components/ui/custom/input-search";
 import StreamsListDrawer from "~/components/features/pages/streams/streams-list-drawer";
+import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
 
 const semesters = [
   { id: 1, name: "1" },
@@ -26,26 +24,18 @@ const streamsStatus = [
 ];
 
 const StreamsPage = () => {
-  const [selectedSemester, setSelectedSemester] = React.useState(semesters);
-  const [selectedStreamStatus, setSelectedStreamStatus] = React.useState(streamsStatus);
+  const [selectedSemester, setSelectedSemester] = useState(semesters);
+  const [selectedStream, setSelectedStream] = useState<StreamsType | null>(null);
 
   return (
     <RootContainer classNames="flex gap-10 !min-h-[calc(100vh-160px)]">
       <div className="flex flex-col flex-1">
         <div className="flex w-full justify-between items-center mb-4">
-          <div className="">
-            <div className="flex items-center gap-2">
-              <GraduationCap className="w-4 text-black/40" />
-              <div className="text-black/40 text-sm">ПОТІК</div>
-            </div>
-
-            <div className="flex gap-3 items-center">
-              <h2 className="text-2xl font-semibold">PH9-25-1-3</h2>
-              <Badge variant="outline" className="text-primary bg-primary-light border-0">
-                Активна
-              </Badge>
-            </div>
-          </div>
+          {selectedStream ? (
+            <EntityHeader Icon={GraduationCap} label="ПОТІК" status="Активний" name={selectedStream.name} />
+          ) : (
+            <h2 className="flex items-center h-14 text-2xl font-semibold">Виберіть потік</h2>
+          )}
 
           <div className="flex items-center gap-4">
             <InputSearch placeholder="Знайти..." />
@@ -61,7 +51,7 @@ const StreamsPage = () => {
               setSelectedItems={setSelectedSemester}
             />
 
-            <StreamsListDrawer />
+            <StreamsListDrawer selectedStream={selectedStream} setSelectedStream={setSelectedStream} />
           </div>
         </div>
 

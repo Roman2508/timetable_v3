@@ -4,11 +4,11 @@ import React from "react";
 import { NavLink } from "react-router";
 import { Plus, User } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
 
 import CategoryActionsModal, {
   type FormData,
 } from "~/components/features/category-actions-modal/category-actions-modal";
-import { useCookies } from "react-cookie";
 import type {
   CategoryModalStateType,
   UpdatingCategoryType,

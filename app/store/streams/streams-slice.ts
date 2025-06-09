@@ -30,7 +30,9 @@ const plansSlice = createSlice({
     setLoadingStatus(state, action) {
       state.loadingStatus = action.payload;
     },
-
+    setStreams(state, action: PayloadAction<StreamsType[]>) {
+      state.streams = action.payload;
+    },
     clearStreamLessons(state) {
       state.streamLessons = null;
     },
@@ -141,7 +143,7 @@ const plansSlice = createSlice({
   },
 });
 
-export const { setLoadingStatus, clearStreamLessons } = plansSlice.actions;
+export const { setLoadingStatus, clearStreamLessons, setStreams } = plansSlice.actions;
 
 export default plansSlice.reducer;
 

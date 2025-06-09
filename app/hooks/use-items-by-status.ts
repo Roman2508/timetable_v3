@@ -1,6 +1,6 @@
 import React from "react";
 
-type ItemType = {
+export type ItemType = {
   status: "Активний" | "Архів";
   [key: string]: any;
 };

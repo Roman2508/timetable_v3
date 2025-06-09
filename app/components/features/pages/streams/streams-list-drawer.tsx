@@ -1,24 +1,64 @@
-import React from "react";
+import { useSelector } from "react-redux";
+import { type Dispatch, type FC, type SetStateAction } from "react";
 import { ChevronsUpDown, Ellipsis, Trash } from "lucide-react";
 
 import {
   Drawer,
+  DrawerTitle,
   DrawerClose,
-  DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
+  DrawerContent,
+  DrawerDescription,
 } from "~/components/ui/common/drawer";
 import { cn } from "~/lib/utils";
-import { Badge } from "~/components/ui/common/badge";
 import { Button } from "~/components/ui/common/button";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import { streamsSelector } from "~/store/streams/streams-slice";
+import type { StreamsType } from "~/store/streams/streams-types";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
-const StreamsListDrawer = () => {
+interface IStreamsListDrawerProps {
+  selectedStream: StreamsType | null;
+  setSelectedStream: Dispatch<SetStateAction<StreamsType | null>>;
+}
+
+const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({ selectedStream, setSelectedStream }) => {
+  // const { streams } = useSelector(streamsSelector);
+
+  const streams = [
+    {
+      id: 1,
+      name: "test stream",
+      groups: [
+        {
+          id: 2,
+          name: "LD9-25-1",
+        },
+        {
+          id: 1,
+          name: "PH9-25-1",
+        },
+      ],
+      lessons: [],
+    },
+    {
+      id: 2,
+      name: "test stream 2",
+      groups: [],
+      lessons: [],
+    },
+  ];
+
+  const onSelectStream = (stream: StreamsType) => {
+    setSelectedStream((prev) => {
+      if (!prev) return stream;
+      if (prev.id !== stream.id) return stream;
+      return null;
+    });
+  };
+
   return (
     <Drawer direction="right">
       <DrawerTrigger>
@@ -28,25 +68,14 @@ const StreamsListDrawer = () => {
         <DrawerHeader>
           <DrawerTitle>Потоки</DrawerTitle>
           <DrawerDescription>Список навчальних потоків</DrawerDescription>
-
-          <Tabs defaultValue="all">
-            <TabsList>
-              <TabsTrigger value="all">Всі (12)</TabsTrigger>
-              <TabsTrigger value="active">Активні (8)</TabsTrigger>
-              <TabsTrigger value="archive">Архів (4)</TabsTrigger>
-            </TabsList>
-          </Tabs>
         </DrawerHeader>
 
         <div className="px-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-          {[...Array(4)].map((_, index) => (
-            <Collapsible className="py-2 px-4 border mb-2 hover:border-primary hover:cursor-pointer" key={index}>
-              <div className="flex items-center justify-between space-x-4">
+          {(streams ?? []).map((stream) => (
+            <Collapsible className="py-2 px-4 border mb-2 hover:border-primary hover:cursor-pointer" key={stream.id}>
+              <div className="flex items-center justify-between space-x-4" onClick={() => onSelectStream(stream)}>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold">PH9-24-1-3</p>
-                  <Badge variant="outline" className="text-primary bg-primary-light border-0">
-                    Активний
-                  </Badge>
+                  <p className="text-sm font-semibold">{stream.name}</p>
                 </div>
 
                 <div className="flex gap-1">
@@ -55,7 +84,7 @@ const StreamsListDrawer = () => {
                   </Button>
 
                   <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
                       <ChevronsUpDown className="h-4 w-4" />
                       <span className="sr-only">Toggle</span>
                     </Button>
@@ -64,30 +93,42 @@ const StreamsListDrawer = () => {
               </div>
 
               <CollapsibleContent className="py-2 mb-2 ml-4">
-                {["PH11-25-1", "PH9-24-1", "LD9-23-2", "LD9-23-2", "PH11-23-2"].map((groupName) => (
-                  <div
-                    className={cn(
-                      "border pl-4 mb-2 font-mono text-sm cursor-pointer hover:border-primary hover:text-primary flex justify-between items-center",
-                    )}
-                  >
-                    {groupName}
+                {stream.groups.length ? (
+                  stream.groups.map((group) => (
+                    <div
+                      key={group.id}
+                      className={cn(
+                        "border pl-4 mb-2 font-mono text-sm cursor-pointer hover:border-primary hover:text-primary flex justify-between items-center",
+                      )}
+                    >
+                      {group.name}
 
-                    <Tooltip delayDuration={500}>
-                      <TooltipTrigger>
-                        <Button variant="ghost">
-                          <Trash />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Видалити групу з потоку</TooltipContent>
-                    </Tooltip>
-                  </div>
-                ))}
+                      <Tooltip delayDuration={500}>
+                        <TooltipTrigger>
+                          <Button variant="ghost" onClick={(e) => e.stopPropagation()}>
+                            <Trash />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Видалити групу з потоку</TooltipContent>
+                      </Tooltip>
+                    </div>
+                  ))
+                ) : (
+                  <div className="font-mono text-sm">До потоку ще не додано жодної групи</div>
+                )}
               </CollapsibleContent>
             </Collapsible>
           ))}
         </div>
 
         <DrawerFooter>
+          {selectedStream ? (
+            <p className="text-center font-mono">
+              Вибрано потік: <b>{selectedStream.name}</b>
+            </p>
+          ) : (
+            ""
+          )}
           <Button>Вибрати</Button>
           <DrawerClose>
             <Button variant="outline" className="w-full">

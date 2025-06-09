@@ -37,7 +37,15 @@ const FullPlanPage: FC = ({}) => {
   const onChangePlanName = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       if (!plan) return;
-      await dispatch(updatePlan({ ...plan, name: planName }));
+
+      const payload = {
+        id: plan.id,
+        name: planName,
+        status: plan.status,
+        categoryId: plan.category.id,
+      };
+
+      await dispatch(updatePlan(payload));
       setEditMode(false);
     }
   };
@@ -73,7 +81,7 @@ const FullPlanPage: FC = ({}) => {
             ) : (
               <span>{plan?.name}</span>
             )}
-            {/* <span>I8 Фармація, промислова фармація ОПС ФМБ (заочна форма навчання) 2024</span> */}
+     
             <Button variant="ghost" onClick={handleChangeEditMode}>
               <PenLine />
             </Button>
@@ -89,7 +97,7 @@ const FullPlanPage: FC = ({}) => {
 
             <Popover>
               <PopoverTrigger asChild>
-                <Button>
+                <Button disabled>
                   <ListFilter />
                   <span className="hidden lg:inline">Фільтр</span>
                   <span className="lg:hidden">Фільтр</span>
@@ -108,7 +116,7 @@ const FullPlanPage: FC = ({}) => {
                     </label>
                   </div>
 
-                  {["1", "2", "3", "4", "5", "6"].map((item) => {
+                  {["1", "2", "3", "4", "5", "6", "7", "8"].map((item) => {
                     return (
                       <div className="flex items-center space-x-2">
                         <Checkbox id={item} />
