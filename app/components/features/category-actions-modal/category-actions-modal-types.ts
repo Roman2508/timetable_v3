@@ -6,7 +6,7 @@ export type CategoryModalStateType = {
 export type UpdatingCategoryType = {
   id: number;
   name: string;
-  shortName: string;
+  shortName?: string;
 };
 
 export type StatusTypes = "Активний" | "Архів" | "";

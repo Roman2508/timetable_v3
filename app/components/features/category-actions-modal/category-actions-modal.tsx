@@ -1,5 +1,5 @@
 import z from "zod";
-import { useState } from "react";
+import { useState, type Dispatch, type FC, type MouseEvent, type SetStateAction } from "react";
 
 import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
@@ -8,30 +8,38 @@ import type { CategoryModalStateType, UpdatingCategoryType } from "./category-ac
 import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogDescription } from "~/components/ui/common/dialog";
 
 interface ICategoryActionsModalProps {
+  title?: string;
+  isOnlyName?: boolean;
+  nameLabel?: string;
+  shortNameLabel?: string;
   modalData: CategoryModalStateType;
   updatingCategory: UpdatingCategoryType | null;
   onCreateCategory: (data: FormData) => Promise<void>;
   onUpdateCategory: (data: FormData & { id: number }) => Promise<void>;
-  setModalData: React.Dispatch<React.SetStateAction<CategoryModalStateType>>;
-  setUpdatingCategory: React.Dispatch<React.SetStateAction<UpdatingCategoryType | null>>;
+  setModalData: Dispatch<SetStateAction<CategoryModalStateType>>;
+  setUpdatingCategory: Dispatch<SetStateAction<UpdatingCategoryType | null>>;
 }
 
 const initialFormData = { name: "", shortName: "" };
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
-  shortName: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 1 символ" }),
+  shortName: z.string({ message: "Це поле обов'язкове" }).optional(),
 });
 
 export type FormData = z.infer<typeof formSchema>;
 
-const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({
+const CategoryActionsModal: FC<ICategoryActionsModalProps> = ({
+  title,
   modalData,
+  isOnlyName,
   setModalData,
   updatingCategory,
   onCreateCategory,
   onUpdateCategory,
   setUpdatingCategory,
+  nameLabel = "Назва підрозділу*",
+  shortNameLabel = "Коротка назва*",
 }) => {
   const [isPending, setIsPending] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
@@ -53,15 +61,26 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({
     if (!value) reset();
   };
 
+  // const validate = () => {
+  //   const res = formSchema.safeParse(formData);
+  //   if (res.success) return;
+  //   return res.error.format();
+  // };
+
   const validate = () => {
     const res = formSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
+    if (!res.success) {
+      return res.error.format();
+    }
+
+    if (!isOnlyName && !formData.shortName) {
+      return { success: false, shortName: { _errors: ["Це поле обов'язкове"] } };
+    }
   };
 
   const errors = showErrors ? validate() : undefined;
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const errors = validate();
@@ -95,8 +114,8 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="pb-4">
-            {modalData.actionType === "create" && "Створити новий підрозділ:"}
-            {modalData.actionType === "update" && "Оновити підрозділ:"}
+            {modalData.actionType === "create" ? (title ? title : "Створити новий підрозділ:") : ""}
+            {modalData.actionType === "update" ? (title ? title : "Оновити підрозділ:") : ""}
           </DialogTitle>
         </DialogHeader>
 
@@ -105,22 +124,26 @@ const CategoryActionsModal: React.FC<ICategoryActionsModalProps> = ({
         <DialogDescription>
           <form onSubmit={handleSubmit}>
             <div className="mb-4 mt-1 flex flex-col gap-1">
-              <h5 className="text-md">Назва підрозділу*</h5>
+              <h5 className="text-md">{nameLabel}</h5>
               <Input
                 value={formData.name}
                 onChange={(e) => setUserFormData((prev) => ({ ...prev, name: e.target.value }))}
               />
+              {/* @ts-ignore */}
               <p className="text-error text-sm mt-1">{errors?.name?._errors.join(", ")}</p>
             </div>
 
-            <div className="mb-8 mt-1 flex flex-col gap-1">
-              <h5 className="text-md">Коротка назва*</h5>
-              <Input
-                value={formData.shortName}
-                onChange={(e) => setUserFormData((prev) => ({ ...prev, shortName: e.target.value }))}
-              />
-              <p className="text-error text-sm mt-1">{errors?.shortName?._errors.join(", ")}</p>
-            </div>
+            {!isOnlyName && (
+              <div className="mb-8 mt-1 flex flex-col gap-1">
+                <h5 className="text-md">{shortNameLabel}</h5>
+                <Input
+                  value={formData.shortName}
+                  onChange={(e) => setUserFormData((prev) => ({ ...prev, shortName: e.target.value }))}
+                />
+                {/* @ts-ignore */}
+                <p className="text-error text-sm mt-1">{errors?.shortName?._errors.join(", ")}</p>
+              </div>
+            )}
 
             <Separator />
 

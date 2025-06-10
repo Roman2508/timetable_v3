@@ -104,11 +104,13 @@ const GroupsPage = () => {
   };
 
   const onCreateCategory = async (data: FormData) => {
-    await dispatch(createGroupCategory(data));
+    const { name, shortName } = data;
+    await dispatch(createGroupCategory({ name, shortName: String(shortName) }));
   };
 
   const onUpdateCategory = async (data: FormData & { id: number }) => {
-    await dispatch(updateGroupCategory(data));
+    const { id, name, shortName } = data;
+    await dispatch(updateGroupCategory({ id, name, shortName: String(shortName) }));
   };
 
   React.useEffect(() => {

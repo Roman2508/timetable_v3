@@ -8,6 +8,13 @@ import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import StreamsListDrawer from "~/components/features/pages/streams/streams-list-drawer";
 import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
+import CategoryActionsModal, {
+  type FormData,
+} from "~/components/features/category-actions-modal/category-actions-modal";
+import type {
+  CategoryModalStateType,
+  UpdatingCategoryType,
+} from "~/components/features/category-actions-modal/category-actions-modal-types";
 
 const semesters = [
   { id: 1, name: "1" },
@@ -24,40 +31,75 @@ const streamsStatus = [
 ];
 
 const StreamsPage = () => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedSemester, setSelectedSemester] = useState(semesters);
   const [selectedStream, setSelectedStream] = useState<StreamsType | null>(null);
+  const [preSelectedStream, setPreSelectedStream] = useState<StreamsType | null>(null);
+  const [updatingStream, setUpdatingStream] = useState<UpdatingCategoryType | null>(null);
+  const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" });
+
+  const onCreateCategory = async (data: FormData) => {
+    console.log(data);
+  };
+
+  const onUpdateCategory = async (data: FormData & { id: number }) => {
+    console.log(data);
+  };
 
   return (
-    <RootContainer classNames="flex gap-10 !min-h-[calc(100vh-160px)]">
-      <div className="flex flex-col flex-1">
-        <div className="flex w-full justify-between items-center mb-4">
-          {selectedStream ? (
-            <EntityHeader Icon={GraduationCap} label="ПОТІК" status="Активний" name={selectedStream.name} />
-          ) : (
-            <h2 className="flex items-center h-14 text-2xl font-semibold">Виберіть потік</h2>
-          )}
+    <>
+      <CategoryActionsModal
+        isOnlyName
+        modalData={modalData}
+        nameLabel="Назва потоку*"
+        setModalData={setModalData}
+        updatingCategory={updatingStream}
+        onCreateCategory={onCreateCategory}
+        onUpdateCategory={onUpdateCategory}
+        setUpdatingCategory={setUpdatingStream}
+        title={modalData.actionType === "create" ? "Створити новий потік" : "Оновити потік*"}
+      />
 
-          <div className="flex items-center gap-4">
-            <InputSearch placeholder="Знайти..." />
+      <RootContainer classNames="flex gap-10 !min-h-[calc(100vh-160px)]">
+        <div className="flex flex-col flex-1">
+          <div className="flex w-full justify-between items-center mb-4">
+            {selectedStream ? (
+              <EntityHeader Icon={GraduationCap} label="ПОТІК" status="Активний" name={selectedStream.name} />
+            ) : (
+              <h2 className="flex items-center h-14 text-2xl font-semibold">Виберіть потік</h2>
+            )}
 
-            <PopoverFilter
-              enableSelectAll
-              label="Семестри"
-              items={semesters}
-              itemsPrefix="Семестр"
-              filterVariant="default"
-              selectAllLabel="Вибрати всі"
-              selectedItems={selectedSemester}
-              setSelectedItems={setSelectedSemester}
-            />
+            <div className="flex items-center gap-4">
+              <InputSearch placeholder="Знайти..." />
 
-            <StreamsListDrawer selectedStream={selectedStream} setSelectedStream={setSelectedStream} />
+              <PopoverFilter
+                enableSelectAll
+                label="Семестри"
+                items={semesters}
+                itemsPrefix="Семестр"
+                filterVariant="default"
+                selectAllLabel="Вибрати всі"
+                selectedItems={selectedSemester}
+                setSelectedItems={setSelectedSemester}
+              />
+
+              <StreamsListDrawer
+                setModalData={setModalData}
+                isDrawerOpen={isDrawerOpen}
+                selectedStream={selectedStream}
+                setIsDrawerOpen={setIsDrawerOpen}
+                setSelectedStream={setSelectedStream}
+                preSelectedStream={preSelectedStream}
+                setUpdatingStream={setUpdatingStream}
+                setPreSelectedStream={setPreSelectedStream}
+              />
+            </div>
           </div>
-        </div>
 
-        <StreamsLessonsTable />
-      </div>
-    </RootContainer>
+          <StreamsLessonsTable />
+        </div>
+      </RootContainer>
+    </>
   );
 };
 
