@@ -52,31 +52,33 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  // const { streams } = useSelector(streamsSelector);
+  const { streams } = useSelector(streamsSelector);
 
-  const streams = [
-    {
-      id: 1,
-      name: "test stream",
-      groups: [
-        {
-          id: 2,
-          name: "LD9-25-1",
-        },
-        {
-          id: 1,
-          name: "PH9-25-1",
-        },
-      ],
-      lessons: [],
-    },
-    {
-      id: 2,
-      name: "test stream 2",
-      groups: [],
-      lessons: [],
-    },
-  ];
+  // const streams = [
+  //   {
+  //     id: 1,
+  //     name: "test stream",
+  //     groups: [
+  //       {
+  //         id: 2,
+  //         name: "LD9-25-1",
+  //       },
+  //       {
+  //         id: 1,
+  //         name: "PH9-25-1",
+  //       },
+  //     ],
+  //     lessons: [],
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "test stream 2",
+  //     groups: [],
+  //     lessons: [],
+  //   },
+  // ];
+
+  console.log("streams", streams);
 
   const onPreSelectStream = (stream: StreamsType) => {
     setPreSelectedStream((prev) => {
@@ -93,6 +95,7 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
   };
 
   const onClickUpdateFunction = (id: number) => {
+    if (!streams) return;
     const selectedStream = streams.find((el) => el.id === id);
     if (selectedStream) {
       setUpdatingStream(selectedStream);
@@ -126,10 +129,15 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
     }
   };
 
+  const handleChangeOpen = () => {
+    if (isDrawerOpen) setPreSelectedStream(null);
+    else setPreSelectedStream(selectedStream);
+  };
+
   return (
     <Drawer direction="right" open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <DrawerTrigger>
-        <Button>Список потоків</Button>
+        <Button onClick={handleChangeOpen}>Список потоків</Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
@@ -149,10 +157,18 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
           </Card>
 
           {(streams ?? []).map((stream) => (
-            <Collapsible className="py-2 px-4 border mb-2 hover:border-primary hover:cursor-pointer" key={stream.id}>
+            <Collapsible
+              className={cn(
+                "py-2 px-4 border mb-2 hover:border-primary hover:cursor-pointer",
+                preSelectedStream?.id === stream.id ? "border-primary" : "",
+              )}
+              key={stream.id}
+            >
               <div className="flex items-center justify-between space-x-4" onClick={() => onPreSelectStream(stream)}>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold">{stream.name}</p>
+                  <p className={cn("text-sm font-semibold", preSelectedStream?.id === stream.id ? "text-primary" : "")}>
+                    {stream.name}
+                  </p>
                 </div>
 
                 <div className="flex gap-1">

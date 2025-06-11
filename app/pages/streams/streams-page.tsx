@@ -96,7 +96,11 @@ const StreamsPage = () => {
             </div>
           </div>
 
-          <StreamsLessonsTable />
+          {true ? (
+            <StreamsLessonsTable />
+          ) : (
+            <div className="text-center font-mono py-20">Виберіть потік для об'єднання дисциплін.</div>
+          )}
         </div>
       </RootContainer>
     </>

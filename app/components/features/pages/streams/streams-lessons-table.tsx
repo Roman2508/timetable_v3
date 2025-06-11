@@ -9,9 +9,9 @@ import {
   type ColumnDef,
   type SortingState,
   type PaginationState,
+  createColumnHelper,
 } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
 
 import { cn } from "~/lib/utils";
 import { makeData, type Person } from "./make-data";
@@ -19,11 +19,23 @@ import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
 
 export const StreamsLessonsTable = () => {
   const rerender = React.useReducer(() => ({}), {})[1];
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
+
+  const columnHelper = createColumnHelper<any>();
+  const columns2 = React.useMemo(
+    () => [
+      columnHelper.accessor("name", { header: "Аудиторія" }),
+      columnHelper.accessor("group", { header: "Аудиторія" }),
+      columnHelper.accessor("semester", { header: "Аудиторія" }),
+      columnHelper.accessor("name", { header: "Аудиторія" }),
+    ],
+    [],
+  );
 
   const columns = React.useMemo<ColumnDef<Person>[]>(
     () => [
@@ -105,8 +117,6 @@ export const StreamsLessonsTable = () => {
     debugTable: true,
   });
 
-  console.log("getHeaderGroups", table.getHeaderGroups());
-
   return (
     <>
       <div className="p-2 block max-w-full">
@@ -146,21 +156,7 @@ export const StreamsLessonsTable = () => {
               </TableRow>
             ))}
           </TableHeader>
-          {/* <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <th key={header.id} colSpan={header.colSpan} rowSpan={header.rowSpan}>
-                      {header.isPlaceholder ? null : (
-                        <div>{flexRender(header.column.columnDef.header, header.getContext())}</div>
-                      )}
-                    </th>
-                  );
-                })}
-              </tr>
-            ))}
-          </thead> */}
+
           <TableBody>
             {table.getRowModel().rows.map((row) => {
               return (
