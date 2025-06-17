@@ -3,8 +3,8 @@ import React from "react";
 import { groupsAPI } from "~/api/groups-api";
 import type { Route } from "./+types/groups";
 import { useLoaderData } from "react-router";
+import GroupsPage from "~/pages/groups-page";
 import { useAppDispatch } from "~/store/store";
-import GroupsPage from "~/pages/groups/groups-page";
 import { setGroupCategories } from "~/store/groups/groups-slice";
 
 export function meta({}: Route.MetaArgs) {

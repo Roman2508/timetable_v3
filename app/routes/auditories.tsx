@@ -1,5 +1,5 @@
 import type { Route } from "./+types/auditories";
-import AuditoriesPage from "~/pages/auditories/auditories-page";
+import AuditoriesPage from "~/pages/auditories-page";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "ЖБФФК | Аудиторії" }, { name: "description", content: "Welcome to React Router!" }];

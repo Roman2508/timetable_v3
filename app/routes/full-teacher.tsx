@@ -1,11 +1,11 @@
 import { useLoaderData } from "react-router";
 
-import type { Route } from "./+types/full-teacher";
-import { auditoriesAPI } from "~/api/auditories-api";
-import FullTeacher from "~/pages/full-teacher/full-teacher-page";
-import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 import { teachersAPI } from "~/api/teachers-api";
+import type { Route } from "./+types/full-teacher";
+import FullTeacher from "~/pages/full-teacher-page";
+import { auditoriesAPI } from "~/api/auditories-api";
 import type { TeachersType } from "~/store/teachers/teachers-types";
+import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 
 export function meta({}: Route.MetaArgs) {
   return [

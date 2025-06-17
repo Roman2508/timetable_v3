@@ -4,7 +4,7 @@ import { useLoaderData } from "react-router";
 import type { Route } from "./+types/streams";
 import { useAppDispatch } from "~/store/store";
 import { streamsAPI } from "~/api/streams-api";
-import StreamsPage from "~/pages/streams/streams-page";
+import StreamsPage from "~/pages/streams-page";
 import { setStreams } from "~/store/streams/streams-slice";
 
 export function meta({}: Route.MetaArgs) {

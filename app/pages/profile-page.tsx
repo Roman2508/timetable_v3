@@ -29,6 +29,7 @@ import { Input } from "~/components/ui/common/input";
 import { RootContainer } from "~/components/layouts/root-container";
 import { InputPassword } from "~/components/ui/custom/input-password";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import getDeviceIcon from "~/helpers/get-device-icon";
 
 const tabsList = [
   { icon: <User />, label: "Профіль", value: "profile" },
@@ -58,7 +59,7 @@ const sessions = [
       },
       device: {
         browser: "Safari",
-        os: "Apple",
+        os: "iOS",
         type: "-",
       },
     },
@@ -199,11 +200,13 @@ const SecurityTab = () => {
           <h4 className="text-lg font-semibold">Поточна</h4>
           {[sessions[1]].map((el) => {
             const { device, location } = el.metadata;
+            const DeviceIcon = getDeviceIcon(device.browser, device.os);
             return (
               <div className="flex gap-4 bg-secondary p-4 cursor-pointer border">
                 <div className="">
-                  {el.metadata.device.browser === "Safari" && <Apple size={48} strokeWidth={1} />}
-                  {el.metadata.device.browser === "Chrome" && <Chrome size={48} strokeWidth={1} />}
+                  <DeviceIcon size={48} />
+                  {/* {el.metadata.device.browser === "Safari" && <Apple size={48} strokeWidth={1} />}
+                  {el.metadata.device.browser === "Chrome" && <Chrome size={48} strokeWidth={1} />} */}
                 </div>
                 <div className="flex-1">
                   <h5 className="text-md font-semibold">
@@ -224,11 +227,13 @@ const SecurityTab = () => {
           <h4 className="text-lg font-semibold mt-4">Інші</h4>
           {sessions.map((el) => {
             const { device, location } = el.metadata;
+            const DeviceIcon = getDeviceIcon(device.browser, device.os);
             return (
               <div className="flex gap-4 bg-secondary p-4 cursor-pointer border">
                 <div className="">
-                  {el.metadata.device.browser === "Safari" && <Apple size={48} strokeWidth={1} />}
-                  {el.metadata.device.browser === "Chrome" && <Chrome size={48} strokeWidth={1} />}
+                  <DeviceIcon size={48} />
+                  {/* {el.metadata.device.browser === "Safari" && <Apple size={48} strokeWidth={1} />}
+                  {el.metadata.device.browser === "Chrome" && <Chrome size={48} strokeWidth={1} />} */}
                 </div>
                 <div className="flex-1">
                   <h5 className="text-md font-semibold">
@@ -325,7 +330,7 @@ const ProfilePage = () => {
     <RootContainer classNames="mb-10 flex gap-8">
       <div className="w-70">
         <h2 className="text-xl font-semibold flex items-center gap-2 mb-6">
-          <Settings className="w-5" /> Налаштування
+          <Settings className="w-5" /> Мій профіль
         </h2>
 
         <div className="sticky top-10">

@@ -1,6 +1,6 @@
 import type { Route } from './+types/teachers'
 
-import TeachersPage from '~/pages/teachers/teachers-page'
+import TeachersPage from '~/pages/teachers-page'
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: 'ЖБФФК | Викладацький склад' }, { name: 'description', content: 'Welcome to React Router!' }]

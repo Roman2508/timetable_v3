@@ -28,6 +28,8 @@ export default [
     route("grade-book", "./routes/grade-book.tsx"),
 
     route("profile", "./routes/profile.tsx"),
+
+    route("settings", "./routes/settings.tsx"),
   ]),
 
   route("auth", "./routes/auth.tsx"),

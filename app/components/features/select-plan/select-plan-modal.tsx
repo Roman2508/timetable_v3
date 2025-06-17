@@ -16,7 +16,7 @@ import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
 import { Separator } from "~/components/ui/common/separator";
 import { InputSearch } from "~/components/ui/custom/input-search";
-import type { GroupFormData } from "~/pages/full-group/full-group-page";
+import type { GroupFormData } from "~/pages/full-group-page";
 import type { PlansCategoriesType } from "~/store/plans/plans-types";
 
 interface IChangePlanModalProps {

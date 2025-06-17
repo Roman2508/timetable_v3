@@ -4,8 +4,8 @@ import { useLoaderData } from "react-router";
 import { plansAPI } from "~/api/plans-api";
 import type { Route } from "./+types/home";
 import { useAppDispatch } from "~/store/store";
+import FullPlanPage from "~/pages/full-plan-page";
 import { planSubjectsAPI } from "~/api/plan-subjects-api";
-import FullPlanPage from "~/pages/full-plan/full-plan-page";
 import { setPlan, setPlanSubjects } from "~/store/plans/plans-slice";
 
 export function meta({}: Route.MetaArgs) {

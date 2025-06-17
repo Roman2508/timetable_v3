@@ -1,7 +1,7 @@
 import { useLoaderData } from "react-router";
 
 import type { Route } from "./+types/full-group";
-import FullPlanPage from "~/pages/full-group/full-group-page";
+import FullPlanPage from "~/pages/full-group-page";
 import { groupsAPI } from "~/api/groups-api";
 import type { GroupsType } from "~/store/groups/groups-types";
 

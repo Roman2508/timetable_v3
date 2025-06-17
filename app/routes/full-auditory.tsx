@@ -2,7 +2,7 @@ import { useLoaderData } from "react-router";
 
 import type { Route } from "./+types/full-auditory";
 import { auditoriesAPI } from "~/api/auditories-api";
-import FullAuditory from "~/pages/full-auditory/full-auditory-page";
+import FullAuditory from "~/pages/full-auditory-page";
 import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 
 export function meta({}: Route.MetaArgs) {

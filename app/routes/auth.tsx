@@ -1,5 +1,5 @@
 import type { Route } from "./+types/auth";
-import AuthPage from "~/pages/auth/auth-page";
+import AuthPage from "~/pages/auth-page";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "ЖБФФК | Вхід" }, { name: "description", content: "Welcome to React Router!" }];

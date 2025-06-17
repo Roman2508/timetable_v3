@@ -6,7 +6,7 @@ import { cn } from "~/lib/utils";
 import { Input } from "../ui/common/input";
 import { Button } from "../ui/common/button";
 import EntitiesDropdown from "./entities-dropdown";
-import type { GroupFormData } from "~/pages/full-group/full-group-page";
+import type { GroupFormData } from "~/pages/full-group-page";
 
 type ItemType = {
   id: number | string;
