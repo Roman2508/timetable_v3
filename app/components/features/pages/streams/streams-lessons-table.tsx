@@ -1,43 +1,105 @@
-import React from "react";
-
 import {
   flexRender,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  getPaginationRowModel,
+  createColumnHelper,
+  getFilteredRowModel,
   type ColumnDef,
   type SortingState,
   type PaginationState,
-  createColumnHelper,
 } from "@tanstack/react-table";
+import { useSelector } from "react-redux";
+import { useEffect, useMemo, useState, type FC } from "react";
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 import { cn } from "~/lib/utils";
+import { useAppDispatch } from "~/store/store";
 import { makeData, type Person } from "./make-data";
 import { Input } from "~/components/ui/common/input";
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { Button } from "~/components/ui/common/button";
+import type { StreamsType } from "~/store/streams/streams-types";
+import { getStreamLessons } from "~/store/streams/streams-async-actions";
+import { groupLessonsByFields } from "~/helpers/group-lessons-by-fields";
+import { clearStreamLessons, streamsSelector } from "~/store/streams/streams-slice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
 
-export const StreamsLessonsTable = () => {
-  const rerender = React.useReducer(() => ({}), {})[1];
+interface IStreamLessonsTableProps {
+  selectedStream: StreamsType | null;
+}
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+export const StreamsLessonsTable: FC<IStreamLessonsTableProps> = ({ selectedStream }) => {
+  const dispatch = useAppDispatch();
 
-  const columnHelper = createColumnHelper<any>();
-  const columns2 = React.useMemo(
-    () => [
-      columnHelper.accessor("name", { header: "Аудиторія" }),
-      columnHelper.accessor("group", { header: "Аудиторія" }),
-      columnHelper.accessor("semester", { header: "Аудиторія" }),
-      columnHelper.accessor("name", { header: "Аудиторія" }),
-    ],
-    [],
+  const { streamLessons } = useSelector(streamsSelector);
+
+  const lessons = useMemo(
+    () =>
+      groupLessonsByFields(streamLessons ?? [], { groupName: true, lessonName: true, semester: true, subgroups: true }),
+    [streamLessons],
   );
 
-  const columns = React.useMemo<ColumnDef<Person>[]>(
+  console.log("stream lessons:", lessons);
+
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [data, setData] = useState(() => makeData(1000));
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
+
+  const columnHelper = createColumnHelper<any>();
+
+  // const columns2 = useMemo(
+  //   () => [
+  //     columnHelper.accessor("name", { header: "Дисципліна" }),
+  //     columnHelper.accessor("group", { header: "Група" }),
+  //     columnHelper.accessor("semester", { header: "Семестр" }),
+  //     columnHelper.accessor((row) => row.category?.name ?? "", {
+  //       id: "category",
+  //       header: "Підрозділ",
+  //       cell: (info) => info.getValue(),
+  //     }),
+
+  //     columnHelper.accessor("courseNumber", { header: "Курс" }),
+  //     columnHelper.accessor((row) => row.students.length, {
+  //       id: "studentsCount",
+  //       header: "Студентів",
+  //       cell: (info) => info.getValue(),
+  //     }),
+  //     columnHelper.accessor("formOfEducation", { header: "Форма навчання" }),
+  //     columnHelper.display({
+  //       id: "status",
+  //       header: "Статус",
+  //       cell: ({ row }) => {
+  //         let isStatusActive = true;
+  //         if (row.original.status === "Архів") isStatusActive = false;
+  //         return (
+  //           <Badge
+  //             variant="outline"
+  //             className={cn(
+  //               "border-0",
+  //               isStatusActive ? "text-success bg-success-background" : "text-error bg-error-background",
+  //             )}
+  //           >
+  //             {row.original.status}
+  //           </Badge>
+  //         );
+  //       },
+  //     }),
+  //     columnHelper.display({
+  //       id: "actions",
+  //       header: "Дії",
+  //       cell: ({ row }) => {
+  //         return <GroupActions id={row.original.id} />;
+  //       },
+  //     }),
+  //   ],
+  //   [],
+  // );
+
+  const columns = useMemo<ColumnDef<Person>[]>(
     () => [
       {
         accessorKey: "name",
@@ -91,31 +153,59 @@ export const StreamsLessonsTable = () => {
     [],
   );
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
+  /* 
+    id: 2,
+    name: "Ділова іноземна мова (B2)",
+    semester: 1,
+    specialization: null,
+    typeRu: "ПЗ",
+    typeEn: "practical",
+    hours: 36,
+    subgroupNumber: null,
+    stream: null,
+    teacher: null,
 
-  const [data, setData] = React.useState(() => makeData(1000));
-  const refreshData = () => setData(() => makeData(1000));
-
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 20,
-  });
+    
+    group: {id: 2, name: 'LD9-25-1'}
+    hours: 30
+    id: 20
+    name: "Фармакологія"
+    planSubjectId: {id: 1}
+    semester: 1
+    specialization: null
+    stream: null
+    subgroupNumber: null
+    teacher: null
+    typeEn: "practical"
+    typeRu: "ПЗ"
+  */
 
   const table = useReactTable({
     data,
     columns,
-    state: {
-      pagination,
-      sorting,
-    },
+    state: { sorting, globalFilter },
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onPaginationChange: setPagination,
-    // Pipeline
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
+    getSortedRowModel: getSortedRowModel(),
+
+    filterFns: { fuzzy: fuzzyFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: "fuzzy",
+    getFilteredRowModel: getFilteredRowModel(),
   });
+
+  useEffect(() => {
+    if (!selectedStream) return;
+    dispatch(clearStreamLessons());
+    const fetchGroups = async () => {
+      Promise.allSettled(
+        selectedStream.groups.map(async (el) => {
+          await dispatch(getStreamLessons(el.id));
+        }),
+      );
+    };
+    fetchGroups();
+  }, [selectedStream]);
 
   return (
     <>

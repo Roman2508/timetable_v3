@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { GraduationCap } from "lucide-react";
 
+import CategoryActionsModal, {
+  type FormData,
+} from "~/components/features/category-actions-modal/category-actions-modal";
+import type {
+  UpdatingCategoryType,
+  CategoryModalStateType,
+} from "~/components/features/category-actions-modal/category-actions-modal-types";
 import EntityHeader from "~/components/features/entity-header";
 import type { StreamsType } from "~/store/streams/streams-types";
 import { InputSearch } from "~/components/ui/custom/input-search";
@@ -8,13 +15,8 @@ import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import StreamsListDrawer from "~/components/features/pages/streams/streams-list-drawer";
 import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
-import CategoryActionsModal, {
-  type FormData,
-} from "~/components/features/category-actions-modal/category-actions-modal";
-import type {
-  CategoryModalStateType,
-  UpdatingCategoryType,
-} from "~/components/features/category-actions-modal/category-actions-modal-types";
+import { useAppDispatch } from "~/store/store";
+import { createStream, updateStream } from "~/store/streams/streams-async-actions";
 
 const semesters = [
   { id: 1, name: "1" },
@@ -25,12 +27,9 @@ const semesters = [
   { id: 6, name: "6" },
 ];
 
-const streamsStatus = [
-  { id: 1, name: "Активні" },
-  { id: 2, name: "Архів" },
-];
-
 const StreamsPage = () => {
+  const dispatch = useAppDispatch();
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedSemester, setSelectedSemester] = useState(semesters);
   const [selectedStream, setSelectedStream] = useState<StreamsType | null>(null);
@@ -38,12 +37,20 @@ const StreamsPage = () => {
   const [updatingStream, setUpdatingStream] = useState<UpdatingCategoryType | null>(null);
   const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" });
 
-  const onCreateCategory = async (data: FormData) => {
-    console.log(data);
+  const onCreateStream = async (data: FormData) => {
+    try {
+      await dispatch(createStream({ name: data.name }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const onUpdateCategory = async (data: FormData & { id: number }) => {
-    console.log(data);
+  const onUpdateStream = async (data: FormData & { id: number }) => {
+    try {
+      await dispatch(updateStream({ id: data.id, name: data.name }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -54,8 +61,8 @@ const StreamsPage = () => {
         nameLabel="Назва потоку*"
         setModalData={setModalData}
         updatingCategory={updatingStream}
-        onCreateCategory={onCreateCategory}
-        onUpdateCategory={onUpdateCategory}
+        onCreateCategory={onCreateStream}
+        onUpdateCategory={onUpdateStream}
         setUpdatingCategory={setUpdatingStream}
         title={modalData.actionType === "create" ? "Створити новий потік" : "Оновити потік*"}
       />
@@ -97,7 +104,7 @@ const StreamsPage = () => {
           </div>
 
           {true ? (
-            <StreamsLessonsTable />
+            <StreamsLessonsTable selectedStream={selectedStream} />
           ) : (
             <div className="text-center font-mono py-20">Виберіть потік для об'єднання дисциплін.</div>
           )}

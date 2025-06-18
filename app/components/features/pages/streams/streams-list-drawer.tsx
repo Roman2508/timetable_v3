@@ -54,32 +54,6 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
 
   const { streams } = useSelector(streamsSelector);
 
-  // const streams = [
-  //   {
-  //     id: 1,
-  //     name: "test stream",
-  //     groups: [
-  //       {
-  //         id: 2,
-  //         name: "LD9-25-1",
-  //       },
-  //       {
-  //         id: 1,
-  //         name: "PH9-25-1",
-  //       },
-  //     ],
-  //     lessons: [],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "test stream 2",
-  //     groups: [],
-  //     lessons: [],
-  //   },
-  // ];
-
-  console.log("streams", streams);
-
   const onPreSelectStream = (stream: StreamsType) => {
     setPreSelectedStream((prev) => {
       if (!prev) return stream;
