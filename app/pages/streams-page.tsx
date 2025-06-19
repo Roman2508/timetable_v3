@@ -8,15 +8,18 @@ import type {
   UpdatingCategoryType,
   CategoryModalStateType,
 } from "~/components/features/category-actions-modal/category-actions-modal-types";
+import { useAppDispatch } from "~/store/store";
 import EntityHeader from "~/components/features/entity-header";
 import type { StreamsType } from "~/store/streams/streams-types";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
+import type { StreamLessonType } from "~/helpers/group-lessons-by-streams";
+import { createStream, updateStream } from "~/store/streams/streams-async-actions";
 import StreamsListDrawer from "~/components/features/pages/streams/streams-list-drawer";
 import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
-import { useAppDispatch } from "~/store/store";
-import { createStream, updateStream } from "~/store/streams/streams-async-actions";
+import { Button } from "~/components/ui/common/button";
+import CombineStreamLessonsModal from "~/components/features/pages/streams/combine-stream-lessons-modal";
 
 const semesters = [
   { id: 1, name: "1" },
@@ -31,7 +34,9 @@ const StreamsPage = () => {
   const dispatch = useAppDispatch();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isCombineModalOpen, setIsCombineModalOpen] = useState(false);
   const [selectedSemester, setSelectedSemester] = useState(semesters);
+  const [selectedLessons, setSelectedLessons] = useState<StreamLessonType[]>([]);
   const [selectedStream, setSelectedStream] = useState<StreamsType | null>(null);
   const [preSelectedStream, setPreSelectedStream] = useState<StreamsType | null>(null);
   const [updatingStream, setUpdatingStream] = useState<UpdatingCategoryType | null>(null);
@@ -67,6 +72,12 @@ const StreamsPage = () => {
         title={modalData.actionType === "create" ? "Створити новий потік" : "Оновити потік*"}
       />
 
+      <CombineStreamLessonsModal
+        isOpen={isCombineModalOpen}
+        setIsOpen={setIsCombineModalOpen}
+        selectedLessons={selectedLessons}
+      />
+
       <RootContainer classNames="flex gap-10 !min-h-[calc(100vh-160px)]">
         <div className="flex flex-col flex-1">
           <div className="flex w-full justify-between items-center mb-4">
@@ -90,6 +101,8 @@ const StreamsPage = () => {
                 setSelectedItems={setSelectedSemester}
               />
 
+              {selectedLessons.length > 1 && <Button onClick={() => setIsCombineModalOpen(true)}>Об'єднати</Button>}
+
               <StreamsListDrawer
                 setModalData={setModalData}
                 isDrawerOpen={isDrawerOpen}
@@ -104,7 +117,11 @@ const StreamsPage = () => {
           </div>
 
           {true ? (
-            <StreamsLessonsTable selectedStream={selectedStream} />
+            <StreamsLessonsTable
+              selectedStream={selectedStream}
+              selectedLessons={selectedLessons}
+              setSelectedLessons={setSelectedLessons}
+            />
           ) : (
             <div className="text-center font-mono py-20">Виберіть потік для об'єднання дисциплін.</div>
           )}
