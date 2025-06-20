@@ -142,6 +142,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
   };
 
   const deleteSemesterConfirmation = async () => {
+    alert('Якщо раніше був вибраний план - перевіряю чи не вибрано інший')
     // // Якщо раніше був вибраний план - перевіряю чи не вибрано інший
     // if (defaultValue !== selectedPlan?.id) {
     //   const result = await onConfirm({ title: CONFIRM_MODAL_TITLE, description: CONFIRM_MODAL_DESC }, dispatch);

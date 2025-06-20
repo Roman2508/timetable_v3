@@ -9,6 +9,7 @@ import type {
   CategoryModalStateType,
 } from "~/components/features/category-actions-modal/category-actions-modal-types";
 import { useAppDispatch } from "~/store/store";
+import { Button } from "~/components/ui/common/button";
 import EntityHeader from "~/components/features/entity-header";
 import type { StreamsType } from "~/store/streams/streams-types";
 import { InputSearch } from "~/components/ui/custom/input-search";
@@ -18,8 +19,8 @@ import type { StreamLessonType } from "~/helpers/group-lessons-by-streams";
 import { createStream, updateStream } from "~/store/streams/streams-async-actions";
 import StreamsListDrawer from "~/components/features/pages/streams/streams-list-drawer";
 import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
-import { Button } from "~/components/ui/common/button";
 import CombineStreamLessonsModal from "~/components/features/pages/streams/combine-stream-lessons-modal";
+import StreamLessonDetailsModal from "~/components/features/pages/streams/stream-lesson-details-modal";
 
 const semesters = [
   { id: 1, name: "1" },
@@ -34,12 +35,14 @@ const StreamsPage = () => {
   const dispatch = useAppDispatch();
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCombineModalOpen, setIsCombineModalOpen] = useState(false);
   const [selectedSemester, setSelectedSemester] = useState(semesters);
   const [selectedLessons, setSelectedLessons] = useState<StreamLessonType[]>([]);
   const [selectedStream, setSelectedStream] = useState<StreamsType | null>(null);
   const [preSelectedStream, setPreSelectedStream] = useState<StreamsType | null>(null);
   const [updatingStream, setUpdatingStream] = useState<UpdatingCategoryType | null>(null);
+  const [selectedLessonFromDetails, setSelectedLessonFromDetails] = useState<StreamLessonType | null>(null);
   const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" });
 
   const onCreateStream = async (data: FormData) => {
@@ -74,8 +77,16 @@ const StreamsPage = () => {
 
       <CombineStreamLessonsModal
         isOpen={isCombineModalOpen}
+        selectedStream={selectedStream}
         setIsOpen={setIsCombineModalOpen}
         selectedLessons={selectedLessons}
+      />
+
+      <StreamLessonDetailsModal
+        isOpen={isDetailsModalOpen}
+        setIsOpen={setIsDetailsModalOpen}
+        selectedLessonFromDetails={selectedLessonFromDetails}
+        setSelectedLessonFromDetails={setSelectedLessonFromDetails}
       />
 
       <RootContainer classNames="flex gap-10 !min-h-[calc(100vh-160px)]">
@@ -121,6 +132,8 @@ const StreamsPage = () => {
               selectedStream={selectedStream}
               selectedLessons={selectedLessons}
               setSelectedLessons={setSelectedLessons}
+              setIsDetailsModalOpen={setIsDetailsModalOpen}
+              setSelectedLessonFromDetails={setSelectedLessonFromDetails}
             />
           ) : (
             <div className="text-center font-mono py-20">Виберіть потік для об'єднання дисциплін.</div>

@@ -9,16 +9,16 @@ import {
   type PaginationState,
 } from "@tanstack/react-table";
 import { useSelector } from "react-redux";
-import { Checkbox } from "~/components/ui/common/checkbox";
+import { FiSearch as SearchIcon } from "react-icons/fi";
 import { useEffect, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 
 import { cn } from "~/lib/utils";
-import { makeData } from "./make-data";
 import { useAppDispatch } from "~/store/store";
 import { Input } from "~/components/ui/common/input";
 import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { Button } from "~/components/ui/common/button";
+import { Checkbox } from "~/components/ui/common/checkbox";
 import type { StreamsType } from "~/store/streams/streams-types";
 import { getStreamLessons } from "~/store/streams/streams-async-actions";
 import { clearStreamLessons, streamsSelector } from "~/store/streams/streams-slice";
@@ -35,13 +35,17 @@ const checkIsLessonsSame = (obj1: StreamLessonType, obj2: StreamLessonType) => {
 interface IStreamLessonsTableProps {
   selectedStream: StreamsType | null;
   selectedLessons: StreamLessonType[];
+  setIsDetailsModalOpen: Dispatch<SetStateAction<boolean>>;
   setSelectedLessons: Dispatch<SetStateAction<StreamLessonType[]>>;
+  setSelectedLessonFromDetails: Dispatch<SetStateAction<StreamLessonType | null>>;
 }
 
 export const StreamsLessonsTable: FC<IStreamLessonsTableProps> = ({
   selectedStream,
   selectedLessons,
   setSelectedLessons,
+  setIsDetailsModalOpen,
+  setSelectedLessonFromDetails,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -50,7 +54,6 @@ export const StreamsLessonsTable: FC<IStreamLessonsTableProps> = ({
   const lessons = useMemo(() => groupLessonsByStreams(streamLessons ?? []), [streamLessons]);
 
   const [globalFilter, setGlobalFilter] = useState("");
-  const [data, setData] = useState(() => makeData(1000));
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
 
@@ -75,21 +78,72 @@ export const StreamsLessonsTable: FC<IStreamLessonsTableProps> = ({
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <Checkbox
-            checked={checkIsActive(row.original)}
-            onClick={() => handleSelectedLesson(row.original)}
-            // onChange={() => handleSelectedLesson(row.original)}
-          />
+          <Checkbox checked={checkIsActive(row.original)} onClick={() => handleSelectedLesson(row.original)} />
         ),
       }),
       columnHelper.accessor("name", { header: "Дисципліна" }),
       columnHelper.accessor((row) => row.group.name, { id: "group", header: "Група", cell: (info) => info.getValue() }),
       columnHelper.accessor("semester", { header: "Семестр" }),
-      columnHelper.accessor("lectures", { header: "Лекції" }),
-      columnHelper.accessor("practical", { header: "Практичні" }),
-      columnHelper.accessor("laboratory", { header: "Лабораторні" }),
-      columnHelper.accessor("seminars", { header: "Семінари" }),
-      columnHelper.accessor("exams", { header: "Екзамени" }),
+      columnHelper.accessor(
+        (row) =>
+          row.lectures?.streamName ? <p className="font-bold">({row.lectures?.hours})</p> : row.lectures?.hours,
+        {
+          id: "lectures",
+          header: "Лекції",
+          cell: (info) => info.getValue(),
+        },
+      ),
+      columnHelper.accessor(
+        (row) =>
+          row.practical?.streamName ? <p className="font-bold">({row.practical?.hours})</p> : row.practical?.hours,
+        {
+          id: "practical",
+          header: "Практичні",
+          cell: (info) => info.getValue(),
+        },
+      ),
+      columnHelper.accessor(
+        (row) =>
+          row.laboratory?.streamName ? <p className="font-bold">({row.laboratory?.hours})</p> : row.laboratory?.hours,
+        {
+          id: "laboratory",
+          header: "Лабораторні",
+          cell: (info) => info.getValue(),
+        },
+      ),
+      columnHelper.accessor(
+        (row) =>
+          row.seminars?.streamName ? <p className="font-bold">({row.seminars?.hours})</p> : row.seminars?.hours,
+        {
+          id: "seminars",
+          header: "Семінари",
+          cell: (info) => info.getValue(),
+        },
+      ),
+      columnHelper.accessor(
+        (row) => (row.exams?.streamName ? <p className="font-bold">({row.exams?.hours})</p> : row.exams?.hours),
+        {
+          id: "exams",
+          header: "Екзамен",
+          cell: (info) => info.getValue(),
+        },
+      ),
+      columnHelper.display({
+        id: "details",
+        header: "",
+        cell: ({ row }) => (
+          <Button
+            variant="ghost"
+            className="cursor-pointer w-8 h-8"
+            onClick={() => {
+              setSelectedLessonFromDetails(row.original);
+              setIsDetailsModalOpen(true);
+            }}
+          >
+            <SearchIcon />
+          </Button>
+        ),
+      }),
     ],
     [selectedLessons],
   );
@@ -128,46 +182,10 @@ export const StreamsLessonsTable: FC<IStreamLessonsTableProps> = ({
       ) : (
         <div className="p-2 block max-w-full">
           <Table className="w-full ">
-            {/* <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-white">
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder ? null : (
-                          <div
-                            className={cn(header.column.getCanSort() ? "cursor-pointer select-none" : "")}
-                            onClick={header.column.getToggleSortingHandler()}
-                            title={
-                              header.column.getCanSort()
-                                ? header.column.getNextSortingOrder() === "asc"
-                                  ? "Sort ascending"
-                                  : header.column.getNextSortingOrder() === "desc"
-                                  ? "Sort descending"
-                                  : "Clear sort"
-                                : undefined
-                            }
-                          >
-                            <p className="inline-flex relative">
-                              {flexRender(header.column.columnDef.header, header.getContext())}
-                              {{
-                                asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
-                                desc: <ArrowDown className="w-4 absolute right-[-20px]" />,
-                              }[header.column.getIsSorted() as string] ?? null}
-                            </p>
-                          </div>
-                        )}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader> */}
-
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-white">
-                  {headerGroup.headers.map((header, index) => {
+                  {headerGroup.headers.map((header) => {
                     return (
                       <TableHead key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder ? null : (
@@ -206,13 +224,19 @@ export const StreamsLessonsTable: FC<IStreamLessonsTableProps> = ({
                   <TableRow
                     key={row.id}
                     className={cn(
-                      "hover:bg-border/40",
+                      "hover:bg-border/40 py-0",
                       checkIsActive(row.original) ? "text-primary bg-primary-light hover:bg-primary-light" : "",
                     )}
                   >
-                    {row.getVisibleCells().map((cell) => {
+                    {row.getVisibleCells().map((cell, index) => {
                       return (
-                        <TableCell key={cell.id} className={cn("text-left")}>
+                        <TableCell
+                          key={cell.id}
+                          className={cn(
+                            "py-0",
+                            row.getVisibleCells().length === index + 1 ? "text-right" : "text-left",
+                          )}
+                        >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       );

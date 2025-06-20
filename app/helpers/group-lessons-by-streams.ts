@@ -1,14 +1,21 @@
 import type { GroupLoadType } from "~/store/groups/groups-types";
 
+type LessonType = {
+  id: number;
+  hours: number;
+  streamName: string | null;
+  unitedWith: number[];
+};
+
 export type StreamLessonType = {
   name: string;
   group: { id: number; name: string };
   semester: number;
-  lectures: null;
-  practical: null;
-  laboratory: null;
-  seminars: null;
-  exams: null;
+  lectures: LessonType | null;
+  practical: LessonType | null;
+  laboratory: LessonType | null;
+  seminars: LessonType | null;
+  exams: LessonType | null;
 };
 
 export const groupLessonsByStreams = (lessons: GroupLoadType[]): StreamLessonType[] => {
@@ -45,8 +52,14 @@ export const groupLessonsByStreams = (lessons: GroupLoadType[]): StreamLessonTyp
 
     el.forEach((lessonType) => {
       if (lessonType.typeEn in lesson) {
+        const lessonDetails = {
+          id: lessonType.id,
+          hours: lessonType.hours,
+          streamName: lessonType.stream ? lessonType.stream.name : null,
+          unitedWith: lessonType.unitedWith ? lessonType.unitedWith.map((el) => el.id) : [],
+        };
         // @ts-ignore
-        lesson[lessonType.typeEn] = lessonType.hours;
+        lesson[lessonType.typeEn] = lessonDetails;
       }
     });
 

@@ -75,6 +75,7 @@ export type GroupLoadType = {
   planSubjectId: { id: number };
   plan: { id: number };
   stream: GroupLoadStreamType | null;
+  unitedWith: { id: number; name: string }[];
   teacher: TeachersType | null;
   cmk: { id: number };
 };

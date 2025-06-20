@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
+import { ChevronsUpDown, Plus, Trash } from "lucide-react";
 import { type Dispatch, type FC, type SetStateAction } from "react";
-import { ChevronsUpDown, Ellipsis, Plus, Trash } from "lucide-react";
 
 import {
   Drawer,
