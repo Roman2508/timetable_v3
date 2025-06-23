@@ -24,7 +24,7 @@ export type TeachersType = {
   bio: EditorJSItemType[];
   status: "Активний" | "Архів";
   printedWorks: EditorJSItemType[];
-  category: { id: number; name: string };
+  category: { id: number; name: string; shortName: string };
   user: { id: number; email: string; lastLogin: string };
 };
 

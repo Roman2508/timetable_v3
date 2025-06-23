@@ -55,7 +55,7 @@ const teachersSlice = createSlice({
 
       const newCategories = state.teachersCategories.map((el) => {
         if (el.id === action.payload.id) {
-          return { ...action.payload };
+          return { ...el, name: action.payload.name, shortName: action.payload.shortName };
         }
 
         return el;

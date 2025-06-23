@@ -1,16 +1,16 @@
 import { useMemo } from "react";
 
 type ItemType = {
-  category: { id: number; name: string; [key: string]: any };
+  semester: number;
   [key: string]: any;
 };
 
-export function useItemsByCategory<T extends Record<string, any>>(items: T[] | null, filters: { id: number }[]) {
+export function useItemsBySemesters<T extends Record<string, any>>(items: T[] | null, filters: { id: number }[]) {
   if (!items) return [];
 
   const visibleItems = useMemo(() => {
     return items.filter((el) => {
-      return filters.some((f) => f.id === el.category.id);
+      return filters.some((f) => f.id === el.semester);
     });
   }, [items, filters]);
 

@@ -1,16 +1,21 @@
-import React from "react";
-import { ChevronLeft, CircleX, CopyPlus, CopyX, GraduationCap, Search, SquarePlus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronLeft, CircleX, CopyPlus, CopyX, GraduationCap, SquarePlus } from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
-import { Badge } from "~/components/ui/common/badge";
 import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
+import EntityHeader from "~/components/features/entity-header";
 import { InputSearch } from "~/components/ui/custom/input-search";
+import type { GroupsShortType } from "~/store/groups/groups-types";
 import { RootContainer } from "~/components/layouts/root-container";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import SelectGroupModal from "~/components/features/select-group/select-group-modal";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
+import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
+import { useSelector } from "react-redux";
+import { teachersSelector } from "~/store/teachers/teachers-slice";
+import { DistributionTeacherTable } from "~/components/features/pages/distribution/distribution-teacher-table";
 
 const cmk = [
   { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
@@ -65,27 +70,20 @@ const distributionVariants = [
 ];
 
 const DistributionPage = () => {
-  const [selectedSemesters, setSelectedSemesters] = React.useState(semesters);
-  const [selectedSmk, setSelectedCmk] = React.useState(cmk);
+  const [selectedSmk, setSelectedCmk] = useState(cmk);
+  const [selectedSemesters, setSelectedSemesters] = useState(semesters);
+  const [selectedGroup, setSelectedGroup] = useState<GroupsShortType | null>(null);
+
+  useEffect(() => {
+    //
+  }, [selectedGroup]);
 
   return (
     <RootContainer>
       <div className="flex justify-between items-center mb-6">
         <div className="">
-          {true ? (
-            <div className="flex flex-col h-[56px]">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 text-black/40" />
-                <div className="text-black/40 text-sm">ГРУПА</div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-semibold">PH9-25-1</h2>
-                <Badge variant="outline" className="text-primary bg-primary-light border-0">
-                  Активна
-                </Badge>
-              </div>
-            </div>
+          {selectedGroup ? (
+            <EntityHeader label="ГРУПА" name={selectedGroup.name} status={selectedGroup.status} Icon={GraduationCap} />
           ) : (
             <div className="flex items-center h-[56px]">
               <h2 className="text-lg font-semibold">Виберіть групу для розподілу навантаження</h2>
@@ -94,17 +92,14 @@ const DistributionPage = () => {
         </div>
 
         <div className="flex gap-3">
-          <Button>
-            <Search />
-            Вибрати групу
-          </Button>
+          <SelectGroupModal setSelectedGroup={setSelectedGroup} selectedGroup={selectedGroup} />
         </div>
       </div>
 
       <div className="flex w-full gap-3">
         <Card className="p-3 flex-1">
           <div className="flex gap-4 justify-between">
-            <InputSearch className="w-full" />
+            <InputSearch value="" className="w-full" placeholder="Знайти..." onChange={(e) => {}} />
 
             <PopoverFilter
               enableSelectAll
@@ -143,7 +138,7 @@ const DistributionPage = () => {
               <div className="flex justify-between items-center gap-4 mb-4">
                 <p className="min-w-30">{el}</p>
                 <Input className="cursor-default" readOnly value="" />
-                <Input className="max-w-20 cursor-default" readOnly value={20} />
+                <Input className="max-w-13 cursor-default" readOnly value={120} />
                 <Button variant="outline">
                   <ChevronLeft />
                 </Button>
@@ -154,7 +149,7 @@ const DistributionPage = () => {
 
         <Card className="p-3 flex-1">
           <div className="flex gap-4 justify-between">
-            <InputSearch className="w-full" />
+            <InputSearch value={""} className="w-full" placeholder="Знайти..." onChange={(e) => {}} />
 
             <PopoverFilter
               enableSelectAll
@@ -166,7 +161,7 @@ const DistributionPage = () => {
             />
           </div>
 
-          <DistributionLessonsTable />
+          <DistributionTeacherTable globalFilter="" setGlobalFilter={() => {}} />
         </Card>
       </div>
     </RootContainer>

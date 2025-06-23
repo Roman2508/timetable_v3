@@ -12,43 +12,15 @@ const generalInitialState: GeneralSliceInitialState = {
     open: true,
     expandedItems: ["Структура"],
   },
-  groups: {
-    status: "Всі",
-    categories: [],
-    orderField: "",
-    isOrderDesc: false,
-  },
-  auditories: {
-    status: "Всі",
-    categories: [],
-    orderField: "",
-    isOrderDesc: false,
-  },
-  teachers: {
-    status: "Всі",
-    categories: [],
-    orderField: "",
-    isOrderDesc: false,
-  },
-  plans: {
-    status: "Всі",
-    categories: [],
-    expanded: [],
-  },
+  groups: { status: "Всі", categories: [], orderField: "", isOrderDesc: false },
+  auditories: { status: "Всі", categories: [], orderField: "", isOrderDesc: false },
+  teachers: { status: "Всі", categories: [], orderField: "", isOrderDesc: false },
+  plans: { status: "Всі", categories: [], expanded: [] },
 
-  confirmModal: {
-    isOpen: false,
-    title: "",
-    itemName: "",
-    description: "",
-    answer: false,
-    onConfirm: () => {},
-  },
-  alertModal: {
-    isOpen: false,
-    title: "",
-    text: "",
-  },
+  streams: { semesters: "" },
+
+  confirmModal: { isOpen: false, title: "", itemName: "", description: "", answer: false, onConfirm: () => {} },
+  alertModal: { isOpen: false, title: "", text: "" },
 };
 
 const generalSlice = createSlice({
@@ -115,6 +87,10 @@ const generalSlice = createSlice({
       state.plans.expanded = action.payload;
     },
 
+    setStreamFilters(state, action: PayloadAction<string>) {
+      state.streams.semesters = action.payload;
+    },
+
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
       const keys = Object.keys(action.payload);
       const { isOpen, answer, title, itemName, description, onConfirm } = action.payload;
@@ -148,6 +124,7 @@ export const {
   setPlanExpanded,
   setTeacherOrder,
   setAuditoryOrder,
+  setStreamFilters,
   setTeacherStatus,
   setTeacherFilters,
   setAuditoryStatus,

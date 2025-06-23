@@ -20,6 +20,8 @@ export type GeneralSliceInitialState = {
     expanded: { id: number }[];
   };
 
+  streams: { semesters: string };
+
   confirmModal: {
     isOpen: boolean;
     answer: boolean;

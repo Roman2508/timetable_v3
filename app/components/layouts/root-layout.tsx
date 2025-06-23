@@ -21,6 +21,7 @@ import {
   EXPANDED_SIDEBAR_ITEMS,
   PLAN_FILTERS,
   PLAN_EXPANDED,
+  STREAMS_FILTERS,
 } from "~/constants/cookies-keys";
 import {
   setPlanStatus,
@@ -37,6 +38,7 @@ import {
   toggleExpandedSidebarItems,
   setPlanFilters,
   setPlanExpanded,
+  setStreamFilters,
 } from "~/store/general/general-slice";
 import { plansAPI } from "~/api/plans-api";
 import { groupsAPI } from "~/api/groups-api";
@@ -140,6 +142,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   if (teacherOrderField) {
     store.dispatch(setTeacherOrder({ id: teacherOrderField, desc: teacherOrderType }));
   }
+
+  // streams
+  store.dispatch(setStreamFilters(cookies[STREAMS_FILTERS] ?? ""));
 
   return {
     preloadedState: store.getState(),

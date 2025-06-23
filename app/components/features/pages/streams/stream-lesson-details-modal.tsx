@@ -1,19 +1,12 @@
-import { type FC, type Dispatch, type SetStateAction } from "react";
+import { useSelector } from "react-redux";
+import { type FC, type Dispatch, type SetStateAction, useMemo } from "react";
 
 import { Button } from "~/components/ui/common/button";
 import { Separator } from "~/components/ui/common/separator";
+import { streamsSelector } from "~/store/streams/streams-slice";
 import type { StreamLessonType } from "~/helpers/group-lessons-by-streams";
+import { getCombinedStreamLessons } from "~/helpers/get-combined-stream-lessons";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "~/components/ui/common/dialog";
-
-type LessonKey = "lectures" | "practical" | "laboratory" | "seminars" | "exams";
-function getUnitedLessonsKeys(subject: StreamLessonType): LessonKey[] {
-  const keys: LessonKey[] = ["lectures", "practical", "laboratory", "seminars", "exams"];
-
-  return keys.filter((key) => {
-    const lesson = subject[key];
-    return lesson !== null && lesson.unitedWith.length > 1;
-  });
-}
 
 interface IStreamLessonDetailsModalProps {
   isOpen: boolean;
@@ -28,44 +21,19 @@ const StreamLessonDetailsModal: FC<IStreamLessonDetailsModalProps> = ({
   selectedLessonFromDetails,
   setSelectedLessonFromDetails,
 }) => {
+  const { streamLessons } = useSelector(streamsSelector);
+
   const onOpenChange = (isOpen: boolean) => {
     setIsOpen(isOpen);
     setSelectedLessonFromDetails(null);
   };
 
+  const combinedLessons = useMemo(
+    () => getCombinedStreamLessons(selectedLessonFromDetails, streamLessons),
+    [selectedLessonFromDetails, streamLessons],
+  );
+
   if (!selectedLessonFromDetails) return;
-
-  const a = {
-    name: "Фармакологія",
-    group: {
-      id: 2,
-      name: "LD9-25-1",
-    },
-    semester: 1,
-    lectures: {
-      id: 19,
-      hours: 10,
-      streamName: "test stream updated",
-      unitedWith: [19, 3],
-    },
-    practical: {
-      id: 20,
-      hours: 30,
-      streamName: "test stream updated",
-      unitedWith: [20, 4],
-    },
-    laboratory: null,
-    seminars: null,
-    exams: {
-      id: 21,
-      hours: 2,
-      streamName: null,
-      unitedWith: [],
-    },
-  };
-
-  console.log(getUnitedLessonsKeys(selectedLessonFromDetails));
-
   const { name, group, semester } = selectedLessonFromDetails;
 
   return (
@@ -90,30 +58,31 @@ const StreamLessonDetailsModal: FC<IStreamLessonDetailsModalProps> = ({
               <li>
                 <span className="font-bold">Семестр:</span> {semester}
               </li>
-              <li>
-                <span className="font-bold">Lesson types:</span> lectures, practical
-              </li>
             </ul>
 
             <p className="font-bold pt-4 pb-2 text-base">Об'єднана з:</p>
 
-            {[...Array(2)].map((el) => (
-              <ul className="border-b py-2">
-                <li>
-                  <span className="font-bold">Дисципліна:</span> {name}
-                </li>
-                <li>
-                  <span className="font-bold">Група: </span>
-                  {group.name}
-                </li>
-                <li>
-                  <span className="font-bold">Семестр:</span> {semester}
-                </li>
-                <li>
-                  <span className="font-bold">Lesson types:</span> lectures, practical
-                </li>
-              </ul>
-            ))}
+            {combinedLessons && combinedLessons.length ? (
+              combinedLessons.map((el) => (
+                <ul className="border-b py-2">
+                  <li>
+                    <span className="font-bold">Дисципліна:</span> {el.name}
+                  </li>
+                  <li>
+                    <span className="font-bold">Група: </span>
+                    {el.group}
+                  </li>
+                  <li>
+                    <span className="font-bold">Семестр:</span> {el.semester}
+                  </li>
+                  <li>
+                    <span className="font-bold">Види занять:</span> {el.lessonTypes.join(", ")}
+                  </li>
+                </ul>
+              ))
+            ) : (
+              <p className="pt-4 text-center font-bold text-base">Дисципліна ще не об'єднана в потік</p>
+            )}
           </div>
 
           <div className="flex !justify-start pt-2">

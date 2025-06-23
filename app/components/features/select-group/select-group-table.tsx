@@ -1,20 +1,16 @@
-import React from "react";
+import { useMemo, type Dispatch, type FC, type SetStateAction } from "react";
+
 import { cn } from "~/lib/utils";
+import type { GroupsShortType } from "~/store/groups/groups-types";
 
-const groupsList = [
-  { name: "PH9-25- 27", course: 25, students: 54 },
-  { name: "PH9-25- 87", course: 51, students: 16 },
-  { name: "PH9-25- 12", course: 2, students: 74 },
-  { name: "PH9-25- 33", course: 3, students: 27 },
-  { name: "PH9-25- 45", course: 38, students: 80 },
-  { name: "PH9-25- 01", course: 83, students: 67 },
-  { name: "PH9-25- 41", course: 96, students: 34 },
-  { name: "PH9-25- 53", course: 38, students: 85 },
-  { name: "PH9-25-11", course: 65, students: 3 },
-];
+interface ISelectGroupTableProps {
+  groups: GroupsShortType[];
+  selectedGroup: GroupsShortType | null;
+  setSelectedGroup: Dispatch<SetStateAction<GroupsShortType | null>>;
+}
 
-export const SelectGroupTable = () => {
-  const columns = React.useMemo<{ label: string; key: string }[]>(
+export const SelectGroupTable: FC<ISelectGroupTableProps> = ({ groups, selectedGroup, setSelectedGroup }) => {
+  const columns = useMemo<{ label: string; key: string }[]>(
     () => [
       { label: "Назва", key: "name" },
       { label: "Курс", key: "course" },
@@ -34,16 +30,18 @@ export const SelectGroupTable = () => {
       </div>
 
       <div className="">
-        {groupsList.map((group) => (
+        {groups.map((group) => (
           <div
+            onClick={() => setSelectedGroup(group)}
             className={cn(
               "flex px-4 py-2 border border-white border-t-border",
               "hover:border hover:border-primary cursor-pointer",
+              selectedGroup?.id === group.id ? "bg-primary-light border-primary text-primary" : "",
             )}
           >
             <div className="flex-1">{group.name}</div>
-            <div className="flex-1">{group.course}</div>
-            <div className="flex-1">{group.students}</div>
+            <div className="flex-1">{group.courseNumber}</div>
+            <div className="flex-1">{group.students.length}</div>
           </div>
         ))}
       </div>

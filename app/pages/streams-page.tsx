@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
+import { useEffect, useState } from "react";
 import { GraduationCap } from "lucide-react";
 
 import CategoryActionsModal, {
@@ -10,7 +12,9 @@ import type {
 } from "~/components/features/category-actions-modal/category-actions-modal-types";
 import { useAppDispatch } from "~/store/store";
 import { Button } from "~/components/ui/common/button";
+import { STREAMS_FILTERS } from "~/constants/cookies-keys";
 import EntityHeader from "~/components/features/entity-header";
+import { generalSelector, setStreamFilters } from "~/store/general/general-slice";
 import type { StreamsType } from "~/store/streams/streams-types";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
@@ -19,8 +23,8 @@ import type { StreamLessonType } from "~/helpers/group-lessons-by-streams";
 import { createStream, updateStream } from "~/store/streams/streams-async-actions";
 import StreamsListDrawer from "~/components/features/pages/streams/streams-list-drawer";
 import { StreamsLessonsTable } from "~/components/features/pages/streams/streams-lessons-table";
-import CombineStreamLessonsModal from "~/components/features/pages/streams/combine-stream-lessons-modal";
 import StreamLessonDetailsModal from "~/components/features/pages/streams/stream-lesson-details-modal";
+import CombineStreamLessonsModal from "~/components/features/pages/streams/combine-stream-lessons-modal";
 
 const semesters = [
   { id: 1, name: "1" },
@@ -34,10 +38,22 @@ const semesters = [
 const StreamsPage = () => {
   const dispatch = useAppDispatch();
 
+  const [_, setCookie] = useCookies();
+
+  const {
+    streams: { semesters: defaultSelectedSemesters },
+  } = useSelector(generalSelector);
+
+  const [selectedSemester, setSelectedSemester] = useState(
+    defaultSelectedSemesters.length
+      ? defaultSelectedSemesters.split(",").map((sem) => ({ id: Number(sem), name: sem }))
+      : semesters,
+  );
+
+  const [globalFilter, setGlobalFilter] = useState("");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isCombineModalOpen, setIsCombineModalOpen] = useState(false);
-  const [selectedSemester, setSelectedSemester] = useState(semesters);
   const [selectedLessons, setSelectedLessons] = useState<StreamLessonType[]>([]);
   const [selectedStream, setSelectedStream] = useState<StreamsType | null>(null);
   const [preSelectedStream, setPreSelectedStream] = useState<StreamsType | null>(null);
@@ -60,6 +76,13 @@ const StreamsPage = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (!selectedSemester.length) return;
+    const semestersString = selectedSemester.map((el) => el.id).join(",");
+    setCookie(STREAMS_FILTERS, semestersString);
+    dispatch(setStreamFilters(semestersString));
+  }, [selectedSemester]);
 
   return (
     <>
@@ -99,7 +122,11 @@ const StreamsPage = () => {
             )}
 
             <div className="flex items-center gap-4">
-              <InputSearch placeholder="Знайти..." />
+              <InputSearch
+                value={globalFilter}
+                placeholder="Знайти..."
+                onChange={(e) => setGlobalFilter(e.target.value)}
+              />
 
               <PopoverFilter
                 enableSelectAll
@@ -129,8 +156,11 @@ const StreamsPage = () => {
 
           {true ? (
             <StreamsLessonsTable
+              globalFilter={globalFilter}
               selectedStream={selectedStream}
+              setGlobalFilter={setGlobalFilter}
               selectedLessons={selectedLessons}
+              selectedSemester={selectedSemester}
               setSelectedLessons={setSelectedLessons}
               setIsDetailsModalOpen={setIsDetailsModalOpen}
               setSelectedLessonFromDetails={setSelectedLessonFromDetails}

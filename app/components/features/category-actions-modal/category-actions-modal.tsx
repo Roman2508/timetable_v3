@@ -44,7 +44,7 @@ const CategoryActionsModal: FC<ICategoryActionsModalProps> = ({
   const [isPending, setIsPending] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
   const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
-
+  
   const formData = {
     ...initialFormData,
     ...updatingCategory,

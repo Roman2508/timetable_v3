@@ -1,5 +1,6 @@
-import React from "react";
+import { useSelector } from "react-redux";
 import { ChevronsUpDown, Search } from "lucide-react";
+import { useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import {
   Dialog,
@@ -13,14 +14,31 @@ import {
 import { Button } from "~/components/ui/common/button";
 import { SelectGroupTable } from "./select-group-table";
 import { Separator } from "~/components/ui/common/separator";
+import { groupsSelector } from "~/store/groups/groups-slice";
 import { InputSearch } from "~/components/ui/custom/input-search";
+import type { GroupsShortType } from "~/store/groups/groups-types";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
-const SelectGroupModal = () => {
+interface ISelectGroupModal {
+  selectedGroup: GroupsShortType | null;
+  setSelectedGroup: Dispatch<SetStateAction<GroupsShortType | null>>;
+}
+
+const SelectGroupModal: FC<ISelectGroupModal> = ({ selectedGroup, setSelectedGroup }) => {
+  const { groupCategories } = useSelector(groupsSelector);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [preSelectedGroup, setPreSelectedGroup] = useState<GroupsShortType | null>(selectedGroup);
+
+  const onSelectedGroup = () => {
+    setSelectedGroup(preSelectedGroup);
+    setIsModalOpen(false);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger>
-        <Button>
+        <Button onClick={() => setIsModalOpen(true)}>
           <Search />
           Вибрати групу
         </Button>
@@ -38,14 +56,10 @@ const SelectGroupModal = () => {
           <InputSearch className="mb-4 mx-4 mr-6" placeholder="Знайти групу..." />
 
           <div className="min-h-[40vh] max-h-[50vh] overflow-y-auto px-4">
-            {[
-              "І8 Фармація. Денна форма",
-              "І8 Фармація. Заочна форма",
-              "І6 Технології медичної діагностики та лікування",
-            ].map((el) => (
-              <Collapsible className="pt-2 border mb-4" defaultOpen>
+            {(groupCategories ?? []).map((category) => (
+              <Collapsible key={category.id} className="pt-2 border mb-4" defaultOpen>
                 <div className="flex items-center justify-between pl-4 pb-2 pr-2">
-                  <h4 className="text-sm font-semibold">{el}</h4>
+                  <h4 className="text-sm font-semibold">{category.name}</h4>
 
                   <CollapsibleTrigger asChild>
                     <Button variant="ghost" size="sm">
@@ -56,7 +70,11 @@ const SelectGroupModal = () => {
                 </div>
 
                 <CollapsibleContent className="pt-2">
-                  <SelectGroupTable />
+                  <SelectGroupTable
+                    groups={category.groups}
+                    selectedGroup={preSelectedGroup}
+                    setSelectedGroup={setPreSelectedGroup}
+                  />
                 </CollapsibleContent>
               </Collapsible>
             ))}
@@ -66,12 +84,14 @@ const SelectGroupModal = () => {
         <Separator />
 
         <DialogFooter className="flex !justify-between items-center pt-2 px-4">
-          <Button>Вибрати</Button>
+          <Button onClick={() => onSelectedGroup()}>Вибрати</Button>
 
-          <div className="font-mono mr-3">
-            Вибрано групу:
-            <span className="font-bold"> PH9-25-1</span>
-          </div>
+          {preSelectedGroup && (
+            <div className="font-mono mr-3">
+              Вибрано групу:
+              <span className="font-bold"> {preSelectedGroup.name}</span>
+            </div>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

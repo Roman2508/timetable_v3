@@ -1,4 +1,4 @@
-import React from "react";
+import { useMemo } from "react";
 
 export type ItemType = {
   status: "Активний" | "Архів";
@@ -19,7 +19,7 @@ export function useItemsByStatus<T extends Record<string, any>>(
   targetKey: keyof T,
   status: string,
 ): ReturnType {
-  const { filteredItems, counts } = React.useMemo(() => {
+  const { filteredItems, counts } = useMemo(() => {
     if (!items) {
       return {
         filteredItems: [],

@@ -111,11 +111,13 @@ const AuditoriesPage = () => {
   };
 
   const onCreateCategory = async (data: FormData) => {
-    await dispatch(createAuditoryCategory(data));
+    const { name, shortName } = data;
+    await dispatch(createAuditoryCategory({ name, shortName: String(shortName) }));
   };
 
   const onUpdateCategory = async (data: FormData & { id: number }) => {
-    await dispatch(updateAuditoryCategory(data));
+    const { id, name, shortName } = data;
+    await dispatch(updateAuditoryCategory({ id, name, shortName: String(shortName) }));
   };
 
   React.useEffect(() => {
