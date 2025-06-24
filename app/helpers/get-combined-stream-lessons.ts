@@ -31,10 +31,10 @@ export const getCombinedStreamLessons = (
   const groupedLessonsArray: Record<string, GroupLoadType[]> = {};
 
   combinedLessons.forEach((l) => {
-    const key1 = l.semester ?? "";
-    const key2 = l.group.id ?? "";
-    const key3 = l.subgroupNumber ?? "";
-    const key4 = l.specialization ?? "";
+    const key1 = l.semester || "";
+    const key2 = String(l.group.id) || "";
+    const key3 = l.subgroupNumber || "";
+    const key4 = l.specialization || "";
     const key = key1 + key2 + key3 + key4;
 
     if (!groupedLessonsArray[key]) {

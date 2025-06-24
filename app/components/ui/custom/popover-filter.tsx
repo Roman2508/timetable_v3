@@ -12,6 +12,7 @@ type IPopoverItem = {
 
 interface IPopoverFilterProps {
   label?: string;
+  disabled?: boolean;
   items: IPopoverItem[];
   itemsPrefix?: string;
   selectAllLabel?: string;
@@ -28,6 +29,7 @@ export const PopoverFilter: React.FC<IPopoverFilterProps> = ({
   setSelectedItems,
   label = "Фільтр",
   itemsPrefix = "",
+  disabled = false,
   filterSize = "default",
   filterVariant = "outline",
   selectAllLabel = "Всі",
@@ -68,7 +70,7 @@ export const PopoverFilter: React.FC<IPopoverFilterProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant={filterVariant} size={filterSize}>
+        <Button variant={filterVariant} size={filterSize} disabled={disabled}>
           <ListFilter />
           <span className="hidden lg:inline">{label}</span>
           <span className="lg:hidden">{label}</span>

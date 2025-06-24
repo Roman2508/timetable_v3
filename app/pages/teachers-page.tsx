@@ -4,6 +4,7 @@ import React from "react";
 import { NavLink } from "react-router";
 import { Plus, User } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
 
 import {
   createTeacherCategory,
@@ -14,7 +15,6 @@ import type {
   UpdatingCategoryType,
   CategoryModalStateType,
 } from "~/components/features/category-actions-modal/category-actions-modal-types";
-import { useCookies } from "react-cookie";
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";

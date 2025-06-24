@@ -1,147 +1,118 @@
-import React from "react";
-
 import {
   flexRender,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
-  getPaginationRowModel,
-  type SortingFn,
-  type ColumnDef,
+  createColumnHelper,
+  getFilteredRowModel,
   type SortingState,
   type PaginationState,
 } from "@tanstack/react-table";
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  ListFilter,
-  Plus,
-} from "lucide-react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/common/pagination";
+import { useSelector } from "react-redux";
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useMemo, type Dispatch, type FC, type SetStateAction, useEffect } from "react";
 
 import { cn } from "~/lib/utils";
-import { makeData, type Person } from "./make-data";
+import { useAppDispatch } from "~/store/store";
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { Button } from "~/components/ui/common/button";
-import { Checkbox } from "~/components/ui/common/checkbox";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
-import { Input } from "~/components/ui/common/input";
+import type { GroupLoadType, GroupsShortType } from "~/store/groups/groups-types";
+import LoadingSpinner from "~/components/ui/icons/loading-spinner";
+import { getGroupLoadByCurrentCourse } from "~/store/schedule-lessons/schedule-lessons-async-actions";
+import { clearGroupLoad, scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { InputSearch } from "~/components/ui/custom/input-search";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
+import { groupLessonsforDistribution, type DistributionLessonType } from "~/helpers/get-lesson-for-distribution";
+import { Pagination, PaginationItem, PaginationLink, PaginationContent } from "~/components/ui/common/pagination";
+import { useItemsBySemesters } from "~/hooks/use-items-by-semesters";
 
-// A typical debounced input react component
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = React.useState(initialValue);
-
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return <InputSearch onChange={(e) => setValue(e.target.value)} placeholder="Пошук..." value={value} {...props} />;
+interface IDistributionLessonsTableProps {
+  globalFilter: string;
+  selectedGroup: GroupsShortType | null;
+  selectedLesson: DistributionLessonType | null;
+  setGlobalFilter: Dispatch<SetStateAction<string>>;
+  selectedSemesters: { id: number; name: string }[];
+  setSelectedLesson: Dispatch<SetStateAction<DistributionLessonType | null>>;
+  setSelectedSemesters: Dispatch<SetStateAction<{ id: number; name: string }[]>>;
+  setAvailableSemesters: Dispatch<SetStateAction<{ id: number; name: string }[]>>;
 }
 
-export const DistributionLessonsTable = () => {
-  const rerender = React.useReducer(() => ({}), {})[1];
+export const DistributionLessonsTable: FC<IDistributionLessonsTableProps> = ({
+  globalFilter,
+  selectedGroup,
+  selectedLesson,
+  setGlobalFilter,
+  setSelectedLesson,
+  selectedSemesters,
+  setSelectedSemesters,
+  setAvailableSemesters,
+}) => {
+  const dispatch = useAppDispatch();
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const { groupLoad } = useSelector(scheduleLessonsSelector);
 
-  const columns = React.useMemo<ColumnDef<Person>[]>(
+  const groupedLoad = useMemo(() => groupLessonsforDistribution(groupLoad), [groupLoad]);
+  const filtredLoad = useItemsBySemesters(groupedLoad, selectedSemesters);
+
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [isLessonsLoading, setIsLessonsLoading] = useState(false);
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
+
+  const columnHelper = createColumnHelper<DistributionLessonType>();
+  const columns = useMemo(
     () => [
-      {
-        accessorKey: "name",
-        header: "Дисципліна",
-        rowSpan: 3,
-        footer: (props) => props.column.id,
-        // columns: [
-        //   {
-        //     accessorKey: "name",
-        //     cell: (info) => info.getValue(),
-        //     footer: (props) => props.column.id,
-        //   },
-        // ],
-      },
-      {
-        accessorKey: "cmk",
-        header: "ЦК",
-        rowSpan: 3,
-        footer: (props) => props.column.id,
-      },
-      {
-        header: "Семестр",
-        accessorKey: "semester",
-        footer: (props) => props.column.id,
-        rowSpan: 3,
-        // columns: [
-        //   {
-        //     accessorFn: (row) => row.lastName,
-        //     id: "age",
-        //     cell: (info) => info.getValue(),
-        //     header: () => <span>Last Name</span>,
-        //     footer: (props) => props.column.id,
-        //   },
-        // ],
-      },
+      columnHelper.accessor("name", { header: "Дисципліна" }),
+      columnHelper.accessor("semester", { header: "Семестр" }),
     ],
     [],
   );
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
-
-  const [data, setData] = React.useState(() => makeData(1000));
-  const refreshData = () => setData(() => makeData(1000));
-
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 20,
-  });
-
   const table = useReactTable({
-    data,
     columns,
-    state: {
-      pagination,
-      sorting,
-    },
+    data: filtredLoad,
     onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onPaginationChange: setPagination,
-    // Pipeline
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
+    getSortedRowModel: getSortedRowModel(),
+    state: { sorting, pagination, globalFilter },
+
+    globalFilterFn: "fuzzy",
+    filterFns: { fuzzy: fuzzyFilter },
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
-  console.log("getHeaderGroups", table.getHeaderGroups());
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (selectedGroup?.id) {
+          setIsLessonsLoading(true);
+          const { payload } = await dispatch(getGroupLoadByCurrentCourse(selectedGroup.id));
+
+          const allSemesters = (payload as GroupLoadType[]).map((el) => el.semester);
+          const uniqueSemesters = [...new Set(allSemesters)];
+          const availableSemesters = uniqueSemesters.map((semester) => ({ id: semester, name: String(semester) }));
+          setSelectedSemesters(availableSemesters);
+          setAvailableSemesters(availableSemesters);
+        }
+      } finally {
+        setIsLessonsLoading(false);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      dispatch(clearGroupLoad());
+    };
+  }, [selectedGroup]);
+
+  if (!selectedGroup || !groupedLoad.length) {
+    return <p className="font-mono text-center py-10">Пусто</p>;
+  }
+
+  if (isLessonsLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <>
@@ -152,17 +123,10 @@ export const DistributionLessonsTable = () => {
               <TableRow key={headerGroup.id} className="hover:bg-white">
                 {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className={index === 2 ? "!max-w-15 p-0" : "p-0"}
-                    >
+                    <TableHead key={header.id} colSpan={header.colSpan}>
                       {header.isPlaceholder ? null : (
                         <div
-                          className={cn(
-                            header.column.getCanSort() ? "cursor-pointer select-none text-left p-0" : "",
-                            index === 2 ? "text-center" : "",
-                          )}
+                          className={cn(index === 1 ? "!text-right" : "text-left", "cursor-pointer select-none")}
                           onClick={header.column.getToggleSortingHandler()}
                           title={
                             header.column.getCanSort()
@@ -174,7 +138,7 @@ export const DistributionLessonsTable = () => {
                               : undefined
                           }
                         >
-                          <p className={cn("inline-flex relative", index === 2 ? "" : "text-left")}>
+                          <p className="inline-flex relative uppercase font-mono">
                             {flexRender(header.column.columnDef.header, header.getContext())}
                             {{
                               asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
@@ -192,16 +156,26 @@ export const DistributionLessonsTable = () => {
 
           <TableBody>
             {table.getRowModel().rows.map((row) => {
+              const isNameSame = row.original.name === selectedLesson?.name;
+              const isSemesterSame = row.original.semester === selectedLesson?.semester;
+
               return (
-                <TableRow key={row.id} className="hover:bg-border/40 cursor-pointer">
+                <TableRow
+                  key={row.id}
+                  className={cn(
+                    "hover:bg-border/40 cursor-pointer",
+                    isNameSame && isSemesterSame ? "!text-primary !bg-primary-light" : "",
+                  )}
+                  onClick={() => setSelectedLesson(row.original)}
+                >
                   {row.getVisibleCells().map((cell, index) => {
                     return (
                       <TableCell
                         key={cell.id}
                         className={cn(
-                          index === 0 ? "truncate max-w-[200px]" : "",
                           "px-0 py-1",
-                          index === 2 ? "text-center" : "",
+                          index === 1 ? "text-right" : "",
+                          index === 0 ? "truncate max-w-[200px]" : "",
                         )}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -2,14 +2,14 @@ import { z } from "zod";
 import { useState, type FC, type Dispatch, type MouseEvent, type SetStateAction } from "react";
 
 import { cn } from "~/lib/utils";
+import { useAppDispatch } from "~/store/store";
 import { Button } from "~/components/ui/common/button";
 import { Checkbox } from "~/components/ui/common/checkbox";
 import { Separator } from "~/components/ui/common/separator";
-import type { StreamLessonType } from "~/helpers/group-lessons-by-streams";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "~/components/ui/common/dialog";
 import type { StreamsType } from "~/store/streams/streams-types";
+import type { StreamLessonType } from "~/helpers/group-lessons-by-streams";
 import { addLessonToStream, deleteLessonFromStream } from "~/store/streams/streams-async-actions";
-import { useAppDispatch } from "~/store/store";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "~/components/ui/common/dialog";
 
 const checkIsCombined = (subjects: StreamLessonType[]) => {
   const keys = ["lectures", "practical", "laboratory", "seminars", "exams"] as const;

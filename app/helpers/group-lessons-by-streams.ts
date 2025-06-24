@@ -18,14 +18,16 @@ export type StreamLessonType = {
   exams: LessonType | null;
 };
 
-export const groupLessonsByStreams = (lessons: GroupLoadType[]): StreamLessonType[] => {
+export const groupLessonsByStreams = (lessons: GroupLoadType[] | null): StreamLessonType[] => {
+  if (!lessons) return [];
+
   const groupedLessons: Record<string, GroupLoadType[]> = {};
 
   lessons.forEach((subject) => {
-    const key1 = subject.name ?? "";
-    const key2 = subject.semester ?? "";
-    const key3 = subject.group.name ?? "";
-    const key4 = subject.subgroupNumber ?? "";
+    const key1 = subject.name || "";
+    const key2 = subject.semester || "";
+    const key3 = subject.group.name || "";
+    const key4 = subject.subgroupNumber || "";
 
     const key = key1 + key2 + key3 + key4;
 

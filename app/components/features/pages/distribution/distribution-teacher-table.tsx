@@ -9,56 +9,50 @@ import {
   type PaginationState,
 } from "@tanstack/react-table";
 import { useSelector } from "react-redux";
-import { FiSearch as SearchIcon } from "react-icons/fi";
-import { useEffect, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import { cn } from "~/lib/utils";
 import { useAppDispatch } from "~/store/store";
-import { Input } from "~/components/ui/common/input";
 import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { Button } from "~/components/ui/common/button";
-import { Checkbox } from "~/components/ui/common/checkbox";
-import { getStreamLessons } from "~/store/streams/streams-async-actions";
-import { clearStreamLessons, streamsSelector } from "~/store/streams/streams-slice";
-import { groupLessonsByStreams, type StreamLessonType } from "~/helpers/group-lessons-by-streams";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
 import { teachersSelector } from "~/store/teachers/teachers-slice";
 import type { TeachersType } from "~/store/teachers/teachers-types";
 import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
+import { useItemsByCategory } from "~/hooks/use-items-by-category";
 
 interface IDistributionTeacherTableProps {
   globalFilter: string;
+  selectedTeacherId: number | null;
+  selectedTeacherCategories: { id: number }[];
   setGlobalFilter: Dispatch<SetStateAction<string>>;
+  setSelectedTeacherId: Dispatch<SetStateAction<number | null>>;
 }
 
-export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({ globalFilter, setGlobalFilter }) => {
-  const dispatch = useAppDispatch();
-
+export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
+  globalFilter,
+  setGlobalFilter,
+  selectedTeacherId,
+  setSelectedTeacherId,
+  selectedTeacherCategories,
+}) => {
   const { teachersCategories } = useSelector(teachersSelector);
 
   const teachers = useMemo(() => (teachersCategories ?? []).flatMap((el) => el.teachers), [teachersCategories]);
-  //   const filtredLessons = useItemsBySemesters(lessons, selectedSemester);
+  const filtredTeachers = useItemsByCategory(teachers, selectedTeacherCategories);
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
 
-  const handleSelectedLesson = (lesson: StreamLessonType) => {
-    // setSelectedLessons((prev) => {
-    //   const existedLesson = prev.find((el) => checkIsLessonsSame(lesson, el));
-    //   if (existedLesson) {
-    //     return prev.filter((el) => !checkIsLessonsSame(lesson, el));
-    //   }
-    //   return [...prev, lesson];
-    // });
-  };
-
-  console.log(teachers);
-
-  const checkIsActive = (lesson: StreamLessonType) => {
-    // return selectedLessons.some((el) => checkIsLessonsSame(lesson, el));
+  const handleSelectTeacher = (teacherId: number) => {
+    setSelectedTeacherId((prev) => {
+      if (prev === teacherId) return null;
+      else return teacherId;
+    });
   };
 
   const columnHelper = createColumnHelper<TeachersType>();
@@ -69,66 +63,52 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({ g
         header: "ПІБ",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("category.name", { header: "ЦК" }),
+      columnHelper.display({
+        id: "category.shortName",
+        header: "ЦК",
+        cell: ({ row }) => {
+          return (
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>{row.original.category.shortName}</TooltipTrigger>
+              <TooltipContent>ЦК {row.original.category.name}</TooltipContent>
+            </Tooltip>
+          );
+        },
+      }),
     ],
     [teachers],
   );
 
-  /* 
-                    <Tooltip delayDuration={500}>
-                      <TooltipTrigger>
-                        <TabsTrigger key={el.name} value={el.name} className="px-3 py-2">
-                          {el.icon}
-                        </TabsTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent>{el.tooltip}</TooltipContent>
-                    </Tooltip>
-
-  */
-
   const table = useReactTable({
-    data: teachers,
+    data: filtredTeachers,
     columns,
     state: { sorting, globalFilter },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
 
+    globalFilterFn: "fuzzy",
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: "fuzzy",
     getFilteredRowModel: getFilteredRowModel(),
   });
-
-  //   useEffect(() => {
-  //     if (!selectedStream) return;
-  //     dispatch(clearStreamLessons());
-  //     const fetchGroups = async () => {
-  //       Promise.allSettled(
-  //         selectedStream.groups.map(async (el) => {
-  //           await dispatch(getStreamLessons(el.id));
-  //         }),
-  //       );
-  //     };
-  //     fetchGroups();
-  //   }, [selectedStream]);
 
   return (
     <>
       {!teachers.length ? (
         <div className="font-mono py-20 text-center">Пусто</div>
       ) : (
-        <div className="p-2 block max-w-full">
+        <div className="block max-w-full">
           <Table className="w-full ">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-white">
-                  {headerGroup.headers.map((header) => {
+                  {headerGroup.headers.map((header, index) => {
                     return (
                       <TableHead key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder ? null : (
                           <div
-                            className={cn("cursor-pointer select-none text-left")}
+                            className={cn(index === 1 ? "!text-right" : "text-left", "cursor-pointer select-none")}
                             onClick={header.column.getToggleSortingHandler()}
                             title={
                               header.column.getCanSort()
@@ -158,13 +138,12 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({ g
 
             <TableBody>
               {table.getRowModel().rows.map((row) => {
+                const isSelected = selectedTeacherId === row.original.id;
                 return (
                   <TableRow
                     key={row.id}
-                    className={cn(
-                      "hover:bg-border/40",
-                      //   checkIsActive(row.original) ? "text-primary bg-primary-light hover:bg-primary-light" : "",
-                    )}
+                    onClick={() => handleSelectTeacher(row.original.id)}
+                    className={cn("hover:bg-border/40", isSelected ? "!text-primary !bg-primary-light" : "")}
                   >
                     {row.getVisibleCells().map((cell, index) => {
                       return (
@@ -185,7 +164,7 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({ g
             </TableBody>
           </Table>
 
-          <div className="flex items-center justify-center my-8 gap-8">
+          <div className="flex items-center justify-between mt-4 pl-1">
             <Pagination>
               <PaginationContent className="flex gap-4">
                 <PaginationItem onClick={() => table.previousPage()}>

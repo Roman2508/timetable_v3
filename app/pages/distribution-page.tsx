@@ -1,82 +1,36 @@
-import { useEffect, useState } from "react";
-import { ChevronLeft, CircleX, CopyPlus, CopyX, GraduationCap, SquarePlus } from "lucide-react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { GraduationCap } from "lucide-react";
 
 import { Card } from "~/components/ui/common/card";
-import { Input } from "~/components/ui/common/input";
-import { Button } from "~/components/ui/common/button";
+import { sortByName } from "~/helpers/sort-by-name";
 import EntityHeader from "~/components/features/entity-header";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import type { GroupsShortType } from "~/store/groups/groups-types";
+import { teachersSelector } from "~/store/teachers/teachers-slice";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import type { DistributionLessonType } from "~/helpers/get-lesson-for-distribution";
 import SelectGroupModal from "~/components/features/select-group/select-group-modal";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
-import { useSelector } from "react-redux";
-import { teachersSelector } from "~/store/teachers/teachers-slice";
+import DistributionActions from "~/components/features/pages/distribution/distribution-actions";
 import { DistributionTeacherTable } from "~/components/features/pages/distribution/distribution-teacher-table";
-
-const cmk = [
-  { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
-  { id: 2, name: "Фармацевтичних дисциплін", count: 17 },
-  { id: 3, name: "Гуманітарних дисциплін", count: 7 },
-  { id: 4, name: "Медико-біологічних дисциплін", count: 5 },
-  { id: 5, name: "Хімічних дисциплін", count: 10 },
-];
-
-const semesters = [
-  { id: 1, name: "1" },
-  { id: 2, name: "2" },
-  { id: 3, name: "3" },
-  { id: 4, name: "4" },
-  { id: 5, name: "5" },
-  { id: 6, name: "6" },
-];
-
-const distributionVariants = [
-  {
-    icon: <CopyX />,
-    tooltip: "Відкріпити всі",
-    name: "unpin_all",
-    onClick: () => {},
-    disabled: false,
-    isActive: false,
-  },
-  {
-    icon: <CircleX />,
-    tooltip: "Відкріпити одного",
-    name: "unpin_one",
-    onClick: () => {},
-    disabled: false,
-    isActive: false,
-  },
-  {
-    icon: <CopyPlus />,
-    tooltip: "Прикріпити всі",
-    name: "attach_all",
-    onClick: () => {},
-    disabled: false,
-    isActive: false,
-  },
-  {
-    icon: <SquarePlus />,
-    tooltip: "Прикріпити одного",
-    name: "attach_one",
-    onClick: () => {},
-    disabled: false,
-    isActive: true,
-  },
-];
+import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
 
 const DistributionPage = () => {
-  const [selectedSmk, setSelectedCmk] = useState(cmk);
-  const [selectedSemesters, setSelectedSemesters] = useState(semesters);
-  const [selectedGroup, setSelectedGroup] = useState<GroupsShortType | null>(null);
+  const { teachersCategories } = useSelector(teachersSelector);
 
-  useEffect(() => {
-    //
-  }, [selectedGroup]);
+  const [selectedGroup, setSelectedGroup] = useState<GroupsShortType | null>(null);
+  const [selectedSemesters, setSelectedSemesters] = useState<{ id: number; name: string }[]>([]);
+  const [availableSemesters, setAvailableSemesters] = useState<{ id: number; name: string }[]>([]);
+
+  const defaultSelected = teachersCategories ? teachersCategories.map((el) => ({ id: el.id })) : [];
+  const [selectedTeacherCategories, setSelectedTeacherCategories] = useState<{ id: number }[]>(defaultSelected);
+
+  const [searchLesson, setSearchLesson] = useState("");
+  const [searchTeacher, setSearchTeacher] = useState("");
+
+  const [selectedTeacherId, setSelectedTeacherId] = useState<number | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<DistributionLessonType | null>(null);
 
   return (
     <RootContainer>
@@ -99,69 +53,74 @@ const DistributionPage = () => {
       <div className="flex w-full gap-3">
         <Card className="p-3 flex-1">
           <div className="flex gap-4 justify-between">
-            <InputSearch value="" className="w-full" placeholder="Знайти..." onChange={(e) => {}} />
+            <InputSearch
+              className="w-full"
+              value={searchLesson}
+              placeholder="Знайти..."
+              onChange={(e) => setSearchLesson(e.target.value)}
+            />
 
             <PopoverFilter
               enableSelectAll
-              items={semesters}
               itemsPrefix="Семестр"
+              disabled={!selectedGroup}
+              items={availableSemesters}
               selectAllLabel="Вибрати всі"
               selectedItems={selectedSemesters}
               setSelectedItems={setSelectedSemesters}
             />
           </div>
 
-          <DistributionLessonsTable />
+          <DistributionLessonsTable
+            globalFilter={searchLesson}
+            selectedGroup={selectedGroup}
+            selectedLesson={selectedLesson}
+            setGlobalFilter={setSearchLesson}
+            setSelectedLesson={setSelectedLesson}
+            selectedSemesters={selectedSemesters}
+            setSelectedSemesters={setSelectedSemesters}
+            setAvailableSemesters={setAvailableSemesters}
+          />
         </Card>
 
         <Card className="p-3 flex-1 gap-0">
-          <h3 className="text-md font-semibold text-center pb-3">Інформаційні технології у фармації</h3>
-
-          <div className="flex gap-2 justify-center mb-8 py-2 border-y">
-            <Tabs defaultValue="attach_one">
-              <TabsList>
-                {distributionVariants.map((el) => (
-                  <Tooltip delayDuration={500}>
-                    <TooltipTrigger>
-                      <TabsTrigger key={el.name} value={el.name} className="px-3 py-2">
-                        {el.icon}
-                      </TabsTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent>{el.tooltip}</TooltipContent>
-                  </Tooltip>
-                ))}
-              </TabsList>
-            </Tabs>
-          </div>
-          <div className="">
-            {["ЛК", "ПЗ", "ЛАБ", "СЕМ", "ЕКС", "КОНС"].map((el) => (
-              <div className="flex justify-between items-center gap-4 mb-4">
-                <p className="min-w-30">{el}</p>
-                <Input className="cursor-default" readOnly value="" />
-                <Input className="max-w-13 cursor-default" readOnly value={120} />
-                <Button variant="outline">
-                  <ChevronLeft />
-                </Button>
-              </div>
-            ))}
-          </div>
+          <DistributionActions
+            selectedLesson={selectedLesson}
+            selectedTeacherId={selectedTeacherId}
+            setSelectedLesson={setSelectedLesson}
+          />
         </Card>
 
-        <Card className="p-3 flex-1">
+        <Card className="p-3 flex-1 h-[calc(100vh-240px)]">
           <div className="flex gap-4 justify-between">
-            <InputSearch value={""} className="w-full" placeholder="Знайти..." onChange={(e) => {}} />
+            <InputSearch
+              className="w-full"
+              value={searchTeacher}
+              placeholder="Знайти..."
+              onChange={(e) => setSearchTeacher(e.target.value)}
+            />
 
             <PopoverFilter
+              itemsPrefix=""
               enableSelectAll
-              items={cmk}
-              itemsPrefix="ЦК"
+              filterVariant="outline"
               selectAllLabel="Вибрати всі"
-              selectedItems={selectedSmk}
-              setSelectedItems={setSelectedCmk}
+              selectedItems={selectedTeacherCategories}
+              items={sortByName(teachersCategories) || []}
+              setSelectedItems={setSelectedTeacherCategories}
             />
           </div>
-
-          <DistributionTeacherTable globalFilter="" setGlobalFilter={() => {}} />
+          {selectedTeacherCategories.length ? (
+            <DistributionTeacherTable
+              globalFilter={searchTeacher}
+              setGlobalFilter={setSearchTeacher}
+              selectedTeacherId={selectedTeacherId}
+              setSelectedTeacherId={setSelectedTeacherId}
+              selectedTeacherCategories={selectedTeacherCategories}
+            />
+          ) : (
+            <p className="font-mono text-center py-10">Пусто</p>
+          )}
         </Card>
       </div>
     </RootContainer>

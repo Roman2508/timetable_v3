@@ -20,13 +20,13 @@ import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { Button } from "~/components/ui/common/button";
 import { Checkbox } from "~/components/ui/common/checkbox";
 import type { StreamsType } from "~/store/streams/streams-types";
+import { useItemsBySemesters } from "~/hooks/use-items-by-semesters";
 import { getStreamLessons } from "~/store/streams/streams-async-actions";
 import { clearStreamLessons, streamsSelector } from "~/store/streams/streams-slice";
-import { groupLessonsByStreams, type StreamLessonType } from "~/helpers/group-lessons-by-streams";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
-import { useItemsBySemesters } from "~/hooks/use-items-by-semesters";
+import { groupLessonsByStreams, type StreamLessonType } from "~/helpers/group-lessons-by-streams";
 
 const checkIsLessonsSame = (obj1: StreamLessonType, obj2: StreamLessonType) => {
   const sharedKeys = Object.keys(obj1).filter((key) => key in obj2);

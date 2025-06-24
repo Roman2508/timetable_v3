@@ -5,7 +5,7 @@ export const getTeacherFullname = (teacher: TeachersType, variant: "short" | "fu
     return `${teacher.lastName} ${teacher.firstName} ${teacher.middleName}`;
   }
   if (variant === "short") {
-    return `${teacher.lastName} ${teacher.firstName[0]} ${teacher.middleName[0]}`;
+    return `${teacher.lastName} ${teacher.firstName[0]}.${teacher.middleName[0]}.`;
   }
   return "";
 };
