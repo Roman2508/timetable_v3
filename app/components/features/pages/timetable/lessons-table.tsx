@@ -1,296 +1,178 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-
-import "./index.css";
-
 import {
-  type Column,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type FilterFn,
-  type SortingFn,
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  sortingFns,
   useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  createColumnHelper,
+  getFilteredRowModel,
+  type SortingState,
 } from "@tanstack/react-table";
+import { useCookies } from "react-cookie";
+import { useSelector } from "react-redux";
+import { ArrowDown, ArrowUp } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
 
-// A TanStack fork of Kent C. Dodds' match-sorter library that provides ranking information
-import { type RankingInfo, rankItem, compareItems } from "@tanstack/match-sorter-utils";
-
-import { makeData, Person } from "./makeData";
+import { cn } from "~/lib/utils";
+import { useAppDispatch } from "~/store/store";
 import { fuzzyFilter } from "~/helpers/fuzzy-filter";
+import { generalSelector } from "~/store/general/general-slice";
+import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
+import type { GroupLoadType, GroupsShortType } from "~/store/groups/groups-types";
+import { clearGroupLoad, scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { findLessonsForSchedule } from "~/store/schedule-lessons/schedule-lessons-async-actions";
 
-declare module "@tanstack/react-table" {
-  //add fuzzy filter to the filterFns
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>;
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo;
-  }
+interface ILessonsTableProps {
+  //
 }
 
-// Define a custom fuzzy sort function that will sort by rank if the row has ranking information
-const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-  let dir = 0;
+export const LessonsTable: React.FC<ILessonsTableProps> = ({}) => {
+  const dispatch = useAppDispatch();
 
-  // Only sort by rank if the column has ranking information
-  if (rowA.columnFiltersMeta[columnId]) {
-    dir = compareItems(rowA.columnFiltersMeta[columnId]?.itemRank!, rowB.columnFiltersMeta[columnId]?.itemRank!);
-  }
+  const [_, setCookie] = useCookies();
 
-  // Provide an alphanumeric fallback for when the item ranks are equal
-  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-};
+  // const { auditories: { isOrderDesc, orderField } } = useSelector(generalSelector);
+  const { groupLoad, loadingStatus, scheduleLessons } = useSelector(scheduleLessonsSelector);
+  // const [sorting, setSorting] = React.useState<SortingState>(orderField ? [{ id: orderField, desc: isOrderDesc }] : []);
 
-function App() {
-  const rerender = React.useReducer(() => ({}), {})[1];
-
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = React.useState("");
-
-  const columns = React.useMemo<ColumnDef<Person, any>[]>(
+  const columnHelper = createColumnHelper<GroupLoadType>();
+  const columns = useMemo(
     () => [
-      {
-        accessorKey: "id",
-        filterFn: "equalsString", //note: normal non-fuzzy filter column - exact match required
-      },
-      {
-        accessorKey: "firstName",
+      columnHelper.accessor("name", { header: "Дисципліна" }),
+      columnHelper.accessor((row) => getTeacherFullname(row.teacher, "short"), {
+        id: "category",
+        header: "Викладач",
         cell: (info) => info.getValue(),
-        filterFn: "includesStringSensitive", //note: normal non-fuzzy filter column - case sensitive
-      },
-      {
-        accessorFn: (row) => row.lastName,
-        id: "lastName",
-        cell: (info) => info.getValue(),
-        header: () => <span>Last Name</span>,
-        filterFn: "includesString", //note: normal non-fuzzy filter column - case insensitive
-      },
-      {
-        accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-        id: "fullName",
-        header: "Full Name",
-        cell: (info) => info.getValue(),
-        filterFn: "fuzzy", //using our custom fuzzy filter function
-        // filterFn: fuzzyFilter, //or just define with the function
-        sortingFn: fuzzySort, //sort by fuzzy rank (falls back to alphanumeric)
-      },
+      }),
+
+      columnHelper.display({
+        id: "remark",
+        header: "Примітка",
+        cell: ({ row }) => {
+          return 123;
+        },
+      }),
+
+      columnHelper.display({
+        id: "plan",
+        header: "План",
+        cell: ({ row }) => {
+          return 1;
+        },
+      }),
+
+      columnHelper.display({
+        id: "fact",
+        header: "Факт",
+        cell: ({ row }) => {
+          return 1;
+        },
+      }),
     ],
     [],
   );
 
-  const [data, setData] = React.useState<Person[]>(() => makeData(5_000));
-  const refreshData = () => setData((_old) => makeData(50_000)); //stress test
-
   const table = useReactTable({
-    data,
+    data: groupLoad || [],
     columns,
-    filterFns: {
-      fuzzy: fuzzyFilter, //define as a filter function that can be used in column definitions
-    },
-    state: {
-      columnFilters,
-      globalFilter,
-    },
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: "fuzzy", //apply fuzzy filter to the global filter (most common use case for fuzzy filter)
+    // state: { sorting },
+    // onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(), //client side filtering
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
+
+    // globalFilterFn: "fuzzy",
+    filterFns: { fuzzy: fuzzyFilter },
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
-  //apply the fuzzy sort if the fullName column is being filtered
-  React.useEffect(() => {
-    if (table.getState().columnFilters[0]?.id === "fullName") {
-      if (table.getState().sorting[0]?.id !== "fullName") {
-        table.setSorting([{ id: "fullName", desc: false }]);
-      }
+  const lastSelectedItemId = 1;
+  const lastSelectedScheduleType = "group";
+  const selectedSemester = 1;
+
+  useEffect(() => {
+    if (!lastSelectedItemId) return;
+
+    if (lastSelectedScheduleType === "group" || lastSelectedScheduleType === "teacher") {
+      dispatch(clearGroupLoad());
+      const semester = selectedSemester;
+      const itemId = lastSelectedItemId;
+      const scheduleType = lastSelectedScheduleType;
+      dispatch(findLessonsForSchedule({ semester, itemId, scheduleType }));
     }
-  }, [table.getState().columnFilters[0]?.id]);
+  }, [lastSelectedItemId, /* lastSelectedScheduleType, */ selectedSemester]);
+
+  // React.useEffect(() => {
+  //   if (sorting.length) {
+  //     setCookie(GROUP_SORT_KEY, sorting[0].id);
+  //     setCookie(GROUP_SORT_TYPE, sorting[0].desc);
+  //   } else {
+  //     setCookie(GROUP_SORT_KEY, "");
+  //     setCookie(GROUP_SORT_TYPE, false);
+  //   }
+  // }, [sorting]);
 
   return (
-    <div className="p-2">
-      <div>
-        <DebouncedInput
-          value={globalFilter ?? ""}
-          onChange={(value) => setGlobalFilter(String(value))}
-          className="p-2 font-lg shadow border border-block"
-          placeholder="Search all columns..."
-        />
-      </div>
-      <div className="h-2" />
-      <table>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
+    <Table className="w-full">
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id} className="hover:bg-white">
+            {headerGroup.headers.map((header, index) => {
+              return (
+                <TableHead key={header.id} colSpan={header.colSpan} className="text-xs">
+                  {header.isPlaceholder ? null : (
+                    <div
+                      className={cn(index !== 6 ? "cursor-pointer select-none text-left" : "text-right")}
+                      onClick={header.column.getToggleSortingHandler()}
+                      title={
+                        header.column.getCanSort()
+                          ? header.column.getNextSortingOrder() === "asc"
+                            ? "Sort ascending"
+                            : header.column.getNextSortingOrder() === "desc"
+                            ? "Sort descending"
+                            : "Clear sort"
+                          : undefined
+                      }
+                    >
+                      <p className="inline-flex relative uppercase font-mono">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {{
+                          asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
+                          desc: <ArrowDown className="w-4 absolute right-[-20px]" />,
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </p>
+                    </div>
+                  )}
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+
+      <TableBody>
+        {table.getRowModel().rows.map((groupData) => {
+          const group = groupData.original;
+          return (
+            <TableRow key={group.id} className="hover:bg-border/40">
+              {groupData.getVisibleCells().map((cell, index) => {
+                const isActionsCol = index === groupData.getVisibleCells().length - 1;
                 return (
-                  <th key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
-                      <>
-                        <div
-                          {...{
-                            className: header.column.getCanSort() ? "cursor-pointer select-none" : "",
-                            onClick: header.column.getToggleSortingHandler(),
-                          }}
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {{
-                            asc: " 🔼",
-                            desc: " 🔽",
-                          }[header.column.getIsSorted() as string] ?? null}
-                        </div>
-                        {header.column.getCanFilter() ? (
-                          <div>
-                            <Filter column={header.column} />
-                          </div>
-                        ) : null}
-                      </>
+                  <TableCell
+                    key={cell.id}
+                    className={cn(
+                      "text-left px-2 py-1 text-xs cursor-pointer",
+                      isActionsCol ? "!text-right" : "",
+                      index === 0 ? "truncate max-w-[160px]" : "",
                     )}
-                  </th>
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
                 );
               })}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div className="h-2" />
-      <div className="flex items-center gap-2">
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<<"}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<"}
-        </button>
-        <button className="border rounded p-1" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-          {">"}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {">>"}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </strong>
-        </span>
-        <span className="flex items-center gap-1">
-          | Go to page:
-          <input
-            type="number"
-            defaultValue={table.getState().pagination.pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              table.setPageIndex(page);
-            }}
-            className="border p-1 rounded w-16"
-          />
-        </span>
-        <select
-          value={table.getState().pagination.pageSize}
-          onChange={(e) => {
-            table.setPageSize(Number(e.target.value));
-          }}
-        >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>{table.getPrePaginationRowModel().rows.length} Rows</div>
-      <div>
-        <button onClick={() => rerender()}>Force Rerender</button>
-      </div>
-      <div>
-        <button onClick={() => refreshData()}>Refresh Data</button>
-      </div>
-      <pre>
-        {JSON.stringify(
-          {
-            columnFilters: table.getState().columnFilters,
-            globalFilter: table.getState().globalFilter,
-          },
-          null,
-          2,
-        )}
-      </pre>
-    </div>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
   );
-}
-
-function Filter({ column }: { column: Column<any, unknown> }) {
-  const columnFilterValue = column.getFilterValue();
-
-  return (
-    <DebouncedInput
-      type="text"
-      value={(columnFilterValue ?? "") as string}
-      onChange={(value) => column.setFilterValue(value)}
-      placeholder={`Search...`}
-      className="w-36 border shadow rounded"
-    />
-  );
-}
-
-// A typical debounced input react component
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = React.useState(initialValue);
-
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return <input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
-}
+};

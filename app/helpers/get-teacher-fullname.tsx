@@ -1,6 +1,8 @@
 import type { TeachersType } from "~/store/teachers/teachers-types";
 
-export const getTeacherFullname = (teacher: TeachersType, variant: "short" | "full" = "full") => {
+export const getTeacherFullname = (teacher: TeachersType | null, variant: "short" | "full" = "full") => {
+  if (!teacher) return "";
+
   if (variant === "full") {
     return `${teacher.lastName} ${teacher.firstName} ${teacher.middleName}`;
   }

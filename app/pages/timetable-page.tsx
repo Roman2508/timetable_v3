@@ -1,20 +1,22 @@
-// import { WideContainer } from '@/components/layouts/wide-container'
-import React from "react";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
 } from "~/components/ui/common/dropdown-menu";
 import { Button } from "~/components/ui/common/button";
-// import { ListFilter } from 'lucide-react'
-// import { IconChevronDown } from '@tabler/icons-react'
-
 import { WideContainer } from "~/components/layouts/wide-container";
-import { ChevronDown } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { LessonsTable } from "~/components/features/pages/timetable/lessons-table";
 
 const TimetablePage = () => {
+  useEffect(() => {
+    //
+  }, []);
+
   return (
     <WideContainer>
       <div className="w-full h-full">
@@ -74,12 +76,11 @@ const TimetablePage = () => {
         </div>
 
         <div className="flex gap-4 items-start">
-          <div className="w-90 border">
-            {/* <TeachersList /> */}
-            table
+          <div className="w-3/10 border">
+            <LessonsTable />
           </div>
 
-          <div className="flex-1 border-t">
+          <div className="w-7/10 border-t">
             <div className="flex border-x">
               <div className="flex justify-between w-full">
                 <div className="flex gap-2 p-2">

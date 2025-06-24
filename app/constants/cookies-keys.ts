@@ -28,3 +28,9 @@ export const PLAN_FILTERS = "plan_filters";
 export const PLAN_EXPANDED = "plan_expanded";
 
 export const STREAMS_FILTERS = "streams_filters";
+
+export const TIMETABLE_SEMESTER = "timetable_";
+export const TIMETABLE_WEEK = "timetable_week";
+export const TIMETABLE_ITEM = "timetable_item";
+export const TIMETABLE_CATEGORY = "timetable_category";
+export const TIMETABLE_TYPE = "timetable_type";
