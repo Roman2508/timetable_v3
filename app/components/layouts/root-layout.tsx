@@ -22,6 +22,11 @@ import {
   PLAN_FILTERS,
   PLAN_EXPANDED,
   STREAMS_FILTERS,
+  TIMETABLE_SEMESTER,
+  TIMETABLE_WEEK,
+  TIMETABLE_ITEM,
+  TIMETABLE_CATEGORY,
+  TIMETABLE_TYPE,
 } from "~/constants/cookies-keys";
 import {
   setPlanStatus,
@@ -39,6 +44,7 @@ import {
   setPlanFilters,
   setPlanExpanded,
   setStreamFilters,
+  setTimetableData,
 } from "~/store/general/general-slice";
 import { plansAPI } from "~/api/plans-api";
 import { groupsAPI } from "~/api/groups-api";
@@ -145,6 +151,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   // streams
   store.dispatch(setStreamFilters(cookies[STREAMS_FILTERS] ?? ""));
+
+  // timetable
+  const semester = !isNaN(Number(cookies[TIMETABLE_SEMESTER])) ? Number(cookies[TIMETABLE_SEMESTER]) : null;
+  const week = !isNaN(Number(cookies[TIMETABLE_WEEK])) ? Number(cookies[TIMETABLE_WEEK]) : null;
+  const item = !isNaN(Number(cookies[TIMETABLE_ITEM])) ? Number(cookies[TIMETABLE_ITEM]) : null;
+  const category = !isNaN(Number(cookies[TIMETABLE_CATEGORY])) ? Number(cookies[TIMETABLE_CATEGORY]) : null;
+  const type = cookies[TIMETABLE_TYPE] ? cookies[TIMETABLE_TYPE] : null;
+  store.dispatch(setTimetableData({ semester, week, item, category, type }));
 
   return {
     preloadedState: store.getState(),

@@ -27,7 +27,7 @@ export const instanse = axios.create({
 instanse.interceptors.request.use((config) => {
   if (config.headers) {
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ4MjQ2MTU1LCJleHAiOjE3NTA4MzgxNTV9.17zxUWB0r8uAgi10EyXPQIUZr0VPZbhhhTgKaX2c0-Q";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzUwODQwMTM3LCJleHAiOjE3NTM0MzIxMzd9.45M1GUnxEarIpr6_t0OvLjrH2UCyuUCRnxQp3A0hJ3M";
     // const token = getLocalStorageToken()
     config.headers.Authorization = String(`Bearer ${token}`);
 
@@ -41,9 +41,10 @@ instanse.interceptors.response.use(
   (error) => {
     // Any status codes that fall outside the range of 2xx trigger this function
     if (error.response && error.response.status === 401) {
-      if (window.location.pathname !== "/auth") {
-        window.location.replace("/auth");
-      }
+      // if (window.location.pathname !== "/auth") {
+      //   window.location.replace("/auth");
+      // }
+      //
       // localStorage.removeItem(TOKEN_NAME)
     }
 

@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -7,77 +8,122 @@ import {
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
 } from "~/components/ui/common/dropdown-menu";
+import { useAppDispatch } from "~/store/store";
 import { Button } from "~/components/ui/common/button";
+import { generalSelector } from "~/store/general/general-slice";
+import type { StreamsType } from "~/store/streams/streams-types";
+import { settingsSelector } from "~/store/settings/settings-slice";
 import { WideContainer } from "~/components/layouts/wide-container";
+import type { TeachersType } from "~/store/teachers/teachers-types";
+import type { GroupLoadStreamType } from "~/store/groups/groups-types";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { LessonsTable } from "~/components/features/pages/timetable/lessons-table";
+import { getGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-async-actions";
+import { clearGroupLoad, clearGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-slice";
+import { customDayjs } from "~/lib/dayjs";
+import TimetableHeader from "~/components/features/pages/timetable/timetable-header";
+
+export interface ISelectedLesson {
+  id: number;
+  name: string;
+  students: number;
+  totalHours: number;
+  teacher: TeachersType;
+  currentLessonHours: number;
+  subgroupNumber: number | null;
+  specialization: string | null;
+  replacement: null | TeachersType;
+  group: { id: number; name: string };
+  stream: GroupLoadStreamType | StreamsType | null;
+  typeRu: "ЛК" | "ПЗ" | "ЛАБ" | "СЕМ" | "ЕКЗ" | "КОНС" | "МЕТОД";
+}
 
 const TimetablePage = () => {
+  const dispatch = useAppDispatch();
+
+  const {
+    timetable: { semester, week, item, category, type },
+  } = useSelector(generalSelector);
+  const { settings } = useSelector(settingsSelector);
+
+  const [weeksCount, setWeeksCount] = useState(0);
+  const [selectedSemester, setSelectedSemester] = useState<1 | 2>(1);
+  const [isPossibleToCreateLessons, setIsPossibleToCreateLessons] = useState(true);
+  const [selectedLesson, setSelectedLesson] = useState<ISelectedLesson | null>(null);
+  const [copyTheScheduleModalVisible, setCopyTheScheduleModalVisible] = useState(false);
+  const [slectedGroupId, setSlectedGroupId] = useState<number | null>(type === "group" ? item : null);
+  const [selectedTeacherId, setSelectedTeacherId] = useState<null | number>(type === "teacher" ? item : null);
+  const [selectedAuditoryId, setSelectedAuditoryId] = useState<number | null>(type === "auditory" ? item : null);
+
+  // set weeks count in current semester
   useEffect(() => {
-    //
+    if (!settings) return;
+    const { firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd } = settings;
+
+    if (!semester || semester === 1) {
+      const endDate = customDayjs(firstSemesterEnd);
+      const weeksCount = endDate.diff(firstSemesterStart, "week", true);
+      const roundedUp = Math.ceil(weeksCount);
+      setWeeksCount(roundedUp + 1);
+      setSelectedSemester(1);
+      return;
+    }
+
+    if (semester === 2) {
+      const endDate = customDayjs(secondSemesterEnd);
+      const weeksCount = endDate.diff(secondSemesterStart, "week", true);
+      const roundedUp = Math.ceil(weeksCount);
+      setWeeksCount(roundedUp + 1);
+      setSelectedSemester(semester);
+    }
+  }, [settings, semester]);
+
+  useEffect(() => {
+    // Якщо дисципліна не об'єднана в потік
+    if (!selectedLesson) return;
+
+    // Якщо група не об'єднана в потік - очищаю накладки
+    if (!selectedLesson.stream) {
+      dispatch(clearGroupOverlay());
+      return;
+    }
+
+    // Якщо дисципліна об'єднана в потік і кількість груп в потоці = або < 1
+    if (selectedLesson.stream.groups.length <= 1) return;
+
+    Promise.allSettled(
+      selectedLesson.stream.groups.map(async (group) => {
+        if (group.id === selectedLesson.group.id) return;
+        await dispatch(getGroupOverlay({ semester: selectedSemester, groupId: group.id }));
+      }),
+    );
+  }, [selectedLesson]);
+
+  useEffect(() => {
+    // очищаю group load для сторінки з розподілом навантаження
+    return () => {
+      dispatch(clearGroupLoad());
+    };
   }, []);
 
   return (
     <WideContainer>
       <div className="w-full h-full">
-        <div className="flex justify-between mb-4">
-          <div className="flex gap-3">
-            {[...Array(4)].map((_, i) => {
-              const label = i === 0 ? "Циклова комісія" : i === 1 ? "Група" : i === 2 ? "Тиждень" : "Семестр";
-              const width = i === 0 ? "min-w-80" : i === 1 ? "min-w-40" : "min-w-20";
+        <TimetableHeader
+          weeksCount={weeksCount}
+          setSlectedGroupId={setSlectedGroupId}
+          setSelectedLesson={setSelectedLesson}
+        />
 
-              return (
-                <DropdownMenu key={i}>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={`${width} flex justify-between shadow-0`}
-                      //   className="bg-primary hover:bg-primary/90 text-primary-light hover:text-primary-light"
-                    >
-                      {/* <ListFilter /> */}
-                      <span className="hidden lg:inline">{label}</span>
-                      <span className="lg:hidden">{label}</span>
-                      {/* <IconChevronDown /> */}
-                      <ChevronDown />
-                    </Button>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent align="start" className="w-75">
-                    {[
-                      { id: 1, checked: true, name: "Фармація" },
-                      { id: 2, checked: true, name: "Лаб. діагностика" },
-                    ].map((item) => {
-                      return (
-                        <DropdownMenuCheckboxItem
-                          key={item.id}
-                          className="capitalize"
-                          checked={item.checked}
-                          onCheckedChange={(value: any) => {
-                            //   column.toggleVisibility(!!value)
-                          }}
-                        >
-                          ЦК {item.name}
-                        </DropdownMenuCheckboxItem>
-                      );
-                    })}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              );
-            })}
-          </div>
-
-          <Tabs defaultValue="all">
-            <TabsList>
-              <TabsTrigger value="all">Групи</TabsTrigger>
-              <TabsTrigger value="active">Викладачі</TabsTrigger>
-              <TabsTrigger value="archive">Аудиторії</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        <div className="flex gap-4 items-start">
+        <div className="flex gap-4">
           <div className="w-3/10 border">
-            <LessonsTable />
+            <LessonsTable
+              selectedSemester={semester}
+              selectedLesson={selectedLesson}
+              setSelectedLesson={setSelectedLesson}
+              setSelectedTeacherId={setSelectedTeacherId}
+              setIsPossibleToCreateLessons={setIsPossibleToCreateLessons}
+            />
           </div>
 
           <div className="w-7/10 border-t">

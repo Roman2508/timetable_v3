@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import type { DistributionLessonType } from "~/helpers/get-lesson-for-distribution";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
 import { attachTeacher, unpinTeacher } from "~/store/schedule-lessons/schedule-lessons-async-actions";
+import { sortLessonsByLessonType } from "~/helpers/sort-lessons-by-lesson-type";
 
 export type AttachmentTypes = "attach_one" | "attach_all" | "unpin_one" | "unpin_all";
 
@@ -38,18 +39,7 @@ const distributionVariants = [
   },
 ] as const;
 
-export const sortLessonsByLessonType = (distributionLessons: DistributionLessonType | null): GroupLoadType[] => {
-  if (!distributionLessons) return [];
-  const selectedLesson = distributionLessons.lessonTypes;
-  const sortOrder = ["ЛК", "ПЗ", "ЛАБ", "СЕМ", "ЕКЗ", "КОНС", "МЕТОД"];
-  const lessonsCopy = JSON.parse(JSON.stringify(selectedLesson));
 
-  lessonsCopy.sort((a: GroupLoadType, b: GroupLoadType) => {
-    return sortOrder.indexOf(a.typeRu) - sortOrder.indexOf(b.typeRu);
-  });
-
-  return lessonsCopy;
-};
 
 interface IDistributionActionsProps {
   selectedTeacherId: number | null;
@@ -64,7 +54,7 @@ const DistributionActions: FC<IDistributionActionsProps> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const orderedLessons = useMemo(() => sortLessonsByLessonType(selectedLesson), [selectedLesson]);
+  const orderedLessons = useMemo(() => sortLessonsByLessonType(selectedLesson?.lessonTypes), [selectedLesson]);
 
   const [isDisabled, setIsDisabled] = useState(false);
   const [attachmentType, setAttachmentType] = useState<AttachmentTypes>("attach_one");

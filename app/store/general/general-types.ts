@@ -22,6 +22,14 @@ export type GeneralSliceInitialState = {
 
   streams: { semesters: string };
 
+  timetable: {
+    semester: number | null;
+    week: number | null;
+    item: number | null;
+    category: number | null;
+    type: string | null;
+  };
+
   confirmModal: {
     isOpen: boolean;
     answer: boolean;

@@ -19,6 +19,14 @@ const generalInitialState: GeneralSliceInitialState = {
 
   streams: { semesters: "" },
 
+  timetable: {
+    semester: null,
+    week: null,
+    item: null,
+    category: null,
+    type: null,
+  },
+
   confirmModal: { isOpen: false, title: "", itemName: "", description: "", answer: false, onConfirm: () => {} },
   alertModal: { isOpen: false, title: "", text: "" },
 };
@@ -91,6 +99,10 @@ const generalSlice = createSlice({
       state.streams.semesters = action.payload;
     },
 
+    setTimetableData(state, action: PayloadAction<Partial<GeneralSliceInitialState["timetable"]>>) {
+      state.timetable = { ...state.timetable, ...action.payload };
+    },
+
     changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
       const keys = Object.keys(action.payload);
       const { isOpen, answer, title, itemName, description, onConfirm } = action.payload;
@@ -126,6 +138,7 @@ export const {
   setAuditoryOrder,
   setStreamFilters,
   setTeacherStatus,
+  setTimetableData,
   setTeacherFilters,
   setAuditoryStatus,
   setAuditoryFilters,
