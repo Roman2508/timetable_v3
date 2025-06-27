@@ -184,7 +184,7 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
           <TableRow key={headerGroup.id} className="hover:bg-white">
             {headerGroup.headers.map((header, index) => {
               return (
-                <TableHead key={header.id} colSpan={header.colSpan} className="text-xs">
+                <TableHead key={header.id} colSpan={header.colSpan} className="text-sm">
                   {header.isPlaceholder ? null : (
                     <div
                       className={cn(index !== 6 ? "cursor-pointer select-none text-left" : "text-right")}

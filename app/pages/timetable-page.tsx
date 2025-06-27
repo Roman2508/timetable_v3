@@ -1,13 +1,7 @@
 import { useSelector } from "react-redux";
-import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
-} from "~/components/ui/common/dropdown-menu";
+import { customDayjs } from "~/lib/dayjs";
 import { useAppDispatch } from "~/store/store";
 import { Button } from "~/components/ui/common/button";
 import { generalSelector } from "~/store/general/general-slice";
@@ -16,12 +10,10 @@ import { settingsSelector } from "~/store/settings/settings-slice";
 import { WideContainer } from "~/components/layouts/wide-container";
 import type { TeachersType } from "~/store/teachers/teachers-types";
 import type { GroupLoadStreamType } from "~/store/groups/groups-types";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { LessonsTable } from "~/components/features/pages/timetable/lessons-table";
+import TimetableHeader from "~/components/features/pages/timetable/timetable-header";
 import { getGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-async-actions";
 import { clearGroupLoad, clearGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-slice";
-import { customDayjs } from "~/lib/dayjs";
-import TimetableHeader from "~/components/features/pages/timetable/timetable-header";
 
 export interface ISelectedLesson {
   id: number;
