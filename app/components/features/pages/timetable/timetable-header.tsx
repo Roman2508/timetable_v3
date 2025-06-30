@@ -1,6 +1,14 @@
 import { useSelector } from "react-redux";
-import { useState, type Dispatch, type SetStateAction, type FC } from "react";
+import { useCookies } from "react-cookie";
+import { useState, type Dispatch, type SetStateAction, type FC, useCallback } from "react";
 
+import {
+  TIMETABLE_ITEM,
+  TIMETABLE_TYPE,
+  TIMETABLE_WEEK,
+  TIMETABLE_CATEGORY,
+  TIMETABLE_SEMESTER,
+} from "~/constants/cookies-keys";
 import { useAppDispatch } from "~/store/store";
 import { groupsSelector } from "~/store/groups/groups-slice";
 import type { ISelectedLesson } from "~/pages/timetable-page";
@@ -12,14 +20,6 @@ import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { useTimetableHeaderDefault } from "~/hooks/use-timetable-header-default";
 import { generalSelector, setTimetableData } from "~/store/general/general-slice";
 import { clearTeacherLessons } from "~/store/schedule-lessons/schedule-lessons-slice";
-import { useCookies } from "react-cookie";
-import {
-  TIMETABLE_CATEGORY,
-  TIMETABLE_ITEM,
-  TIMETABLE_SEMESTER,
-  TIMETABLE_TYPE,
-  TIMETABLE_WEEK,
-} from "~/constants/cookies-keys";
 
 const semesters = [
   { id: 1, name: "1" },
@@ -50,20 +50,19 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
   const { teachersCategories } = useSelector(teachersSelector);
   const { auditoriCategories } = useSelector(auditoriesSelector);
 
-  const { itemsList: defaultItemsList, categoriesList: defaultCategoriesList } = useTimetableHeaderDefault();
+  const { itemsList: defaultItemsList, categoriesList: defaultCategoriesList } = useTimetableHeaderDefault({
+    setSlectedGroupId,
+  });
   const [itemsList, setItemsList] = useState<IListItem[]>(defaultItemsList);
   const [categoriesList, setCategoriesList] = useState<IListItem[]>(defaultCategoriesList);
 
-  //   console.log("categoriesList", categoriesList, "itemsList", itemsList);
-  //   console.log(teachersCategories);
-
-  const weeksList = () => {
+  const weeksList = useCallback(() => {
     const weeks: { id: number; name: string }[] = [];
     for (let i = 0; i < weeksCount; i++) {
       weeks.push({ id: Number(i + 1), name: String(i + 1) });
     }
     return weeks;
-  };
+  }, [weeksCount]);
 
   const onCategoryChange = (categoryId: number) => {
     dispatch(clearTeacherLessons());
@@ -73,7 +72,7 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
       if (!groupsCategory) return;
       const itemsList = groupsCategory.groups.map((el) => ({ id: el.id, name: el.name }));
       setItemsList(itemsList);
-      setSlectedGroupId(groupsCategory.groups[0].id);
+      setSlectedGroupId(groupsCategory.groups[0].id || null);
       dispatch(setTimetableData({ type: "group", item: itemsList[0]?.id, category: categoryId || groupsCategory.id }));
       setCookie(TIMETABLE_ITEM, itemsList[0]?.id);
       setCookie(TIMETABLE_CATEGORY, categoryId || groupsCategory.id);
@@ -122,7 +121,6 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
 
       item = groupCategories[0].groups[0]?.id;
       category = groupCategories[0].id;
-      return;
     }
 
     if (type === "teacher") {
@@ -135,7 +133,6 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
 
       item = teachersCategories[0].teachers[0]?.id;
       category = teachersCategories[0].id;
-      return;
     }
 
     if (type === "auditory") {
@@ -177,7 +174,7 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
             setCookie(TIMETABLE_ITEM, item);
             dispatch(setTimetableData({ item }));
           }}
-          label={type === "group" ? "Групи" : type === "teacher" ? "Викладач" : type === "auditory" ? "Аудиторія" : ""}
+          label={type === "group" ? "Група" : type === "teacher" ? "Викладач" : type === "auditory" ? "Аудиторія" : ""}
         />
 
         <DropdownSelect
@@ -192,6 +189,7 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
         />
 
         <DropdownSelect
+          sortBy="id"
           classNames="w-30"
           label="Тиждень"
           items={weeksList()}
@@ -205,9 +203,15 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
 
       <Tabs defaultValue={type || "group"} onValueChange={(value) => onTabChange(value)}>
         <TabsList>
-          <TabsTrigger value="group">Групи</TabsTrigger>
-          <TabsTrigger value="teacher">Викладачі</TabsTrigger>
-          <TabsTrigger value="auditory">Аудиторії</TabsTrigger>
+          <TabsTrigger value="group" className="h-10">
+            Групи
+          </TabsTrigger>
+          <TabsTrigger value="teacher" className="h-10">
+            Викладачі
+          </TabsTrigger>
+          <TabsTrigger value="auditory" className="h-10">
+            Аудиторії
+          </TabsTrigger>
         </TabsList>
       </Tabs>
     </div>

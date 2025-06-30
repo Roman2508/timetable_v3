@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { type Dispatch, type SetStateAction } from "react";
 
 import { useAppDispatch } from "~/store/store";
 import { groupsSelector } from "~/store/groups/groups-slice";
@@ -13,7 +13,11 @@ interface IListItem {
   name: string;
 }
 
-const useTimetableHeaderDefault = () => {
+const useTimetableHeaderDefault = ({
+  setSlectedGroupId,
+}: {
+  setSlectedGroupId: Dispatch<SetStateAction<number | null>>;
+}) => {
   const dispatch = useAppDispatch();
 
   const {
@@ -39,10 +43,7 @@ const useTimetableHeaderDefault = () => {
 
       categoriesList = groupCategories.map((el) => ({ id: el.id, name: el.name }));
       itemsList = groupCategories[0].groups.map((el) => ({ id: el.id, name: el.name }));
-      // setSlectedGroupId(groupCategories[0].groups[0]?.id);
-      // setSlectedGroupId(groupCategories[0].groups[0]?.id);
-      // setSlectedGroupId(groupCategories[0].groups[0]?.id);
-      // setSlectedGroupId(groupCategories[0].groups[0]?.id);
+      setSlectedGroupId(groupCategories[0].groups[0]?.id);
     }
   }
 

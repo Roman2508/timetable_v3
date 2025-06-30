@@ -50,11 +50,20 @@ const TimetablePage = () => {
   // set weeks count in current semester
   useEffect(() => {
     if (!settings) return;
-    const { firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd } = settings;
 
     if (!semester || semester === 1) {
-      const endDate = customDayjs(firstSemesterEnd);
-      const weeksCount = endDate.diff(firstSemesterStart, "week", true);
+      // const sday = settings.firstSemesterEnd.slice(0, 2);
+      // const smonth = settings.firstSemesterEnd.slice(3, 5);
+      // const syear = settings.firstSemesterEnd.slice(6, 10);
+      // const firstStart = `${smonth}.${sday}.${syear}`;
+
+      // const eday = settings.firstSemesterEnd.slice(0, 2);
+      // const emonth = settings.firstSemesterEnd.slice(3, 5);
+      // const eyear = settings.firstSemesterEnd.slice(6, 10);
+      // const firstEnd = `${emonth}.${eday}.${eyear}`;
+
+      const endDate = customDayjs(settings.firstSemesterEnd);
+      const weeksCount = endDate.diff(settings.firstSemesterStart, "week", true);
       const roundedUp = Math.ceil(weeksCount);
       setWeeksCount(roundedUp + 1);
       setSelectedSemester(1);
@@ -62,8 +71,8 @@ const TimetablePage = () => {
     }
 
     if (semester === 2) {
-      const endDate = customDayjs(secondSemesterEnd);
-      const weeksCount = endDate.diff(secondSemesterStart, "week", true);
+      const endDate = customDayjs(settings.secondSemesterEnd);
+      const weeksCount = endDate.diff(settings.secondSemesterStart, "week", true);
       const roundedUp = Math.ceil(weeksCount);
       setWeeksCount(roundedUp + 1);
       setSelectedSemester(semester);
@@ -176,3 +185,62 @@ const TimetablePage = () => {
 };
 
 export default TimetablePage;
+
+const settings = {
+  id: 1,
+  firstSemesterStart: "01.09.2024",
+  firstSemesterEnd: "20.12.2024",
+  secondSemesterStart: "30.06.2025",
+  secondSemesterEnd: "01.02.2025",
+  callSchedule: {
+    "1": {
+      start: "08:30",
+      end: "9:50",
+    },
+    "2": {
+      start: "10:00",
+      end: "11:20",
+    },
+    "3": {
+      start: "12:00",
+      end: "13:20",
+    },
+    "4": {
+      start: "13:30",
+      end: "14:50",
+    },
+    "5": {
+      start: "15:00",
+      end: "16:20",
+    },
+    "6": {
+      start: "16:30",
+      end: "17:50",
+    },
+    "7": {
+      start: "18:00",
+      end: "19:20",
+    },
+  },
+  colors: {
+    lectures: "#ffffff",
+    practical: "#ffffff",
+    laboratory: "#ffffff",
+    seminars: "#ffffff",
+    exams: "#ffffff",
+    examsConsulation: "#ffffff",
+  },
+  roles: [
+    {
+      name: "admin",
+      credentials: {
+        timetableRead: true,
+        timetableCreate: false,
+        groupsRead: true,
+        groupsCreate: false,
+      },
+    },
+    { name: "teacher", credentials: [] },
+    { name: "student", credentials: [] },
+  ],
+};

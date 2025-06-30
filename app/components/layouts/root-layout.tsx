@@ -63,6 +63,8 @@ import { LoadingBar } from "../features/loading-bar/loading-bar";
 import { setGroupCategories } from "~/store/groups/groups-slice";
 import { setTeacherCategories } from "~/store/teachers/teachers-slice";
 import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
+import { settingsAPI } from "~/api/settings-api";
+import { setSettings } from "~/store/settings/settings-slice";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -76,6 +78,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const expandedSidebarItems = (cookies[EXPANDED_SIDEBAR_ITEMS] ?? "").split(",");
   store.dispatch(toggleExpandedSidebarItems(expandedSidebarItems));
+
+  // settings
+  const { data: settings } = await settingsAPI.getSettings();
+  store.dispatch(setSettings(settings));
 
   // groups
   const { data: groupsCategories } = await groupsAPI.getGroupsCategories();

@@ -18,13 +18,7 @@ import {
   incrementAllGroupsCourse,
   decrementAllGroupsCourse,
 } from "./groups-async-actions";
-import {
-  type GroupsType,
-  type GroupLoadType,
-  type GroupsShortType,
-  type GroupsInitialState,
-  type GroupCategoriesType,
-} from "./groups-types";
+import { type GroupsType, type GroupLoadType, type GroupsInitialState, type GroupCategoriesType } from "./groups-types";
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
 import { type AttachSpecializationPayloadType } from "../../api/api-types";
@@ -294,19 +288,6 @@ const groupsSlice = createSlice({
 });
 
 export const groupsSelector = (state: RootState) => state.groups;
-
-export const groupsListSelector = createSelector(
-  (state: RootState) => state.groups.groupCategories,
-  (groupCategories) => {
-    const groups: GroupsShortType[] = [];
-
-    groupCategories?.forEach((category) => {
-      category.groups.forEach((group) => groups.push(group));
-    });
-
-    return { groups };
-  },
-);
 
 export const { setLoadingStatus, clearGroupData, setGroupCategories, setGroup } = groupsSlice.actions;
 

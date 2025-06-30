@@ -23,6 +23,9 @@ const settingsSlice = createSlice({
     setLoadingStatus(state, action) {
       state.loadingStatus = action.payload;
     },
+    setSettings(state, action: PayloadAction<SettingsType>) {
+      state.settings = action.payload;
+    },
   },
   extraReducers: (builder) => {
     /* getSettings */
@@ -54,6 +57,6 @@ const settingsSlice = createSlice({
 
 export const settingsSelector = (state: RootState) => state.settings;
 
-export const { setLoadingStatus } = settingsSlice.actions;
+export const { setLoadingStatus, setSettings } = settingsSlice.actions;
 
 export default settingsSlice.reducer;
