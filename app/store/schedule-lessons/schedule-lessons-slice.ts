@@ -33,13 +33,6 @@ import { type GroupLoadType } from "../groups/groups-types";
 import { type StudentType } from "../students/students-types";
 import { type TeachersType } from "../teachers/teachers-types";
 
-// const getLocalStorageData = () => {
-//   if (!window || typeof window === "undefined") return {};
-//   const data = window.localStorage.getItem("persist:scheduleLessons");
-//   if (data) return JSON.parse(data);
-//   return {};
-// };
-
 const scheduleLessonsInitialState: ScheduleLessonInitialStateType = {
   groupLoad: null,
   teacherLessons: null,
@@ -55,11 +48,6 @@ const scheduleLessonsInitialState: ScheduleLessonInitialStateType = {
   lastSelectedItemId: 1,
   lastSelectedScheduleType: "group",
   lastSelectedStructuralUnitId: 1,
-  // lastOpenedSemester: getLocalStorageData().lastOpenedSemester || 1,
-  // lastOpenedWeek: getLocalStorageData().lastOpenedWeek || 1,
-  // lastSelectedItemId: getLocalStorageData().lastSelectedItemId || 1,
-  // lastSelectedScheduleType: getLocalStorageData().lastSelectedScheduleType || "group",
-  // lastSelectedStructuralUnitId: getLocalStorageData().lastSelectedStructuralUnitId || 1,
 
   loadingStatus: LoadingStatusTypes.NEVER,
 };
@@ -115,6 +103,9 @@ const scheduleLessonsSlice = createSlice({
       if (action.payload.lastSelectedStructuralUnitId) {
         state.lastSelectedStructuralUnitId = action.payload.lastSelectedStructuralUnitId;
       }
+    },
+    setScheduleLessons(state, action: PayloadAction<ScheduleLessonType[] | null>) {
+      state.scheduleLessons = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -357,6 +348,7 @@ export const {
   clearGroupLoad,
   setLoadingStatus,
   clearGroupOverlay,
+  setScheduleLessons,
   clearTeacherOverlay,
   setLastSelectedData,
   clearTeacherLessons,

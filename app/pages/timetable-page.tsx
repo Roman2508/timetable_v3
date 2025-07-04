@@ -14,6 +14,7 @@ import { LessonsTable } from "~/components/features/pages/timetable/lessons-tabl
 import TimetableHeader from "~/components/features/pages/timetable/timetable-header";
 import { getGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-async-actions";
 import { clearGroupLoad, clearGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-slice";
+import TimetableCalendar from "~/components/features/pages/timetable/timetable-calendar";
 
 export interface ISelectedLesson {
   id: number;
@@ -34,7 +35,7 @@ const TimetablePage = () => {
   const dispatch = useAppDispatch();
 
   const {
-    timetable: { semester, week, item, category, type },
+    timetable: { semester, item, type },
   } = useSelector(generalSelector);
   const { settings } = useSelector(settingsSelector);
 
@@ -52,16 +53,6 @@ const TimetablePage = () => {
     if (!settings) return;
 
     if (!semester || semester === 1) {
-      // const sday = settings.firstSemesterEnd.slice(0, 2);
-      // const smonth = settings.firstSemesterEnd.slice(3, 5);
-      // const syear = settings.firstSemesterEnd.slice(6, 10);
-      // const firstStart = `${smonth}.${sday}.${syear}`;
-
-      // const eday = settings.firstSemesterEnd.slice(0, 2);
-      // const emonth = settings.firstSemesterEnd.slice(3, 5);
-      // const eyear = settings.firstSemesterEnd.slice(6, 10);
-      // const firstEnd = `${emonth}.${eday}.${eyear}`;
-
       const endDate = customDayjs(settings.firstSemesterEnd);
       const weeksCount = endDate.diff(settings.firstSemesterStart, "week", true);
       const roundedUp = Math.ceil(weeksCount);
@@ -127,57 +118,18 @@ const TimetablePage = () => {
             />
           </div>
 
-          <div className="w-7/10 border-t">
-            <div className="flex border-x">
-              <div className="flex justify-between w-full">
-                <div className="flex gap-2 p-2">
-                  <Button variant="outline" size="sm">
-                    Наступний тиждень
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    Попередній тиждень
-                  </Button>
-                </div>
-
-                <div className="p-2">
-                  <Button variant="outline" size="sm">
-                    Копіювати розклад
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex">
-              <div className="w-6 border-l">
-                <div className="h-8 border-t h-[33px]"></div>
-                {[...Array(7)].map((_, i) => (
-                  <div
-                    className={i === 6 ? "text-xs font-bold h-25 p-2 border-y" : "text-xs font-bold h-25 p-2 border-t"}
-                    key={i}
-                  >
-                    {i + 1}
-                  </div>
-                ))}
-              </div>
-
-              <div className="w-full border-l grid grid-cols-6">
-                {[...Array(6)].map((_, i) => (
-                  <div className="border-t" key={i}>
-                    <div className="border-b p-2 border-r text-xs font-bold h-[33px]">Пн 02.09</div>
-
-                    {[...Array(7)].map((_, j) => (
-                      <div className="h-25 border-b p-2 text-xs border-r overflow-hidden" key={j}>
-                        <p>Lorem ipsum dolor sit amet consectetur</p>
-                        <p>Ab modi veritatis</p>
-                        <p>consectetur adipisicing</p>
-                        <p>sit amet</p>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <TimetableCalendar
+            weeksCount={weeksCount}
+            slectedGroupId={slectedGroupId}
+            selectedLesson={selectedLesson}
+            selectedTeacherId={selectedTeacherId}
+            setSelectedLesson={setSelectedLesson}
+            selectedAuditoryId={selectedAuditoryId}
+            setSelectedTeacherId={setSelectedTeacherId}
+            setSelectedAuditoryId={setSelectedAuditoryId}
+            isPossibleToCreateLessons={isPossibleToCreateLessons}
+            setCopyTheScheduleModalVisible={setCopyTheScheduleModalVisible}
+          />
         </div>
       </div>
     </WideContainer>
@@ -185,62 +137,3 @@ const TimetablePage = () => {
 };
 
 export default TimetablePage;
-
-const settings = {
-  id: 1,
-  firstSemesterStart: "01.09.2024",
-  firstSemesterEnd: "20.12.2024",
-  secondSemesterStart: "30.06.2025",
-  secondSemesterEnd: "01.02.2025",
-  callSchedule: {
-    "1": {
-      start: "08:30",
-      end: "9:50",
-    },
-    "2": {
-      start: "10:00",
-      end: "11:20",
-    },
-    "3": {
-      start: "12:00",
-      end: "13:20",
-    },
-    "4": {
-      start: "13:30",
-      end: "14:50",
-    },
-    "5": {
-      start: "15:00",
-      end: "16:20",
-    },
-    "6": {
-      start: "16:30",
-      end: "17:50",
-    },
-    "7": {
-      start: "18:00",
-      end: "19:20",
-    },
-  },
-  colors: {
-    lectures: "#ffffff",
-    practical: "#ffffff",
-    laboratory: "#ffffff",
-    seminars: "#ffffff",
-    exams: "#ffffff",
-    examsConsulation: "#ffffff",
-  },
-  roles: [
-    {
-      name: "admin",
-      credentials: {
-        timetableRead: true,
-        timetableCreate: false,
-        groupsRead: true,
-        groupsCreate: false,
-      },
-    },
-    { name: "teacher", credentials: [] },
-    { name: "student", credentials: [] },
-  ],
-};
