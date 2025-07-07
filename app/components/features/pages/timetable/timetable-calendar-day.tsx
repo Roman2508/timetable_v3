@@ -145,7 +145,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
           <Fragment key={`${day.start}-${lessonNumber}`}>
             {!!lesson?.length && (
               <div
-                className="h-25 border-b p-2 text-xs border-r overflow-hidden"
+                className="h-25 border-b p-2 text-xs border-r overflow-hidden cursor-pointer"
                 style={lesson && lesson[0] ? { backgroundColor: colors[convertColorKeys[lesson[0].typeRu]] } : {}}
               >
                 {!!lesson.length &&
@@ -244,7 +244,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
             {!lesson?.length && !overlay && (
               <div
                 className={cn(
-                  "h-25 border-b p-2 text-xs border-r overflow-hidden",
+                  "h-25 border-b p-2 text-xs border-r overflow-hidden  cursor-pointer",
                   isDayOutsideTheSemester ? "bg-sidebar cursor-default" : "",
                 )}
                 onClick={() => {

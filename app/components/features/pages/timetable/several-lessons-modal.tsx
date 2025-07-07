@@ -1,11 +1,16 @@
-import {} from "react";
+import { type Dispatch, type FC, type SetStateAction } from "react";
 
 import { Button } from "~/components/ui/common/button";
 import { Separator } from "~/components/ui/common/separator";
 import { AlertDialogHeader } from "~/components/ui/common/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "~/components/ui/common/dialog";
 
-const SeveralLessonsModal = ({ open, setOpen }) => {
+interface ISeveralLessonsModalProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const SeveralLessonsModal: FC<ISeveralLessonsModalProps> = ({ open, setOpen }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="px-0 py-4 gap-0">

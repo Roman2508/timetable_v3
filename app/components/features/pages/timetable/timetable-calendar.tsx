@@ -29,6 +29,10 @@ import type { ISelectedLesson } from "~/pages/timetable-page";
 import { settingsSelector } from "~/store/settings/settings-slice";
 import { generalSelector, setTimetableData } from "~/store/general/general-slice";
 import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types";
+import SeveralLessonsModal from "./several-lessons-modal";
+import CopyingTimetableModal from "./copying-timetable-modal";
+import SelectAuditoryModal from "../../select-auditory/select-auditory-modal";
+import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 
 export interface ISelectedTimeSlot {
   data: Dayjs;
@@ -44,12 +48,12 @@ interface ITimetableCalendarProps {
   selectedLesson: ISelectedLesson | null;
   setSelectedTeacherId: Dispatch<SetStateAction<number | null>>;
   setSelectedAuditoryId: Dispatch<SetStateAction<number | null>>;
-  setCopyTheScheduleModalVisible: Dispatch<SetStateAction<boolean>>;
   setSelectedLesson: Dispatch<SetStateAction<ISelectedLesson | null>>;
 }
 
 const TimetableCalendar: FC<ITimetableCalendarProps> = ({
   weeksCount,
+  slectedGroupId,
   selectedLesson,
   setSelectedLesson,
   selectedTeacherId,
@@ -57,7 +61,6 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
   setSelectedTeacherId,
   setSelectedAuditoryId,
   isPossibleToCreateLessons,
-  setCopyTheScheduleModalVisible,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -70,17 +73,19 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
   const { scheduleLessons, teacherLessons, groupOverlay, loadingStatus } = useSelector(scheduleLessonsSelector);
 
   const [isRemote, setIsRemote] = useState(false);
-  const [modalVisible, setModalVisible] = useState(true); ///////
   const [isAddNewLesson, setIsAddNewLesson] = useState(false);
+
+  const [actionsModalVisible, setActionsModalVisible] = useState(false);
   const [teacherModalVisible, setTeacherModalVisible] = useState(false);
   const [auditoryModalVisible, setAuditoryModalVisible] = useState(false);
-
-  const [selectedAuditoryName, setSelectedAuditoryName] = useState("");
   const [severalLessonsModalVisible, setSeveralLessonsModalVisible] = useState(false);
+  const [copingTimetableModalVisible, setCopingTimetableModalVisible] = useState(false);
+
+  const [currentWeekDays, setCurrentWeekDays] = useState(getCalendarWeek(week || 1));
   const [replacementTeacherId, setReplacementTeacherId] = useState<number | null>(null);
+  const [selectedAuditory, setSelectedAuditory] = useState<AuditoriesTypes | null>(null);
   const [severalLessonsList, setSeveralLessonsList] = useState<ScheduleLessonType[]>([]);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<ISelectedTimeSlot | null>(null);
-  const [currentWeekDays, setCurrentWeekDays] = useState(getCalendarWeek(week || 1));
 
   //
 
@@ -181,7 +186,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
     }
     // if (!selectedLesson) return alert("Дисципліна не вибрана")
     setSelectedTimeSlot({ data, lessonNumber });
-    setModalVisible(true);
+    setActionsModalVisible(true);
   };
 
   const onGetAuditoryOverlay = (_date: Dayjs, lessonNumber: number, auditoryId: number) => {
@@ -271,21 +276,38 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
     <>
       <LessonActionsModal
         isRemote={isRemote}
-        open={modalVisible}
-        setOpen={setModalVisible}
+        open={actionsModalVisible}
         currentWeekNumber={week || 1}
         isAddNewLesson={isAddNewLesson}
         selectedLesson={selectedLesson}
+        setOpen={setActionsModalVisible}
         selectedTimeSlot={selectedTimeSlot}
+        selectedAuditory={selectedAuditory}
         setIsAddNewLesson={setIsAddNewLesson}
-        selectedAuditoryId={selectedAuditoryId}
+        setSelectedAuditory={setSelectedAuditory}
         selectedSemester={(semester as 1 | 2) || 1}
-        selectedAuditoryName={selectedAuditoryName}
         setSeveralLessonsList={setSeveralLessonsList}
         setTeacherModalVisible={setTeacherModalVisible}
         setAuditoryModalVisible={setAuditoryModalVisible}
-        setSelectedAuditoryName={setSelectedAuditoryName}
         setSeveralLessonsModalVisible={setSeveralLessonsModalVisible}
+      />
+
+      <CopyingTimetableModal
+        groupId={slectedGroupId}
+        open={copingTimetableModalVisible}
+        setOpen={setCopingTimetableModalVisible}
+      />
+
+      <SeveralLessonsModal open={severalLessonsModalVisible} setOpen={setSeveralLessonsModalVisible} />
+
+      <SelectAuditoryModal
+        isRemote={isRemote}
+        setIsRemote={setIsRemote}
+        open={auditoryModalVisible}
+        setOpen={setAuditoryModalVisible}
+        selectedAuditory={selectedAuditory}
+        setSelectedAuditory={setSelectedAuditory}
+        setLessonActionsModalVisible={setActionsModalVisible}
       />
 
       <div className="w-7/10 border-t">
@@ -327,7 +349,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
 
             {type === "group" && (
               <div className="p-2">
-                <Button variant="outline" size="sm" onClick={() => setCopyTheScheduleModalVisible(true)}>
+                <Button variant="outline" size="sm" onClick={() => setCopingTimetableModalVisible(true)}>
                   Копіювати розклад
                 </Button>
               </div>

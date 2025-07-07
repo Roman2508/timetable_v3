@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 
 import { customDayjs } from "~/lib/dayjs";
 import { useAppDispatch } from "~/store/store";
-import { Button } from "~/components/ui/common/button";
 import { generalSelector } from "~/store/general/general-slice";
 import type { StreamsType } from "~/store/streams/streams-types";
 import { settingsSelector } from "~/store/settings/settings-slice";
@@ -12,9 +11,9 @@ import type { TeachersType } from "~/store/teachers/teachers-types";
 import type { GroupLoadStreamType } from "~/store/groups/groups-types";
 import { LessonsTable } from "~/components/features/pages/timetable/lessons-table";
 import TimetableHeader from "~/components/features/pages/timetable/timetable-header";
+import TimetableCalendar from "~/components/features/pages/timetable/timetable-calendar";
 import { getGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-async-actions";
 import { clearGroupLoad, clearGroupOverlay } from "~/store/schedule-lessons/schedule-lessons-slice";
-import TimetableCalendar from "~/components/features/pages/timetable/timetable-calendar";
 
 export interface ISelectedLesson {
   id: number;
@@ -43,7 +42,6 @@ const TimetablePage = () => {
   const [selectedSemester, setSelectedSemester] = useState<1 | 2>(1);
   const [isPossibleToCreateLessons, setIsPossibleToCreateLessons] = useState(true);
   const [selectedLesson, setSelectedLesson] = useState<ISelectedLesson | null>(null);
-  const [copyTheScheduleModalVisible, setCopyTheScheduleModalVisible] = useState(false);
   const [slectedGroupId, setSlectedGroupId] = useState<number | null>(type === "group" ? item : null);
   const [selectedTeacherId, setSelectedTeacherId] = useState<null | number>(type === "teacher" ? item : null);
   const [selectedAuditoryId, setSelectedAuditoryId] = useState<number | null>(type === "auditory" ? item : null);
@@ -128,7 +126,6 @@ const TimetablePage = () => {
             setSelectedTeacherId={setSelectedTeacherId}
             setSelectedAuditoryId={setSelectedAuditoryId}
             isPossibleToCreateLessons={isPossibleToCreateLessons}
-            setCopyTheScheduleModalVisible={setCopyTheScheduleModalVisible}
           />
         </div>
       </div>

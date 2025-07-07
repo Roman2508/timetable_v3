@@ -219,7 +219,7 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
         {!groupLoad && loadingStatus === LoadingStatusTypes.LOADING ? (
           <TableRow className="hover:bg-white">
             <TableCell colSpan={5}>
-              <LoadingSpinner />
+              <LoadingSpinner classNames="py-8" />
             </TableCell>
           </TableRow>
         ) : isEmptyTable ? (
