@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { ChevronsUpDown, Search } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import {
@@ -7,18 +7,19 @@ import {
   DialogTitle,
   DialogFooter,
   DialogHeader,
-  DialogTrigger,
   DialogContent,
   DialogDescription,
 } from "~/components/ui/common/dialog";
+import { Label } from "~/components/ui/common/label";
 import { Button } from "~/components/ui/common/button";
-import { SelectAuditoryTable } from "./select-auditory-table";
+import { Checkbox } from "~/components/ui/common/checkbox";
 import { Separator } from "~/components/ui/common/separator";
+import { SelectAuditoryTable } from "./select-auditory-table";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { auditoriesSelector } from "~/store/auditories/auditories-slise";
+import { scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
 import type { AuditoriesTypes, AuditoryCategoriesTypes } from "~/store/auditories/auditories-types";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
-import { scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
 
 interface ISelectAuditoryModal {
   open: boolean;
@@ -48,6 +49,7 @@ const SelectAuditoryModal: FC<ISelectAuditoryModal> = ({
   const onSelectedAuditory = () => {
     setSelectedAuditory(preSelectedAuditory);
     setOpen(false);
+    setLessonActionsModalVisible(true);
   };
 
   const onOpenChange = (open: boolean) => {
@@ -58,7 +60,9 @@ const SelectAuditoryModal: FC<ISelectAuditoryModal> = ({
   const checkAuditoryOverlay = () => {
     if (auditoryOverlay && auditoryOverlay.length) {
       const freeAuditories = (auditoriCategories || []).map((el) => {
-        const auditories = el.auditories.filter((el) => auditoryOverlay.some((s) => s.id !== el.id));
+        const auditories = el.auditories.filter(
+          (auditory) => !auditoryOverlay.some((overlay) => overlay.id === auditory.id),
+        );
         return { ...el, auditories };
       });
       setFreeAuditories(freeAuditories);
@@ -67,13 +71,7 @@ const SelectAuditoryModal: FC<ISelectAuditoryModal> = ({
 
   const onClickRemote = (isChecked: boolean) => {
     setIsRemote(isChecked);
-
-    if (isChecked) {
-      setPreSelectedAuditory(null);
-    } else {
-      const auditoriesList = freeAuditories.flatMap((el) => el.auditories);
-      setPreSelectedAuditory(auditoriesList[0]);
-    }
+    if (isChecked) setPreSelectedAuditory(null);
   };
 
   // on first render set selected category and auditory if they exist
@@ -111,7 +109,7 @@ const SelectAuditoryModal: FC<ISelectAuditoryModal> = ({
           <InputSearch className="mb-4 mx-4 mr-6" placeholder="Знайти аудиторію..." />
 
           <div className="min-h-[40vh] max-h-[50vh] overflow-y-auto px-4">
-            {(auditoriCategories ?? []).map((category) => (
+            {(freeAuditories ?? []).map((category) => (
               <Collapsible key={category.id} className="pt-2 border mb-4" defaultOpen>
                 <div className="flex items-center justify-between pl-4 pb-2 pr-2">
                   <h4 className="text-sm font-semibold">{category.name}</h4>
@@ -126,6 +124,7 @@ const SelectAuditoryModal: FC<ISelectAuditoryModal> = ({
 
                 <CollapsibleContent className="pt-2">
                   <SelectAuditoryTable
+                    setIsRemote={setIsRemote}
                     auditories={category.auditories}
                     selectedAuditory={preSelectedAuditory}
                     setSelectedAuditory={setPreSelectedAuditory}
@@ -139,14 +138,28 @@ const SelectAuditoryModal: FC<ISelectAuditoryModal> = ({
         <Separator />
 
         <DialogFooter className="flex !justify-between items-center pt-2 px-4">
-          <Button onClick={onSelectedAuditory}>Вибрати</Button>
+          <div className="flex items-center gap-4">
+            <Button onClick={onSelectedAuditory} disabled={!preSelectedAuditory && !isRemote}>
+              Вибрати
+            </Button>
 
-          {preSelectedAuditory && (
-            <div className="font-mono mr-3">
-              Вибрано аудиторію:
-              <span className="font-bold"> {preSelectedAuditory.name}</span>
-            </div>
-          )}
+            {preSelectedAuditory && (
+              <div className="font-mono mr-3">
+                Вибрано аудиторію:
+                <span className="font-bold"> {preSelectedAuditory.name}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="remote"
+              checked={isRemote}
+              defaultChecked={isRemote}
+              onCheckedChange={() => onClickRemote(!isRemote)}
+            />
+            <Label htmlFor="remote">Дистанційно</Label>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -34,6 +34,7 @@ import { auditoriesSelector } from "~/store/auditories/auditories-slise";
 import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types";
 import { deleteTeacherOverlay, scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
+import type { TeachersType } from "~/store/teachers/teachers-types";
 
 const DAY_NAMES = ["Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота", "Неділя"];
 
@@ -306,13 +307,13 @@ const LessonActionsModal: FC<ILessonActionsModalProps> = ({
                 if (teacherOverlay) setTeacherModalVisible(true);
               }}
               className={cn(
-                !auditoryOverlay ? "opacity-[0.5] !cursor-default" : "",
+                !teacherOverlay ? "opacity-[0.5] !cursor-default" : "",
                 "flex items-center gap-2 px-4 py-3 border-b cursor-pointer hover:bg-sidebar",
               )}
             >
               <ReplacementIcon width={18} />
               <div className="flex gap-2">
-                {!auditoryOverlay ? (
+                {!teacherOverlay ? (
                   <>
                     Зробити заміну
                     <LoadingSpinner size={20} />

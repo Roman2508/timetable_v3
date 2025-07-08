@@ -11,6 +11,7 @@ import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
 import type { SettingsType } from "~/store/settings/settings-types";
 import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types";
 import { getAuditoryOverlay } from "~/store/schedule-lessons/schedule-lessons-async-actions";
+import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
 
 const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
 
@@ -49,6 +50,7 @@ interface ICalendarDayProps {
   scheduleLessons: ScheduleLessonType[] | null;
   setIsAddNewLesson: Dispatch<SetStateAction<boolean>>;
   onTimeSlotClick: (data: Dayjs, lessonNumber: number) => void;
+  setSelectedAuditory: Dispatch<SetStateAction<AuditoriesTypes | null>>;
   setSeveralLessonsList: Dispatch<SetStateAction<ScheduleLessonType[]>>;
   handleOpenSeveralLessonModal: (
     scheduledElement: ScheduleLessonType,
@@ -69,6 +71,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
   onTimeSlotClick,
   selectedSemester,
   setIsAddNewLesson,
+  setSelectedAuditory,
   setSeveralLessonsList,
   isPossibleToCreateLessons,
   handleOpenSeveralLessonModal,
@@ -145,7 +148,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
           <Fragment key={`${day.start}-${lessonNumber}`}>
             {!!lesson?.length && (
               <div
-                className="h-25 border-b p-2 text-xs border-r overflow-hidden cursor-pointer"
+                className="h-25 border-b text-xs border-r overflow-hidden cursor-pointer"
                 style={lesson && lesson[0] ? { backgroundColor: colors[convertColorKeys[lesson[0].typeRu]] } : {}}
               >
                 {!!lesson.length &&
@@ -175,6 +178,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
                         key={l.id}
                         onClick={() => {
                           setSeveralLessonsList(lesson);
+                          setSelectedAuditory(l.auditory); // Перевірити чи не буде багів коли одночасно виставлено декілька уроків
                           handleOpenSeveralLessonModal(l, day.data, lessonNumber, l.auditory ? l.auditory.id : null);
                         }}
                         className={cn(severalLessonsClassName, { selected: isSame })}

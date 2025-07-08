@@ -5,7 +5,10 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
 
 import dayOfYear from "dayjs/plugin/dayOfYear";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
 dayjs.extend(dayOfYear);
+dayjs.extend(customParseFormat);
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);

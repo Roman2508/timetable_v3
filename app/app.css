@@ -206,3 +206,58 @@ body {
     background: var(--muted-foreground);
   }
 }
+
+/* timetable slots */
+.lesson-1 {
+  padding: 2px 4px;
+  position: relative;
+  height: 100%;
+  line-height: 1.2;
+}
+
+.lesson-2 {
+  overflow: hidden;
+  position: relative;
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px 4px;
+}
+
+.lesson-3,
+.lesson-4 {
+  overflow: hidden;
+  position: relative;
+  font-size: 10px;
+  line-height: 1;
+  padding: 2px 4px;
+}
+
+.lesson-2 + div,
+.lesson-3 + div,
+.lesson-4 + div {
+  border-top: 1px solid rgb(201 201 201);
+}
+
+.lesson-2 {
+  height: 48px;
+}
+.lesson-3 {
+  height: 28.6px;
+}
+.lesson-4 {
+  height: 21.5px;
+}
+
+.lesson-1.selected::after,
+.lesson-2.selected::after,
+.lesson-3.selected::after,
+.lesson-4.selected::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border: 1px solid rgba(0, 0, 0, 1);
+}
+/* // timetable slots */

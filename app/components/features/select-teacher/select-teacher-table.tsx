@@ -1,25 +1,21 @@
 import { useMemo, type Dispatch, type FC, type SetStateAction } from "react";
+import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
 
 import { cn } from "~/lib/utils";
 import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
+import type { TeachersType } from "~/store/teachers/teachers-types";
 
-interface ISelectAuditoryTableProps {
-  auditories: AuditoriesTypes[];
-  selectedAuditory: AuditoriesTypes | null;
-  setIsRemote: Dispatch<SetStateAction<boolean>>;
-  setSelectedAuditory: Dispatch<SetStateAction<AuditoriesTypes | null>>;
+interface ISelectTeacherTableProps {
+  teachers: TeachersType[];
+  selectedTeacher: TeachersType | null;
+  setSelectedTeacher: Dispatch<SetStateAction<TeachersType | null>>;
 }
 
-export const SelectAuditoryTable: FC<ISelectAuditoryTableProps> = ({
-  auditories,
-  setIsRemote,
-  selectedAuditory,
-  setSelectedAuditory,
-}) => {
+const SelectTeacherTable: FC<ISelectTeacherTableProps> = ({ teachers, selectedTeacher, setSelectedTeacher }) => {
   const columns = useMemo<{ label: string; key: string }[]>(
     () => [
-      { label: "Назва", key: "name" },
-      { label: "Кількість місць", key: "seatsNumber" },
+      { label: "ПІБ", key: "name" },
+      { label: "ЦК", key: "category" },
     ],
     [],
   );
@@ -35,21 +31,18 @@ export const SelectAuditoryTable: FC<ISelectAuditoryTableProps> = ({
       </div>
 
       <div className="">
-        {auditories.length ? (
-          auditories.map((auditory) => (
+        {teachers.length ? (
+          teachers.map((teacher) => (
             <div
-              onClick={() => {
-                setIsRemote(false);
-                setSelectedAuditory(auditory);
-              }}
+              onClick={() => setSelectedTeacher(teacher)}
               className={cn(
                 "flex px-4 py-2 border border-white border-t-border",
                 "hover:border hover:border-primary cursor-pointer",
-                selectedAuditory?.id === auditory.id ? "bg-primary-light border-primary text-primary" : "",
+                selectedTeacher?.id === teacher.id ? "bg-primary-light border-primary text-primary" : "",
               )}
             >
-              <div className="flex-1">{auditory.name}</div>
-              <div className="flex-1">{auditory.seatsNumber}</div>
+              <div className="flex-1 truncate max-w-65 mr-1">{getTeacherFullname(teacher)}</div>
+              <div className="flex-1 truncate max-w-65">{teacher.category.name}</div>
             </div>
           ))
         ) : (
@@ -62,3 +55,5 @@ export const SelectAuditoryTable: FC<ISelectAuditoryTableProps> = ({
     </div>
   );
 };
+
+export { SelectTeacherTable };

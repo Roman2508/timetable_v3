@@ -3,11 +3,9 @@ import {
   Mail,
   Info,
   User,
-  Apple,
   Users,
   Award,
   Camera,
-  Chrome,
   Palette,
   Calendar,
   KeyRound,
@@ -26,10 +24,10 @@ import React from "react";
 
 import { cn } from "~/lib/utils";
 import { Input } from "~/components/ui/common/input";
+import getDeviceIcon from "~/helpers/get-device-icon";
 import { RootContainer } from "~/components/layouts/root-container";
 import { InputPassword } from "~/components/ui/custom/input-password";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import getDeviceIcon from "~/helpers/get-device-icon";
 
 const tabsList = [
   { icon: <User />, label: "Профіль", value: "profile" },

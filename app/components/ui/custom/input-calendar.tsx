@@ -38,7 +38,7 @@ const InputCalendar: FC<IInputCalendarProps> = ({ label, value, onValueChange, c
     } else {
       console.error("Некорректная дата");
     }
-  }, []);
+  }, [value]);
 
   return (
     <div className={cn("flex flex-col gap-1 mb-2", classNames)}>
@@ -58,10 +58,11 @@ const InputCalendar: FC<IInputCalendarProps> = ({ label, value, onValueChange, c
           <Calendar
             mode="single"
             selected={date}
-            captionLayout="dropdown"
+            defaultMonth={date}
             onSelect={onSelect}
-            fromYear={currentYear - 5}
+            captionLayout="dropdown"
             toYear={currentYear + 5}
+            fromYear={currentYear - 5}
           />
         </PopoverContent>
       </Popover>

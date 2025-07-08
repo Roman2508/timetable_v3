@@ -44,7 +44,7 @@ const TimetablePage = () => {
   const [selectedLesson, setSelectedLesson] = useState<ISelectedLesson | null>(null);
   const [slectedGroupId, setSlectedGroupId] = useState<number | null>(type === "group" ? item : null);
   const [selectedTeacherId, setSelectedTeacherId] = useState<null | number>(type === "teacher" ? item : null);
-  const [selectedAuditoryId, setSelectedAuditoryId] = useState<number | null>(type === "auditory" ? item : null);
+  // const [selectedAuditoryId, setSelectedAuditoryId] = useState<number | null>(type === "auditory" ? item : null);
 
   // set weeks count in current semester
   useEffect(() => {
@@ -122,9 +122,7 @@ const TimetablePage = () => {
             selectedLesson={selectedLesson}
             selectedTeacherId={selectedTeacherId}
             setSelectedLesson={setSelectedLesson}
-            selectedAuditoryId={selectedAuditoryId}
             setSelectedTeacherId={setSelectedTeacherId}
-            setSelectedAuditoryId={setSelectedAuditoryId}
             isPossibleToCreateLessons={isPossibleToCreateLessons}
           />
         </div>
