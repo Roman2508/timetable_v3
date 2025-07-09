@@ -1,123 +1,79 @@
-import React from "react";
-
 import {
   flexRender,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
+  createColumnHelper,
   getPaginationRowModel,
-  type SortingFn,
-  type ColumnDef,
   type SortingState,
   type PaginationState,
 } from "@tanstack/react-table";
-import {
-  ArrowDown,
-  ArrowUp,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  ListFilter,
-  Plus,
-} from "lucide-react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "~/components/ui/common/pagination";
+import { useMemo, useState, type FC } from "react";
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
 
 import { cn } from "~/lib/utils";
-import { makeData, type Person } from "./make-data";
-import { Button } from "~/components/ui/common/button";
-import { Checkbox } from "~/components/ui/common/checkbox";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
-import { Input } from "~/components/ui/common/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
+import { makeData } from "./make-data";
+import StudentsActions from "./students-actions";
 import { Badge } from "~/components/ui/common/badge";
+import { Button } from "~/components/ui/common/button";
+import type { StudentType } from "~/store/students/students-types";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
 
-// A typical debounced input react component
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number;
-  onChange: (value: string | number) => void;
-  debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-  const [value, setValue] = React.useState(initialValue);
-
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value);
-    }, debounce);
-
-    return () => clearTimeout(timeout);
-  }, [value]);
-
-  return <InputSearch onChange={(e) => setValue(e.target.value)} placeholder="Пошук..." value={value} {...props} />;
+interface IStudentsAccountsTableProps {
+  orderField: string;
+  isOrderDesc: boolean;
 }
 
-export const StudentsAccountsTable = () => {
-  const rerender = React.useReducer(() => ({}), {})[1];
+export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({ orderField, isOrderDesc }) => {
+  const [sorting, setSorting] = useState<SortingState>(orderField ? [{ id: orderField, desc: isOrderDesc }] : []);
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-
-  const columns = React.useMemo<ColumnDef<Person>[]>(
+  const columnHelper = createColumnHelper<StudentType>();
+  const columns = useMemo(
     () => [
-      {
-        accessorKey: "name",
-        header: "ПІБ",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "login",
-        header: "Логін",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "password",
-        header: "Пароль",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "email",
-        header: "Ел.пошта",
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: "status",
+      columnHelper.accessor("name", { header: "ПІБ" }),
+      columnHelper.accessor("login", { header: "Логін" }),
+      columnHelper.accessor("password", { header: "Пароль" }),
+      columnHelper.accessor("email", { header: "Пошта" }),
+
+      columnHelper.display({
+        id: "status",
         header: "Статус",
-        footer: (props) => props.column.id,
-      },
-      //   {
-      //     accessorKey: "group",
-      //     header: "Група",
-      //     footer: (props) => props.column.id,
-      //   },
+        cell: ({ row }) => {
+          const status = row.original.status;
+          return (
+            <Badge
+              variant="outline"
+              className={cn(
+                "border-0",
+                status === "Навчається" ? "text-success bg-success-background" : "",
+                status === "Відраховано" ? "text-error bg-error-background" : "",
+                status === "Академічна відпустка" ? "text-primary bg-primary-light" : "",
+              )}
+            >
+              {status}
+            </Badge>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "Дії",
+        cell: ({ row }) => {
+          return <StudentsActions {...row.original} />;
+        },
+      }),
     ],
     [],
   );
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [globalFilter, setGlobalFilter] = useState("");
 
-  const [data, setData] = React.useState(() => makeData(1000));
+  const [data, setData] = useState(() => makeData(1000));
   const refreshData = () => setData(() => makeData(1000));
 
-  const [pagination, setPagination] = React.useState<PaginationState>({
+  const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 30,
   });
@@ -141,20 +97,29 @@ export const StudentsAccountsTable = () => {
   return (
     <>
       <div className="block max-w-full">
-        <Table className="w-full overflow-hidden">
+        <Table className="w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-white">
+                <TableHead className="!text-left font-mono">
+                  <div className="cursor-default select-none text-left">
+                    <p className="inline-flex relative uppercase font-mono">№</p>
+                  </div>
+                </TableHead>
+
                 {headerGroup.headers.map((header, index) => {
                   return (
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
-                      className={index === 2 ? "!max-w-15 p-0" : "p-0"}
+                      className={cn(index === 2 ? "!max-w-15 p-0" : "p-0", index === 5 ? "!text-right" : "")}
                     >
                       {header.isPlaceholder ? null : (
                         <div
-                          className={cn(header.column.getCanSort() ? "cursor-pointer select-none text-left p-0" : "")}
+                          className={cn(
+                            header.column.getCanSort() ? "cursor-pointer select-none text-left p-0" : "text-left",
+                            index === 5 ? "!text-right" : "",
+                          )}
                           onClick={header.column.getToggleSortingHandler()}
                           title={
                             header.column.getCanSort()
@@ -166,7 +131,7 @@ export const StudentsAccountsTable = () => {
                               : undefined
                           }
                         >
-                          <p className={cn("inline-flex relative text-left font-mono uppercase")}>
+                          <p className={cn("inline-flex relative !text-left font-mono uppercase")}>
                             {flexRender(header.column.columnDef.header, header.getContext())}
                             {{
                               asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
@@ -183,32 +148,24 @@ export const StudentsAccountsTable = () => {
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows.map((row) => {
+            {table.getRowModel().rows.map((row, rowIndex) => {
               return (
                 <TableRow key={row.id} className="hover:bg-border/40 cursor-pointer">
-                  {row.getVisibleCells().map((cell, index) => {
-                    const textContent = flexRender(cell.column.columnDef.cell, cell.getContext());
-                    const isLastCol = index === row.getVisibleCells().length - 1;
-                    let bageClassName = "text-success bg-success-background border-0";
-                    if (isLastCol) {
-                      console.log(textContent);
-                    }
-                    if (isLastCol && textContent?.props.row.original.status === "Відраховано") {
-                      bageClassName = "text-error bg-error-background border-0";
-                    }
-                    if (isLastCol && textContent?.props.row.original.status === "Академ.відпустка") {
-                      bageClassName = "text-primary bg-primary-light border-0";
-                    }
+                  <TableCell className={cn("truncate max-w-[30px]", "text-left px-2")}>{rowIndex + 1}</TableCell>
 
+                  {row.getVisibleCells().map((cell, index) => {
+                    const isLastCol = index === row.getVisibleCells().length - 1;
+                    const isFirstCol = index === 0;
                     return (
-                      <TableCell key={cell.id} className={cn(index === 0 ? "truncate max-w-[200px]" : "", "px-0 py-1")}>
-                        {!isLastCol ? (
-                          textContent
-                        ) : (
-                          <Badge variant="outline" className={bageClassName}>
-                            {textContent}
-                          </Badge>
+                      <TableCell
+                        key={cell.id}
+                        className={cn(
+                          "p-0",
+                          isLastCol ? "!text-right" : "!text-left",
+                          isFirstCol ? "truncate max-w-[200px]" : "",
                         )}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     );
                   })}

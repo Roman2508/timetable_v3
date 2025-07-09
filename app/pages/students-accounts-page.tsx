@@ -1,54 +1,69 @@
-import React from "react";
-import {
-  ArrowRightFromLine,
-  ChevronLeft,
-  CircleX,
-  CopyPlus,
-  CopyX,
-  Download,
-  GraduationCap,
-  Import,
-  MessageCircleQuestion,
-  Repeat2,
-  Search,
-  SquarePlus,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { ArrowRightFromLine, Download, GraduationCap, MessageCircleQuestion, Repeat2 } from "lucide-react";
 
-import { Card } from "~/components/ui/common/card";
+import { useAppDispatch } from "~/store/store";
 import { Badge } from "~/components/ui/common/badge";
-import { Input } from "~/components/ui/common/input";
 import { Button } from "~/components/ui/common/button";
+import { groupsSelector } from "~/store/groups/groups-slice";
 import { InputSearch } from "~/components/ui/custom/input-search";
+import { clearStudents, studentsSelector } from "~/store/students/students-slice";
+import type { StudentType } from "~/store/students/students-types";
+import type { GroupsShortType } from "~/store/groups/groups-types";
 import { RootContainer } from "~/components/layouts/root-container";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { DistributionLessonsTable } from "~/components/features/pages/distribution/distribution-lessons-table";
-import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import { StudentsAccountsTable } from "~/components/features/pages/students-accounts/students-accounts-table";
 import SelectGroupModal from "~/components/features/select-group/select-group-modal";
+import { StudentsAccountsTable } from "~/components/features/pages/students-accounts/students-accounts-table";
+import { getGroupCategories } from "~/store/groups/groups-async-actions";
+import { getStudentsByGroupId } from "~/store/students/students-async-actions";
+import EntityHeader from "~/components/features/entity-header";
 
 const StudentsAccountsPage = () => {
+  const dispatch = useAppDispatch();
+
+  const { groupCategories } = useSelector(groupsSelector);
+  const { students, loadingStatus } = useSelector(studentsSelector);
+
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [helperModalVisible, setHelperModalVisible] = useState(false);
+  const [editMode, setEditMode] = useState<"create" | "update">("create");
+  const [studentsIdsToDelete, setStudentsIdsToDelete] = useState<number[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<GroupsShortType | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<StudentType | null>(null);
+
+  const handleAddStudentToDelete = (id: number) => {
+    setStudentsIdsToDelete((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((studentId) => studentId !== id);
+      }
+
+      return [...prev, id];
+    });
+  };
+
+  useEffect(() => {
+    if (groupCategories) return;
+    dispatch(getGroupCategories());
+  }, []);
+
+  useEffect(() => {
+    if (!selectedGroup) return;
+    dispatch(getStudentsByGroupId(selectedGroup.id));
+
+    return () => {
+      dispatch(clearStudents());
+    };
+  }, [selectedGroup]);
+
   return (
     <RootContainer>
       <div className="flex justify-between items-center mb-6">
         <div className="">
-          {true ? (
-            <div className="flex flex-col h-[56px]">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 text-black/40" />
-                <div className="text-black/40 text-sm">ГРУПА</div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <h2 className="text-2xl font-semibold">PH9-25-1</h2>
-                <Badge variant="outline" className="text-primary bg-primary-light border-0">
-                  Активна
-                </Badge>
-              </div>
-            </div>
+          {selectedGroup ? (
+            <EntityHeader label="ГРУПА" name={selectedGroup.name} status={selectedGroup.status} Icon={GraduationCap} />
           ) : (
             <div className="flex items-center h-[56px]">
-              <h2 className="text-lg font-semibold">Виберіть групу для розподілу навантаження</h2>
+              <h2 className="text-lg font-semibold">Виберіть групу для перегляду студентів</h2>
             </div>
           )}
         </div>
@@ -70,7 +85,7 @@ const StudentsAccountsPage = () => {
             <Repeat2 />
           </Button>
 
-          <SelectGroupModal />
+          <SelectGroupModal selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup} />
         </div>
       </div>
 

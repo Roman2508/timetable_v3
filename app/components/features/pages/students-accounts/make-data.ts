@@ -16,7 +16,7 @@ const range = (len: number) => {
 };
 
 const newPerson = (): Person => {
-  const statusList = ["Навчається", "Відраховано", "Академ.відпустка"];
+  const statusList = ["Навчається", "Відраховано", "Академічна відпустка"];
   const index1 = Math.floor(Math.random() * statusList.length);
   const groups = ["PH9-25-1", "PH9-24-2", "LD9-23-1", "PHe11-23-1"];
   const index2 = Math.floor(Math.random() * groups.length);

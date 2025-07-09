@@ -81,7 +81,7 @@ export const GradeBookTable = () => {
                       className={cn(
                         index === 0
                           ? "max-w-[200px] sticky left-0 !z-30 bg-primary p-0 translate-x-[-1px]"
-                          : "min-w-[100px]",
+                          : "min-w-[80px]",
                         "border-x sticky top-0 z-20 bg-background",
                       )}
                     >
