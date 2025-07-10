@@ -14,6 +14,8 @@ export default [
     route("teachers/:id", "./routes/full-teacher.tsx"),
 
     route("students", "./routes/students-accounts.tsx"),
+    route("students/:id", "./routes/full-student.tsx"),
+
     route("students-divide", "./routes/students-divide.tsx"),
 
     route("plans", "./routes/plans.tsx"),

@@ -4,7 +4,10 @@ import { type CreateStudentsPayloadType, type UpdateStudentsPayloadType } from "
 
 export const studentsAPI = {
   getByGroupId(id: number) {
-    return instanse.get<StudentType[]>(`/students/${id}`);
+    return instanse.get<StudentType[]>(`/students/group/${id}`);
+  },
+  getById(id: number) {
+    return instanse.get<StudentType>(`/students/${id}`);
   },
   create(payload: CreateStudentsPayloadType) {
     return instanse.post<StudentType>("/students", payload);

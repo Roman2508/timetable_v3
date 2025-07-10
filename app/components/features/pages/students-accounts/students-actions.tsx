@@ -21,7 +21,7 @@ const StudentsActions: React.FC<IStudentsActionsProps> = ({ id }) => {
     const confirmPayload = {
       isOpen: true,
       title: "Ви дійсно хочете видалити студента?",
-      description: `Студент, включаючи всі результати навчання, будуть видалені назавжди. Цю дію не можна відмінити.`,
+      description: `Студент та всі результати навчання пов'язані з ним будуть видалені назавжди. Цю дію не можна відмінити.`,
     };
     const result = await onConfirm(confirmPayload, dispatch);
 
@@ -33,10 +33,8 @@ const StudentsActions: React.FC<IStudentsActionsProps> = ({ id }) => {
   return (
     <ActionsDropdown
       itemId={id}
-      //   changeStatusFunction={() => {}}
-      // changeCategoryFunction={() => {}}
       onClickDeleteFunction={onClickDeleteCategory}
-      onClickUpdateFunction={() => navigate(`/groups/${id}`)}
+      onClickUpdateFunction={() => navigate(`/students/${id}`)}
     />
   );
 };

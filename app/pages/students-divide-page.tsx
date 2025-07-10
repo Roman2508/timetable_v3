@@ -1,4 +1,5 @@
-import React from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { ChevronsUpDown, CircleX, CopyX, GraduationCap, UserMinus, UserPlus } from "lucide-react";
 
 import { cn } from "~/lib/utils";
@@ -10,13 +11,27 @@ import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import SelectGroupModal from "~/components/features/select-group/select-group-modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import type { GroupLoadType, GroupsShortType } from "~/store/groups/groups-types";
+import { useAppDispatch } from "~/store/store";
+import { groupsSelector } from "~/store/groups/groups-slice";
+import { scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
+import {
+  addStudentToLesson,
+  deleteStudentFromLesson,
+  addStudentsToAllGroupLessons,
+  deleteStudentsFromAllGroupLessons,
+} from "~/store/schedule-lessons/schedule-lessons-async-actions";
+import DropdownSelect from "~/components/ui/custom/dropdown-select";
 
-const cmk = [
-  { id: 1, name: "Загальноосвітніх дисциплін", count: 12 },
-  { id: 2, name: "Фармацевтичних дисциплін", count: 17 },
-  { id: 3, name: "Гуманітарних дисциплін", count: 7 },
-  { id: 4, name: "Медико-біологічних дисциплін", count: 5 },
-  { id: 5, name: "Хімічних дисциплін", count: 10 },
+const semestersList = [
+  { id: 1, name: "1" },
+  { id: 2, name: "2" },
+  { id: 3, name: "3" },
+  { id: 4, name: "4" },
+  { id: 5, name: "5" },
+  { id: 6, name: "6" },
+  { id: 7, name: "7" },
+  { id: 8, name: "8" },
 ];
 
 const lessonsTabs = [
@@ -39,7 +54,95 @@ const lessonsTabs = [
 ];
 
 const StudentsDividePage = () => {
-  const [activeLesson, setActiveLesson] = React.useState("");
+  const dispatch = useAppDispatch();
+
+  const { group } = useSelector(groupsSelector);
+  const { lessonStudents, loadingStatus } = useSelector(scheduleLessonsSelector);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [studentsToAdd, setStudentsToAdd] = useState<string[]>([]);
+  const [openedLessonsIds, setOpenedLessonsIds] = useState<string[]>([]);
+  const [studentsToDelete, setStudentsToDelete] = useState<string[]>([]);
+  const [dividingType, setDividingType] = useState<"all" | "one">("all");
+  const [selectedLesson, setSelectedLesson] = useState<GroupLoadType | null>(null);
+  const [isActionButtonsDisabled, setIsActionButtonsDisabled] = useState({ add: false, delete: false });
+
+  const [activeLesson, setActiveLesson] = useState("");
+  const [selectedSemester, setSelectedSemester] = useState<number>();
+  const [selectedGroup, setSelectedGroup] = useState<GroupsShortType | null>(null);
+
+  const selectedLessonText = selectedLesson
+    ? `${selectedLesson.typeRu}. ${selectedLesson.name} ${
+        selectedLesson.subgroupNumber ? `(підгрупа ${selectedLesson.subgroupNumber})` : "(вся група)"
+      }`
+    : "";
+
+  const handleChangeMultiple = (event: React.ChangeEvent<HTMLSelectElement>, type: "add" | "delete") => {
+    const { options } = event.target;
+    const value: string[] = [];
+    for (let i = 0, l = options.length; i < l; i += 1) {
+      if (options[i].selected) {
+        value.push(options[i].value);
+      }
+    }
+    if (type === "add") setStudentsToAdd(value);
+    if (type === "delete") setStudentsToDelete(value);
+  };
+
+  const onAddStudentsToLesson = async () => {
+    try {
+      if (!selectedLesson) return alert("Виберіть дисципліну");
+      setIsActionButtonsDisabled((prev) => ({ ...prev, add: true }));
+      const studentIds = studentsToAdd.map((el) => Number(el));
+      await dispatch(addStudentToLesson({ lessonId: selectedLesson.id, studentIds }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsActionButtonsDisabled((prev) => ({ ...prev, add: false }));
+    }
+  };
+
+  const onDeleteStudentsFromLesson = async () => {
+    try {
+      if (!selectedLesson) return alert("Виберіть дисципліну");
+      setIsActionButtonsDisabled((prev) => ({ ...prev, delete: true }));
+      const studentIds = studentsToDelete.map((el) => Number(el));
+      await dispatch(deleteStudentFromLesson({ lessonId: selectedLesson.id, studentIds }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsActionButtonsDisabled((prev) => ({ ...prev, delete: false }));
+    }
+  };
+
+  const onAddStudentsToAllGroupLessons = async () => {
+    try {
+      if (!selectedGroup || !selectedSemester) return alert("Виберіть групу та семестр");
+      setIsActionButtonsDisabled((prev) => ({ ...prev, add: true }));
+      const studentIds = studentsToAdd.map((el) => Number(el));
+      const payload = { groupId: selectedGroup.id, semester: selectedSemester, studentIds };
+      await dispatch(addStudentsToAllGroupLessons(payload));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsActionButtonsDisabled((prev) => ({ ...prev, add: false }));
+    }
+  };
+
+  const onDeleteStudentsFromAllGroupLessons = async () => {
+    try {
+      if (!selectedGroup || !selectedSemester) return alert("Виберіть групу та семестр");
+      setIsActionButtonsDisabled((prev) => ({ ...prev, delete: true }));
+      const studentIds = studentsToDelete.map((el) => Number(el));
+      await dispatch(
+        deleteStudentsFromAllGroupLessons({ groupId: selectedGroup.id, semester: selectedSemester, studentIds }),
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsActionButtonsDisabled((prev) => ({ ...prev, delete: false }));
+    }
+  };
 
   return (
     <RootContainer classNames="max-h-[calc(100vh-160px)] overflow-hidden">
@@ -67,7 +170,15 @@ const StudentsDividePage = () => {
         </div>
 
         <div className="flex gap-3">
-          <SelectGroupModal />
+          <SelectGroupModal selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup} />
+
+          <DropdownSelect
+            classNames="w-40 bg-primary"
+            items={semestersList}
+            label="Вибрати семестр"
+            selectedItem={selectedSemester}
+            onChange={(item) => setSelectedSemester(item)}
+          />
         </div>
       </div>
 
