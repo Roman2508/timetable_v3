@@ -1,47 +1,43 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
 
 import { useAppDispatch } from "~/store/store";
+import { Card } from "~/components/ui/common/card";
 import { Button } from "~/components/ui/common/button";
+import { LoadingStatusTypes } from "~/store/app-types";
+import LoadingSpinner from "~/components/ui/icons/loading-spinner";
 import { WideContainer } from "~/components/layouts/wide-container";
 import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
 import { gradeBookSelector } from "~/store/gradeBook/grade-book-slice";
 import { ListFilter, NotebookPen, Printer, UnfoldVertical } from "lucide-react";
 import { GradeBookTable } from "~/components/features/pages/grade-book/grade-book-table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
 import SelectGradeBookModal from "~/components/features/pages/grade-book/select-grade-book-modal";
+import GradeBookSummaryModal from "~/components/features/pages/grade-book/grade-book-summary-modal";
 
 export default function PlansPage() {
   const dispatch = useAppDispatch();
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const { gradeBook, loadingStatus } = useSelector(gradeBookSelector);
 
   const [isOpenFilterModal, setIsOpenFilterModal] = useState(false);
   const [isOpenSummaryModal, setIsOpenSummaryModal] = useState(false);
+  const [isGradeBookLoading, setIsGradeBookLoading] = useState(false);
   const [gradeBookLessonDates, setGradeBookLessonDates] = useState<{ date: string }[]>([]);
-
-  useEffect(() => {
-    const groupId = searchParams.get("groupId");
-    const lessonId = searchParams.get("lessonId");
-    const semester = searchParams.get("semester");
-    const lessonType = searchParams.get("lessonType");
-
-    if (!groupId || !lessonId || !semester || !lessonType) return;
-    fetchGradeBook(Number(groupId), Number(lessonId), Number(semester), lessonType);
-  }, [searchParams]);
 
   return (
     <>
       <SelectGradeBookModal
         open={isOpenFilterModal}
         setOpen={setIsOpenFilterModal}
+        setIsGradeBookLoading={setIsGradeBookLoading}
         setGradeBookLessonDates={setGradeBookLessonDates}
       />
 
+      <GradeBookSummaryModal open={isOpenSummaryModal} setOpen={setIsOpenSummaryModal} />
+
       <WideContainer>
-        <div className="flex justify-between mb-6">
+        <div className="flex justify-between mb-6 items-center">
           {gradeBook ? (
             <div className="flex gap-5">
               <div className="pr-5 border-r">
@@ -60,26 +56,59 @@ export default function PlansPage() {
               </div>
             </div>
           ) : (
-            <p className="font-mono">Виберіть групу</p>
+            <p></p>
           )}
 
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => setIsOpenFilterModal(true)}>
-              <ListFilter />
-            </Button>
-            <Button variant="outline">
-              <UnfoldVertical className="rotate-[90deg]" />
-            </Button>
-            <Button variant="outline">
-              <NotebookPen />
-            </Button>
-            <Button variant="outline">
-              <Printer />
-            </Button>
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>
+                <Button variant="outline" onClick={() => setIsOpenFilterModal(true)}>
+                  <ListFilter />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Знайти електронний журнал</TooltipContent>
+            </Tooltip>
+
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>
+                <Button variant="outline" onClick={() => setIsOpenSummaryModal(true)}>
+                  <UnfoldVertical className="rotate-[90deg]" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Додати підсумок</TooltipContent>
+            </Tooltip>
+
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>
+                <Button variant="outline">
+                  <NotebookPen />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Теми</TooltipContent>
+            </Tooltip>
+
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>
+                <Button variant="outline">
+                  <Printer />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Друк</TooltipContent>
+            </Tooltip>
           </div>
         </div>
 
-        <GradeBookTable />
+        {!gradeBook && loadingStatus !== LoadingStatusTypes.LOADING ? (
+          <Card className="py-10 text-center">
+            <p className="font-mono">Виберіть параметри для пошуку журналу</p>
+          </Card>
+        ) : !gradeBook && loadingStatus === LoadingStatusTypes.LOADING ? (
+          <LoadingSpinner />
+        ) : gradeBook ? (
+          <GradeBookTable gradeBookLessonDates={gradeBookLessonDates} />
+        ) : (
+          ""
+        )}
       </WideContainer>
     </>
   );

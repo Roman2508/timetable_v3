@@ -22,14 +22,21 @@ import { clearGradeBook } from "~/store/gradeBook/grade-book-slice";
 import type { GradeBookType } from "~/store/gradeBook/grade-book-types";
 import { getGradeBook, getLessonThemes } from "~/store/gradeBook/grade-book-async-actions";
 import { lessonsForGradeBookSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
+import { findLessonsForSchedule } from "~/store/schedule-lessons/schedule-lessons-async-actions";
 
 interface ISelectGradeBookModal {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  setIsGradeBookLoading: Dispatch<SetStateAction<boolean>>;
   setGradeBookLessonDates: Dispatch<SetStateAction<{ date: string }[]>>;
 }
 
-const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({ open, setOpen, setGradeBookLessonDates }) => {
+const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
+  open,
+  setOpen,
+  setIsGradeBookLoading,
+  setGradeBookLessonDates,
+}) => {
   const dispatch = useAppDispatch();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,8 +45,8 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({ open, setOpen, setGra
   const lessonsList = useMemo(
     () =>
       lessons.map((el) => {
-        const unitInfo = option.subgroupNumber ? `(${option.subgroupNumber} підгрупа)` : "(Вся група)";
-        return `${option.typeRu} / ${option.name} ${unitInfo}`;
+        const unitInfo = el.subgroupNumber ? `(${el.subgroupNumber} підгрупа)` : "(Вся група)";
+        return { id: el.id, name: `${el.typeRu} / ${el.name} ${unitInfo}` };
       }),
     [lessons],
   );
@@ -48,14 +55,16 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({ open, setOpen, setGra
   const groupList = useMemo(() => (groupCategories || []).flatMap((el) => el.groups), [groupCategories]);
 
   const [userFormData, setUserFormData] = useState({});
-  const [selectedLessonType, setSelectedLessonType] = useState<null | string>(null);
 
   const formData = {
-    groupId: searchParams.get("groupId"),
-    semester: searchParams.get("semester"),
-    lessonId: searchParams.get("lessonId"),
+    lessonType: searchParams.get("lessonType"),
+    groupId: Number(searchParams.get("groupId")),
+    semester: Number(searchParams.get("semester")),
+    lessonId: Number(searchParams.get("lessonId")),
     ...userFormData,
   };
+
+  const isSubmitDisabled = !formData.groupId || !formData.semester || !formData.lessonId;
 
   const fetchGradeBook = async (groupId: number, lessonId: number, semester: number, lessonType: string) => {
     const { payload } = await dispatch(
@@ -71,8 +80,7 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({ open, setOpen, setGra
     const selectedGroup = groupList.find((el) => el.id === groupId);
 
     if (selectedGroup) {
-      // Треба знайти рік вступу групи і до нього додавати курс навчання
-      alert("Треба знайти рік вступу групи і до нього додавати курс навчання");
+      // alert("Треба знайти рік вступу групи і до нього додавати курс навчання");
       dispatch(getLessonThemes({ id: lessonId, year: selectedGroup.yearOfAdmission + selectedGroup.courseNumber }));
     }
 
@@ -101,51 +109,49 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({ open, setOpen, setGra
 
   const onSubmit = async () => {
     try {
-      if (!selectedLessonType) return alert("Виберіть дисципліну");
-      //   handleClose()
-
-      const { groupId, lessonId, semester } = formData;
+      const { groupId, lessonId, semester, lessonType } = formData;
+      if (!groupId || !lessonId || !semester || !lessonType) {
+        alert("Вибрані не всі параметри");
+        return;
+      }
 
       setSearchParams({
         groupId: String(groupId),
         lessonId: String(lessonId),
         semester: String(semester),
-        lessonType: selectedLessonType,
+        lessonType: String(lessonType),
       });
       dispatch(clearGradeBook());
-      await fetchGradeBook(Number(groupId), Number(lessonId), Number(semester), selectedLessonType);
+      await fetchGradeBook(groupId, lessonId, semester, lessonType);
+      setOpen(false);
     } catch (error) {
       console.log(error);
     }
   };
 
-  //   React.useEffect(() => {
-  //     if (groups.length) return
-  //     dispatch(getGroupCategories(false))
-  //   }, [])
+  useEffect(() => {
+    if (!formData.semester || !formData.groupId) return;
+    const payload = { semester: +formData.semester, itemId: +formData.groupId, scheduleType: "group" } as const;
+    dispatch(findLessonsForSchedule(payload));
+  }, [formData.groupId, formData.semester]);
 
-  //   React.useEffect(() => {
-  //     if (!watch('semester') || !watch('group')) return
-  //     dispatch(findLessonsForSchedule({ semester: watch('semester'), itemId: watch('group'), scheduleType: 'group' }))
-  //   }, [watch('group'), watch('semester')])
+  useEffect(() => {
+    const groupId = searchParams.get("groupId");
+    const lessonId = searchParams.get("lessonId");
+    const semester = searchParams.get("semester");
+    const lessonType = searchParams.get("lessonType");
 
-  //   React.useEffect(() => {
-  //     if (!watch('lesson')) return
-  //     const findedLesson = lessons.find((el) => el.id === Number(watch('lesson')))
-  //     if (findedLesson) setSelectedLessonType(findedLesson.typeRu)
-  //   }, [watch('lesson')])
-
-  //   React.useEffect(() => {
-  //     const groupId = searchParams.get('groupId')
-  //     const lessonId = searchParams.get('lessonId')
-  //     const semester = searchParams.get('semester')
-
-  //     if (!groupId || !lessonId || !semester) return
-
-  //     setValue('group', Number(groupId))
-  //     setValue('lesson', lessonId)
-  //     setValue('semester', Number(semester))
-  //   }, [searchParams])
+    if (!groupId || !lessonId || !semester || !lessonType) return;
+    const getGradeBookAsync = async () => {
+      try {
+        setIsGradeBookLoading(true);
+        await fetchGradeBook(Number(groupId), Number(lessonId), Number(semester), lessonType);
+      } finally {
+        setIsGradeBookLoading(false);
+      }
+    };
+    getGradeBookAsync();
+  }, [searchParams]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -180,27 +186,23 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({ open, setOpen, setGra
               items={lessonsList}
               classNames="w-full mb-6"
               selectedItem={formData.lessonId}
-              onChange={(lessonId) => setUserFormData((prev) => ({ ...prev, lessonId }))}
+              onChange={(lessonId) => {
+                setUserFormData((prev) => ({ ...prev, lessonId }));
+                const selectedLesson = lessons.find((el) => el.id === lessonId);
+                if (selectedLesson) {
+                  setUserFormData((prev) => ({ ...prev, lessonType: selectedLesson.typeRu }));
+                }
+              }}
             />
-
-            {/* 
-            {lessons.map((option) => {
-                      const unitInfo = option.subgroupNumber ? `(${option.subgroupNumber} підгрупа)` : '(Вся група)'
-
-                      return (
-                        <MenuItem key={option.id} value={option.id}>
-                          {`${option.typeRu} / ${option.name} ${unitInfo}`}
-                        </MenuItem>
-                      )
-                    })}
-            */}
           </div>
         </DialogDescription>
 
         <Separator />
 
         <DialogFooter className="flex !justify-between items-center pt-2 px-4">
-          <Button>Вибрати</Button>
+          <Button onClick={onSubmit} disabled={isSubmitDisabled}>
+            Вибрати
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

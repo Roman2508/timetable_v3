@@ -1,153 +1,254 @@
-import React from "react";
+import React, { useMemo, type FC } from "react";
 
-import {
-  flexRender,
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-  type ColumnDef,
-  type SortingState,
-  type PaginationState,
-} from "@tanstack/react-table";
-import { ArrowDown, ArrowUp } from "lucide-react";
-
-import { cn } from "~/lib/utils";
-import { makeData, type Person } from "./make-data";
 import AbsentIcon from "~/components/ui/icons/absent-icon";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import type {
+  GradeBookSummaryTypes,
+  GradeBookType,
+  GradeType,
+  StudentGradesType,
+} from "~/store/gradeBook/grade-book-types";
+import { useAppDispatch } from "~/store/store";
+import { gradeBookSelector, updateGradesLocally } from "~/store/gradeBook/grade-book-slice";
+import { updateGrade } from "~/store/gradeBook/grade-book-async-actions";
+import GradeBookTableHead from "./grade-book-table-head";
+import { useSelector } from "react-redux";
+import GradeBookTableCell from "./grade-book-table-cell";
+import { gradeBookSummary } from "~/helpers/grade-book-summary";
 
-export const GradeBookTable = () => {
-  const rerender = React.useReducer(() => ({}), {})[1];
+const cellInitialState = {
+  lessonNumber: 0,
+  isAbsence: false,
+  rating: 0,
+  summaryType: null as null | GradeBookSummaryTypes,
+  student: 0,
+};
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+interface IGradeBookTableProps {
+  gradeBookLessonDates: { date: string }[];
+}
 
-  const columns = React.useMemo<ColumnDef<Person>[]>(
-    () => [
-      {
-        accessorKey: "name",
-        header: "Студент",
-        rowSpan: 3,
-        footer: (props) => props.column.id,
-      },
-      ...Array(20)
-        .fill(null)
-        .map((_, index) => ({
-          accessorKey: String(index + 1),
-          header: String(index + 1),
-          rowSpan: 3,
-          footer: (props) => props.column.id,
-        })),
-    ],
-    [],
-  );
+export const GradeBookTable: FC<IGradeBookTableProps> = ({ gradeBookLessonDates }) => {
+  const dispatch = useAppDispatch();
 
-  const [data, setData] = React.useState(() => makeData(1000));
-  const refreshData = () => setData(() => makeData(1000));
+  const { gradeBook } = useSelector(gradeBookSelector);
 
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 30,
+  const [hoveredCell, setHoveredSell] = React.useState({
+    col: 0,
+    row: 0,
+    summaryType: null as null | GradeBookSummaryTypes,
   });
+  const [cellData, setCellData] = React.useState<GradeType & { student: number }>(cellInitialState);
+  const [backupGrade, setBackupGrade] = React.useState<(GradeType & { student: number }) | null>(null);
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      pagination,
-      sorting,
-    },
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onPaginationChange: setPagination,
-    // Pipeline
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    debugTable: true,
-  });
+  const updageGrade = () => {
+    try {
+      const isLessonNumberEqual = backupGrade?.lessonNumber === cellData.lessonNumber;
+      const isAbsenceEqual = backupGrade?.isAbsence === cellData.isAbsence;
+      const isRatingEqual = backupGrade?.rating === cellData.rating;
+      const isStudentsEqual = backupGrade?.student === cellData.student;
+
+      if (isLessonNumberEqual && isStudentsEqual && (!isAbsenceEqual || !isRatingEqual)) {
+        const data = {
+          id: cellData.student,
+          rating: cellData.rating,
+          isAbsence: cellData.isAbsence,
+          summaryType: cellData.summaryType,
+          lessonNumber: cellData.lessonNumber,
+        };
+        dispatch(updateGradesLocally(data));
+        dispatch(updateGrade(data));
+        setBackupGrade(null);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+    }
+  };
+
+  const gradeBookGrades = useMemo(() => {
+    if (!gradeBook) return [];
+    return JSON.parse(JSON.stringify(gradeBook.grades)).sort((a: StudentGradesType, b: StudentGradesType) => {
+      if (a.student.name < b.student.name) return -1;
+      if (a.student.name > b.student.name) return 1;
+      return 0;
+    });
+  }, [gradeBook?.grades]);
 
   return (
     <>
       <div className="block max-w-full">
-        <Table className="block w-full overflow-auto border max-h-[calc(100vh-165px)] relative">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-white">
-                {headerGroup.headers.map((header, index) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className={cn(
-                        index === 0
-                          ? "max-w-[200px] sticky left-0 !z-30 bg-primary p-0 translate-x-[-1px]"
-                          : "min-w-[80px]",
-                        "border-x sticky top-0 z-20 bg-background",
-                      )}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={cn(
-                            header.column.getCanSort() ? "cursor-pointer select-none text-center p-0" : "",
-                            index === 0 ? "border-r h-full flex items-center justify-center" : "",
-                          )}
-                          onClick={header.column.getToggleSortingHandler()}
-                          title={
-                            header.column.getCanSort()
-                              ? header.column.getNextSortingOrder() === "asc"
-                                ? "Sort ascending"
-                                : header.column.getNextSortingOrder() === "desc"
-                                ? "Sort descending"
-                                : "Clear sort"
-                              : undefined
-                          }
-                        >
-                          <p className={cn("inline-flex relative", index === 2 ? "" : "text-left")}>
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {{
-                              asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
-                              desc: <ArrowDown className="w-4 absolute right-[-20px]" />,
-                            }[header.column.getIsSorted() as string] ?? null}
-                          </p>
-                        </div>
-                      )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
+        <table className="block w-full overflow-auto border max-h-[calc(100vh-165px)] relative">
+          <GradeBookTableHead gradeBook={gradeBook} gradeBookLessonDates={gradeBookLessonDates} />
 
-          <TableBody>
-            {table.getRowModel().rows.map((row, rowIndex) => {
-              return (
-                <TableRow key={row.id} className="hover:bg-border/40 cursor-pointer">
-                  {row.getVisibleCells().map((cell, index) => {
+          <tbody>
+            {gradeBookGrades.map((grade: StudentGradesType, rowIndex: number) => (
+              <tr key={grade.id}>
+                <td className="truncate max-w-[300px] border-l sticky left-0 z-10 bg-background translate-x-[-1px] p-0 px-2 border-t">
+                  {rowIndex + 1}. {grade.student.name}
+                </td>
+
+                {Array(gradeBook ? gradeBook.lesson.hours : 0)
+                  .fill(null)
+                  .map((_, colIndex) => {
+                    const moduleAvarage = gradeBook?.summary.find(
+                      (el) => el.afterLesson === colIndex + 1 && el.type === "MODULE_AVERAGE",
+                    );
+
+                    const moduleSum = gradeBook?.summary.find(
+                      (el) => el.afterLesson === colIndex + 1 && el.type === "MODULE_SUM",
+                    );
+
+                    const moduleTest = gradeBook?.summary.find(
+                      (el) => el.afterLesson === colIndex + 1 && el.type === "MODULE_TEST",
+                    );
+
+                    const additionalRate = gradeBook?.summary.find(
+                      (el) => el.afterLesson === colIndex + 1 && el.type === "ADDITIONAL_RATE",
+                    );
+
+                    const currentRate = gradeBook?.summary.find(
+                      (el) => el.afterLesson === colIndex + 1 && el.type === "CURRENT_RATE",
+                    );
+
+                    const examRate = gradeBook?.summary.find(
+                      (el) => el.afterLesson === colIndex + 1 && el.type === "EXAM",
+                    );
+
                     return (
-                      <TableCell
-                        key={cell.id}
-                        className={cn(
-                          index === 0
-                            ? "truncate max-w-[300px] border-l sticky left-0 z-10 bg-background translate-x-[-1px] p-0"
-                            : "min-w-[80px] text-center p-2 py-1 border-x",
-                          "",
+                      <React.Fragment key={colIndex}>
+                        <GradeBookTableCell
+                          isDefaultCell
+                          gradeId={grade.id}
+                          colIndex={colIndex}
+                          rowIndex={rowIndex}
+                          cellData={cellData}
+                          grades={grade.grades}
+                          setCellData={setCellData}
+                          hoveredCell={hoveredCell}
+                          updageGrade={updageGrade}
+                          backupGrade={backupGrade}
+                          setHoveredSell={setHoveredSell}
+                          setBackupGrade={setBackupGrade}
+                        />
+
+                        {currentRate && (
+                          <th className="bg-sidebar border-t">
+                            <p style={{ textAlign: "center", margin: 0 }}>
+                              {gradeBookSummary.getModuleRate(
+                                gradeBook ? gradeBook.summary : [],
+                                grade.grades,
+                                currentRate.afterLesson,
+                                "current_sum",
+                              )}
+                            </p>
+                          </th>
                         )}
-                      >
-                        <div className={index === 0 ? "p-2 py-1 border-r" : "flex items-center justify-center"}>
-                          {index !== 0 && <AbsentIcon />}
-                          <div className={index !== 0 ? "w-12" : ""}>
-                            {index === 0 && `${rowIndex + 1}. `}
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </div>
-                        </div>
-                      </TableCell>
+
+                        {additionalRate && (
+                          <GradeBookTableCell
+                            gradeId={grade.id}
+                            colIndex={colIndex}
+                            rowIndex={rowIndex}
+                            cellData={cellData}
+                            grades={grade.grades}
+                            setCellData={setCellData}
+                            hoveredCell={hoveredCell}
+                            backupGrade={backupGrade}
+                            updageGrade={updageGrade}
+                            showAbsenceCheckbox={false}
+                            setHoveredSell={setHoveredSell}
+                            setBackupGrade={setBackupGrade}
+                            summaryType={additionalRate.type}
+                          />
+                        )}
+
+                        {moduleTest && (
+                          <GradeBookTableCell
+                            gradeId={grade.id}
+                            colIndex={colIndex}
+                            rowIndex={rowIndex}
+                            cellData={cellData}
+                            grades={grade.grades}
+                            setCellData={setCellData}
+                            hoveredCell={hoveredCell}
+                            updageGrade={updageGrade}
+                            backupGrade={backupGrade}
+                            showAbsenceCheckbox={false}
+                            summaryType={moduleTest.type}
+                            setHoveredSell={setHoveredSell}
+                            setBackupGrade={setBackupGrade}
+                          />
+                        )}
+
+                        {moduleAvarage && (
+                          <th className="bg-sidebar border-t">
+                            <p style={{ textAlign: "center", margin: 0 }}>
+                              {gradeBookSummary.getModuleRate(
+                                gradeBook ? gradeBook.summary : [],
+                                grade.grades,
+                                moduleAvarage.afterLesson,
+                                "average",
+                              )}
+                            </p>
+                          </th>
+                        )}
+
+                        {moduleSum && (
+                          <th className="bg-sidebar border-t">
+                            <p style={{ textAlign: "center", margin: 0 }}>
+                              {gradeBookSummary.getModuleRate(
+                                gradeBook ? gradeBook.summary : [],
+                                grade.grades,
+                                moduleSum.afterLesson,
+                                "sum",
+                              )}
+                            </p>
+                          </th>
+                        )}
+
+                        {examRate && (
+                          <GradeBookTableCell
+                            gradeId={grade.id}
+                            colIndex={colIndex}
+                            rowIndex={rowIndex}
+                            cellData={cellData}
+                            grades={grade.grades}
+                            setCellData={setCellData}
+                            hoveredCell={hoveredCell}
+                            updageGrade={updageGrade}
+                            backupGrade={backupGrade}
+                            showAbsenceCheckbox={false}
+                            summaryType={examRate.type}
+                            setHoveredSell={setHoveredSell}
+                            setBackupGrade={setBackupGrade}
+                          />
+                        )}
+                      </React.Fragment>
                     );
                   })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+
+                {gradeBook?.summary.find((el) => el.type === "LESSON_AVERAGE") && (
+                  <td style={{ textAlign: "center", backgroundColor: "#f3f3f3" }}>
+                    {gradeBookSummary.getTotalRate(grade.grades, "average")}
+                  </td>
+                )}
+
+                {gradeBook?.summary.find((el) => el.type === "LESSON_SUM") && (
+                  <>
+                    <td style={{ textAlign: "center", backgroundColor: "#f3f3f3" }}>
+                      {gradeBookSummary.getTotalRate(grade.grades, "sum")}
+                    </td>
+
+                    <td style={{ textAlign: "center", backgroundColor: "#f3f3f3" }}>
+                      {gradeBookSummary.calcECTS(Number(gradeBookSummary.getTotalRate(grade.grades, "sum")))}
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
