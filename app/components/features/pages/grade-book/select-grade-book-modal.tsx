@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router";
+import { type SetURLSearchParams } from "react-router";
 import { useEffect, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import {
@@ -26,20 +26,20 @@ import { findLessonsForSchedule } from "~/store/schedule-lessons/schedule-lesson
 
 interface ISelectGradeBookModal {
   open: boolean;
+  searchParams: URLSearchParams;
+  setSearchParams: SetURLSearchParams;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setIsGradeBookLoading: Dispatch<SetStateAction<boolean>>;
   setGradeBookLessonDates: Dispatch<SetStateAction<{ date: string }[]>>;
 }
 
 const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
   open,
   setOpen,
-  setIsGradeBookLoading,
+  searchParams,
+  setSearchParams,
   setGradeBookLessonDates,
 }) => {
   const dispatch = useAppDispatch();
-
-  const [searchParams, setSearchParams] = useSearchParams();
 
   const { lessons } = useSelector(lessonsForGradeBookSelector);
   const lessonsList = useMemo(
@@ -54,6 +54,7 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
   const { groupCategories } = useSelector(groupsSelector);
   const groupList = useMemo(() => (groupCategories || []).flatMap((el) => el.groups), [groupCategories]);
 
+  const [isFetching, setIsFetching] = useState(false);
   const [userFormData, setUserFormData] = useState({});
 
   const formData = {
@@ -108,25 +109,22 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
   };
 
   const onSubmit = async () => {
-    try {
-      const { groupId, lessonId, semester, lessonType } = formData;
-      if (!groupId || !lessonId || !semester || !lessonType) {
-        alert("Вибрані не всі параметри");
-        return;
-      }
-
-      setSearchParams({
-        groupId: String(groupId),
-        lessonId: String(lessonId),
-        semester: String(semester),
-        lessonType: String(lessonType),
-      });
-      dispatch(clearGradeBook());
-      await fetchGradeBook(groupId, lessonId, semester, lessonType);
-      setOpen(false);
-    } catch (error) {
-      console.log(error);
+    const { groupId, lessonId, semester, lessonType } = formData;
+    if (!groupId || !lessonId || !semester || !lessonType) {
+      alert("Вибрані не всі параметри");
+      return;
     }
+
+    setSearchParams({
+      groupId: String(groupId),
+      lessonId: String(lessonId),
+      semester: String(semester),
+      lessonType: String(lessonType),
+    });
+    dispatch(clearGradeBook());
+    setIsFetching(true);
+    // await fetchGradeBook(groupId, lessonId, semester, lessonType);
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -144,10 +142,10 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
     if (!groupId || !lessonId || !semester || !lessonType) return;
     const getGradeBookAsync = async () => {
       try {
-        setIsGradeBookLoading(true);
+        setIsFetching(true);
         await fetchGradeBook(Number(groupId), Number(lessonId), Number(semester), lessonType);
       } finally {
-        setIsGradeBookLoading(false);
+        setIsFetching(false);
       }
     };
     getGradeBookAsync();
@@ -158,7 +156,7 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
       <DialogContent className="px-0 max-w-[450px]">
         <DialogHeader className="px-4">
           <DialogTitle className="pb-4">Електронний журнал:</DialogTitle>
-          <p className="leading-[1.25] opacity-[.6]">Вкажіть критерії для пошуку електронного журналу</p>
+          <p className="leading-[1.25] opacity-[.6]">Виберіть критерії для пошуку електронного журналу</p>
         </DialogHeader>
 
         <Separator />
@@ -200,8 +198,8 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
         <Separator />
 
         <DialogFooter className="flex !justify-between items-center pt-2 px-4">
-          <Button onClick={onSubmit} disabled={isSubmitDisabled}>
-            Вибрати
+          <Button onClick={onSubmit} disabled={isFetching || isSubmitDisabled}>
+            {isFetching ? "Завантаження..." : "Вибрати"}
           </Button>
         </DialogFooter>
       </DialogContent>

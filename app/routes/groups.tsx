@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 */
 
-export default function Teachers() {
+export default function Groups() {
   return <GroupsPage />;
 }
 

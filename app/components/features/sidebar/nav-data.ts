@@ -140,6 +140,10 @@ export const navData = {
           title: "Електронний журнал",
           url: "/grade-book",
         },
+        {
+          title: "Навчально-метдичні комплекси",
+          url: "/instructional-materials",
+        },
       ],
     },
     {

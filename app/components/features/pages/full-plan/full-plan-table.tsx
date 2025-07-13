@@ -191,7 +191,7 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
 
-    globalFilterFn: "fuzzy",
+    globalFilterFn: "auto",
     onPaginationChange: setPagination,
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalSearch,

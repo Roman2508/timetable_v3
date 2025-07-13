@@ -19,7 +19,7 @@ const GradeBookTableHead: React.FC<IGradeBookTableHeadProps> = ({ gradeBook, gra
   return (
     <thead>
       <tr>
-        <th className="max-w-[200px] sticky left-0 !z-30 p-0 translate-x-[-1px] border-x sticky top-0 z-20 bg-sidebar">
+        <th className="max-w-[200px] sticky left-0 !z-30 p-0 translate-x-[-1px] border-x sticky top-0 z-20 bg-sidebar text-sm">
           ПІБ студента
         </th>
 
@@ -32,7 +32,7 @@ const GradeBookTableHead: React.FC<IGradeBookTableHeadProps> = ({ gradeBook, gra
 
             return (
               <React.Fragment key={index}>
-                <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+                <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
                   <Tooltip delayDuration={500}>
                     <TooltipTrigger>
                       <span style={{ userSelect: "none" }}>
@@ -45,34 +45,34 @@ const GradeBookTableHead: React.FC<IGradeBookTableHeadProps> = ({ gradeBook, gra
                 </th>
 
                 {gradeBook.summary.find((el) => el.afterLesson === index + 1 && el.type === "CURRENT_RATE") && (
-                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
                     <p>Поточний</p>
                     <p style={{ whiteSpace: "nowrap" }}>рейтинг</p>
                   </th>
                 )}
 
                 {gradeBook.summary.find((el) => el.afterLesson === index + 1 && el.type === "ADDITIONAL_RATE") && (
-                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
                     <p>Додатковий</p>
                     <p style={{ whiteSpace: "nowrap" }}>рейтинг</p>
                   </th>
                 )}
 
                 {gradeBook.summary.find((el) => el.afterLesson === index + 1 && el.type === "MODULE_TEST") && (
-                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
                     <p>Модульний</p>
                     <p style={{ whiteSpace: "nowrap" }}>контроль</p>
                   </th>
                 )}
 
                 {gradeBook.summary.find((el) => el.afterLesson === index + 1 && el.type === "MODULE_AVERAGE") && (
-                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
                     <p>Тематична</p>
                   </th>
                 )}
 
                 {gradeBook.summary.find((el) => el.afterLesson === index + 1 && el.type === "MODULE_SUM") && (
-                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+                  <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
                     <p>Рейтинг</p>
                     <p style={{ whiteSpace: "nowrap" }}>з модуля</p>
                   </th>
@@ -82,23 +82,23 @@ const GradeBookTableHead: React.FC<IGradeBookTableHeadProps> = ({ gradeBook, gra
           })}
 
         {gradeBook.summary.find((el) => el.type === GradeBookSummaryTypes.EXAM) && (
-          <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+          <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
             <p>Екзамен</p>
           </th>
         )}
 
         {gradeBook.summary.find((el) => el.type === GradeBookSummaryTypes.LESSON_AVERAGE) && (
-          <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">Семестрова</th>
+          <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">Семестрова</th>
         )}
 
         {gradeBook.summary.find((el) => el.type === GradeBookSummaryTypes.LESSON_SUM) && (
           <>
-            <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+            <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
               <p>Рейтинг</p>
               <p style={{ whiteSpace: "nowrap" }}>з дисципліни</p>
             </th>
 
-            <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px]">
+            <th className="border-x sticky top-0 z-20 bg-sidebar min-w-[80px] text-sm">
               <p>ECTS</p>
             </th>
           </>

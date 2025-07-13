@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router";
 
-import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { Button } from "~/components/ui/common/button";
 import { LoadingStatusTypes } from "~/store/app-types";
@@ -16,13 +16,12 @@ import SelectGradeBookModal from "~/components/features/pages/grade-book/select-
 import GradeBookSummaryModal from "~/components/features/pages/grade-book/grade-book-summary-modal";
 
 export default function PlansPage() {
-  const dispatch = useAppDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { gradeBook, loadingStatus } = useSelector(gradeBookSelector);
 
   const [isOpenFilterModal, setIsOpenFilterModal] = useState(false);
   const [isOpenSummaryModal, setIsOpenSummaryModal] = useState(false);
-  const [isGradeBookLoading, setIsGradeBookLoading] = useState(false);
   const [gradeBookLessonDates, setGradeBookLessonDates] = useState<{ date: string }[]>([]);
 
   return (
@@ -30,7 +29,8 @@ export default function PlansPage() {
       <SelectGradeBookModal
         open={isOpenFilterModal}
         setOpen={setIsOpenFilterModal}
-        setIsGradeBookLoading={setIsGradeBookLoading}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
         setGradeBookLessonDates={setGradeBookLessonDates}
       />
 
@@ -99,9 +99,13 @@ export default function PlansPage() {
         </div>
 
         {!gradeBook && loadingStatus !== LoadingStatusTypes.LOADING ? (
-          <Card className="py-10 text-center">
-            <p className="font-mono">Виберіть параметри для пошуку журналу</p>
-          </Card>
+          searchParams.toString() === "" ? (
+            <Card className="py-10 text-center">
+              <p className="font-mono">Виберіть параметри для пошуку журналу</p>
+            </Card>
+          ) : (
+            <LoadingSpinner />
+          )
         ) : !gradeBook && loadingStatus === LoadingStatusTypes.LOADING ? (
           <LoadingSpinner />
         ) : gradeBook ? (

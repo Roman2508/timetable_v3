@@ -29,6 +29,8 @@ export default [
 
     route("grade-book", "./routes/grade-book.tsx"),
 
+    route("instructional-materials", "./routes/instructional-materials.tsx"),
+
     route("profile", "./routes/profile.tsx"),
 
     route("settings", "./routes/settings.tsx"),

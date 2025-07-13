@@ -19,17 +19,17 @@ interface IDropdownSelectProps {
   items: IItem[];
   classNames?: string;
   sortBy?: "name" | "id";
-  selectedItem: IItem | null;
+  selectedItem?: IItem | null;
   onChange: (id: number) => void;
 }
 
 const DropdownSelect: FC<IDropdownSelectProps> = ({
   items,
   onChange,
-  selectedItem,
   label = "",
   classNames = "",
   sortBy = "name",
+  selectedItem = null,
 }) => {
   const active = items.find((el) => el.id === selectedItem);
 

@@ -13,24 +13,20 @@ import {
 import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { rankItem } from "@tanstack/match-sorter-utils";
 
 import { cn } from "~/lib/utils";
-import GroupActions from "./group-actions";
 import { Badge } from "~/components/ui/common/badge";
 import { generalSelector } from "~/store/general/general-slice";
 import type { GroupsShortType } from "~/store/groups/groups-types";
 import { GROUP_SORT_KEY, GROUP_SORT_TYPE } from "~/constants/cookies-keys";
+import InstructionalMaterialsActions from "./instructional-materials-actions";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 
-interface IGroupsTableProps {
-  globalSearch: string;
+interface IInstructionalMaterialsTableProps {
   groups: GroupsShortType[];
-  setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch, setGlobalSearch }) => {
+export const InstructionalMaterialsTable: React.FC<IInstructionalMaterialsTableProps> = ({ groups }) => {
   const [_, setCookie] = useCookies();
 
   const {
@@ -78,7 +74,7 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
         id: "actions",
         header: "Дії",
         cell: ({ row }) => {
-          return <GroupActions id={row.original.id} />;
+          return <InstructionalMaterialsActions id={row.original.id} />;
         },
       }),
     ],
@@ -88,15 +84,10 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
   const table = useReactTable({
     data: groups,
     columns,
-    state: { sorting, globalFilter: globalSearch },
+    state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-
-    filterFns: { fuzzy: fuzzyFilter },
-    onGlobalFilterChange: setGlobalSearch,
-    globalFilterFn: "auto",
-    getFilteredRowModel: getFilteredRowModel(),
   });
 
   React.useEffect(() => {

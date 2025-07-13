@@ -84,7 +84,7 @@ export const GradeBookTable: FC<IGradeBookTableProps> = ({ gradeBookLessonDates 
           <tbody>
             {gradeBookGrades.map((grade: StudentGradesType, rowIndex: number) => (
               <tr key={grade.id}>
-                <td className="truncate max-w-[300px] border-l sticky left-0 z-10 bg-background translate-x-[-1px] p-0 px-2 border-t">
+                <td className="truncate max-w-[300px] border-l sticky left-0 z-10 bg-background translate-x-[-1px] p-0 px-2 border-t text-sm">
                   {rowIndex + 1}. {grade.student.name}
                 </td>
 
@@ -133,7 +133,7 @@ export const GradeBookTable: FC<IGradeBookTableProps> = ({ gradeBookLessonDates 
                         />
 
                         {currentRate && (
-                          <th className="bg-sidebar border-t">
+                          <th className="bg-sidebar border-t text-sm">
                             <p style={{ textAlign: "center", margin: 0 }}>
                               {gradeBookSummary.getModuleRate(
                                 gradeBook ? gradeBook.summary : [],
@@ -182,7 +182,7 @@ export const GradeBookTable: FC<IGradeBookTableProps> = ({ gradeBookLessonDates 
                         )}
 
                         {moduleAvarage && (
-                          <th className="bg-sidebar border-t">
+                          <th className="bg-sidebar border-t text-sm">
                             <p style={{ textAlign: "center", margin: 0 }}>
                               {gradeBookSummary.getModuleRate(
                                 gradeBook ? gradeBook.summary : [],
@@ -195,7 +195,7 @@ export const GradeBookTable: FC<IGradeBookTableProps> = ({ gradeBookLessonDates 
                         )}
 
                         {moduleSum && (
-                          <th className="bg-sidebar border-t">
+                          <th className="bg-sidebar border-t text-sm">
                             <p style={{ textAlign: "center", margin: 0 }}>
                               {gradeBookSummary.getModuleRate(
                                 gradeBook ? gradeBook.summary : [],
