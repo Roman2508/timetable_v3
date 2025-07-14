@@ -1,4 +1,4 @@
-import { useMemo, type FC } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC } from "react";
 import { ChevronDown } from "lucide-react";
 
 import {
@@ -31,6 +31,10 @@ const DropdownSelect: FC<IDropdownSelectProps> = ({
   sortBy = "name",
   selectedItem = null,
 }) => {
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const [triggerWidth, setTriggerWidth] = useState<number | null>(null);
+
   const active = items.find((el) => el.id === selectedItem);
 
   const memorizedItems = useMemo(() => {
@@ -41,10 +45,16 @@ const DropdownSelect: FC<IDropdownSelectProps> = ({
     }
   }, [items, sortBy]);
 
+  useLayoutEffect(() => {
+    if (triggerRef.current) {
+      setTriggerWidth(triggerRef.current.offsetWidth);
+    }
+  }, []);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={cn("flex justify-between shadow-0 relative", classNames)}>
+        <Button variant="outline" className={cn("flex justify-between shadow-0 relative", classNames)} ref={triggerRef}>
           <span className="absolute top-[-8px] font-sm" style={{ fontSize: "12px" }}>
             {label}
           </span>
@@ -53,7 +63,12 @@ const DropdownSelect: FC<IDropdownSelectProps> = ({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align="start" style={{ minWidth: triggerWidth ? `${triggerWidth}px` : "auto" }}>
+        {!memorizedItems.length && (
+          <DropdownMenuCheckboxItem className="cursor-pointer" disabled>
+            Пусто
+          </DropdownMenuCheckboxItem>
+        )}
         {memorizedItems.map((item) => (
           <DropdownMenuCheckboxItem
             key={item.value}

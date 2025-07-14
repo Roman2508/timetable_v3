@@ -48,6 +48,9 @@ const teacherProfileSlice = createSlice({
     setLoadingStatus(state, action) {
       state.loadingStatus = action.payload;
     },
+    setIndividualWork(state, action: PayloadAction<IndividualWorkPlanType[]>) {
+      state.individualWorkPlan = action.payload;
+    },
     clearInstructionalMaterials(state) {
       state.instructionalMaterials = null;
     },
@@ -246,7 +249,8 @@ const teacherProfileSlice = createSlice({
   },
 });
 
-export const { setLoadingStatus, clearTeacherReports, clearIndividualTeacherWork } = teacherProfileSlice.actions;
+export const { setLoadingStatus, clearTeacherReports, clearIndividualTeacherWork, setIndividualWork } =
+  teacherProfileSlice.actions;
 
 export default teacherProfileSlice.reducer;
 

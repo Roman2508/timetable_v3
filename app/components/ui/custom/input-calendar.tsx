@@ -9,12 +9,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/
 
 interface IInputCalendarProps {
   value: string;
-  label: string;
+  label?: string;
   classNames?: string;
   onValueChange: (date: string) => void;
 }
 
-const InputCalendar: FC<IInputCalendarProps> = ({ label, value, onValueChange, classNames = "" }) => {
+const InputCalendar: FC<IInputCalendarProps> = ({ label = "", value, onValueChange, classNames = "" }) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
 
@@ -42,7 +42,7 @@ const InputCalendar: FC<IInputCalendarProps> = ({ label, value, onValueChange, c
 
   return (
     <div className={cn("flex flex-col gap-1 mb-2", classNames)}>
-      <p className="text-sm">{label}</p>
+      {label && <p className="text-sm">{label}</p>}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>

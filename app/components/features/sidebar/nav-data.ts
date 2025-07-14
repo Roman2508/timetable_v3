@@ -144,6 +144,14 @@ export const navData = {
           title: "Навчально-метдичні комплекси",
           url: "/instructional-materials",
         },
+        {
+          title: "Індивідуальний план роботи викладача",
+          url: "/individual-teacher-work",
+        },
+        {
+          title: "Види педагогічної діяльності",
+          url: "/teacher-activities-types",
+        },
       ],
     },
     {

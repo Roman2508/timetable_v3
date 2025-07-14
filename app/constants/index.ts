@@ -8,3 +8,5 @@ export const SEMESTERS_LIST = [
   { id: 7, name: "7" },
   { id: 8, name: "8" },
 ];
+
+export const TEMPORARY_TEACHER_ID = 6

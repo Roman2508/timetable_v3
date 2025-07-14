@@ -28,8 +28,9 @@ export default [
     route("timetable", "./routes/timetable.tsx"),
 
     route("grade-book", "./routes/grade-book.tsx"),
-
     route("instructional-materials", "./routes/instructional-materials.tsx"),
+    route("individual-teacher-work", "./routes/individual-teacher-work.tsx"),
+    route("teacher-activities-types", "./routes/teacher-activities-types.tsx"),
 
     route("profile", "./routes/profile.tsx"),
 

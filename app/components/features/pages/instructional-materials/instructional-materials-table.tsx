@@ -1,171 +1,128 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 
-import {
-  flexRender,
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  createColumnHelper,
-  getFilteredRowModel,
-  type FilterFn,
-  type SortingState,
-} from "@tanstack/react-table";
-import { useCookies } from "react-cookie";
 import { useSelector } from "react-redux";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { PenLine, X } from "lucide-react";
 
-import { cn } from "~/lib/utils";
-import { Badge } from "~/components/ui/common/badge";
-import { generalSelector } from "~/store/general/general-slice";
-import type { GroupsShortType } from "~/store/groups/groups-types";
-import { GROUP_SORT_KEY, GROUP_SORT_TYPE } from "~/constants/cookies-keys";
-import InstructionalMaterialsActions from "./instructional-materials-actions";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { useAppDispatch } from "~/store/store";
+import { Input } from "~/components/ui/common/input";
+import { Button } from "~/components/ui/common/button";
+import type { GroupLoadType } from "~/store/groups/groups-types";
+import { teacherProfileSelector } from "~/store/teacher-profile/teacher-profile-slice";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/ui/common/table";
+import {
+  createInstructionalMaterials,
+  updateInstructionalMaterials,
+} from "~/store/teacher-profile/teacher-profile-async-actions";
 
 interface IInstructionalMaterialsTableProps {
-  groups: GroupsShortType[];
+  showedYear: number;
+  selectedLesson: GroupLoadType;
 }
 
-export const InstructionalMaterialsTable: React.FC<IInstructionalMaterialsTableProps> = ({ groups }) => {
-  const [_, setCookie] = useCookies();
+export const InstructionalMaterialsTable: React.FC<IInstructionalMaterialsTableProps> = ({
+  showedYear,
+  selectedLesson,
+}) => {
+  const dispatch = useAppDispatch();
 
-  const {
-    groups: { isOrderDesc, orderField },
-  } = useSelector(generalSelector);
+  const { instructionalMaterials } = useSelector(teacherProfileSelector);
 
-  const [sorting, setSorting] = React.useState<SortingState>(orderField ? [{ id: orderField, desc: isOrderDesc }] : []);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const columnHelper = createColumnHelper<GroupsShortType>();
-  const columns = React.useMemo(
-    () => [
-      columnHelper.accessor("name", { header: "Група" }),
-      columnHelper.accessor((row) => row.category?.name ?? "", {
-        id: "category",
-        header: "Підрозділ",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("courseNumber", { header: "Курс" }),
-      columnHelper.accessor((row) => row.students.length, {
-        id: "studentsCount",
-        header: "Студентів",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("formOfEducation", { header: "Форма навчання" }),
-      columnHelper.display({
-        id: "status",
-        header: "Статус",
-        cell: ({ row }) => {
-          let isStatusActive = true;
-          if (row.original.status === "Архів") isStatusActive = false;
-          return (
-            <Badge
-              variant="outline"
-              className={cn(
-                "border-0",
-                isStatusActive ? "text-success bg-success-background" : "text-error bg-error-background",
-              )}
-            >
-              {row.original.status}
-            </Badge>
-          );
-        },
-      }),
-      columnHelper.display({
-        id: "actions",
-        header: "Дії",
-        cell: ({ row }) => {
-          return <InstructionalMaterialsActions id={row.original.id} />;
-        },
-      }),
-    ],
-    [],
-  );
+  const [actionType, setActionType] = useState<"create" | "update">("create");
+  const [editedTheme, setEditedTheme] = useState({ lessonNumber: 0, theme: "", id: 0 });
 
-  const table = useReactTable({
-    data: groups,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
+  const handleEditTheme = (lessonNumber: number, theme: string, id: number) => {
+    if (!selectedLesson) return alert("Урок не вибраний");
+    setEditedTheme({ lessonNumber, theme, id });
 
-  React.useEffect(() => {
-    if (sorting.length) {
-      setCookie(GROUP_SORT_KEY, sorting[0].id);
-      setCookie(GROUP_SORT_TYPE, sorting[0].desc);
-    } else {
-      setCookie(GROUP_SORT_KEY, "");
-      setCookie(GROUP_SORT_TYPE, false);
+    setTimeout(() => {
+      if (inputRef.current) inputRef.current.focus();
+    });
+
+    if (theme) setActionType("update");
+    else setActionType("create");
+  };
+
+  const setLessonTheme = async () => {
+    if (!selectedLesson) return alert("Урок не вибраний");
+
+    if (actionType === "create") {
+      const payload = {
+        name: editedTheme.theme,
+        lessonNumber: editedTheme.lessonNumber,
+        lessonId: selectedLesson.id,
+        year: showedYear,
+      };
+      await dispatch(createInstructionalMaterials(payload));
+      return;
     }
-  }, [sorting]);
+
+    if (actionType === "update") {
+      const payload = {
+        name: editedTheme.theme,
+        id: editedTheme.id,
+        lessonId: selectedLesson.id,
+        lessonNumber: editedTheme.lessonNumber,
+      };
+      await dispatch(updateInstructionalMaterials(payload));
+    }
+
+    setEditedTheme({ lessonNumber: 0, theme: "", id: 0 });
+  };
 
   return (
     <Table className="w-full">
       <TableHeader>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id} className="hover:bg-white">
-            <TableHead className="!text-left font-mono">
-              <div className="cursor-pointer select-none text-left">
-                <p className="inline-flex relative uppercase font-mono">№</p>
-              </div>
-            </TableHead>
-
-            {headerGroup.headers.map((header, index) => {
-              return (
-                <TableHead key={header.id} colSpan={header.colSpan}>
-                  {header.isPlaceholder ? null : (
-                    <div
-                      className={cn(index !== 6 ? "cursor-pointer select-none text-left" : "text-right")}
-                      onClick={header.column.getToggleSortingHandler()}
-                      title={
-                        header.column.getCanSort()
-                          ? header.column.getNextSortingOrder() === "asc"
-                            ? "Sort ascending"
-                            : header.column.getNextSortingOrder() === "desc"
-                            ? "Sort descending"
-                            : "Clear sort"
-                          : undefined
-                      }
-                    >
-                      <p className="inline-flex relative uppercase font-mono">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {{
-                          asc: <ArrowUp className="w-4 absolute right-[-20px]" />,
-                          desc: <ArrowDown className="w-4 absolute right-[-20px]" />,
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </p>
-                    </div>
-                  )}
-                </TableHead>
-              );
-            })}
-          </TableRow>
-        ))}
+        <TableRow className="hover:bg-white">
+          <TableCell className="uppercase font-mono w-[5%]">№</TableCell>
+          <TableCell className="uppercase font-mono w-[80%]">Тема</TableCell>
+          <TableCell className="uppercase font-mono w-[10%]">Години</TableCell>
+          <TableCell className="uppercase font-mono w-[5%] text-right">Дії</TableCell>
+        </TableRow>
       </TableHeader>
 
       <TableBody>
-        {table.getRowModel().rows.map((groupData, index) => {
-          const group = groupData.original;
-          return (
-            <TableRow key={group.id} className="hover:bg-border/40">
-              <TableCell className={cn("truncate max-w-[30px]", "text-left px-2 py-1")}>{index + 1}</TableCell>
+        {[...Array(selectedLesson ? selectedLesson.hours : 0)].map((_, index) => {
+          const rowNumber = index + 1;
+          const isLast = selectedLesson?.hours === rowNumber;
+          const theme = instructionalMaterials?.find((el) => el.lessonNumber === rowNumber);
+          const themeName = theme ? theme.name : "-";
 
-              {groupData.getVisibleCells().map((cell, index) => {
-                const isActionsCol = index === groupData.getVisibleCells().length - 1;
-                return (
-                  <TableCell
-                    key={cell.id}
-                    className={cn(
-                      "text-left px-2 py-1",
-                      isActionsCol ? "!text-right" : "",
-                      index === 0 ? "truncate max-w-[200px]" : "",
-                    )}
+          return (
+            <TableRow className="hover:bg-border/40">
+              <TableCell className="py-0">{rowNumber}</TableCell>
+              <TableCell className="py-0">
+                {editedTheme.lessonNumber === rowNumber ? (
+                  <Input
+                    className="border-0 bg-transparent"
+                    ref={inputRef}
+                    value={editedTheme.theme}
+                    onChange={(e) => setEditedTheme((prev) => ({ ...prev, theme: e.target.value }))}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") setLessonTheme();
+                      if (e.key === "Escape") setEditedTheme({ lessonNumber: 0, theme: "", id: 0 });
+                    }}
+                  />
+                ) : (
+                  themeName
+                )}
+              </TableCell>
+              <TableCell className="py-0">{theme && !isLast ? 2 : theme && isLast ? 1 : "-"}</TableCell>
+              <TableCell className="py-0 text-right">
+                {editedTheme.lessonNumber === rowNumber ? (
+                  <Button variant="ghost" onClick={(e) => handleEditTheme(0, "", 0)}>
+                    <X />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    onClick={(e) => handleEditTheme(rowNumber, theme ? theme.name : "", theme ? theme.id : 0)}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                );
-              })}
+                    <PenLine />
+                  </Button>
+                )}
+              </TableCell>
             </TableRow>
           );
         })}
