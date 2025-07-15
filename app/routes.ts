@@ -22,15 +22,19 @@ export default [
     route("plans/:id", "./routes/full-plan.tsx"),
 
     route("distribution", "./routes/distribution.tsx"),
+    route("view-distribution-load", "./routes/view-distribution-load.tsx"),
 
     route("streams", "./routes/streams.tsx"),
 
     route("timetable", "./routes/timetable.tsx"),
 
     route("grade-book", "./routes/grade-book.tsx"),
+
     route("instructional-materials", "./routes/instructional-materials.tsx"),
     route("individual-teacher-work", "./routes/individual-teacher-work.tsx"),
     route("teacher-activities-types", "./routes/teacher-activities-types.tsx"),
+    route("teachers-report", "./routes/teachers-report.tsx"),
+    route("my-teaching-load", "./routes/my-teaching-load.tsx"),
 
     route("profile", "./routes/profile.tsx"),
 

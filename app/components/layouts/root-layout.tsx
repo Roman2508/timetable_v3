@@ -6,45 +6,45 @@ import { Outlet, useLoaderData, useLocation, type LoaderFunctionArgs } from "rea
 import {
   PLAN_STATUS,
   GROUP_STATUS,
+  PLAN_FILTERS,
   GROUP_FILTERS,
+  PLAN_EXPANDED,
+  TIMETABLE_WEEK,
+  TIMETABLE_ITEM,
+  TIMETABLE_TYPE,
   GROUP_SORT_KEY,
   TEACHER_STATUS,
   GROUP_SORT_TYPE,
   AUDITORY_STATUS,
+  STREAMS_FILTERS,
   TEACHER_FILTERS,
   TEACHER_SORT_KEY,
   AUDITORY_FILTERS,
   AUDITORY_SORT_KEY,
   TEACHER_SORT_TYPE,
   AUDITORY_SORT_TYPE,
+  TIMETABLE_SEMESTER,
+  TIMETABLE_CATEGORY,
   SIDEBAR_COOKIE_NAME,
   EXPANDED_SIDEBAR_ITEMS,
-  PLAN_FILTERS,
-  PLAN_EXPANDED,
-  STREAMS_FILTERS,
-  TIMETABLE_SEMESTER,
-  TIMETABLE_WEEK,
-  TIMETABLE_ITEM,
-  TIMETABLE_CATEGORY,
-  TIMETABLE_TYPE,
 } from "~/constants/cookies-keys";
 import {
   setPlanStatus,
   setGroupsOrder,
   setGroupStatus,
+  setPlanFilters,
   setSidebarState,
   setGroupFilters,
   setTeacherOrder,
+  setPlanExpanded,
   setAuditoryOrder,
   setTeacherStatus,
+  setStreamFilters,
+  setTimetableData,
   setAuditoryStatus,
   setTeacherFilters,
   setAuditoryFilters,
   toggleExpandedSidebarItems,
-  setPlanFilters,
-  setPlanExpanded,
-  setStreamFilters,
-  setTimetableData,
 } from "~/store/general/general-slice";
 import { plansAPI } from "~/api/plans-api";
 import { groupsAPI } from "~/api/groups-api";
@@ -53,18 +53,19 @@ import Footer from "../features/footer/footer";
 import { CookiesProvider } from "react-cookie";
 import AlertModal from "../features/alert-modal";
 import { teachersAPI } from "~/api/teachers-api";
+import { settingsAPI } from "~/api/settings-api";
 import ConfirmModal from "../features/confirm-modal";
 import { auditoriesAPI } from "~/api/auditories-api";
 import { TooltipProvider } from "../ui/common/tooltip";
 import { makeStore, type RootState } from "~/store/store";
 import { Header } from "~/components/features/header/header";
+import { setSettings } from "~/store/settings/settings-slice";
 import { setPlanCategories } from "~/store/plans/plans-slice";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
 import { setGroupCategories } from "~/store/groups/groups-slice";
 import { setTeacherCategories } from "~/store/teachers/teachers-slice";
 import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
-import { settingsAPI } from "~/api/settings-api";
-import { setSettings } from "~/store/settings/settings-slice";
+import { Toaster } from "../ui/common/sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -183,6 +184,8 @@ const RootLayout: React.FC = () => {
       <ReduxProvider store={store}>
         <TooltipProvider>
           <SidebarLayout>
+            <Toaster />
+
             <ConfirmModal />
             <AlertModal />
 

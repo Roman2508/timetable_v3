@@ -59,12 +59,14 @@ const TeacherActivitiesTypesModal: FC<Props> = ({ open, setOpen, editedWork, set
       if (editedWork) {
         await dispatch(updateIndividualTeacherWork({ ...payload, id: editedWork.id }));
         onOpenChange(false);
+        setUserFormData({});
         return;
       }
 
       // create
       await dispatch(createIndividualTeacherWork(payload));
       onOpenChange(false);
+      setUserFormData({});
     } catch (error) {
       console.log(error);
     } finally {

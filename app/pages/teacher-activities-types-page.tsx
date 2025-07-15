@@ -1,17 +1,14 @@
+import { Plus } from "lucide-react";
 import { useState, type FC } from "react";
 
-import { useAppDispatch } from "~/store/store";
+import { Button } from "~/components/ui/common/button";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { RootContainer } from "~/components/layouts/root-container";
+import type { IndividualWorkPlanType } from "~/store/teacher-profile/teacher-profile-types";
 import TeacherActivitiesTypesModal from "~/components/features/pages/teacher-activities-types/teacher-activities-types-modal";
 import { TeacherActivitiesTypesTable } from "~/components/features/pages/teacher-activities-types/teacher-activities-types-table";
-import type { IndividualWorkPlanType } from "~/store/teacher-profile/teacher-profile-types";
-import { Button } from "~/components/ui/common/button";
-import { Plus } from "lucide-react";
 
 const TeacherActivitiesTypesPage: FC = ({}) => {
-  const dispatch = useAppDispatch();
-
   const [globalSearch, setGlobalSearch] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [editedWork, setEditedWork] = useState<IndividualWorkPlanType | null>(null);

@@ -138,7 +138,7 @@ export const TeacherActivitiesTypesTable: FC<Props> = ({
                     className={cn(
                       "text-left px-2 py-0",
                       isActionsCol ? "!text-right" : "",
-                      index === 0 ? "truncate" : "",
+                      index === 0 ? "truncate max-w-[700px]" : "",
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

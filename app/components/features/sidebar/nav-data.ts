@@ -69,7 +69,7 @@ export const navData = {
         },
         {
           title: "Перегляд навантаження",
-          url: "#",
+          url: "/view-distribution-load",
         },
       ],
     },
@@ -151,6 +151,14 @@ export const navData = {
         {
           title: "Види педагогічної діяльності",
           url: "/teacher-activities-types",
+        },
+        {
+          title: "Звіт викладача",
+          url: "/teachers-report",
+        },
+        {
+          title: "Моє педагогічне навантаження",
+          url: "/my-teaching-load",
         },
       ],
     },

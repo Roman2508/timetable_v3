@@ -25,7 +25,7 @@ export default function IndividualTeacherWork() {
   const dispatch = useAppDispatch();
 
   const [plannedHours, setPlannedHours] = useState(0);
-  const [showedYear, setShowedYear] = useState<number>(customDayjs().year());
+  const [showedYear, setShowedYear] = useState(customDayjs().year());
 
   const selectedWorkTypes = useMemo(
     () =>
