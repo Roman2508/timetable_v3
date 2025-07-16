@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useMemo, type FC } from "react";
 import cookie from "cookie";
 import { Provider as ReduxProvider } from "react-redux";
-import { Outlet, useLoaderData, useLocation, type LoaderFunctionArgs } from "react-router";
+import { Outlet, redirect, useLoaderData, useLocation, type LoaderFunctionArgs } from "react-router";
 
 import {
   PLAN_STATUS,
@@ -49,6 +49,7 @@ import {
 import { plansAPI } from "~/api/plans-api";
 import { groupsAPI } from "~/api/groups-api";
 import SidebarLayout from "./sidebar-layout";
+import { Toaster } from "../ui/common/sonner";
 import Footer from "../features/footer/footer";
 import { CookiesProvider } from "react-cookie";
 import AlertModal from "../features/alert-modal";
@@ -65,8 +66,99 @@ import { LoadingBar } from "../features/loading-bar/loading-bar";
 import { setGroupCategories } from "~/store/groups/groups-slice";
 import { setTeacherCategories } from "~/store/teachers/teachers-slice";
 import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
-import { Toaster } from "../ui/common/sonner";
+import type { Route } from "./+types/root-layout";
+import { userContext } from "~/context";
+import {
+  preloadAuditories,
+  preloadGeteral,
+  preloadGroups,
+  preloadPlans,
+  preloadStreams,
+  preloadTeachers,
+  preloadTimetable,
+} from "~/loaders";
+import { authMe } from "~/store/auth/auth-async-actions";
 
+// export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
+//   async ({ request, context }) => {
+//     // const user = await getUserFromSession(request);
+//     const user = true;
+//     if (!user) {
+//       throw redirect("/auth");
+//     }
+//     // context.set(userContext, user);
+//   },
+// ];
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const store = makeStore();
+
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const cookies = cookie.parse(cookieHeader);
+
+  const token = ""
+
+  // const user = await store.dispatch(authMe(token))
+
+  await Promise.all([
+    preloadGeteral(store, cookies),
+    preloadGroups(store, cookies),
+    preloadPlans(store, cookies),
+    preloadTeachers(store, cookies),
+    preloadAuditories(store, cookies),
+    preloadStreams(store, cookies),
+    preloadTimetable(store, cookies),
+  ]);
+
+  // settings
+  const { data: settings } = await settingsAPI.getSettings();
+  store.dispatch(setSettings(settings));
+
+  return {
+    preloadedState: store.getState(),
+  };
+}
+
+const RootLayout: FC = () => {
+  const { pathname } = useLocation();
+  const disableFooterPaths = ["/grade-book", "/timetable"];
+
+  const { preloadedState } = useLoaderData() as { preloadedState: RootState };
+  const store = useMemo(() => makeStore(preloadedState), [preloadedState]);
+
+  return (
+    <CookiesProvider defaultSetOptions={{ path: "/" }}>
+      <ReduxProvider store={store}>
+        <TooltipProvider>
+          <SidebarLayout>
+            <Toaster />
+
+            <ConfirmModal />
+            <AlertModal />
+
+            <LoadingBar />
+
+            <Header />
+
+            <main className="flex flex-1 flex-col">
+              <div className="@container/main flex flex-1 flex-col gap-2">
+                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                  <Outlet />
+                </div>
+              </div>
+            </main>
+
+            {!disableFooterPaths.includes(pathname) && <Footer />}
+          </SidebarLayout>
+        </TooltipProvider>
+      </ReduxProvider>
+    </CookiesProvider>
+  );
+};
+
+export default RootLayout;
+
+/* 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
 
@@ -171,42 +263,4 @@ export async function loader({ request }: LoaderFunctionArgs) {
     preloadedState: store.getState(),
   };
 }
-
-const RootLayout: React.FC = () => {
-  const { pathname } = useLocation();
-  const disableFooterPaths = ["/grade-book", "/timetable"];
-
-  const { preloadedState } = useLoaderData() as { preloadedState: RootState };
-  const store = React.useMemo(() => makeStore(preloadedState), [preloadedState]);
-
-  return (
-    <CookiesProvider defaultSetOptions={{ path: "/" }}>
-      <ReduxProvider store={store}>
-        <TooltipProvider>
-          <SidebarLayout>
-            <Toaster />
-
-            <ConfirmModal />
-            <AlertModal />
-
-            <LoadingBar />
-
-            <Header />
-
-            <main className="flex flex-1 flex-col">
-              <div className="@container/main flex flex-1 flex-col gap-2">
-                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <Outlet />
-                </div>
-              </div>
-            </main>
-
-            {!disableFooterPaths.includes(pathname) && <Footer />}
-          </SidebarLayout>
-        </TooltipProvider>
-      </ReduxProvider>
-    </CookiesProvider>
-  );
-};
-
-export default RootLayout;
+*/
