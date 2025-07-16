@@ -78,17 +78,7 @@ import {
   preloadTimetable,
 } from "~/loaders";
 import { authMe } from "~/store/auth/auth-async-actions";
-
-// export const unstable_middleware: Route.unstable_MiddlewareFunction[] = [
-//   async ({ request, context }) => {
-//     // const user = await getUserFromSession(request);
-//     const user = true;
-//     if (!user) {
-//       throw redirect("/auth");
-//     }
-//     // context.set(userContext, user);
-//   },
-// ];
+import StoreLayout from "./store-layout";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -96,7 +86,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const cookieHeader = request.headers.get("cookie") ?? "";
   const cookies = cookie.parse(cookieHeader);
 
-  const token = ""
+  if (!cookies.token) {
+    return redirect("/auth");
+  }
 
   // const user = await store.dispatch(authMe(token))
 
