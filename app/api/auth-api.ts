@@ -26,7 +26,13 @@ export const authAPI = {
   },
 
   getMe(token: string) {
-    return instanse.post<AuthResponseType>("/auth/me", { token });
+    return instanse.post<AuthResponseType>(
+      "/auth/me",
+      {},
+      {
+        headers: { cookie: token },
+      },
+    );
   },
 
   /* teacher data */

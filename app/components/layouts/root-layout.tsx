@@ -78,7 +78,6 @@ import {
   preloadTimetable,
 } from "~/loaders";
 import { authMe } from "~/store/auth/auth-async-actions";
-import StoreLayout from "./store-layout";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const store = makeStore();
@@ -87,10 +86,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const cookies = cookie.parse(cookieHeader);
 
   if (!cookies.token) {
+    if (!request.url.includes("/auth")) {
+      return redirect("/auth");
+    } else {
+      return { preloadedState: store.getState() };
+    }
+  }
+
+  const { payload } = await store.dispatch(authMe(cookies.token || ""));
+
+  if (!payload) {
     return redirect("/auth");
   }
 
-  // const user = await store.dispatch(authMe(token))
+  if (payload && request.url.includes("/auth")) {
+    return redirect("/");
+  }
 
   await Promise.all([
     preloadGeteral(store, cookies),
@@ -122,26 +133,30 @@ const RootLayout: FC = () => {
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <ReduxProvider store={store}>
         <TooltipProvider>
-          <SidebarLayout>
-            <Toaster />
+          {pathname !== "/auth" ? (
+            <SidebarLayout>
+              <Toaster />
 
-            <ConfirmModal />
-            <AlertModal />
+              <ConfirmModal />
+              <AlertModal />
 
-            <LoadingBar />
+              <LoadingBar />
 
-            <Header />
+              <Header />
 
-            <main className="flex flex-1 flex-col">
-              <div className="@container/main flex flex-1 flex-col gap-2">
-                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                  <Outlet />
+              <main className="flex flex-1 flex-col">
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                  <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                    <Outlet />
+                  </div>
                 </div>
-              </div>
-            </main>
+              </main>
 
-            {!disableFooterPaths.includes(pathname) && <Footer />}
-          </SidebarLayout>
+              {!disableFooterPaths.includes(pathname) && <Footer />}
+            </SidebarLayout>
+          ) : (
+            <Outlet />
+          )}
         </TooltipProvider>
       </ReduxProvider>
     </CookiesProvider>

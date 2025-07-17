@@ -16,6 +16,8 @@ export { groupLoadLessonsAPI } from "./group-load-lessons-api";
 
 export const instanse = axios.create({
   baseURL: "http://localhost:7777/",
+  withCredentials: true,
+  
   // headers: {
   //   ['Content-Type']: 'application/json',
   //   responseType: 'json',

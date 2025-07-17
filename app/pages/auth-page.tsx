@@ -21,7 +21,7 @@ const defaultFormData = { email: "", password: "" };
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const [isFetching, setIsFetching] = useState(false);
   const [formData, setFormData] = useState(defaultFormData);
@@ -29,11 +29,11 @@ const AuthPage = () => {
   const login = async () => {
     try {
       setIsFetching(true);
-      // const { payload } = await dispatch(authLogin(formData));
+      const { payload } = await dispatch(authLogin(formData));
 
-      const { data } = await authAPI.login(formData);
+      // const { data } = await authAPI.login(formData);
 
-      if (data) {
+      if (payload) {
         navigate("/");
       }
     } catch (error) {
@@ -81,11 +81,11 @@ const AuthPage = () => {
 
             {/* <p className="text-center mb-4">або увійти за допомогою Google</p> */}
 
-            <div className="flex items-center gap-2 mb-4">
+            {/* <div className="flex items-center gap-2 mb-4">
               <Separator orientation="horizontal" className="flex-1" />
               <p className="">або</p>
               <Separator orientation="horizontal" className="flex-1" />
-            </div>
+            </div> */}
 
             <GoogleLogin
               width="100%"
