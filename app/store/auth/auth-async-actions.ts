@@ -96,6 +96,14 @@ export const googleLogin = createAsyncThunk(
   },
 );
 
+export const authLogout = createAsyncThunk("auth/logout", async (_, thunkAPI): Promise<boolean> => {
+  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
+  const promise = authAPI.logout();
+  const { data } = await promise;
+  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS));
+  return data;
+});
+
 /* teacher */
 export const updateTeacherBio = createAsyncThunk(
   "teachers/updateTeacherBio",

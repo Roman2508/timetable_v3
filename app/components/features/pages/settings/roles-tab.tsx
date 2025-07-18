@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { InfoIcon, ScanEyeIcon, ArrowDown, ArrowUp } from "lucide-react";
+import { InfoIcon, ScanEyeIcon, ArrowDown, ArrowUp, Lock } from "lucide-react";
 
 import { Switch } from "~/components/ui/common/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
@@ -22,22 +22,32 @@ const tableData = [
   {
     name: "Головний адміністратор",
     users: 1,
+    isReserved: true,
   },
   {
     name: "Адміністратор",
     users: 4,
+    isReserved: true,
   },
   {
     name: "Викладач",
     users: 46,
+    isReserved: true,
   },
   {
     name: "Студент",
     users: 512,
+    isReserved: true,
   },
   {
     name: "Методист",
     users: 1,
+    isReserved: true,
+  },
+  {
+    name: "Гість",
+    users: 2,
+    isReserved: false,
   },
 ];
 
@@ -70,7 +80,18 @@ const RolesTab = () => {
   const columnHelper = createColumnHelper<(typeof tableData)[number]>();
   const columns = useMemo(
     () => [
-      columnHelper.accessor("name", { header: "Назва" }),
+      columnHelper.display({
+        id: "name",
+        header: "Назва",
+        cell: ({ row }) => {
+          return (
+            <div className="flex items-center gap-2">
+              {row.original.name}
+              {row.original.isReserved && <Lock size={14} />}
+            </div>
+          );
+        },
+      }),
       columnHelper.accessor((row) => row.users, {
         id: "studentsCount",
         header: "Користувачів",
@@ -100,9 +121,9 @@ const RolesTab = () => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
 
+    globalFilterFn: "auto",
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalSearch,
-    globalFilterFn: "fuzzy",
     getFilteredRowModel: getFilteredRowModel(),
   });
 

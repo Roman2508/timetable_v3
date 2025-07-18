@@ -133,10 +133,10 @@ const RootLayout: FC = () => {
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <ReduxProvider store={store}>
         <TooltipProvider>
+          <Toaster />
+
           {pathname !== "/auth" ? (
             <SidebarLayout>
-              <Toaster />
-
               <ConfirmModal />
               <AlertModal />
 

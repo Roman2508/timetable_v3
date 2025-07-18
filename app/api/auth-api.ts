@@ -26,13 +26,11 @@ export const authAPI = {
   },
 
   getMe(token: string) {
-    return instanse.post<AuthResponseType>(
-      "/auth/me",
-      {},
-      {
-        headers: { cookie: token },
-      },
-    );
+    return instanse.post<AuthResponseType>("/auth/me", {}, { headers: { cookie: token } });
+  },
+
+  logout() {
+    return instanse.post<boolean>("/auth/logout");
   },
 
   /* teacher data */

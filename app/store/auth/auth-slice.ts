@@ -10,6 +10,7 @@ import {
   googleLogin,
   updateTeacherBio,
   updateTeacherPrintedWorks,
+  authLogout,
 } from "./auth-async-actions";
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
@@ -41,13 +42,18 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(authLogin.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
-      state.user = action.payload.user;
+      state.user = action.payload;
     });
     builder.addCase(googleLogin.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
-      state.user = action.payload.user;
+      state.user = action.payload;
     });
     builder.addCase(authMe.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
-      state.user = action.payload.user;
+      state.user = action.payload;
+    });
+    builder.addCase(authLogout.fulfilled, (state, action: PayloadAction<boolean>) => {
+      if (action.payload) {
+        state.user = null;
+      }
     });
 
     /* updateTeacherBio */
