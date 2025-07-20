@@ -21,11 +21,11 @@ import { changeExpandSidebarItems, generalSelector } from "~/store/general/gener
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
 interface INavMainItem {
+  id: string;
   key: string;
   title: string;
   icon?: LucideIcon;
-  isActive?: boolean;
-  items?: { title: string; url: string }[];
+  items?: { id: string; title: string; url: string }[];
 }
 
 interface INavMain {
@@ -56,17 +56,20 @@ const NavMain: React.FC<INavMain> = ({ items }) => {
     setCookie(EXPANDED_SIDEBAR_ITEMS, expandedItemsStr);
   };
 
+  const checkIsExpanded = (id: string) => {
+    return sidebar.expandedItems.some((el) => el === id);
+  };
+
   return (
     <SidebarGroup>
-      {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
-            key={item.title}
             asChild
-            defaultOpen={item.isActive}
+            key={item.title}
             className="group/collapsible"
-            onClick={() => onChangeExpanded(item.key)}
+            defaultOpen={checkIsExpanded(item.id)}
+            onClick={() => onChangeExpanded(item.id)}
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -76,6 +79,7 @@ const NavMain: React.FC<INavMain> = ({ items }) => {
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
+
               <CollapsibleContent>
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (

@@ -11,7 +11,7 @@ import { TeamSwitcher } from "~/components/features/sidebar/team-switcher";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "~/components/ui/common/sidebar";
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
-  const [navifation, setNavigation] = useState(navData);
+  const [navigation, setNavigation] = useState(navData);
 
   const { sidebar } = useSelector(generalSelector);
 
@@ -32,13 +32,13 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={navifation.teams} />
+        <TeamSwitcher teams={navigation.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navifation.navMain} />
+        <NavMain items={navigation.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={navifation.user} />
+        <NavUser user={navigation.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

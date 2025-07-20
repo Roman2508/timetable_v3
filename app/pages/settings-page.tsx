@@ -15,6 +15,7 @@ import { AccountsTab } from "~/components/features/pages/settings/accounts-tab";
 import { GeneralInfoTab } from "~/components/features/pages/settings/general-info-tab";
 import { CallScheduleTab } from "~/components/features/pages/settings/call-schedule-tab";
 import { EducationTermsTab } from "~/components/features/pages/settings/education-terms-tab";
+import { OtherTab } from "~/components/features/pages/settings/other-tab";
 
 const tabsList = [
   { icon: <InfoIcon />, label: "Загальна інформація", value: "general-info" },
@@ -22,6 +23,7 @@ const tabsList = [
   { icon: <ClipboardMinusIcon />, label: "Розклад дзвінків", value: "call-schedule" },
   { icon: <UsersIcon />, label: "Облікові записи", value: "accounts" },
   { icon: <ScanEyeIcon />, label: "Ролі", value: "roles" },
+  { icon: <InfoIcon />, label: "Інше", value: "other" },
 ];
 
 const SettingsPage = () => {
@@ -58,6 +60,7 @@ const SettingsPage = () => {
         {activeTab === "call-schedule" && <CallScheduleTab />}
         {activeTab === "accounts" && <AccountsTab />}
         {activeTab === "roles" && <RolesTab />}
+        {activeTab === "other" && <OtherTab />}
       </div>
     </RootContainer>
   );

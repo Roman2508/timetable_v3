@@ -39,7 +39,7 @@ const CategoryCard: React.FC<ICategoryCardProps> = ({
         </CardAction>
       </CardHeader>
 
-      <CardFooter className="flex-col items-start gap-1 text-sm px-3">
+      <CardFooter className="flex-col items-start gap-1 text-sm px-3 mb-auto">
         <div className="line-clamp-1 flex gap-2 font-medium">{name}</div>
       </CardFooter>
 

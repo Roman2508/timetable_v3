@@ -202,7 +202,7 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
       </div>
 
       <Tabs defaultValue={type || "group"} onValueChange={(value) => onTabChange(value)}>
-        <TabsList>
+        <TabsList className="h-full">
           <TabsTrigger value="group" className="h-10">
             Групи
           </TabsTrigger>

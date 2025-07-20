@@ -5,10 +5,8 @@ import { useState, useEffect, type FC, type Dispatch, type SetStateAction, useCa
 
 import {
   clearTeacherOverlay,
-  setLastSelectedData,
   clearAuditoryOverlay,
   scheduleLessonsSelector,
-  lastSelectedDataSelector,
 } from "~/store/schedule-lessons/schedule-lessons-slice";
 import {
   getTeacherOverlay,
@@ -24,17 +22,17 @@ import { LoadingStatusTypes } from "~/store/app-types";
 import LessonActionsModal from "./lesson-actions-modal";
 import getCalendarWeek from "~/helpers/get-calendar-week";
 import { TIMETABLE_WEEK } from "~/constants/cookies-keys";
+import SeveralLessonsModal from "./several-lessons-modal";
 import TimetableCalendarDay from "./timetable-calendar-day";
+import CopyingTimetableModal from "./copying-timetable-modal";
 import type { ISelectedLesson } from "~/pages/timetable-page";
 import { settingsSelector } from "~/store/settings/settings-slice";
+import type { TeachersType } from "~/store/teachers/teachers-types";
+import SelectTeacherModal from "../../select-teacher/select-teacher-modal";
+import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
+import SelectAuditoryModal from "../../select-auditory/select-auditory-modal";
 import { generalSelector, setTimetableData } from "~/store/general/general-slice";
 import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types";
-import SeveralLessonsModal from "./several-lessons-modal";
-import CopyingTimetableModal from "./copying-timetable-modal";
-import SelectAuditoryModal from "../../select-auditory/select-auditory-modal";
-import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
-import SelectTeacherModal from "../../select-teacher/select-teacher-modal";
-import type { TeachersType } from "~/store/teachers/teachers-types";
 
 export interface ISelectedTimeSlot {
   data: Dayjs;
@@ -331,13 +329,14 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
         <div className="flex border-x">
           <div className="flex justify-between w-full">
             <div className="flex gap-2 p-2">
-              <Button variant="outline" size="sm" disabled={isTodayDisabled} onClick={setToday}>
+              <Button variant="outline" className="select-none" size="sm" disabled={isTodayDisabled} onClick={setToday}>
                 Сьогодні
               </Button>
 
               <Button
                 size="sm"
                 variant="outline"
+                className="select-none"
                 disabled={week === 1 || !week}
                 onClick={() => {
                   if (week) {
@@ -350,8 +349,9 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
               </Button>
 
               <Button
-                variant="outline"
                 size="sm"
+                variant="outline"
+                className="select-none"
                 disabled={week === weeksCount}
                 onClick={() => {
                   if (week) {
@@ -366,7 +366,12 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
 
             {type === "group" && (
               <div className="p-2">
-                <Button variant="outline" size="sm" onClick={() => setCopingTimetableModalVisible(true)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="select-none"
+                  onClick={() => setCopingTimetableModalVisible(true)}
+                >
                   Копіювати розклад
                 </Button>
               </div>

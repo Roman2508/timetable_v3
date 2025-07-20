@@ -66,6 +66,9 @@ const SelectAuditoryModal: FC<ISelectAuditoryModal> = ({
         return { ...el, auditories };
       });
       setFreeAuditories(freeAuditories);
+    } else {
+      // Якщо немає накладок, то всі аудиторії вільні
+      setFreeAuditories(auditoriCategories || []);
     }
   };
 
