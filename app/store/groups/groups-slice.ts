@@ -1,4 +1,4 @@
-import { type PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit";
+import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import {
   getGroup,
@@ -18,10 +18,10 @@ import {
   incrementAllGroupsCourse,
   decrementAllGroupsCourse,
 } from "./groups-async-actions";
-import { type GroupsType, type GroupLoadType, type GroupsInitialState, type GroupCategoriesType } from "./groups-types";
 import { type RootState } from "../store";
 import { LoadingStatusTypes } from "../app-types";
 import { type AttachSpecializationPayloadType } from "../../api/api-types";
+import { type GroupsType, type GroupLoadType, type GroupsInitialState, type GroupCategoriesType } from "./groups-types";
 
 const emptyGroupData: GroupsInitialState["group"] = {
   id: 0,
@@ -247,43 +247,9 @@ const groupsSlice = createSlice({
 
         return !bool;
       });
-      console.log([...lessons, ...action.payload]);
-      console.log(JSON.stringify([...lessons, ...action.payload]));
+
       state.group.groupLoad = [...lessons, ...action.payload];
     });
-
-    // /* attachTeacher */
-    // builder.addCase(
-    //   attachTeacher.fulfilled,
-    //   (state, action: PayloadAction<{ lessonId: number; teacher: TeachersType }>) => {
-    //     if (!state.group.groupLoad) return
-
-    //     const lessons = state.group.groupLoad.map((el) => {
-    //       if (el.id === action.payload.lessonId) {
-    //         return { ...el, teacher: action.payload.teacher }
-    //       }
-
-    //       return el
-    //     })
-
-    //     state.group.groupLoad = lessons
-    //   }
-    // )
-
-    // /* unpinTeacher */
-    // builder.addCase(unpinTeacher.fulfilled, (state, action: PayloadAction<{ lessonId: number }>) => {
-    //   if (!state.group.groupLoad) return
-
-    //   const lessons = state.group.groupLoad.map((el) => {
-    //     if (el.id === action.payload.lessonId) {
-    //       return { ...el, teacher: null }
-    //     }
-
-    //     return el
-    //   })
-
-    //   state.group.groupLoad = lessons
-    // })
   },
 });
 
