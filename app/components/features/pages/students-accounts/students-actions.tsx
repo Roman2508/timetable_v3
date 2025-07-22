@@ -2,7 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router";
 
 import { useAppDispatch } from "~/store/store";
-import { onConfirm } from "../../confirm-modal";
+import { ConfirmWindow } from "../../confirm-window";
+import { dialogText } from "~/constants/dialogs-text";
 import { ActionsDropdown } from "../../actions-dropdown";
 import { deleteStudent } from "~/store/students/students-async-actions";
 
@@ -17,15 +18,8 @@ const StudentsActions: React.FC<IStudentsActionsProps> = ({ id }) => {
 
   const onClickDeleteCategory = async (id: number) => {
     if (!id) return;
-
-    const confirmPayload = {
-      isOpen: true,
-      title: "Ви дійсно хочете видалити студента?",
-      description: `Студент та всі результати навчання пов'язані з ним будуть видалені назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.students.title, dialogText.confirm.students.text);
+    if (confirmed) {
       dispatch(deleteStudent(id));
     }
   };

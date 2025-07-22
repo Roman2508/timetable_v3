@@ -18,23 +18,25 @@ import type {
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
 import { pluralizeWords } from "~/helpers/pluralize-words";
 import { useItemsByStatus } from "~/hooks/use-items-by-status";
-import { onConfirm } from "~/components/features/confirm-modal";
+import { AlertWindow } from "~/components/features/alert-window";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { CategoryCard } from "~/components/features/category-card";
 import { useItemsByCategory } from "~/hooks/use-items-by-category";
 import { teachersSelector } from "~/store/teachers/teachers-slice";
+import { ConfirmWindow } from "~/components/features/confirm-window";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { TEACHER_FILTERS, TEACHER_STATUS } from "~/constants/cookies-keys";
+import { generalSelector, setTeacherFilters } from "~/store/general/general-slice";
 import { TeachersTable } from "~/components/features/pages/teachers/teachers-table";
 import type { TeachersCategoryType, TeachersType } from "~/store/teachers/teachers-types";
 import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal";
 import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal";
-import { changeAlertModalStatus, generalSelector, setTeacherFilters } from "~/store/general/general-slice";
 
 const TeachersPage = () => {
   const dispatch = useAppDispatch();
@@ -85,22 +87,12 @@ const TeachersPage = () => {
     if (!selectedCategory) return;
 
     if (selectedCategory.teachers.length) {
-      const alertPayload = {
-        isOpen: true,
-        title: "Видалення циклової комісії неможливе",
-        text: "Циклова комісія не може бути видалена, оскільки вона містить пов’язаних викладачів. Перед видаленням циклової необхідно спочатку видалити або перемістити всіх викладачів, які до неї належать.",
-      };
-      dispatch(changeAlertModalStatus(alertPayload));
+      AlertWindow(dialogText.alert.teacher_category_delete.title, dialogText.alert.teacher_category_delete.text);
       return;
     }
 
-    const confirmPayload = {
-      isOpen: true,
-      title: "Ви дійсно хочете видалити циклову комісію?",
-      description: `Циклову комісію "${selectedCategory.name}" буде видалена назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.cmk.title, dialogText.confirm.cmk.text);
+    if (confirmed) {
       dispatch(deleteTeacherCategory(id));
     }
   };

@@ -261,3 +261,35 @@ body {
   border: 1px solid rgba(0, 0, 0, 1);
 }
 /* // timetable slots */
+
+/* confirm/alert modal animation */
+.animate__zoomIn,
+.animate__fadeIn,
+.animate__zoomOut,
+.animate__fadeOut {
+  --animate-duration: 0.2s !important;
+}
+.animate__zoomIn {
+  animation-name: zoomIn95 !important;
+}
+.animate__zoomOut {
+  animation-name: zoomOut95 !important;
+}
+
+@keyframes zoomIn95 {
+  from {
+    transform: scale3d(0.95, 0.95, 1);
+  }
+  to {
+    transform: scale3d(1, 1, 1);
+  }
+}
+@keyframes zoomOut95 {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+  to {
+    transform: scale3d(0.95, 0.95, 1);
+  }
+}
+/* // confirm/alert modal animation */

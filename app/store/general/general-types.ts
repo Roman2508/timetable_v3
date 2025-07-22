@@ -29,21 +29,4 @@ export type GeneralSliceInitialState = {
     category: number | null;
     type: string | null;
   };
-
-  confirmModal: {
-    isOpen: boolean;
-    answer: boolean;
-    title: string;
-    itemName: string;
-    description: string;
-    onConfirm: () => void;
-  };
-  alertModal: {
-    isOpen: boolean;
-    title: string;
-    text: string;
-  };
 };
-
-export type ChangeConfirmDialogStateType = Partial<GeneralSliceInitialState["confirmModal"]>;
-export type ChangeAlertDialogStateType = Partial<GeneralSliceInitialState["alertModal"]>;

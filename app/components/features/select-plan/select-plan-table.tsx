@@ -3,13 +3,14 @@ import { AlignRight, ChevronsUpDown, PenLine } from "lucide-react";
 import { useCallback, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react";
 
 import { cn } from "~/lib/utils";
-import { onConfirm } from "../confirm-modal";
+import { AlertWindow } from "../alert-window";
 import { useAppDispatch } from "~/store/store";
+import { ConfirmWindow } from "../confirm-window";
 import { Badge } from "~/components/ui/common/badge";
+import { dialogText } from "~/constants/dialogs-text";
 import { ActionsDropdown } from "../actions-dropdown";
 import { Button } from "~/components/ui/common/button";
-import type { PlanActionModalType } from "~/pages/plans/plans-page";
-import { changeAlertModalStatus } from "~/store/general/general-slice";
+import type { PlanActionModalType } from "~/pages/plans-page";
 import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
 import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
@@ -60,27 +61,15 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
 
   const onClickCategoryDeleteFunction = async (id: number) => {
     if (!id) return;
-
-    const confirmPayload = {
-      isOpen: true,
-      title: "Ви дійсно хочете видалити категорію?",
-      description: `Категорія, буде видалена назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-
-    if (!result) return;
+    const confirmed = await ConfirmWindow(dialogText.confirm.category.title, dialogText.confirm.category.text);
+    if (!confirmed) return;
 
     const selectedCategory = plansCategories.find((el) => el.id === id);
 
     if (!selectedCategory) return;
 
     if (selectedCategory.plans.length > 0) {
-      const alertPayload = {
-        isOpen: true,
-        title: "Видалення категорії неможливе",
-        text: "Категорія не може бути видалена, оскільки вона містить пов’язані навчальні плани. Перед видаленням категорії необхідно спочатку видалити або перемістити всі навчальні плани, які до неї належать.",
-      };
-      dispatch(changeAlertModalStatus(alertPayload));
+      AlertWindow(dialogText.alert.plan_delete.title, dialogText.alert.plan_delete.text);
       return;
     }
 
@@ -101,15 +90,8 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
 
   const onClickDeleteFunction = async (id: number) => {
     if (!id) return;
-
-    const confirmPayload = {
-      isOpen: true,
-      title: `Ви дійсно хочете видалити навчальний план ${name}?`,
-      description: `Навчальний план, буде видалений назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.plan_delete.title, dialogText.confirm.plan_delete.text);
+    if (confirmed) {
       dispatch(deletePlan(id));
     }
   };

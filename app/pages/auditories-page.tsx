@@ -18,19 +18,21 @@ import { useCookies } from "react-cookie";
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
 import { pluralizeWords } from "~/helpers/pluralize-words";
 import { useItemsByStatus } from "~/hooks/use-items-by-status";
-import { onConfirm } from "~/components/features/confirm-modal";
+import { AlertWindow } from "~/components/features/alert-window";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { CategoryCard } from "~/components/features/category-card";
 import { useItemsByCategory } from "~/hooks/use-items-by-category";
+import { ConfirmWindow } from "~/components/features/confirm-window";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { auditoriesSelector } from "~/store/auditories/auditories-slise";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { AUDITORY_FILTERS, AUDITORY_STATUS } from "~/constants/cookies-keys";
-import { changeAlertModalStatus, generalSelector, setAuditoryFilters } from "~/store/general/general-slice";
+import { generalSelector, setAuditoryFilters } from "~/store/general/general-slice";
 import { AuditoriesTable } from "~/components/features/pages/auditories/auditories-table";
 import type { AuditoriesTypes, AuditoryCategoriesTypes } from "~/store/auditories/auditories-types";
 import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal";
@@ -85,22 +87,12 @@ const AuditoriesPage = () => {
     if (!selectedCategory) return;
 
     if (selectedCategory.auditories.length) {
-      const alertPayload = {
-        isOpen: true,
-        title: "Видалення категорії неможливе",
-        text: "Категорія не може бути видалена, оскільки вона містить пов’язані аудиторії. Перед видаленням категорії необхідно спочатку видалити або перемістити всі аудиторії, які до неї належать.",
-      };
-      dispatch(changeAlertModalStatus(alertPayload));
+      AlertWindow(dialogText.alert.auditory_category_delete.title, dialogText.alert.auditory_category_delete.text);
       return;
     }
 
-    const confirmPayload = {
-      isOpen: true,
-      title: "Ви дійсно хочете видалити категорію?",
-      description: `Категорія "${selectedCategory.name}" буде видалена назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.category.title, dialogText.confirm.category.text);
+    if (confirmed) {
       dispatch(deleteAuditoryCategory(id));
     }
   };

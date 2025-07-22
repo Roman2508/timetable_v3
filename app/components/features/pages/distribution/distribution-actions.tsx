@@ -1,18 +1,18 @@
-import { ChevronLeft, CircleX, CopyPlus, CopyX, SquarePlus, X as CloseIcon } from "lucide-react";
 import { useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
+import { ChevronLeft, CircleX, CopyPlus, CopyX, SquarePlus, X as CloseIcon } from "lucide-react";
 
 import { useAppDispatch } from "~/store/store";
+import { AlertWindow } from "../../alert-window";
 import { Input } from "~/components/ui/common/input";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
-import type { GroupLoadType } from "~/store/groups/groups-types";
 import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
 import type { TeachersType } from "~/store/teachers/teachers-types";
-import { changeAlertModalStatus } from "~/store/general/general-slice";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { sortLessonsByLessonType } from "~/helpers/sort-lessons-by-lesson-type";
 import type { DistributionLessonType } from "~/helpers/get-lesson-for-distribution";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
 import { attachTeacher, unpinTeacher } from "~/store/schedule-lessons/schedule-lessons-async-actions";
-import { sortLessonsByLessonType } from "~/helpers/sort-lessons-by-lesson-type";
 
 export type AttachmentTypes = "attach_one" | "attach_all" | "unpin_one" | "unpin_all";
 
@@ -38,8 +38,6 @@ const distributionVariants = [
     name: "attach_one",
   },
 ] as const;
-
-
 
 interface IDistributionActionsProps {
   selectedTeacherId: number | null;
@@ -95,12 +93,7 @@ const DistributionActions: FC<IDistributionActionsProps> = ({
 
   const onClickActionButton = async (lessonId: number) => {
     if (!selectedTeacherId) {
-      const alertPayload = {
-        isOpen: true,
-        title: "Помилка",
-        text: "Викладач для закріплення за дисципліною не вибраний",
-      };
-      dispatch(changeAlertModalStatus(alertPayload));
+      AlertWindow(dialogText.alert.distribution_teacher.title, dialogText.alert.distribution_teacher.text);
       return;
     }
 

@@ -9,7 +9,7 @@ export default function HomePage() {
     <RootContainer>
       <div className="p-10 my-5 bg-sidebar">
         {navData.navMain.map((el) => (
-          <div>
+          <div key={el.id}>
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-bold">{el.title}</h1>
             </div>

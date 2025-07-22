@@ -9,27 +9,22 @@ import {
   DialogContent,
   DialogDescription,
 } from "~/components/ui/common/dialog";
-import { onConfirm } from "../confirm-modal";
-import { useAppDispatch } from "~/store/store";
+import { ConfirmWindow } from "../confirm-window";
 import { SelectPlanTable } from "./select-plan-table";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
 import { Separator } from "~/components/ui/common/separator";
-import { InputSearch } from "~/components/ui/custom/input-search";
 import type { GroupFormData } from "~/pages/full-group-page";
+import { InputSearch } from "~/components/ui/custom/input-search";
 import type { PlansCategoriesType } from "~/store/plans/plans-types";
 
 interface IChangePlanModalProps {
   isOpen: boolean;
   defaultValue?: number;
-  // defaultValue?: { id: number; name: string };
   setOpenedModalName: React.Dispatch<React.SetStateAction<string>>;
   setUserFormData: React.Dispatch<React.SetStateAction<Partial<GroupFormData>>>;
 }
-
-const CONFIRM_MODAL_TITLE = "Ви змінюєте навчальний план";
-const CONFIRM_MODAL_DESC =
-  "Усі дані попереднього навантаження будуть видалені, і на їх місці буде автоматично згенеровано нове навантаження згідно з обраним навчальним планом.";
 
 const MODAL_NAME = "educationPlan";
 
@@ -48,8 +43,6 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
   setUserFormData,
   setOpenedModalName,
 }) => {
-  const dispatch = useAppDispatch();
-
   const { plansCategories } = useSelector(plansSelector);
 
   const [searchValue, setSearchValue] = React.useState("");
@@ -62,9 +55,9 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
   const onClickConfirm = async () => {
     // Якщо раніше був вибраний план - перевіряю чи не вибрано інший
     if (defaultValue && defaultValue !== selectedPlan?.id) {
-      const result = await onConfirm({ title: CONFIRM_MODAL_TITLE, description: CONFIRM_MODAL_DESC }, dispatch);
+      const confirmed = await ConfirmWindow(dialogText.confirm.plan_change.title, dialogText.confirm.plan_change.text);
 
-      if (result && selectedPlan) {
+      if (confirmed && selectedPlan) {
         setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
       }
     } else {

@@ -7,14 +7,15 @@ import { Pencil, Plus, Trash2, User } from "lucide-react";
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
 import EntityField from "~/components/features/entity-field";
 import EntityHeader from "~/components/features/entity-header";
-import { onConfirm } from "~/components/features/confirm-modal";
+import { teachersSelector } from "~/store/teachers/teachers-slice";
 import { RootContainer } from "~/components/layouts/root-container";
 import type { TeachersType } from "~/store/teachers/teachers-types";
 import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
-import { teachersSelector } from "~/store/teachers/teachers-slice";
+import { ConfirmWindow } from "~/components/features/confirm-window";
 import { createTeacher, deleteTeacher, updateTeacher } from "~/store/teachers/teachers-async-actions";
 
 interface IFullTeacherProps {
@@ -191,13 +192,8 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
 
   const onDeleteTeacher = async () => {
     if (!isUpdate) return;
-
-    const title = `Ви впевнені, що хочете видалити викладача:`;
-    const description = "Викладач, буде видалений назавжди. Цю дію не можна відмінити.";
-    const itemName = `${getTeacherFullname(teacher)}?`;
-    const result = await onConfirm({ isOpen: true, title, itemName, description }, dispatch);
-
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.teachers.title, dialogText.confirm.teachers.text);
+    if (confirmed) {
       await dispatch(deleteTeacher(Number(teacher)));
       navigate("/teachers");
     }

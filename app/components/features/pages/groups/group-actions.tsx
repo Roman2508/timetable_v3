@@ -2,7 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router";
 
 import { useAppDispatch } from "~/store/store";
-import { onConfirm } from "../../confirm-modal";
+import { ConfirmWindow } from "../../confirm-window";
+import { dialogText } from "~/constants/dialogs-text";
 import { ActionsDropdown } from "../../actions-dropdown";
 import { deleteGroup } from "~/store/groups/groups-async-actions";
 
@@ -17,15 +18,9 @@ const GroupActions: React.FC<IGroupActionsProps> = ({ id }) => {
 
   const onClickDeleteCategory = async (id: number) => {
     if (!id) return;
+    const confirmed = await ConfirmWindow(dialogText.confirm.groups.title, dialogText.confirm.groups.text);
 
-    const confirmPayload = {
-      isOpen: true,
-      title: "Ви дійсно хочете видалити групу?",
-      description: `Група, включаючи все навчальне навантаження, розклад та студентів, що зараховані до групи, будуть видалені назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-
-    if (result) {
+    if (confirmed) {
       dispatch(deleteGroup(id));
     }
   };
@@ -33,8 +28,6 @@ const GroupActions: React.FC<IGroupActionsProps> = ({ id }) => {
   return (
     <ActionsDropdown
       itemId={id}
-      //   changeStatusFunction={() => {}}
-      // changeCategoryFunction={() => {}}
       onClickDeleteFunction={onClickDeleteCategory}
       onClickUpdateFunction={() => navigate(`/groups/${id}`)}
     />

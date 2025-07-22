@@ -18,14 +18,15 @@ import type {
 } from "../../category-actions-modal/category-actions-modal-types";
 import { cn } from "~/lib/utils";
 import { useAppDispatch } from "~/store/store";
-import { onConfirm } from "../../confirm-modal";
+import { AlertWindow } from "../../alert-window";
 import { Card } from "~/components/ui/common/card";
+import { ConfirmWindow } from "../../confirm-window";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
 import { ActionsDropdown } from "../../actions-dropdown";
 import { streamsSelector } from "~/store/streams/streams-slice";
 import type { StreamsType } from "~/store/streams/streams-types";
 import { deleteStream } from "~/store/streams/streams-async-actions";
-import { changeAlertModalStatus } from "~/store/general/general-slice";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
 
@@ -83,22 +84,12 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
     if (!selectedStream) return;
 
     if (selectedStream.groups.length) {
-      const alertPayload = {
-        isOpen: true,
-        title: "Видалення потоку неможливе",
-        text: "Потік не може бути видалений, оскільки він містить пов’язані групи. Перед видаленням потоку необхідно спочатку видалити або перемістити всі групи, які до нього належать.",
-      };
-      dispatch(changeAlertModalStatus(alertPayload));
+      AlertWindow(dialogText.alert.stream_delete.title, dialogText.alert.stream_delete.text);
       return;
     }
 
-    const confirmPayload = {
-      isOpen: true,
-      title: "Ви дійсно хочете видалити потік?",
-      description: `Потік "${selectedStream.name}" буде видалено назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.streams.title, dialogText.confirm.streams.text);
+    if (confirmed) {
       dispatch(deleteStream(id));
     }
   };

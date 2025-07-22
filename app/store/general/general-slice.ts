@@ -1,11 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type {
-  GeneralSliceInitialState,
-  ChangeAlertDialogStateType,
-  ChangeConfirmDialogStateType,
-} from "./general-types";
 import type { RootState } from "../store";
+import type { GeneralSliceInitialState } from "./general-types";
 
 const generalInitialState: GeneralSliceInitialState = {
   sidebar: {
@@ -26,9 +22,6 @@ const generalInitialState: GeneralSliceInitialState = {
     category: null,
     type: null,
   },
-
-  confirmModal: { isOpen: false, title: "", itemName: "", description: "", answer: false, onConfirm: () => {} },
-  alertModal: { isOpen: false, title: "", text: "" },
 };
 
 const generalSlice = createSlice({
@@ -102,27 +95,6 @@ const generalSlice = createSlice({
     setTimetableData(state, action: PayloadAction<Partial<GeneralSliceInitialState["timetable"]>>) {
       state.timetable = { ...state.timetable, ...action.payload };
     },
-
-    changeConfirmModalStatus(state, action: PayloadAction<ChangeConfirmDialogStateType>) {
-      const keys = Object.keys(action.payload);
-      const { isOpen, answer, title, itemName, description, onConfirm } = action.payload;
-
-      if (keys.includes("onConfirm")) state.confirmModal.onConfirm = onConfirm ?? (() => {});
-      if (keys.includes("isOpen")) state.confirmModal.isOpen = isOpen ?? false;
-      if (keys.includes("answer")) state.confirmModal.answer = answer ?? false;
-      if (keys.includes("title")) state.confirmModal.title = title ?? "";
-      if (keys.includes("itemName")) state.confirmModal.itemName = itemName ?? "";
-      if (keys.includes("description")) state.confirmModal.description = description ?? "";
-    },
-
-    changeAlertModalStatus(state, action: PayloadAction<ChangeAlertDialogStateType>) {
-      const keys = Object.keys(action.payload);
-      const { isOpen, title, text } = action.payload;
-
-      if (keys.includes("isOpen")) state.alertModal.isOpen = isOpen ?? false;
-      if (keys.includes("title")) state.alertModal.title = title ?? "";
-      if (keys.includes("text")) state.alertModal.text = text ?? "";
-    },
   },
 });
 
@@ -142,8 +114,6 @@ export const {
   setTeacherFilters,
   setAuditoryStatus,
   setAuditoryFilters,
-  changeAlertModalStatus,
-  changeConfirmModalStatus,
   changeExpandSidebarItems,
   toggleExpandedSidebarItems,
 } = generalSlice.actions;

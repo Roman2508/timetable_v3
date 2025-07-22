@@ -16,21 +16,23 @@ import type {
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
 import { sortByName } from "~/helpers/sort-by-name";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
 import { pluralizeWords } from "~/helpers/pluralize-words";
 import { groupsSelector } from "~/store/groups/groups-slice";
 import { useItemsByStatus } from "~/hooks/use-items-by-status";
-import { onConfirm } from "~/components/features/confirm-modal";
+import { AlertWindow } from "~/components/features/alert-window";
 import { InputSearch } from "~/components/ui/custom/input-search";
 import { CategoryCard } from "~/components/features/category-card";
 import { useItemsByCategory } from "~/hooks/use-items-by-category";
+import { ConfirmWindow } from "~/components/features/confirm-window";
 import { RootContainer } from "~/components/layouts/root-container";
 import { PopoverFilter } from "~/components/ui/custom/popover-filter";
 import { GROUP_FILTERS, GROUP_STATUS } from "~/constants/cookies-keys";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
 import { GroupsTable } from "~/components/features/pages/groups/groups-table";
+import { generalSelector, setGroupFilters } from "~/store/general/general-slice";
 import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types";
-import { changeAlertModalStatus, generalSelector, setGroupFilters } from "~/store/general/general-slice";
 import { createGroupCategory, deleteGroupCategory, updateGroupCategory } from "~/store/groups/groups-async-actions";
 
 const GroupsPage = () => {
@@ -78,22 +80,12 @@ const GroupsPage = () => {
     if (!selectedCategory) return;
 
     if (selectedCategory.groups.length) {
-      const alertPayload = {
-        isOpen: true,
-        title: "Видалення структурного підрозділу неможливе",
-        text: "Підрозділ не може бути видалений, оскільки він містить пов’язані групи. Перед видаленням структурного підрозділу необхідно спочатку видалити або перемістити всі групи, які до нього належать.",
-      };
-      dispatch(changeAlertModalStatus(alertPayload));
+      AlertWindow(dialogText.alert.group_category_delete.title, dialogText.alert.group_category_delete.text);
       return;
     }
 
-    const confirmPayload = {
-      isOpen: true,
-      title: "Ви дійсно хочете видалити структурний підрозділ?",
-      description: `Структурний підрозділ "${selectedCategory.name}" буде видалено назавжди. Цю дію не можна відмінити.`,
-    };
-    const result = await onConfirm(confirmPayload, dispatch);
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.unit.title, dialogText.confirm.unit.text);
+    if (confirmed) {
       dispatch(deleteGroupCategory(id));
     }
   };

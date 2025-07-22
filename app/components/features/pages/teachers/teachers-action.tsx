@@ -2,10 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router";
 
 import { useAppDispatch } from "~/store/store";
-import { onConfirm } from "../../confirm-modal";
+import { ConfirmWindow } from "../../confirm-window";
+import { dialogText } from "~/constants/dialogs-text";
 import { ActionsDropdown } from "../../actions-dropdown";
-import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
-import type { TeachersType } from "~/store/teachers/teachers-types";
 import { deleteTeacher } from "~/store/teachers/teachers-async-actions";
 
 interface ITeachersActionsProps {
@@ -19,15 +18,8 @@ const TeachersActions: React.FC<ITeachersActionsProps> = ({ id, ...rest }) => {
 
   const onClickDeleteCategory = async (id: number) => {
     if (!id) return;
-
-    const title = `Ви впевнені, що хочете видалити викладача:`;
-    const description = "Викладач, буде видалений назавжди. Цю дію не можна відмінити.";
-    const itemName = `${getTeacherFullname(rest as TeachersType)}?`;
-
-    const confirmPayload = { isOpen: true, title, itemName, description };
-    const result = await onConfirm(confirmPayload, dispatch);
-
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.teachers.title, dialogText.confirm.teachers.text);
+    if (confirmed) {
       dispatch(deleteTeacher(id));
     }
   };
@@ -35,8 +27,6 @@ const TeachersActions: React.FC<ITeachersActionsProps> = ({ id, ...rest }) => {
   return (
     <ActionsDropdown
       itemId={id}
-      //   changeStatusFunction={() => {}}
-      // changeCategoryFunction={() => {}}
       onClickDeleteFunction={onClickDeleteCategory}
       onClickUpdateFunction={() => navigate(`/teachers/${id}`)}
     />

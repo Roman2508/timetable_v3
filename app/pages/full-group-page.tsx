@@ -6,13 +6,14 @@ import { GraduationCap, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { useAppDispatch } from "~/store/store";
 import { Card } from "~/components/ui/common/card";
+import { dialogText } from "~/constants/dialogs-text";
 import { Button } from "~/components/ui/common/button";
 import { plansSelector } from "~/store/plans/plans-slice";
 import EntityField from "~/components/features/entity-field";
 import type { GroupsType } from "~/store/groups/groups-types";
 import EntityHeader from "~/components/features/entity-header";
-import { onConfirm } from "~/components/features/confirm-modal";
 import { RootContainer } from "~/components/layouts/root-container";
+import { ConfirmWindow } from "~/components/features/confirm-window";
 import { groupsSelector, setGroup } from "~/store/groups/groups-slice";
 import SelectPlanModal from "~/components/features/select-plan/select-plan-modal";
 import SubgroupsModal from "~/components/features/pages/full-group/subgroups-modal";
@@ -245,14 +246,8 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
 
   const onDeleteGroup = async () => {
     if (!isUpdate) return;
-
-    const title = `Ви впевнені, що хочете видалити групу: ${group.name}?`;
-    const description =
-      "Група, включаючи все навчальне навантаження, розклад та студентів, що зараховані до групи, будуть видалені назавжди. Цю дію не можна відмінити.";
-
-    const result = await onConfirm({ isOpen: true, title, description }, dispatch);
-
-    if (result) {
+    const confirmed = await ConfirmWindow(dialogText.confirm.groups.title, dialogText.confirm.groups.text);
+    if (confirmed) {
       await dispatch(deleteGroup(Number(groupId)));
       navigate("/groups");
     }
@@ -267,14 +262,13 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
     if (openedModalName === "stream") {
       const onGoToStreams = async () => {
         setOpenedModalName("");
-        const payload = {
-          isOpen: true,
-          title: "Редагування потоків",
-          description: 'Ви дійсно хочете перейти на сторінку "Потоки"? Всі внесені зміни не буде збережено',
-        };
-        const result = await onConfirm(payload, dispatch);
 
-        if (result) {
+        const confirmed = await ConfirmWindow(
+          dialogText.confirm.groups_open_stream_page.title,
+          dialogText.confirm.groups_open_stream_page.text,
+        );
+
+        if (confirmed) {
           navigate("/streams");
         }
       };
