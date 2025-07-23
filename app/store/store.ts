@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import authReducer from "./auth/auth-slice";
 import plansReducer from "./plans/plans-slice";
+import type { AppDispatch } from "./app-types";
 import groupsReducer from "./groups/groups-slice";
 import streamsReducer from "./streams/streams-slice";
 import generalReducer from "./general/general-slice";
@@ -35,9 +36,4 @@ export const makeStore = (preloadedState: any = undefined) => {
   return configureStore({ reducer: rootReducer, preloadedState });
 };
 
-export const store = makeStore();
-
-export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore["getState"]>;
-export type AppDispatch = AppStore["dispatch"];
 export const useAppDispatch = () => useDispatch<AppDispatch>();

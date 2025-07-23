@@ -26,7 +26,7 @@ import {
   type InstructionalMaterialsType,
   type TeacherProfileInitialInitialState,
 } from "./teacher-profile-types";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type GroupLoadType } from "../groups/groups-types";
 import { type TeacherReportUploadFileResponceType } from "../../api/api-types";

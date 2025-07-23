@@ -24,6 +24,6 @@ export const AlertWindow = async (title: string, text?: string): Promise<boolean
         "!bg-background !text-sidebar-foreground !border !border-border !rounded-none !h-10 !px-4 !py-2 !m-0  !hover:bg-accent !hover:text-accent-foreground",
     },
   });
-
   return result.isConfirmed;
+  return false;
 };

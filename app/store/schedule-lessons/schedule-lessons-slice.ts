@@ -27,7 +27,7 @@ import {
   type ScheduleLessonType,
   type ScheduleLessonInitialStateType,
 } from "./schedule-lessons-types";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type GroupLoadType } from "../groups/groups-types";
 import { type StudentType } from "../students/students-types";

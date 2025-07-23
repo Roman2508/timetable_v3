@@ -18,8 +18,7 @@ import {
   incrementAllGroupsCourse,
   decrementAllGroupsCourse,
 } from "./groups-async-actions";
-import { type RootState } from "../store";
-import { LoadingStatusTypes } from "../app-types";
+import { LoadingStatusTypes, type RootState } from "../app-types";
 import { type AttachSpecializationPayloadType } from "../../api/api-types";
 import { type GroupsType, type GroupLoadType, type GroupsInitialState, type GroupCategoriesType } from "./groups-types";
 

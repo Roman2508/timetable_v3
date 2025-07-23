@@ -50,7 +50,7 @@ const GroupsPage = () => {
   const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">(
     defaultStatus ? defaultStatus : "Всі",
   );
-  const [selectedCategories, setSelectedCategories] = React.useState(
+  const [selectedCategories, setSelectedCategories] = React.useState<GroupCategoriesType[]>(
     filtredCategories.length ? filtredCategories : groupCategories ? groupCategories.map((el) => ({ id: el.id })) : [],
   );
   const [modalData, setModalData] = React.useState<CategoryModalStateType>({
@@ -124,7 +124,7 @@ const GroupsPage = () => {
       />
 
       <RootContainer classNames="mb-10">
-        <div className="flex justify-between mb-6">
+        <div className="flex justify-center md:justify-between gap-4 flex-col md:flex-row items-center mb-6">
           <h2 className="text-xl">Структурні підрозділи</h2>
 
           <div className="flex items-center gap-2">
@@ -146,7 +146,7 @@ const GroupsPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-5 gap-4 flex-wrap mb-10">
+        <div className="grid grid-cols-1 2xs:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-4 flex-wrap mb-10">
           {(groupCategories ? sortByName(groupCategories) : []).map((item) => (
             <CategoryCard
               key={item.id}

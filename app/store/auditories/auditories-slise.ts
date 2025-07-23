@@ -9,7 +9,7 @@ import {
   deleteAuditoryCategory,
   updateAuditoryCategory,
 } from "./auditories-async-actions";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type AuditoryCategoriesTypes, type AuditoriesInitialState, type AuditoriesTypes } from "./auditories-types";
 

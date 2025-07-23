@@ -1,5 +1,6 @@
+import type { RootState } from "../app-types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../store";
+
 
 type StatusTypes = "success" | "info" | "error" | "";
 

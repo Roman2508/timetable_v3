@@ -7,7 +7,7 @@ import {
   updateCallSchedule,
   updateSemesterTerms,
 } from "./settings-async-actions";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type SettingsInitialStateType, type SettingsType } from "./settings-types";
 

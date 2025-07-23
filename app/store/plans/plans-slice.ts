@@ -22,7 +22,7 @@ import {
   updatePlanSubjectsName,
   updatePlanSubjectsHours,
 } from "./plans-async-actions";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 
 const plansInitialState: PlansInitialState = {

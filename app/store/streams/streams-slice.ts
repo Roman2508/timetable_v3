@@ -11,7 +11,7 @@ import {
   addLessonToStream,
   deleteLessonFromStream,
 } from "./streams-async-actions";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type GroupLoadType } from "../groups/groups-types";
 import { type DeleteGroupFromStreamResponseType } from "../../api/api-types";

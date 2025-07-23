@@ -10,7 +10,7 @@ import {
   getTeachersCategories,
   updateTeacherCategory,
 } from "./teachers-async-actions";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type TeachersCategoryType, type TeachersInitialState, type TeachersType } from "./teachers-types";
 

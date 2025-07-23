@@ -5,7 +5,7 @@ import {
   type AddSummaryResponceType,
   type DeleteGradeBookSummaryPayloadType,
 } from "../../api/api-types";
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type InstructionalMaterialsType } from "../teacher-profile/teacher-profile-types";
 import { type GradeBookInitialStateType, GradeBookSummaryTypes, type GradeBookType } from "./grade-book-types";

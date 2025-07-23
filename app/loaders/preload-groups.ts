@@ -6,8 +6,8 @@ import { setGroupFilters, setGroupsOrder, setGroupStatus } from "~/store/general
 import { GROUP_FILTERS, GROUP_SORT_KEY, GROUP_SORT_TYPE, GROUP_STATUS } from "~/constants/cookies-keys";
 
 export async function preloadGroups(store: AppStore, cookies: Record<string, string | undefined>) {
-  const { data: categories } = await groupsAPI.getGroupsCategories();
-  store.dispatch(setGroupCategories(categories));
+  const { data } = await groupsAPI.getGroupsCategories();
+  store.dispatch(setGroupCategories(data));
 
   const filters = parseIdsFromCookie(cookies[GROUP_FILTERS]);
   store.dispatch(setGroupFilters(filters));

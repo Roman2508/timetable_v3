@@ -1,6 +1,6 @@
 import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-import { type RootState } from "../store";
+import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type StudentType, type StudentsInitialState } from "./students-types";
 import { createStudent, deleteStudent, updateStudent, getStudentsByGroupId } from "./students-async-actions";
