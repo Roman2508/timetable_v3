@@ -465,6 +465,36 @@ export type CreateIndividualTeacherWorkType = {
 export type UpdateIndividualTeacherWorkType = CreateIndividualTeacherWorkType & { id: number };
 /* // individual-teacher-work */
 
+/* user roles */
+export type PermissionType = {
+  id: number;
+  page: string;
+  action: string;
+};
+export type UserRolesType = {
+  id: number;
+  name: string;
+  key: string;
+  permissions: PermissionType[];
+};
+
+export type CreateRolePayloadType = {
+  name: string;
+  key: string;
+};
+export type UpdateRolePayloadType = {
+  id: number;
+  name: string;
+  key: string;
+};
+export type CreatePermissionPayloadType = {
+  page: string;
+  action: string;
+  roleId: number;
+};
+
+/* //user roles */
+
 /* auth */
 export type RegisterPayloadType = {
   email: string;

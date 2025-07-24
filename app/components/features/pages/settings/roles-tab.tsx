@@ -216,6 +216,10 @@ const RolesTab = () => {
         </TableBody>
       </Table>
 
+      <button className="w-full text-sm border border-border border-dashed py-2 mt-2 cursor-pointer hover:bg-border/20 transition-colors">
+        Додати нову роль
+      </button>
+
       <div className="mt-10 mb-4">
         <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
           <InfoIcon className="w-5" /> Ролі
