@@ -2,8 +2,9 @@ import { useDispatch } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import authReducer from "./auth/auth-slice";
-import plansReducer from "./plans/plans-slice";
 import type { AppDispatch } from "./app-types";
+import plansReducer from "./plans/plans-slice";
+import rolesReducer from "./roles/roles-slice";
 import groupsReducer from "./groups/groups-slice";
 import streamsReducer from "./streams/streams-slice";
 import generalReducer from "./general/general-slice";
@@ -18,6 +19,7 @@ import scheduleLessonsReducer from "./schedule-lessons/schedule-lessons-slice";
 
 export const rootReducer = combineReducers({
   auth: authReducer,
+  roles: rolesReducer,
   plans: plansReducer,
   groups: groupsReducer,
   streams: streamsReducer,

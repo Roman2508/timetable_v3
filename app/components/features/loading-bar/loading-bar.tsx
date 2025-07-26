@@ -1,7 +1,7 @@
-import React from "react";
-import { useNavigation } from "react-router";
+import { useEffect } from "react";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import { useNavigation } from "react-router";
 
 export const LoadingBar = () => {
   const navigation = useNavigation();
@@ -10,7 +10,7 @@ export const LoadingBar = () => {
     showSpinner: true,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (typeof window === "undefined") return;
 
     if (navigation.state === "loading" || navigation.state === "submitting") {

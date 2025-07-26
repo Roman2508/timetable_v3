@@ -1,5 +1,5 @@
 import { groupsAPI } from "~/api/groups-api";
-import type { AppStore } from "~/store/store";
+import type { AppStore } from "~/store/app-types";
 import { setGroupCategories } from "~/store/groups/groups-slice";
 import { parseBoolean, parseEnum, parseIdsFromCookie } from "~/helpers/cookie-parsers";
 import { setGroupFilters, setGroupsOrder, setGroupStatus } from "~/store/general/general-slice";

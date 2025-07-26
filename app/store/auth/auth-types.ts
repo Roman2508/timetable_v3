@@ -1,4 +1,5 @@
 import { LoadingStatusTypes } from "../app-types";
+import type { RoleType } from "../roles/roles-types";
 import { type StudentType } from "../students/students-types";
 import { type TeachersType } from "../teachers/teachers-types";
 
@@ -20,12 +21,13 @@ export enum UserRoles {
 export type UserType = {
   id: number;
   login: string; // ??????
+  name: string;
   email: string;
-  role: (typeof userRoles)[number][];
+  roles: RoleType[];
+  // role: (typeof userRoles)[number][];
   picture: string | null;
   lastLogin: string | null;
   createdAt: string | null;
-  // role: ['ADMIN' | 'GUEST' | 'TEACHER' | 'STUDENT' | 'HEAD_OF_DEPARTMENT' | 'METHODIST']
   teacher: TeachersType | null;
   student: StudentType | null;
 };

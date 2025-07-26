@@ -25,8 +25,12 @@ export const authAPI = {
     return instanse.post<AuthResponseType>("/auth/google/me", payload);
   },
 
-  getMe(token: string) {
-    return instanse.post<AuthResponseType>("/auth/me", {}, { headers: { cookie: token } });
+  // getMe(token: string) {
+  //   return instanse.post<AuthResponseType>("/auth/me", {}, { headers: { cookie: token } });
+  // },
+
+  getProfile() {
+    return instanse.get<AuthResponseType>("/auth/profile");
   },
 
   logout() {

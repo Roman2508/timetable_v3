@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import {
-  authMe,
+  // authMe,
   getUsers,
   authLogin,
   deleteUser,
@@ -11,6 +11,7 @@ import {
   updateTeacherBio,
   updateTeacherPrintedWorks,
   authLogout,
+  getProfile,
 } from "./auth-async-actions";
 import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
@@ -39,6 +40,10 @@ const authSlice = createSlice({
     clearUsers(state) {
       state.users = null;
     },
+
+    setUsers(state, action: PayloadAction<UserType[]>) {
+      state.users = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(authLogin.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
@@ -47,9 +52,12 @@ const authSlice = createSlice({
     builder.addCase(googleLogin.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
       state.user = action.payload;
     });
-    builder.addCase(authMe.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
+    builder.addCase(getProfile.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
       state.user = action.payload;
     });
+    // builder.addCase(authMe.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
+    //   state.user = action.payload;
+    // });
     builder.addCase(authLogout.fulfilled, (state, action: PayloadAction<boolean>) => {
       if (action.payload) {
         state.user = null;
@@ -102,7 +110,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoadingStatus, clearUser, clearUsers } = authSlice.actions;
+export const { setLoadingStatus, clearUser, clearUsers, setUsers } = authSlice.actions;
 
 export default authSlice.reducer;
 

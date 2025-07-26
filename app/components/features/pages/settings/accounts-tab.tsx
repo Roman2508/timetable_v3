@@ -1,18 +1,24 @@
-import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, InfoIcon } from "lucide-react";
 import {
-  createColumnHelper,
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
   useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  createColumnHelper,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { ArrowDown, ArrowUp, InfoIcon } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 import { cn } from "~/lib/utils";
+import { fuzzyFilter } from "~/helpers/fuzzy-filter";
+import { authSelector } from "~/store/auth/auth-slice";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import type { UserType } from "~/store/auth/auth-types";
+import { formatLastLogin } from "~/helpers/format-last-login";
+import AccountsActions from "./accounts-actions";
+import AccountsModal from "./accounts-modal";
 
 const data = [
   {
@@ -78,9 +84,14 @@ const data = [
 ];
 
 const AccountsTab = () => {
-  const [globalSearch, setGlobalSearch] = useState("");
+  const { users } = useSelector(authSelector);
 
-  const columnHelper = createColumnHelper<(typeof data)[number]>();
+  const [globalSearch, setGlobalSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [editedUser, setEditedUser] = useState<UserType | null>(null);
+  const [modalType, setModalType] = useState<"create" | "update">("create");
+
+  const columnHelper = createColumnHelper<UserType>();
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -92,33 +103,32 @@ const AccountsTab = () => {
           return (
             <div className="flex items-center gap-2">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src={row.original.picture ? row.original.picture : "https://github.com/shadcn.png"} />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div>
-                <p className="font-semibold">Пташник Роман Вікторович</p>
-                <p className="text-muted-foreground">ptashnyk.roman@pharm.zt.ua</p>
+                <p className="font-semibold">{row.original.name ? row.original.name : "-"}</p>
+                <p className="text-muted-foreground">{row.original.email}</p>
               </div>
             </div>
           );
         },
       }),
-      columnHelper.accessor((row) => row.roles.join(", "), {
+      columnHelper.accessor((row) => (row.roles ? row.roles.map((el) => el.name).join(", ") : "-"), {
         id: "studentsCount",
         header: "Ролі",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("lastLogin", { header: "Останній вхід" }),
+      columnHelper.accessor((row) => formatLastLogin(row.lastLogin), {
+        id: "lastLogin",
+        header: "Останній вхід",
+        cell: (info) => info.getValue(),
+      }),
       columnHelper.display({
         id: "actions",
         header: "Дії",
         cell: ({ row }) => {
-          return (
-            <div>
-              111
-              {/* <GroupActions id={row.original.id} /> */}
-            </div>
-          );
+          return <AccountsActions id={row.original.id} />;
         },
       }),
     ],
@@ -126,21 +136,26 @@ const AccountsTab = () => {
   );
 
   const table = useReactTable({
-    data: data,
     columns,
-    // state: { sorting, globalFilter: globalSearch },
-    // onSortingChange: setSorting,
+    data: users || [],
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
 
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalSearch,
-    globalFilterFn: "fuzzy",
     getFilteredRowModel: getFilteredRowModel(),
   });
 
   return (
     <>
+      <AccountsModal
+        user={editedUser}
+        isOpen={isModalOpen}
+        modalType={modalType}
+        setIsOpen={setIsModalOpen}
+        setModalType={setModalType}
+      />
+
       <h2 className="text-xl font-semibold flex items-center gap-2 mb-6">
         <InfoIcon className="w-5" /> Загальна інформація
       </h2>

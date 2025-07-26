@@ -1,4 +1,4 @@
-import type { AppStore } from "~/store/store";
+import type { AppStore } from "~/store/app-types";
 import { STREAMS_FILTERS } from "~/constants/cookies-keys";
 import { setStreamFilters } from "~/store/general/general-slice";
 

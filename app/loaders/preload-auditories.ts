@@ -1,4 +1,4 @@
-import type { AppStore } from "~/store/store";
+import type { AppStore } from "~/store/app-types";
 import { auditoriesAPI } from "~/api/auditories-api";
 import { setAuditoryCategories } from "~/store/auditories/auditories-slise";
 import { parseBoolean, parseEnum, parseIdsFromCookie } from "~/helpers/cookie-parsers";

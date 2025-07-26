@@ -13,6 +13,7 @@ import {
   preloadTimetable,
   preloadAuditories,
 } from "~/loaders";
+import { instanse } from "~/api/api";
 import { makeStore } from "~/store/store";
 import SidebarLayout from "./sidebar-layout";
 import { Toaster } from "../ui/common/sonner";
@@ -20,60 +21,72 @@ import Footer from "../features/footer/footer";
 import { settingsAPI } from "~/api/settings-api";
 import type { RootState } from "~/store/app-types";
 import { TooltipProvider } from "../ui/common/tooltip";
-import { authMe } from "~/store/auth/auth-async-actions";
+import { getProfile } from "~/store/auth/auth-async-actions";
 import { Header } from "~/components/features/header/header";
 import { setSettings } from "~/store/settings/settings-slice";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const store = makeStore();
+export const shouldRevalidate = () => {
+  return false; // Отключаем повторный вызов лоадера при навигации
+};
 
-  const cookieHeader = request.headers.get("cookie") ?? "";
-  const cookies = cookie.parse(cookieHeader);
+// export async function loader({ request }: LoaderFunctionArgs) {
+//   const store = makeStore();
 
-  if (!cookies.token) {
-    if (!request.url.includes("/auth")) {
-      return redirect("/auth");
-    } else {
-      return { preloadedState: store.getState() };
-    }
-  }
+//   const cookieHeader = request.headers.get("cookie") ?? "";
+//   const cookies = cookie.parse(cookieHeader);
 
-  const { payload } = await store.dispatch(authMe(cookies.token || ""));
+//   if (!cookies.token) {
+//     if (!request.url.includes("/auth")) {
+//       return redirect("/auth");
+//     } else {
+//       return { preloadedState: store.getState() };
+//     }
+//   }
 
-  if (!payload) {
-    return redirect("/auth");
-  }
+//   instanse.interceptors.request.use((config) => {
+//     const cookie = cookies && cookies.token ? `token=${cookies.token}` : "";
+//     config.headers.Cookie = cookie;
+//     return config;
+//   });
 
-  if (payload && request.url.includes("/auth")) {
-    return redirect("/");
-  }
+//   const { payload: userProfile } = await store.dispatch(getProfile());
 
-  await Promise.all([
-    preloadGeteral(store, cookies),
-    preloadGroups(store, cookies),
-    preloadPlans(store, cookies),
-    preloadTeachers(store, cookies),
-    preloadAuditories(store, cookies),
-    preloadStreams(store, cookies),
-    preloadTimetable(store, cookies),
-  ]);
+//   if (!userProfile) {
+//     return redirect("/auth");
+//   }
 
-  // settings
-  const { data: settings } = await settingsAPI.getSettings();
-  store.dispatch(setSettings(settings));
+//   if (userProfile && request.url.includes("/auth")) {
+//     return redirect("/");
+//   }
 
-  return {
-    preloadedState: store.getState(),
-  };
-}
+//   await Promise.all([
+//     preloadGeteral(store, cookies),
+//     preloadGroups(store, cookies),
+//     preloadPlans(store, cookies),
+//     preloadTeachers(store, cookies),
+//     preloadAuditories(store, cookies),
+//     preloadStreams(store, cookies),
+//     preloadTimetable(store, cookies),
+//   ]);
+
+//   // settings
+//   const { data: settings } = await settingsAPI.getSettings();
+//   store.dispatch(setSettings(settings));
+
+//   return {
+//     preloadedState: store.getState(),
+//   };
+// }
 
 const RootLayout: FC = () => {
   const { pathname } = useLocation();
   const disableFooterPaths = ["/grade-book", "/timetable"];
 
-  const { preloadedState } = useLoaderData() as { preloadedState: RootState };
-  const store = useMemo(() => makeStore(preloadedState), [preloadedState]);
+  // const { preloadedState } = useLoaderData() as { preloadedState: RootState };
+  // const store = useMemo(() => makeStore(preloadedState), [preloadedState]);
+
+  const store = makeStore();
 
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>

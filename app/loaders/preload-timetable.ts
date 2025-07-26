@@ -5,7 +5,7 @@ import {
   TIMETABLE_CATEGORY,
   TIMETABLE_SEMESTER,
 } from "~/constants/cookies-keys";
-import type { AppStore } from "~/store/store";
+import type { AppStore } from "~/store/app-types";
 import { parseNumber } from "~/helpers/cookie-parsers";
 import { setTimetableData } from "~/store/general/general-slice";
 

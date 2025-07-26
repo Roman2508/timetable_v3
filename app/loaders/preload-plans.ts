@@ -1,5 +1,5 @@
 import { plansAPI } from "~/api/plans-api";
-import type { AppStore } from "~/store/store";
+import type { AppStore } from "~/store/app-types";
 import { setPlanCategories } from "~/store/plans/plans-slice";
 import { parseEnum, parseIdsFromCookie } from "~/helpers/cookie-parsers";
 import { PLAN_EXPANDED, PLAN_FILTERS, PLAN_STATUS } from "~/constants/cookies-keys";

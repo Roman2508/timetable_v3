@@ -6,16 +6,16 @@ import {
   Settings as SettingsIcon,
   ClipboardMinus as ClipboardMinusIcon,
 } from "lucide-react";
-import React from "react";
+import { useSearchParams } from "react-router";
 
 import { RootContainer } from "~/components/layouts/root-container";
 import RolesTab from "~/components/features/pages/settings/roles-tab";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
+import { OtherTab } from "~/components/features/pages/settings/other-tab";
 import { AccountsTab } from "~/components/features/pages/settings/accounts-tab";
 import { GeneralInfoTab } from "~/components/features/pages/settings/general-info-tab";
 import { CallScheduleTab } from "~/components/features/pages/settings/call-schedule-tab";
 import { EducationTermsTab } from "~/components/features/pages/settings/education-terms-tab";
-import { OtherTab } from "~/components/features/pages/settings/other-tab";
 
 const tabsList = [
   { icon: <InfoIcon />, label: "Загальна інформація", value: "general-info" },
@@ -24,10 +24,23 @@ const tabsList = [
   { icon: <UsersIcon />, label: "Облікові записи", value: "accounts" },
   { icon: <ScanEyeIcon />, label: "Ролі", value: "roles" },
   { icon: <InfoIcon />, label: "Інше", value: "other" },
-];
+] as const;
+
+const tabs = {
+  ["general-info"]: <GeneralInfoTab />,
+  ["education-terms"]: <EducationTermsTab />,
+  ["call-schedule"]: <CallScheduleTab />,
+  ["accounts"]: <AccountsTab />,
+  ["roles"]: <RolesTab />,
+  ["other"]: <OtherTab />,
+};
+
+type TabsVariants = (typeof tabsList)[number]["value"];
 
 const SettingsPage = () => {
-  const [activeTab, setActiveTab] = React.useState(tabsList[0].value);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeTab = (searchParams.get("tab") as TabsVariants) || tabsList[0].value;
 
   return (
     <RootContainer classNames="mb-10 flex gap-8">
@@ -37,13 +50,17 @@ const SettingsPage = () => {
         </h2>
 
         <div className="sticky top-10">
-          <Tabs defaultValue={activeTab} className="mb-4" orientation="vertical">
+          <Tabs
+            value={activeTab}
+            className="mb-4"
+            orientation="vertical"
+            onValueChange={(newValue) => setSearchParams({ tab: newValue })}
+          >
             <TabsList className="flex gap-2 flex-col w-full h-full">
               {tabsList.map((el) => (
                 <TabsTrigger
                   key={el.value}
                   value={el.value}
-                  onClick={() => setActiveTab(el.value)}
                   className="w-full py-3 flex justify-start border data-[state=active]:border-primary bg-sidebar"
                 >
                   {el.icon} {el.label}
@@ -54,14 +71,7 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      <div className="max-w-[800px] w-full mx-auto">
-        {activeTab === "general-info" && <GeneralInfoTab />}
-        {activeTab === "education-terms" && <EducationTermsTab />}
-        {activeTab === "call-schedule" && <CallScheduleTab />}
-        {activeTab === "accounts" && <AccountsTab />}
-        {activeTab === "roles" && <RolesTab />}
-        {activeTab === "other" && <OtherTab />}
-      </div>
+      <div className="max-w-[800px] w-full mx-auto">{tabs[activeTab]}</div>
     </RootContainer>
   );
 };

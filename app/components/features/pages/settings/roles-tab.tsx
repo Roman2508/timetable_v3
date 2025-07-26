@@ -17,6 +17,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avat
 import { fuzzyFilter } from "~/helpers/fuzzy-filter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
 import { cn } from "~/lib/utils";
+import { useSelector } from "react-redux";
+import { rolesSelector } from "~/store/roles/roles-slice";
+import type { RoleType } from "~/store/roles/roles-types";
 
 const tableData = [
   {
@@ -52,6 +55,8 @@ const tableData = [
 ];
 
 const RolesTab = () => {
+  const { roles } = useSelector(rolesSelector);
+
   const defaultItems = [
     {
       id: "groups",
@@ -77,7 +82,8 @@ const RolesTab = () => {
 
   const [globalSearch, setGlobalSearch] = useState("");
 
-  const columnHelper = createColumnHelper<(typeof tableData)[number]>();
+  // const columnHelper = createColumnHelper<(typeof tableData)[number]>();
+  const columnHelper = createColumnHelper<RoleType>();
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -87,12 +93,13 @@ const RolesTab = () => {
           return (
             <div className="flex items-center gap-2">
               {row.original.name}
-              {row.original.isReserved && <Lock size={14} />}
+              {row.original.key === "root_admin" && <Lock size={14} />}
+              {/* {row.original.isReserved && <Lock size={14} />} */}
             </div>
           );
         },
       }),
-      columnHelper.accessor((row) => row.users, {
+      columnHelper.accessor((row) => 10, {
         id: "studentsCount",
         header: "Користувачів",
         cell: (info) => info.getValue(),
@@ -114,7 +121,7 @@ const RolesTab = () => {
   );
 
   const table = useReactTable({
-    data: tableData,
+    data: roles || [],
     columns,
     // state: { sorting, globalFilter: globalSearch },
     // onSortingChange: setSorting,

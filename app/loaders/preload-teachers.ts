@@ -1,5 +1,5 @@
-import type { AppStore } from "~/store/store";
 import { teachersAPI } from "~/api/teachers-api";
+import type { AppStore } from "~/store/app-types";
 import { setTeacherCategories } from "~/store/teachers/teachers-slice";
 import { parseBoolean, parseEnum, parseIdsFromCookie } from "~/helpers/cookie-parsers";
 import { setTeacherFilters, setTeacherOrder, setTeacherStatus } from "~/store/general/general-slice";

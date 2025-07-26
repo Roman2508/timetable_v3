@@ -1,4 +1,4 @@
-import type { AppStore } from "~/store/store";
+import type { AppStore } from "~/store/app-types";
 import { EXPANDED_SIDEBAR_ITEMS, SIDEBAR_COOKIE_NAME } from "~/constants/cookies-keys";
 import { setSidebarState, toggleExpandedSidebarItems } from "~/store/general/general-slice";
 

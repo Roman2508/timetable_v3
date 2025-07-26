@@ -57,23 +57,32 @@ export const authLogin = createAsyncThunk(
   },
 );
 
-export const authMe = createAsyncThunk("auth/authMe", async (token: string, thunkAPI): Promise<AuthResponseType> => {
+export const getProfile = createAsyncThunk("auth/profile", async (_, thunkAPI): Promise<AuthResponseType> => {
   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
-  const promise = authAPI.getMe(token);
-
-  toast.promise(promise, {
-    // loading: 'Завантаження...',
-    // success: 'Авторизований',
-    // error: (error) => {
-    //   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
-    //   return (error as any)?.response?.data?.message || error.message
-    // },
-  });
-
+  const promise = authAPI.getProfile();
+  toast.promise(promise);
   const { data } = await promise;
   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS));
   return data;
 });
+
+// export const authMe = createAsyncThunk("auth/authMe", async (token: string, thunkAPI): Promise<AuthResponseType> => {
+//   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
+//   const promise = authAPI.getMe(token);
+
+//   toast.promise(promise, {
+//     // loading: 'Завантаження...',
+//     // success: 'Авторизований',
+//     // error: (error) => {
+//     //   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
+//     //   return (error as any)?.response?.data?.message || error.message
+//     // },
+//   });
+
+//   const { data } = await promise;
+//   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS));
+//   return data;
+// });
 
 export const googleLogin = createAsyncThunk(
   "auth/googleLogin",
