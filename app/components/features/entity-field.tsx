@@ -6,6 +6,7 @@ import { cn } from "~/lib/utils";
 import { Input } from "../ui/common/input";
 import { Button } from "../ui/common/button";
 import EntitiesDropdown from "./entities-dropdown";
+import { MultiSelect } from "../ui/custom/multi-select";
 import type { GroupFormData } from "~/pages/full-group-page";
 
 type ItemType = {
@@ -24,11 +25,13 @@ interface IEntityFieldProps {
   labelClassNames?: string;
   items: ItemType[] | null;
   inputType: "string" | "number";
-  variant: "input" | "select" | "button";
+  variant: "input" | "select" | "multi-select" | "button";
   errors?: ZodFormattedError<GroupFormData>;
-  currentValue: GroupFormData[keyof GroupFormData];
+  currentValue: string | string[] | number | undefined;
+  // currentValue: GroupFormData[keyof GroupFormData];
   setOpenedModalName?: React.Dispatch<React.SetStateAction<string>>;
-  setUserFormData: React.Dispatch<React.SetStateAction<Partial<GroupFormData>>>;
+  setUserFormData: React.Dispatch<React.SetStateAction<Partial<any>>>;
+  // setUserFormData: React.Dispatch<React.SetStateAction<Partial<GroupFormData>>>;
 }
 
 const EntityField: React.FC<IEntityFieldProps> = ({
@@ -105,6 +108,36 @@ const EntityField: React.FC<IEntityFieldProps> = ({
                 return { ...prev, [inputKey]: currentValue };
               })
             }
+          />
+          <p className="text-error text-sm mt-1">
+            {typeof errors?.[inputKey as keyof typeof errors] === "object" &&
+              "_errors" in (errors[inputKey as keyof typeof errors] ?? {}) &&
+              (errors[inputKey as keyof typeof errors] as { _errors: string[] })._errors.join(", ")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "multi-select") {
+    const activeItems = currentValue as any[];
+    return (
+      <div className={cn("flex items-start gap-4 mb-4", classNames)}>
+        <div className={cn("min-w-90", labelClassNames)}>
+          <h5 className="font-semibold text-md">{title}</h5>
+          <p className="text-black/40 text-sm">{text}</p>
+        </div>
+
+        <div className="w-full">
+          <MultiSelect
+            activeItems={activeItems}
+            items={items ? items : []}
+            onChangeSelected={(newItem) => {
+              setUserFormData((prev) => {
+                const currentPrev = typeof prev[inputKey] === "undefined" ? { ...prev, [inputKey]: [] } : prev;
+                return { ...currentPrev, [inputKey]: newItem };
+              });
+            }}
           />
           <p className="text-error text-sm mt-1">
             {typeof errors?.[inputKey as keyof typeof errors] === "object" &&

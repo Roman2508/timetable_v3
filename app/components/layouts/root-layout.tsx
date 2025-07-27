@@ -30,63 +30,63 @@ export const shouldRevalidate = () => {
   return false; // Отключаем повторный вызов лоадера при навигации
 };
 
-// export async function loader({ request }: LoaderFunctionArgs) {
-//   const store = makeStore();
+export async function loader({ request }: LoaderFunctionArgs) {
+  const store = makeStore();
 
-//   const cookieHeader = request.headers.get("cookie") ?? "";
-//   const cookies = cookie.parse(cookieHeader);
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const cookies = cookie.parse(cookieHeader);
 
-//   if (!cookies.token) {
-//     if (!request.url.includes("/auth")) {
-//       return redirect("/auth");
-//     } else {
-//       return { preloadedState: store.getState() };
-//     }
-//   }
+  if (!cookies.token) {
+    if (!request.url.includes("/auth")) {
+      return redirect("/auth");
+    } else {
+      return { preloadedState: store.getState() };
+    }
+  }
 
-//   instanse.interceptors.request.use((config) => {
-//     const cookie = cookies && cookies.token ? `token=${cookies.token}` : "";
-//     config.headers.Cookie = cookie;
-//     return config;
-//   });
+  instanse.interceptors.request.use((config) => {
+    const cookie = cookies && cookies.token ? `token=${cookies.token}` : "";
+    config.headers.Cookie = cookie;
+    return config;
+  });
 
-//   const { payload: userProfile } = await store.dispatch(getProfile());
+  const { payload: userProfile } = await store.dispatch(getProfile());
 
-//   if (!userProfile) {
-//     return redirect("/auth");
-//   }
+  if (!userProfile) {
+    return redirect("/auth");
+  }
 
-//   if (userProfile && request.url.includes("/auth")) {
-//     return redirect("/");
-//   }
+  if (userProfile && request.url.includes("/auth")) {
+    return redirect("/");
+  }
 
-//   await Promise.all([
-//     preloadGeteral(store, cookies),
-//     preloadGroups(store, cookies),
-//     preloadPlans(store, cookies),
-//     preloadTeachers(store, cookies),
-//     preloadAuditories(store, cookies),
-//     preloadStreams(store, cookies),
-//     preloadTimetable(store, cookies),
-//   ]);
+  await Promise.all([
+    preloadGeteral(store, cookies),
+    preloadGroups(store, cookies),
+    preloadPlans(store, cookies),
+    preloadTeachers(store, cookies),
+    preloadAuditories(store, cookies),
+    preloadStreams(store, cookies),
+    preloadTimetable(store, cookies),
+  ]);
 
-//   // settings
-//   const { data: settings } = await settingsAPI.getSettings();
-//   store.dispatch(setSettings(settings));
+  // settings
+  const { data: settings } = await settingsAPI.getSettings();
+  store.dispatch(setSettings(settings));
 
-//   return {
-//     preloadedState: store.getState(),
-//   };
-// }
+  return {
+    preloadedState: store.getState(),
+  };
+}
 
 const RootLayout: FC = () => {
   const { pathname } = useLocation();
   const disableFooterPaths = ["/grade-book", "/timetable"];
 
-  // const { preloadedState } = useLoaderData() as { preloadedState: RootState };
-  // const store = useMemo(() => makeStore(preloadedState), [preloadedState]);
+  const { preloadedState } = useLoaderData() as { preloadedState: RootState };
+  const store = useMemo(() => makeStore(preloadedState), [preloadedState]);
 
-  const store = makeStore();
+  // const store = makeStore();
 
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>

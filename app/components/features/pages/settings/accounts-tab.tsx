@@ -91,6 +91,14 @@ const AccountsTab = () => {
   const [editedUser, setEditedUser] = useState<UserType | null>(null);
   const [modalType, setModalType] = useState<"create" | "update">("create");
 
+  const onEditUser = (id: number) => {
+    if (!users) return;
+    const editedUser = users.find((el) => el.id === id);
+    if (!editedUser) return;
+    setEditedUser(editedUser);
+    setIsModalOpen(true);
+  };
+
   const columnHelper = createColumnHelper<UserType>();
   const columns = useMemo(
     () => [
@@ -128,7 +136,7 @@ const AccountsTab = () => {
         id: "actions",
         header: "Дії",
         cell: ({ row }) => {
-          return <AccountsActions id={row.original.id} />;
+          return <AccountsActions id={row.original.id} onEditUser={onEditUser} />;
         },
       }),
     ],
