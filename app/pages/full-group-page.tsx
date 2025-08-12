@@ -216,6 +216,14 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
 
   const errors = showErrors ? validate() : undefined;
 
+  /* 
+        <p className="text-error text-sm mt-1">
+            {typeof errors?.[inputKey as keyof typeof errors] === "object" &&
+              "_errors" in (errors[inputKey as keyof typeof errors] ?? {}) &&
+              (errors[inputKey as keyof typeof errors] as { _errors: string[] })._errors.join(", ")}
+        </p>
+  */
+
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
     const excludedKeys = ["groupLoad", "isHide", "specializationList", "stream", "id"];
     // Виключаю зайві ключі з об'єкта нової групи

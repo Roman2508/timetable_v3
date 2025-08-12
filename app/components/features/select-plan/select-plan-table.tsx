@@ -148,7 +148,10 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                       <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default text-end">ДІЇ</div>
                     </>
                   ) : (
-                    <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default">НАЗВА</div>
+                    <>
+                      <div className="flex-9 uppercase opacity-[0.9] font-mono cursor-default">НАЗВА</div>
+                      <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default">ДИСЦИПЛІН</div>
+                    </>
                   )}
                 </div>
 
@@ -217,12 +220,15 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                               setSelectedPlan && setSelectedPlan({ name: plan.name, id: plan.id } as PlansType)
                             }
                             className={cn(
-                              "hover:border hover:border-primary cursor-pointer flex px-4 py-2 border border-white border-t-border",
+                              "hover:border hover:border-primary cursor-pointer flex items-center px-4 py-2 border border-white border-t-border",
                               plan.id === selectedPlan?.id &&
                                 "border border-primary text-primary bg-primary-light font-semibold",
                             )}
                           >
-                            {plan.name}
+                            <div className="flex-9"> {plan.name}</div>
+                            <div className="flex-1 text-right">
+                              {plan.subjectsCount > 2 ? plan.subjectsCount - 1 : plan.subjectsCount}
+                            </div>
                           </div>
                         );
                       }

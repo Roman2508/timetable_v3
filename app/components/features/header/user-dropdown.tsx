@@ -17,15 +17,7 @@ import { authLogout } from "~/store/auth/auth-async-actions";
 import { SidebarMenuButton } from "~/components/ui/common/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar";
 
-interface IUserDropdownProps {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}
-
-const UserDropdown: React.FC<IUserDropdownProps> = () => {
+const UserDropdown: React.FC = () => {
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();

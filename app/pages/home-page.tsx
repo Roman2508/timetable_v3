@@ -7,12 +7,12 @@ import { useEffect } from "react";
 import { groupsAPI } from "~/api/groups-api";
 
 export default function HomePage() {
-  useEffect(() => {
-    (async function () {
-      const { data } = await groupsAPI.getGroupsCategories();
-      console.log(data);
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async function () {
+  //     const { data } = await groupsAPI.getGroupsCategories();
+  //     console.log(data);
+  //   })();
+  // }, []);
 
   return (
     <RootContainer>
@@ -25,9 +25,11 @@ export default function HomePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-3 mt-4 mb-10">
               {el.items.map((item) => (
-                <Link to={item.url}>
-                  <Card className="shadow-none hover:border-primary min-h-[80px] h-full p-2 pl-3 2xl:p-3 2xl:pl-5 cursor-pointer flex flex-row items-center gap-2 2xl:gap-4">
-                    <div className="">{el.icon && <el.icon className="w-[20px] 2xl:w-[24px]" />}</div>
+                <Link to={item.url} key={item.id}>
+                  <Card className="shadow-none hover:border-primary min-h-[80px] h-full p-2 pl-3 2xl:p-3 2xl:pl-5 cursor-pointer gap-2 2xl:gap-4">
+                    <div className="[&>svg]:w-7 2xl:[&>svg]:w-9 [&>svg]:h-7 2xl:[&>svg]:h-9">
+                      {el.icon && <el.icon strokeWidth={1.25} />}
+                    </div>
                     <div className="">
                       <h5 className="flex gap-2 font-bold text-md leading-5 mb-1">{item.title}</h5>
                       <p className="text-sm opacity-[0.6]">

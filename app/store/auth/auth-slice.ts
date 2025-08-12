@@ -33,6 +33,10 @@ const authSlice = createSlice({
       state.loadingStatus = action.payload;
     },
 
+    setUser(state, action: PayloadAction<UserType>) {
+      state.user = action.payload;
+    },
+
     clearUser(state) {
       state.user = null;
     },
@@ -47,12 +51,12 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(authLogin.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
-      state.user = action.payload;
+      state.user = action.payload.user;
     });
     builder.addCase(googleLogin.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
-      state.user = action.payload;
+      state.user = action.payload.user;
     });
-    builder.addCase(getProfile.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
+    builder.addCase(getProfile.fulfilled, (state, action: PayloadAction<AuthResponseType["user"]>) => {
       state.user = action.payload;
     });
     // builder.addCase(authMe.fulfilled, (state, action: PayloadAction<AuthResponseType>) => {
@@ -110,7 +114,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoadingStatus, clearUser, clearUsers, setUsers } = authSlice.actions;
+export const { setLoadingStatus, setUser, clearUser, clearUsers, setUsers } = authSlice.actions;
 
 export default authSlice.reducer;
 

@@ -30,6 +30,7 @@ const AuthPage = () => {
   const onLogin = async () => {
     try {
       setIsFetching(true);
+      console.log(formData);
       const { payload } = await dispatch(authLogin(formData));
 
       if (payload) {

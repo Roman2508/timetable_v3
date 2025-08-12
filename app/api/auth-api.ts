@@ -14,7 +14,7 @@ import { type TeachersType } from "../store/teachers/teachers-types";
 
 export const authAPI = {
   register(payload: RegisterPayloadType) {
-    return instanse.post<AuthResponseType>("/auth/register", payload);
+    return instanse.post<AuthResponseType["user"]>("/auth/register", payload);
   },
 
   login(payload: LoginPayloadType) {
@@ -25,12 +25,16 @@ export const authAPI = {
     return instanse.post<AuthResponseType>("/auth/google/me", payload);
   },
 
+  refresh() {
+    return instanse.get<{ accessToken: string }>("/auth/refresh");
+  },
+
   // getMe(token: string) {
   //   return instanse.post<AuthResponseType>("/auth/me", {}, { headers: { cookie: token } });
   // },
 
   getProfile() {
-    return instanse.get<AuthResponseType>("/auth/profile");
+    return instanse.get<AuthResponseType["user"]>("/auth/profile");
   },
 
   logout() {

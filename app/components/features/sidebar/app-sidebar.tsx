@@ -9,6 +9,7 @@ import { NavMain } from "~/components/features/sidebar/nav-main";
 import { NavUser } from "~/components/features/sidebar/nav-user";
 import { TeamSwitcher } from "~/components/features/sidebar/team-switcher";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "~/components/ui/common/sidebar";
+import UserDropdown from "../header/user-dropdown";
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const [navigation, setNavigation] = useState(navData);
@@ -38,7 +39,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         <NavMain items={navigation.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={navigation.user} />
+        <UserDropdown />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

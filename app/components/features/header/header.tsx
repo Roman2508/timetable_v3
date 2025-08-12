@@ -6,12 +6,6 @@ import { Separator } from "~/components/ui/common/separator";
 import { SidebarTrigger } from "~/components/ui/common/sidebar";
 
 export const Header = () => {
-  const user = {
-    name: "Пташник Роман",
-    email: "ptashnyk.roman@pharm.zt.ua",
-    avatar: "./avatars/shadcn.jpg",
-  };
-
   const toggleFullscreen = async () => {
     const element = document.getElementById("fullscreen-target");
     if (!element) {
@@ -46,7 +40,7 @@ export const Header = () => {
         </Button>
 
         <div className="ml-auto flex items-center gap-2">
-          <UserDropdown user={user} />
+          <UserDropdown />
         </div>
       </div>
     </header>

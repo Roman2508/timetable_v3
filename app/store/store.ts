@@ -1,5 +1,7 @@
 import { useDispatch } from "react-redux";
+import storage from "redux-persist/lib/storage";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistStore, persistReducer } from "redux-persist";
 
 import authReducer from "./auth/auth-slice";
 import type { AppDispatch } from "./app-types";
@@ -34,8 +36,28 @@ export const rootReducer = combineReducers({
   scheduleLessons: scheduleLessonsReducer,
 });
 
-export const makeStore = (preloadedState: any = undefined) => {
-  return configureStore({ reducer: rootReducer, preloadedState });
+// export const makeStore = (preloadedState?: any) => {
+//   return configureStore({ reducer: rootReducer, preloadedState });
+// };
+
+const persistConfig = {
+  key: "timetable",
+  storage,
+  whiteList: ["general"],
 };
+
+const mainReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  reducer: mainReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+});
+
+export const persistor = persistStore(store);
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();

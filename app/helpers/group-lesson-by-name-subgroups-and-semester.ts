@@ -21,7 +21,7 @@ export const groupLessonByNameSubgroupsAndSemester = (lessons: GroupLoadType[]):
 
   // Групуємо усі записи по ключу: назва предмета + семестр
   lessons.forEach((subject) => {
-    const subjectKey = subject.name + subject.semester;
+    const subjectKey = subject.name + subject.semester + subject.planSubjectId.id;
 
     if (!groupedLessons[subjectKey]) {
       groupedLessons[subjectKey] = [];
@@ -53,13 +53,15 @@ export const groupLessonByNameSubgroupsAndSemester = (lessons: GroupLoadType[]):
       const maxSubgroupNumber = Math.max(...el.map((subject) => subject.subgroupNumber));
 
       // Відкидаємо ті, що мають менший номер підгрупи
-      return el.filter((f) => {
-        if (f.subgroupNumber < maxSubgroupNumber) {
-          return false;
-        } else {
-          return true;
-        }
-      });
+      return el.filter((f) => (f.subgroupNumber < maxSubgroupNumber ? false : true));
+      
+      // return el.filter((f) => {
+      //   if (f.subgroupNumber < maxSubgroupNumber) {
+      //     return false;
+      //   } else {
+      //     return true;
+      //   }
+      // });
     });
 
     // Повертаємо всі елементи з усіх унікальних груп в одній групі

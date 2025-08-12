@@ -509,12 +509,18 @@ export type LoginPayloadType = {
 
 export type GoogleLoginPayloadType = Pick<LoginPayloadType, "email">;
 
-export type AuthResponseType = UserType;
+// export type AuthResponseType = UserType;
 
-// export type AuthResponseType = {
-//   user: UserType;
-//   accessToken: string;
-// };
+export type AuthResponseType = {
+  user: UserType;
+  accessToken: string;
+};
+
+export type SessionType = {
+  user: UserType;
+  exp: number;
+  iat: number;
+};
 
 export type UpdateUserPayloadType = {
   id: number;

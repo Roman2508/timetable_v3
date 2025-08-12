@@ -1,7 +1,7 @@
 import cookie from "cookie";
-import { useMemo, type FC } from "react";
+import { useEffect, useMemo, type FC } from "react";
 import { CookiesProvider } from "react-cookie";
-import { Provider as ReduxProvider } from "react-redux";
+import { Provider as ReduxProvider, useSelector } from "react-redux";
 import { Outlet, redirect, useLoaderData, useLocation, type LoaderFunctionArgs } from "react-router";
 
 import {
@@ -14,106 +14,178 @@ import {
   preloadAuditories,
 } from "~/loaders";
 import { instanse } from "~/api/api";
-import { makeStore } from "~/store/store";
+// import { makeStore, useAppDispatch } from "~/store/store";
 import SidebarLayout from "./sidebar-layout";
 import { Toaster } from "../ui/common/sonner";
 import Footer from "../features/footer/footer";
 import { settingsAPI } from "~/api/settings-api";
 import type { RootState } from "~/store/app-types";
+import { getAccessToken, setAccessToken } from "~/helpers/session";
 import { TooltipProvider } from "../ui/common/tooltip";
 import { getProfile } from "~/store/auth/auth-async-actions";
 import { Header } from "~/components/features/header/header";
 import { setSettings } from "~/store/settings/settings-slice";
 import { LoadingBar } from "../features/loading-bar/loading-bar";
+import { authSelector, setUser } from "~/store/auth/auth-slice";
+import jwtDecode from "jwt-decode";
+import type { SessionType } from "~/api/api-types";
+import AuthLayout from "./auth-layout";
+import { persistor, store } from "~/store/store";
+import { PersistGate } from "redux-persist/integration/react";
 
-export const shouldRevalidate = () => {
-  return false; // Отключаем повторный вызов лоадера при навигации
-};
+// export const shouldRevalidate = () => {
+//   return false; // Отключаем повторный вызов лоадера при навигации
+// };
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const store = makeStore();
+// export async function loader({ request }: LoaderFunctionArgs) {
+//   const store = makeStore();
 
-  const cookieHeader = request.headers.get("cookie") ?? "";
-  const cookies = cookie.parse(cookieHeader);
+// 1. Получаем новый access token через refresh
+// try {
+//   const { data } = await instanse.get("/auth/refresh", {
+//     headers: { cookie: request.headers.get("cookie") ?? "" },
+//   });
+//   setAccessToken(data.accessToken);
+// } catch {
+//   if (!request.url.includes("/auth")) return redirect("/auth");
+//   return { preloadedState: store.getState() };
+// }
 
-  if (!cookies.token) {
-    if (!request.url.includes("/auth")) {
-      return redirect("/auth");
-    } else {
-      return { preloadedState: store.getState() };
-    }
-  }
+// 2. Загружаем профиль
+// const { payload: userProfile } = await store.dispatch(getProfile());
 
-  instanse.interceptors.request.use((config) => {
-    const cookie = cookies && cookies.token ? `token=${cookies.token}` : "";
-    config.headers.Cookie = cookie;
-    return config;
-  });
+// if (!userProfile) {
+//   if (!request.url.includes("/auth")) return redirect("/auth");
+// }
 
-  const { payload: userProfile } = await store.dispatch(getProfile());
+// if (userProfile && request.url.includes("/auth")) {
+//   return redirect("/");
+// }
 
-  if (!userProfile) {
-    return redirect("/auth");
-  }
+// 3. Загружаем остальные данные
+//   await Promise.all([
+//     preloadGeteral(store, cookies),
+//     preloadGroups(store, cookies),
+//     preloadPlans(store, cookies),
+//     preloadTeachers(store, cookies),
+//     preloadAuditories(store, cookies),
+//     preloadStreams(store, cookies),
+//     preloadTimetable(store, cookies),
+//   ]);
 
-  if (userProfile && request.url.includes("/auth")) {
-    return redirect("/");
-  }
+// 4. Настройки
+// const { data: settings } = await settingsAPI.getSettings();
+// store.dispatch(setSettings(settings));
 
-  await Promise.all([
-    preloadGeteral(store, cookies),
-    preloadGroups(store, cookies),
-    preloadPlans(store, cookies),
-    preloadTeachers(store, cookies),
-    preloadAuditories(store, cookies),
-    preloadStreams(store, cookies),
-    preloadTimetable(store, cookies),
-  ]);
+// return {
+//   preloadedState: store.getState(),
+// };
+// }
 
-  // settings
-  const { data: settings } = await settingsAPI.getSettings();
-  store.dispatch(setSettings(settings));
+/* 
 
-  return {
-    preloadedState: store.getState(),
-  };
-}
+*/
+
+/* 
+
+*/
+
+/* 
+
+*/
+
+// export async function loader({ request }: LoaderFunctionArgs) {
+//   const store = makeStore();
+
+//   const cookieHeader = request.headers.get("cookie") ?? "";
+//   const cookies = cookie.parse(cookieHeader);
+
+//   console.log("cookies.token", cookies.token);
+
+//   if (!cookies.token) {
+//     if (!request.url.includes("/auth")) {
+//       return redirect("/auth");
+//     } else {
+//       return { preloadedState: store.getState() };
+//     }
+//   }
+
+//   instanse.interceptors.request.use((config) => {
+//     const cookie = cookies && cookies.token ? `token=${cookies.token}` : "";
+//     config.headers.Cookie = cookie;
+//     return config;
+//   });
+
+//   const { payload: userProfile } = await store.dispatch(getProfile());
+
+//   if (!userProfile) {
+//     if (!request.url.includes("/auth")) {
+//       return redirect("/auth");
+//     }
+//   }
+
+//   if (userProfile && request.url.includes("/auth")) {
+//     return redirect("/");
+//   }
+
+//   await Promise.all([
+//     preloadGeteral(store, cookies),
+//     preloadGroups(store, cookies),
+//     preloadPlans(store, cookies),
+//     preloadTeachers(store, cookies),
+//     preloadAuditories(store, cookies),
+//     preloadStreams(store, cookies),
+//     preloadTimetable(store, cookies),
+//   ]);
+
+//   // settings
+//   const { data: settings } = await settingsAPI.getSettings();
+//   store.dispatch(setSettings(settings));
+
+//   return {
+//     preloadedState: store.getState(),
+//   };
+// }
 
 const RootLayout: FC = () => {
   const { pathname } = useLocation();
   const disableFooterPaths = ["/grade-book", "/timetable"];
 
-  const { preloadedState } = useLoaderData() as { preloadedState: RootState };
-  const store = useMemo(() => makeStore(preloadedState), [preloadedState]);
+  // const { preloadedState } = useLoaderData() as { preloadedState: RootState };
+  // const store = useMemo(() => makeStore(preloadedState), [preloadedState]);
 
   // const store = makeStore();
 
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
       <ReduxProvider store={store}>
-        <TooltipProvider>
-          <Toaster />
+        <PersistGate loading={null} persistor={persistor}>
+          <TooltipProvider>
+            <Toaster />
 
-          {pathname !== "/auth" ? (
-            <SidebarLayout>
-              <LoadingBar />
+            {pathname !== "/auth" ? (
+              <AuthLayout>
+                <SidebarLayout>
+                  <LoadingBar />
 
-              <Header />
+                  <Header />
 
-              <main className="flex flex-1 flex-col">
-                <div className="@container/main flex flex-1 flex-col gap-2">
-                  <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                    <Outlet />
-                  </div>
-                </div>
-              </main>
+                  <main className="flex flex-1 flex-col">
+                    <div className="@container/main flex flex-1 flex-col gap-2">
+                      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                        <Outlet />
+                      </div>
+                    </div>
+                  </main>
 
-              {!disableFooterPaths.includes(pathname) && <Footer />}
-            </SidebarLayout>
-          ) : (
-            <Outlet />
-          )}
-        </TooltipProvider>
+                  {!disableFooterPaths.includes(pathname) && <Footer />}
+                </SidebarLayout>
+              </AuthLayout>
+            ) : (
+              <Outlet />
+            )}
+          </TooltipProvider>
+        </PersistGate>
       </ReduxProvider>
     </CookiesProvider>
   );

@@ -1,7 +1,10 @@
 import { toast } from "sonner";
+import jwtDecode from "jwt-decode";
+import type { AxiosResponse } from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import {
+  type SessionType,
   type LoginPayloadType,
   type AuthResponseType,
   type RegisterPayloadType,
@@ -12,12 +15,13 @@ import {
   type GoogleLoginPayloadType,
 } from "../../api/api-types";
 import { authAPI } from "../../api/auth-api";
-import { setLoadingStatus } from "./auth-slice";
+import { setLoadingStatus, setUser } from "./auth-slice";
 import { LoadingStatusTypes } from "../app-types";
+import { clearAccessToken, getAccessToken, setAccessToken } from "~/helpers/session";
 
 export const authRegister = createAsyncThunk(
   "auth/authRegister",
-  async (payload: RegisterPayloadType, thunkAPI): Promise<AuthResponseType> => {
+  async (payload: RegisterPayloadType, thunkAPI): Promise<AuthResponseType["user"]> => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
     const promise = authAPI.register(payload);
 
@@ -52,12 +56,48 @@ export const authLogin = createAsyncThunk(
     });
 
     const { data } = await promise;
+
+    if (data.accessToken) {
+      setAccessToken(data.accessToken);
+    }
+
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS));
     return data;
   },
 );
 
-export const getProfile = createAsyncThunk("auth/profile", async (_, thunkAPI): Promise<AuthResponseType> => {
+/* 
+
+*/
+
+let refreshTokenPromise: Promise<string | null> | null = null;
+
+export const authRefresh = createAsyncThunk("auth/authRefresh", async (_, thunkAPI): Promise<string | null> => {
+  if (!refreshTokenPromise) {
+    refreshTokenPromise = authAPI
+      .refresh()
+      .then((res) => res?.data.accessToken ?? null)
+      .then((newToken) => {
+        if (newToken) {
+          setAccessToken(newToken);
+          return newToken;
+        } else {
+          clearAccessToken();
+          return null;
+        }
+      })
+      .finally(() => {
+        refreshTokenPromise = null;
+      });
+  }
+
+  const newToken = await refreshTokenPromise;
+
+  if (newToken) return newToken;
+  else return newToken;
+});
+
+export const getProfile = createAsyncThunk("auth/profile", async (_, thunkAPI): Promise<AuthResponseType["user"]> => {
   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
   const promise = authAPI.getProfile();
   toast.promise(promise);
@@ -109,6 +149,7 @@ export const authLogout = createAsyncThunk("auth/logout", async (_, thunkAPI): P
   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING));
   const promise = authAPI.logout();
   const { data } = await promise;
+  clearAccessToken();
   thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS));
   return data;
 });
