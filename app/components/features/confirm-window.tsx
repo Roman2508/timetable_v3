@@ -28,6 +28,4 @@ export const ConfirmWindow = async (title: string, text?: string): Promise<boole
   });
 
   return result.isConfirmed;
-
-  return false;
 };

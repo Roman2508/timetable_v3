@@ -1,31 +1,29 @@
-import { useRef } from "react";
-import { useLoaderData } from "react-router";
+import { useEffect } from "react"
+import { useLoaderData } from "react-router"
 
-import type { Route } from "./+types/streams";
-import { useAppDispatch } from "~/store/store";
-import { streamsAPI } from "~/api/streams-api";
-import StreamsPage from "~/pages/streams-page";
-import { setStreams } from "~/store/streams/streams-slice";
+import type { Route } from "./+types/streams"
+import { useAppDispatch } from "~/store/store"
+import { streamsAPI } from "~/api/streams-api"
+import StreamsPage from "~/pages/streams-page"
+import { META_TAGS } from "~/constants/site-meta-tags"
+import { setStreams } from "~/store/streams/streams-slice"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "ЖБФФК | Потоки" }, { name: "description", content: "Welcome to React Router!" }];
+  return [{ title: "ЖБФФК | Потоки" }, ...META_TAGS]
 }
 
-export async function loader({}: Route.LoaderArgs) {
-  const { data: streams } = await streamsAPI.getStreams();
-  return { streams };
+export async function clientLoader({}: Route.LoaderArgs) {
+  const { data: streams } = await streamsAPI.getStreams()
+  return { streams }
 }
 
 export default function Teachers() {
-  const dispatch = useAppDispatch();
-  const loaderData = useLoaderData<typeof loader>();
+  const dispatch = useAppDispatch()
+  const loaderData = useLoaderData<typeof clientLoader>()
 
-  const initialized = useRef(false);
+  useEffect(() => {
+    dispatch(setStreams(loaderData.streams))
+  }, [loaderData])
 
-  if (!initialized.current) {
-    dispatch(setStreams(loaderData.streams));
-    initialized.current = true;
-  }
-
-  return <StreamsPage />;
+  return <StreamsPage />
 }

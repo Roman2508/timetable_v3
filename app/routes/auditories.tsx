@@ -1,10 +1,11 @@
-import type { Route } from "./+types/auditories";
-import AuditoriesPage from "~/pages/auditories-page";
+import type { Route } from "./+types/auditories"
+import AuditoriesPage from "~/pages/auditories-page"
+import { META_TAGS } from "~/constants/site-meta-tags"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "ЖБФФК | Аудиторії" }, { name: "description", content: "Welcome to React Router!" }];
+  return [{ title: "ЖБФФК | Аудиторії" }, ...META_TAGS]
 }
 
 export default function Teachers() {
-  return <AuditoriesPage />;
+  return <AuditoriesPage />
 }

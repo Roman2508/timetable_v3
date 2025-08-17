@@ -1,38 +1,38 @@
-import type { PlanSubjectType } from "~/store/plans/plans-types";
+import type { PlanSubjectType } from "~/store/plans/plans-types"
 
 export type SemesterHoursType = {
-  id: number;
-  name: string;
-  cmk: { id: number; name: string };
-  totalHours: number;
-  semesterNumber: number;
-  lectures: number;
-  practical: number;
-  laboratory: number;
-  seminars: number;
-  exams: number;
-  examsConsulation: number;
-  metodologicalGuidance: number;
-  independentWork: number;
-};
+  id: number
+  name: string
+  cmk: { id: number; name: string }
+  totalHours: number
+  semesterNumber: number
+  lectures: number
+  practical: number
+  laboratory: number
+  seminars: number
+  exams: number
+  examsConsulation: number
+  metodologicalGuidance: number
+  independentWork: number
+}
 
 export type PlanItemType = {
-  name: string;
-  cmk: { id: number; name: string };
-  totalHours: number;
-  semesterNumber: number;
-  semester_1: SemesterHoursType | null;
-  semester_2: SemesterHoursType | null;
-  semester_3: SemesterHoursType | null;
-  semester_4: SemesterHoursType | null;
-  semester_5: SemesterHoursType | null;
-  semester_6: SemesterHoursType | null;
-  semester_7: SemesterHoursType | null;
-  semester_8: SemesterHoursType | null;
-};
+  name: string
+  cmk: { id: number; name: string; shortName: string }
+  totalHours: number
+  semesterNumber: number
+  semester_1: SemesterHoursType | null
+  semester_2: SemesterHoursType | null
+  semester_3: SemesterHoursType | null
+  semester_4: SemesterHoursType | null
+  semester_5: SemesterHoursType | null
+  semester_6: SemesterHoursType | null
+  semester_7: SemesterHoursType | null
+  semester_8: SemesterHoursType | null
+}
 
 const getSemesterHours = (lessonItems: PlanSubjectType[], semester: number) => {
-  const semesterLessons = lessonItems.find((el) => el.semesterNumber === semester);
+  const semesterLessons = lessonItems.find((el) => el.semesterNumber === semester)
 
   if (semesterLessons) {
     return {
@@ -49,26 +49,26 @@ const getSemesterHours = (lessonItems: PlanSubjectType[], semester: number) => {
       examsConsulation: semesterLessons.examsConsulation,
       metodologicalGuidance: semesterLessons.metodologicalGuidance,
       independentWork: semesterLessons.independentWork,
-    };
+    }
   }
 
-  return null;
-};
+  return null
+}
 
 export const groupLessonsByName = (subjects: PlanSubjectType[]): PlanItemType[] => {
-  const groupedSubjects: Record<string, any> = {};
+  const groupedSubjects: Record<string, any> = {}
 
   subjects.forEach((subject) => {
-    const subjectName = subject.name;
+    const subjectName = subject.name
 
     if (!groupedSubjects[subjectName]) {
-      groupedSubjects[subjectName] = [];
+      groupedSubjects[subjectName] = []
     }
 
-    groupedSubjects[subjectName].push(subject);
-  });
+    groupedSubjects[subjectName].push(subject)
+  })
 
-  const groupedSubjectsValues: PlanSubjectType[][] = Object.values(groupedSubjects);
+  const groupedSubjectsValues: PlanSubjectType[][] = Object.values(groupedSubjects)
 
   const planItems = groupedSubjectsValues.map((el: PlanSubjectType[]) => ({
     name: el[0].name,
@@ -83,7 +83,7 @@ export const groupLessonsByName = (subjects: PlanSubjectType[]): PlanItemType[] 
     semester_6: getSemesterHours(el, 6),
     semester_7: getSemesterHours(el, 7),
     semester_8: getSemesterHours(el, 8),
-  }));
+  }))
 
-  return planItems;
-};
+  return planItems
+}

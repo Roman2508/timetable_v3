@@ -1,145 +1,120 @@
-import jwtDecode from "jwt-decode";
-import axios, { AxiosError, type AxiosRequestConfig } from "axios";
+import jwtDecode from "jwt-decode"
+import axios, { AxiosError /* , type AxiosRequestConfig  */ } from "axios"
 
-import { authAPI } from "./auth-api";
-export { plansAPI } from "./plans-api";
-export { groupsAPI } from "./groups-api";
-export { streamsAPI } from "./streams-api";
-export { settingsAPI } from "./settings-api";
-export { teachersAPI } from "./teachers-api";
-export { studentsAPI } from "./students-api";
-import type { SessionType } from "./api-types";
-export { gradeBookAPI } from "./grade-book-api";
-export { auditoriesAPI } from "./auditories-api";
-export { planSubjectsAPI } from "./plan-subjects-api";
-export { teacherProfileAPI } from "./teacher-profile-api";
-export { scheduleLessonsAPI } from "./schedule-lessons-api";
-export { groupLoadLessonsAPI } from "./group-load-lessons-api";
-import { clearAccessToken, getAccessToken, setAccessToken } from "~/helpers/session";
-import { useAppDispatch } from "~/store/store";
-// import { getLocalStorageToken, TOKEN_NAME } from "../utils/localStorageToken";
+import { authAPI } from "./auth-api"
+export { plansAPI } from "./plans-api"
+export { groupsAPI } from "./groups-api"
+export { streamsAPI } from "./streams-api"
+export { settingsAPI } from "./settings-api"
+export { teachersAPI } from "./teachers-api"
+export { studentsAPI } from "./students-api"
+import type { SessionType } from "./api-types"
+export { gradeBookAPI } from "./grade-book-api"
+export { auditoriesAPI } from "./auditories-api"
+export { planSubjectsAPI } from "./plan-subjects-api"
+export { teacherProfileAPI } from "./teacher-profile-api"
+export { scheduleLessonsAPI } from "./schedule-lessons-api"
+export { groupLoadLessonsAPI } from "./group-load-lessons-api"
+import { clearAccessToken, getAccessToken, setAccessToken } from "~/helpers/session"
 
 export const instanse = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
-});
+})
 
 /* 
 
 */
 
-// export const authRefresh = async (): Promise<string | null> => {
-//   const token = getAccessToken();
-
-//   if (!token) return null;
-
-//   const session = jwtDecode<SessionType>(token);
-
-//   if (session.exp < Date.now() / 1000) {
-//     if (!refreshTokenPromise) {
-//       refreshTokenPromise = authAPI
-//         .refresh()
-//         .then((res) => res?.data.accessToken ?? null)
-//         .then((newToken) => {
-//           if (newToken) {
-//             setAccessToken(newToken);
-//             return newToken;
-//           } else {
-//             clearAccessToken();
-//             return null;
-//           }
-//         })
-//         .finally(() => {
-//           refreshTokenPromise = null;
-//         });
-//     }
-
-//     const newToken = await refreshTokenPromise;
-
-//     if (newToken) return newToken;
-//     else return newToken;
-//   }
-
-//   return null;
-// };
-
-let refreshTokenPromise: Promise<string | null> | null = null;
+let refreshTokenPromise: Promise<string | null> | null = null
 
 instanse.interceptors.request.use(
   async (config) => {
-    const token = getAccessToken();
-
-    if (token) {
-      const session = jwtDecode<SessionType>(token);
-
-      // Термін дії токена ще не вийшов
-      if (session.exp > Date.now() / 1000) {
-        config.headers.Authorization = `Bearer ${token}`;
-        return config;
-      }
-
-      // Термін дії токена вийшов і ще не було запиту на refresh
-      if (!refreshTokenPromise) {
-        refreshTokenPromise = authAPI
-          .refresh()
-          .then((res) => res?.data.accessToken ?? null)
-          .then((newToken) => {
-            if (newToken) {
-              setAccessToken(newToken);
-              return newToken;
-            } else {
-              clearAccessToken();
-              return null;
-            }
-          })
-          .finally(() => {
-            refreshTokenPromise = null;
-          });
-      }
-
-      // Був запит на refresh - очікуємо результат
-      const newToken = await refreshTokenPromise;
-
-      if (newToken) {
-        setAccessToken(newToken);
-        config.headers.Authorization = `Bearer ${newToken}`;
-      }
+    // Пропускаємо публічні запити
+    if (config.url?.includes("/auth/refresh") || config.url?.includes("/auth/login")) {
+      return config
     }
 
-    window.location.href = "/auth";
+    const token = getAccessToken()
 
-    // else {
-    //   return Promise.reject(
-    //     new axios.AxiosError("Unauthorized", axios.AxiosError.ERR_BAD_REQUEST, config, null, {
-    //       status: 401,
-    //       statusText: "Unauthorized",
-    //       headers: { "Content-Type": "application/json" },
-    //       config,
-    //       data: { message: "You are not authorized to access this resource" },
-    //     }),
-    //   );
-    // }
+    // Токен відсутній
+    if (!token) {
+      window.location.href = "/auth"
+      return Promise.reject(new axios.AxiosError("Ви не авторизовані"))
+    }
 
-    return config;
+    const session = jwtDecode<SessionType>(token)
+
+    // Термін дії токена ще не вийшов
+    if (session.exp > Date.now() / 1000) {
+      config.headers.Authorization = `Bearer ${token}`
+      return config
+    }
+
+    // Термін дії токена вийшов і ще не було запиту на refresh
+    if (!refreshTokenPromise) {
+      refreshTokenPromise = authAPI
+        .refresh()
+        .then((res) => {
+          const newToken = res?.data.accessToken ?? null
+          if (newToken) {
+            setAccessToken(newToken)
+            config.headers.Authorization = `Bearer ${newToken}`
+            return newToken
+          } else {
+            clearAccessToken()
+            return null
+          }
+        })
+        .catch((err) => null)
+        .finally(() => (refreshTokenPromise = null))
+    }
+
+    // Був запит на refresh - очікуємо результат
+    await refreshTokenPromise
+
+    return config
   },
-  (error: AxiosError) => {
-    return error;
-  },
-);
+  (error: AxiosError) => Promise.reject(error),
+)
 
 /* 
 
 */
 
-instanse.interceptors.response.use(
-  (res) => res,
-  async (error) => {
-    if (error.response?.status === 401) {
-      window.location.href = "/auth";
-    }
-    return Promise.reject(error);
-  },
-);
+/* 
+
+*/
+
+/* 
+
+*/
+
+// instanse.interceptors.response.use(
+//   (res) => res,
+//   async (error) => {
+//     if (error.response?.status === 401) {
+//       window.location.href = "/auth"
+//     }
+//     return Promise.reject(error)
+//   },
+// )
+
+/* 
+
+*/
+
+/* 
+
+*/
+
+/* 
+
+*/
+
+/* 
+
+*/
 
 /* 
 

@@ -1,26 +1,25 @@
-import z from "zod";
-import React from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import { Pencil, Plus, Trash2, User } from "lucide-react";
+import z from "zod"
+import { useMemo, useState, type FC, type MouseEvent } from "react"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router"
+import { Pencil, Plus, Trash2, User } from "lucide-react"
 
-import { useAppDispatch } from "~/store/store";
-import { Card } from "~/components/ui/common/card";
-import { sortByName } from "~/helpers/sort-by-name";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import EntityField from "~/components/features/entity-field";
-import EntityHeader from "~/components/features/entity-header";
-import { teachersSelector } from "~/store/teachers/teachers-slice";
-import { RootContainer } from "~/components/layouts/root-container";
-import type { TeachersType } from "~/store/teachers/teachers-types";
-import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
-import { ConfirmWindow } from "~/components/features/confirm-window";
-import { createTeacher, deleteTeacher, updateTeacher } from "~/store/teachers/teachers-async-actions";
+import { useAppDispatch } from "~/store/store"
+import { Card } from "~/components/ui/common/card"
+import { sortByName } from "~/helpers/sort-by-name"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import EntityField from "~/components/features/entity-field"
+import EntityHeader from "~/components/features/entity-header"
+import { teachersSelector } from "~/store/teachers/teachers-slice"
+import { RootContainer } from "~/components/layouts/root-container"
+import { getTeacherFullname } from "~/helpers/get-teacher-fullname"
+import { ConfirmWindow } from "~/components/features/confirm-window"
+import { createTeacher, deleteTeacher, updateTeacher } from "~/store/teachers/teachers-async-actions"
 
-interface IFullTeacherProps {
-  teacherId: string;
-  teacher: TeachersType;
+interface Props {
+  teacherId: string
+  // teacher: TeachersType
 }
 
 const initialFormState = {
@@ -32,7 +31,7 @@ const initialFormState = {
   calendarId: "",
   category: "",
   status: "Активний",
-};
+}
 
 const formSchema = z.object({
   firstName: z.string({ message: "Це поле обов'язкове" }),
@@ -43,19 +42,19 @@ const formSchema = z.object({
   calendarId: z.string().optional(),
   category: z.number({ message: "Це поле обов'язкове" }),
   status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }),
-});
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
-const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
-  const isUpdate = !isNaN(Number(teacherId));
+const FullTeacher: FC<Props> = ({ teacherId }) => {
+  const isUpdate = !isNaN(Number(teacherId))
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
-  const { teachersCategories } = useSelector(teachersSelector);
+  const { teachersCategories, teacher } = useSelector(teachersSelector)
 
-  const generalInformationFields = React.useMemo(
+  const generalInformationFields = useMemo(
     () => [
       {
         title: "Прізвище*",
@@ -134,11 +133,11 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
       },
     ],
     [teachersCategories],
-  );
+  )
 
-  const [userFormData, setUserFormData] = React.useState<Partial<FormData>>({});
-  const [showErrors, setShowErrors] = React.useState(false);
-  const [isPending, setIsPanding] = React.useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
+  const [showErrors, setShowErrors] = useState(false)
+  const [isPending, setIsPanding] = useState(false)
 
   const formData = {
     ...initialFormState,
@@ -146,7 +145,7 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
     category: teacher?.category.id,
     email: teacher?.user.email,
     ...userFormData,
-  };
+  }
 
   const conditionalFormSchema = formSchema.superRefine((data, ctx) => {
     if (!isUpdate && !data.password) {
@@ -154,50 +153,51 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
         path: ["password"],
         code: z.ZodIssueCode.custom,
         message: "Це поле обов'язкове",
-      });
+      })
     }
-  });
+  })
 
   const validate = () => {
     // const res = formSchema.safeParse(formData);
-    const res = conditionalFormSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
-  };
+    const res = conditionalFormSchema.safeParse(formData)
+    if (res.success) return
+    return res.error.format()
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: MouseEvent<HTMLFormElement>) => {
     try {
-      e.preventDefault();
-      setIsPanding(true);
-      const errors = validate();
+      e.preventDefault()
+      setIsPanding(true)
+      const errors = validate()
       if (errors) {
-        setShowErrors(true);
-        return;
+        setShowErrors(true)
+        return
       }
 
       if (isUpdate) {
-        await dispatch(updateTeacher({ ...formData, id: Number(teacherId) }));
-        navigate("/teachers");
-        return;
+        const { payload } = await dispatch(updateTeacher({ ...formData, id: Number(teacherId) }))
+        if (payload) navigate("/teachers")
+
+        return
       }
 
-      await dispatch(createTeacher(formData));
-      navigate("/teachers");
+      const { payload } = await dispatch(createTeacher(formData))
+      if (payload) navigate("/teachers")
     } finally {
-      setIsPanding(false);
+      setIsPanding(false)
     }
-  };
+  }
 
   const onDeleteTeacher = async () => {
-    if (!isUpdate) return;
-    const confirmed = await ConfirmWindow(dialogText.confirm.teachers.title, dialogText.confirm.teachers.text);
+    if (!isUpdate) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.teachers.title, dialogText.confirm.teachers.text)
     if (confirmed) {
-      await dispatch(deleteTeacher(Number(teacher)));
-      navigate("/teachers");
+      await dispatch(deleteTeacher(Number(teacher)))
+      navigate("/teachers")
     }
-  };
+  }
 
   return (
     <RootContainer>
@@ -227,7 +227,7 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
         <Card className="px-10 pb-12 mb-10">
           <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
           {generalInformationFields.map((input) => {
-            const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData];
+            const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
 
             return (
               <EntityField
@@ -240,7 +240,7 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
                 inputType={input.inputType as "string" | "number"}
                 variant={input.variant as "input" | "select" | "button"}
               />
-            );
+            )
           })}
         </Card>
       </form>
@@ -265,7 +265,7 @@ const FullTeacher: React.FC<IFullTeacherProps> = ({ teacherId, teacher }) => {
         </Card>
       )}
     </RootContainer>
-  );
-};
+  )
+}
 
-export default FullTeacher;
+export default FullTeacher

@@ -1,116 +1,121 @@
-"use client";
+import { NavLink } from "react-router"
+import { Plus, User } from "lucide-react"
+import { useSelector } from "react-redux"
+import { useCookies } from "react-cookie"
+import { useEffect, useState } from "react"
 
-import React from "react";
-import { NavLink } from "react-router";
-import { Plus, User } from "lucide-react";
-import { useSelector } from "react-redux";
-import { useCookies } from "react-cookie";
-
+import {
+  getGroupCategories,
+  createGroupCategory,
+  deleteGroupCategory,
+  updateGroupCategory,
+} from "~/store/groups/groups-async-actions"
 import CategoryActionsModal, {
   type FormData,
-} from "~/components/features/category-actions-modal/category-actions-modal";
+} from "~/components/features/category-actions-modal/category-actions-modal"
 import type {
   CategoryModalStateType,
   UpdatingCategoryType,
-} from "~/components/features/category-actions-modal/category-actions-modal-types";
-import { useAppDispatch } from "~/store/store";
-import { Card } from "~/components/ui/common/card";
-import { sortByName } from "~/helpers/sort-by-name";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import { pluralizeWords } from "~/helpers/pluralize-words";
-import { groupsSelector } from "~/store/groups/groups-slice";
-import { useItemsByStatus } from "~/hooks/use-items-by-status";
-import { AlertWindow } from "~/components/features/alert-window";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import { CategoryCard } from "~/components/features/category-card";
-import { useItemsByCategory } from "~/hooks/use-items-by-category";
-import { ConfirmWindow } from "~/components/features/confirm-window";
-import { RootContainer } from "~/components/layouts/root-container";
-import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { GROUP_FILTERS, GROUP_STATUS } from "~/constants/cookies-keys";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import { GroupsTable } from "~/components/features/pages/groups/groups-table";
-import { generalSelector, setGroupFilters } from "~/store/general/general-slice";
-import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types";
-import { createGroupCategory, deleteGroupCategory, updateGroupCategory } from "~/store/groups/groups-async-actions";
+} from "~/components/features/category-actions-modal/category-actions-modal-types"
+import { useAppDispatch } from "~/store/store"
+import { Card } from "~/components/ui/common/card"
+import { sortByName } from "~/helpers/sort-by-name"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import { pluralizeWords } from "~/helpers/pluralize-words"
+import { groupsSelector } from "~/store/groups/groups-slice"
+import { useItemsByStatus } from "~/hooks/use-items-by-status"
+import { AlertWindow } from "~/components/features/alert-window"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import { CategoryCard } from "~/components/features/category-card"
+import { useItemsByCategory } from "~/hooks/use-items-by-category"
+import { ConfirmWindow } from "~/components/features/confirm-window"
+import { RootContainer } from "~/components/layouts/root-container"
+import { PopoverFilter } from "~/components/ui/custom/popover-filter"
+import { GROUP_FILTERS, GROUP_STATUS } from "~/constants/cookies-keys"
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs"
+import { GroupsTable } from "~/components/features/pages/groups/groups-table"
+import { generalSelector, setGroupFilters } from "~/store/general/general-slice"
+import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types"
 
 const GroupsPage = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const [_, setCookie] = useCookies();
+  const [_, setCookie] = useCookies()
 
   const {
     groups: { categories: filtredCategories, status: defaultStatus },
-  } = useSelector(generalSelector);
-  const { groupCategories } = useSelector(groupsSelector);
+  } = useSelector(generalSelector)
+  const { groupCategories } = useSelector(groupsSelector)
 
-  const [globalSearch, setGlobalSearch] = React.useState("");
-  const [updatingCategory, setUpdatingCategory] = React.useState<UpdatingCategoryType | null>(null);
-  const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">(
-    defaultStatus ? defaultStatus : "Всі",
-  );
-  const [selectedCategories, setSelectedCategories] = React.useState<GroupCategoriesType[]>(
+  const [globalSearch, setGlobalSearch] = useState("")
+  const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
+  const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
+  const [selectedCategories, setSelectedCategories] = useState<GroupCategoriesType[]>(
     filtredCategories.length ? filtredCategories : groupCategories ? groupCategories.map((el) => ({ id: el.id })) : [],
-  );
-  const [modalData, setModalData] = React.useState<CategoryModalStateType>({
+  )
+  const [modalData, setModalData] = useState<CategoryModalStateType>({
     isOpen: false,
     actionType: "create",
-  });
+  })
 
   const { filteredItems: visibleGroups, counts } = useItemsByStatus<GroupCategoriesType>(
     groupCategories,
     "groups",
     activeStatus,
-  ) as { counts: { all: number; active: number; archive: number }; filteredItems: GroupsShortType[] };
-  const filteredItems = useItemsByCategory(visibleGroups, selectedCategories);
+  ) as { counts: { all: number; active: number; archive: number }; filteredItems: GroupsShortType[] }
+  const filteredItems = useItemsByCategory(visibleGroups, selectedCategories)
 
   const onClickUpdateCategory = (id: number) => {
-    if (!groupCategories) return;
-    const selectedCategory = groupCategories.find((el) => el.id === id);
-    if (!selectedCategory) return;
-    const { name, shortName } = selectedCategory;
-    setUpdatingCategory({ id, name, shortName });
-    setModalData({ isOpen: true, actionType: "update" });
-  };
+    if (!groupCategories) return
+    const selectedCategory = groupCategories.find((el) => el.id === id)
+    if (!selectedCategory) return
+    const { name, shortName } = selectedCategory
+    setUpdatingCategory({ id, name, shortName })
+    setModalData({ isOpen: true, actionType: "update" })
+  }
 
   const onClickDeleteCategory = async (id: number) => {
-    if (!groupCategories) return;
-    const selectedCategory = groupCategories.find((el) => el.id === id);
-    if (!selectedCategory) return;
+    if (!groupCategories) return
+    const selectedCategory = groupCategories.find((el) => el.id === id)
+    if (!selectedCategory) return
 
     if (selectedCategory.groups.length) {
-      AlertWindow(dialogText.alert.group_category_delete.title, dialogText.alert.group_category_delete.text);
-      return;
+      AlertWindow(dialogText.alert.group_category_delete.title, dialogText.alert.group_category_delete.text)
+      return
     }
 
-    const confirmed = await ConfirmWindow(dialogText.confirm.unit.title, dialogText.confirm.unit.text);
+    const confirmed = await ConfirmWindow(dialogText.confirm.unit.title, dialogText.confirm.unit.text)
     if (confirmed) {
-      dispatch(deleteGroupCategory(id));
+      dispatch(deleteGroupCategory(id))
     }
-  };
+  }
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
-    setActiveStatus(value);
-    setCookie(GROUP_STATUS, value);
-  };
+    setActiveStatus(value)
+    setCookie(GROUP_STATUS, value)
+  }
 
   const onCreateCategory = async (data: FormData) => {
-    const { name, shortName } = data;
-    await dispatch(createGroupCategory({ name, shortName: String(shortName) }));
-  };
+    const { name, shortName } = data
+    await dispatch(createGroupCategory({ name, shortName: String(shortName) }))
+  }
 
   const onUpdateCategory = async (data: FormData & { id: number }) => {
-    const { id, name, shortName } = data;
-    await dispatch(updateGroupCategory({ id, name, shortName: String(shortName) }));
-  };
+    const { id, name, shortName } = data
+    await dispatch(updateGroupCategory({ id, name, shortName: String(shortName) }))
+  }
 
-  React.useEffect(() => {
-    if (!selectedCategories.length) return;
-    const categoriesIds = selectedCategories.map((el) => el.id);
-    setCookie(GROUP_FILTERS, categoriesIds);
-    dispatch(setGroupFilters(selectedCategories));
-  }, [selectedCategories]);
+  useEffect(() => {
+    dispatch(getGroupCategories())
+  }, [])
+
+  useEffect(() => {
+    if (!selectedCategories.length) return
+    const categoriesIds = selectedCategories.map((el) => el.id)
+    setCookie(GROUP_FILTERS, categoriesIds)
+    dispatch(setGroupFilters(selectedCategories))
+  }, [selectedCategories])
 
   return (
     <>
@@ -200,7 +205,7 @@ const GroupsPage = () => {
         )}
       </RootContainer>
     </>
-  );
-};
+  )
+}
 
-export default GroupsPage;
+export default GroupsPage

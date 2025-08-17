@@ -1,10 +1,11 @@
-import AuthPage from "~/pages/auth-page";
-import type { Route } from "./+types/auth";
+import AuthPage from "~/pages/auth-page"
+import type { Route } from "./+types/auth"
+import { META_TAGS } from "~/constants/site-meta-tags"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "ЖБФФК | Вхід" }, { name: "description", content: "Welcome to React Router!" }];
+  return [{ title: "ЖБФФК | Вхід" }, ...META_TAGS]
 }
 
 export default function Auth() {
-  return <AuthPage />;
+  return <AuthPage />
 }

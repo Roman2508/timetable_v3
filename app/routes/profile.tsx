@@ -1,10 +1,11 @@
-import type { Route } from "./+types/profile";
-import ProfilePage from "~/pages/profile-page";
+import type { Route } from "./+types/profile"
+import ProfilePage from "~/pages/profile-page"
+import { META_TAGS } from "~/constants/site-meta-tags"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "ЖБФФК | Профіль" }, { name: "description", content: "Welcome to React Router!" }];
+  return [{ title: "ЖБФФК | Профіль" }, ...META_TAGS]
 }
 
 export default function GradeBook() {
-  return <ProfilePage />;
+  return <ProfilePage />
 }

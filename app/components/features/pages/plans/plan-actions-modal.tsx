@@ -1,41 +1,41 @@
-import z from "zod";
-import { useSelector } from "react-redux";
-import { useState, type Dispatch, type FC, type SetStateAction } from "react";
+import z from "zod"
+import { useSelector } from "react-redux"
+import { useState, type Dispatch, type FC, type SetStateAction } from "react"
 
-import { useAppDispatch } from "~/store/store";
-import { Input } from "~/components/ui/common/input";
-import EntitiesDropdown from "../../entities-dropdown";
-import { Button } from "~/components/ui/common/button";
-import { plansSelector } from "~/store/plans/plans-slice";
-import { Separator } from "~/components/ui/common/separator";
-import type { PlanActionModalType } from "~/pages/plans/plans-page";
-import { createPlan, createPlanCategory, updatePlan, updatePlanCategory } from "~/store/plans/plans-async-actions";
-import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogDescription } from "~/components/ui/common/dialog";
-import type { PlansType } from "~/store/plans/plans-types";
+import { useAppDispatch } from "~/store/store"
+import { Input } from "~/components/ui/common/input"
+import EntitiesDropdown from "../../entities-dropdown"
+import { Button } from "~/components/ui/common/button"
+import { plansSelector } from "~/store/plans/plans-slice"
+import { Separator } from "~/components/ui/common/separator"
+import type { PlanActionModalType } from "~/pages/plans-page"
+import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types"
+import { createPlan, createPlanCategory, updatePlan, updatePlanCategory } from "~/store/plans/plans-async-actions"
+import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogDescription } from "~/components/ui/common/dialog"
 
 interface IPlanActionsModalProps {
-  modalData: PlanActionModalType;
-  editablePlan?: PlansType | null;
-  editableCategory: { id: number; name: string } | null;
-  setModalData: Dispatch<SetStateAction<PlanActionModalType>>;
-  setEditableCategory: Dispatch<SetStateAction<{ id: number; name: string } | null>>;
+  modalData: PlanActionModalType
+  editablePlan?: PlansType | null
+  editableCategory: { id: number; name: string } | null
+  setModalData: Dispatch<SetStateAction<PlanActionModalType>>
+  setEditableCategory: Dispatch<SetStateAction<{ id: number; name: string } | null>>
 }
 
 const planStatusList = [
   { id: "Активний", name: "Активний" },
   { id: "Архів", name: "Архів" },
-];
+]
 
-const initialFormData = { name: "", category: 0, status: "" };
+const initialFormData = { name: "", category: 0, status: "Активний" } as const
 
 const formSchema = z.object({
   type: z.enum(["create-category", "update-category", "create-plan", "update-plan"]),
   name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
   category: z.number({ message: "Це поле обов'язкове" }).optional(),
   status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }).optional(),
-});
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
 const PlanActionsModal: FC<IPlanActionsModalProps> = ({
   modalData,
@@ -44,80 +44,80 @@ const PlanActionsModal: FC<IPlanActionsModalProps> = ({
   editableCategory,
   setEditableCategory,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const { plansCategories } = useSelector(plansSelector);
+  const { plansCategories } = useSelector(plansSelector)
 
-  const [isPending, setIsPending] = useState(false);
-  const [showErrors, setShowErrors] = useState(false);
-  const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
+  const [isPending, setIsPending] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
 
   const formData = {
     ...initialFormData,
     ...editableCategory,
     ...editablePlan,
     category: editablePlan?.category.id,
-    status: editablePlan?.status,
+    status: editablePlan ? editablePlan.status : initialFormData.status,
     ...userFormData,
     type: modalData.type,
-  };
+  }
 
   const reset = () => {
-    setEditableCategory(null);
-    setUserFormData({});
-  };
+    setEditableCategory(null)
+    setUserFormData({})
+  }
 
   const onOpenChange = (value: boolean) => {
-    setModalData((prev) => ({ ...prev, isOpen: value }));
-    if (!value) reset();
-  };
+    setModalData((prev) => ({ ...prev, isOpen: value }))
+    if (!value) reset()
+  }
 
   const validate = () => {
-    const res = formSchema.safeParse(formData);
+    const res = formSchema.safeParse(formData)
     if (!res.success) {
-      return res.error.format();
+      return res.error.format()
     }
 
     if (modalData.type.includes("plan") && !formData.category) {
-      return { success: false, category: { _errors: ["Категорія є обов'язковою"] } };
+      return { success: false, category: { _errors: ["Категорія є обов'язковою"] } }
     }
 
     if (modalData.type === "update-plan" && !formData.status) {
-      return { success: false, category: { _errors: ["Це поле обов'язкове"] } };
+      return { success: false, category: { _errors: ["Це поле обов'язкове"] } }
     }
-  };
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const errors = validate();
+    const errors = validate()
     if (errors) {
-      console.log(true);
-      setShowErrors(true);
-      return;
+      console.log(true)
+      setShowErrors(true)
+      return
     }
 
     try {
-      setIsPending(true);
+      setIsPending(true)
       if (modalData.type === "create-category") {
-        await dispatch(createPlanCategory({ name: formData.name }));
-        setModalData({ isOpen: false, type: "create-plan" });
-        reset();
-        return;
+        await dispatch(createPlanCategory({ name: formData.name }))
+        setModalData({ isOpen: false, type: "create-plan" })
+        reset()
+        return
       }
 
       if (modalData.type === "update-category" && editableCategory) {
-        await dispatch(updatePlanCategory({ id: editableCategory.id, name: formData.name }));
-        setModalData({ isOpen: false, type: "create-plan" });
-        reset();
+        await dispatch(updatePlanCategory({ id: editableCategory.id, name: formData.name }))
+        setModalData({ isOpen: false, type: "create-plan" })
+        reset()
       }
 
       if (modalData.type === "create-plan" && formData.category) {
-        await dispatch(createPlan({ name: formData.name, categoryId: formData.category }));
-        setModalData({ isOpen: false, type: "create-plan" });
-        reset();
+        await dispatch(createPlan({ name: formData.name, categoryId: formData.category }))
+        setModalData({ isOpen: false, type: "create-plan" })
+        reset()
       }
 
       if (modalData.type === "update-plan" && formData.category && formData.status && editablePlan) {
@@ -128,18 +128,18 @@ const PlanActionsModal: FC<IPlanActionsModalProps> = ({
             status: formData.status,
             categoryId: formData.category,
           }),
-        );
-        setModalData({ isOpen: false, type: "create-plan" });
-        reset();
+        )
+        setModalData({ isOpen: false, type: "create-plan" })
+        reset()
       }
     } finally {
-      setIsPending(false);
+      setIsPending(false)
     }
-  };
+  }
 
   const activeCategoryItem = plansCategories
-    ? plansCategories.find((el) => el.id === formData.category)
-    : { id: "", name: "" };
+    ? plansCategories.find((el: PlansCategoriesType) => el.id === formData.category)
+    : { id: "", name: "" }
 
   return (
     <Dialog open={modalData.isOpen} onOpenChange={onOpenChange}>
@@ -203,7 +203,7 @@ const PlanActionsModal: FC<IPlanActionsModalProps> = ({
         </DialogDescription>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default PlanActionsModal;
+export default PlanActionsModal

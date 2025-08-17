@@ -1,25 +1,25 @@
-import z from "zod";
-import React from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import { Pencil, Plus, Trash2, User } from "lucide-react";
+import z from "zod"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router"
+import { Pencil, Plus, Trash2, User } from "lucide-react"
+import { useMemo, useState, type FC, type MouseEvent } from "react"
 
-import { useAppDispatch } from "~/store/store";
-import { Card } from "~/components/ui/common/card";
-import { sortByName } from "~/helpers/sort-by-name";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import { groupsSelector } from "~/store/groups/groups-slice";
-import EntityField from "~/components/features/entity-field";
-import EntityHeader from "~/components/features/entity-header";
-import type { StudentType } from "~/store/students/students-types";
-import { RootContainer } from "~/components/layouts/root-container";
-import { ConfirmWindow } from "~/components/features/confirm-window";
-import { createStudent, deleteStudent, updateStudent } from "~/store/students/students-async-actions";
+import { useAppDispatch } from "~/store/store"
+import { Card } from "~/components/ui/common/card"
+import { sortByName } from "~/helpers/sort-by-name"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import { groupsSelector } from "~/store/groups/groups-slice"
+import EntityField from "~/components/features/entity-field"
+import EntityHeader from "~/components/features/entity-header"
+import { studentsSelector } from "~/store/students/students-slice"
+import { RootContainer } from "~/components/layouts/root-container"
+import { ConfirmWindow } from "~/components/features/confirm-window"
+import type { GroupCategoriesType } from "~/store/groups/groups-types"
+import { createStudent, deleteStudent, updateStudent } from "~/store/students/students-async-actions"
 
-interface IFullStudentProps {
-  studentId: string;
-  student: StudentType;
+interface Props {
+  studentId: string
 }
 
 const initialFormState = {
@@ -29,7 +29,7 @@ const initialFormState = {
   password: "",
   group: "",
   status: "Навчається",
-};
+}
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }),
@@ -38,19 +38,20 @@ const formSchema = z.object({
   password: z.string().optional(),
   group: z.number({ message: "Це поле обов'язкове" }),
   status: z.enum(["Навчається", "Академічна відпустка", "Відраховано"], { message: "Це поле обов'язкове" }),
-});
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
-const FullStudent: React.FC<IFullStudentProps> = ({ studentId, student }) => {
-  const isUpdate = !isNaN(Number(studentId));
+const FullStudent: FC<Props> = ({ studentId }) => {
+  const isUpdate = !isNaN(Number(studentId))
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
-  const { groupCategories } = useSelector(groupsSelector);
+  const { student } = useSelector(studentsSelector)
+  const { groupCategories } = useSelector(groupsSelector)
 
-  const generalInformationFields = React.useMemo(
+  const generalInformationFields = useMemo(
     () => [
       {
         title: "ПІБ*",
@@ -108,22 +109,22 @@ const FullStudent: React.FC<IFullStudentProps> = ({ studentId, student }) => {
         isEditable: true,
         inputType: "number",
         variant: "select",
-        items: sortByName(groupCategories?.flatMap((el) => el.groups)),
+        items: sortByName(groupCategories?.flatMap((el: GroupCategoriesType) => el.groups)),
       },
     ],
     [groupCategories],
-  );
+  )
 
-  const [userFormData, setUserFormData] = React.useState<Partial<FormData>>({});
-  const [showErrors, setShowErrors] = React.useState(false);
-  const [isPending, setIsPanding] = React.useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
+  const [showErrors, setShowErrors] = useState(false)
+  const [isPending, setIsPanding] = useState(false)
 
   const formData = {
     ...initialFormState,
     ...student,
     group: student?.group.id,
     ...userFormData,
-  };
+  }
 
   const conditionalFormSchema = formSchema.superRefine((data, ctx) => {
     if (!isUpdate && !data.password) {
@@ -131,49 +132,49 @@ const FullStudent: React.FC<IFullStudentProps> = ({ studentId, student }) => {
         path: ["password"],
         code: z.ZodIssueCode.custom,
         message: "Це поле обов'язкове",
-      });
+      })
     }
-  });
+  })
 
   const validate = () => {
-    const res = conditionalFormSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
-  };
+    const res = conditionalFormSchema.safeParse(formData)
+    if (res.success) return
+    return res.error.format()
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: MouseEvent<HTMLFormElement>) => {
     try {
-      e.preventDefault();
-      setIsPanding(true);
-      const errors = validate();
+      e.preventDefault()
+      setIsPanding(true)
+      const errors = validate()
       if (errors) {
-        setShowErrors(true);
-        return;
+        setShowErrors(true)
+        return
       }
 
       if (isUpdate) {
-        await dispatch(updateStudent({ ...formData, id: student.id }));
-        navigate("/students");
-        return;
+        await dispatch(updateStudent({ ...formData, id: student.id }))
+        navigate("/students")
+        return
       }
 
-      await dispatch(createStudent(formData));
-      navigate("/students");
+      await dispatch(createStudent(formData))
+      navigate("/students")
     } finally {
-      setIsPanding(false);
+      setIsPanding(false)
     }
-  };
+  }
 
   const onDeleteStudent = async () => {
-    if (!isUpdate) return;
-    const confirmed = await ConfirmWindow(dialogText.confirm.students.title, dialogText.confirm.students.text);
+    if (!isUpdate) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.students.title, dialogText.confirm.students.text)
     if (confirmed) {
-      await dispatch(deleteStudent(Number(student.id)));
-      navigate("/students");
+      await dispatch(deleteStudent(Number(student.id)))
+      navigate("/students")
     }
-  };
+  }
 
   return (
     <RootContainer>
@@ -203,7 +204,7 @@ const FullStudent: React.FC<IFullStudentProps> = ({ studentId, student }) => {
         <Card className="px-10 pb-12 mb-10">
           <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
           {generalInformationFields.map((input) => {
-            const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData];
+            const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
 
             return (
               <EntityField
@@ -217,7 +218,7 @@ const FullStudent: React.FC<IFullStudentProps> = ({ studentId, student }) => {
                 inputType={input.inputType as "string" | "number"}
                 variant={input.variant as "input" | "select" | "button"}
               />
-            );
+            )
           })}
         </Card>
       </form>
@@ -242,7 +243,7 @@ const FullStudent: React.FC<IFullStudentProps> = ({ studentId, student }) => {
         </Card>
       )}
     </RootContainer>
-  );
-};
+  )
+}
 
-export default FullStudent;
+export default FullStudent

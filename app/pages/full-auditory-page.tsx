@@ -1,25 +1,23 @@
-import z from "zod";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import { useState, useMemo, type FC } from "react";
-import { Building2, Pencil, Plus, Trash2 } from "lucide-react";
+import z from "zod"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router"
+import { useState, useMemo, type FC } from "react"
+import { Building2, Pencil, Plus, Trash2 } from "lucide-react"
 
-import { useAppDispatch } from "~/store/store";
-import { Card } from "~/components/ui/common/card";
-import { sortByName } from "~/helpers/sort-by-name";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import EntityField from "~/components/features/entity-field";
-import EntityHeader from "~/components/features/entity-header";
-import { RootContainer } from "~/components/layouts/root-container";
-import { ConfirmWindow } from "~/components/features/confirm-window";
-import { auditoriesSelector } from "~/store/auditories/auditories-slise";
-import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
-import { createAuditory, deleteAuditory, updateAuditory } from "~/store/auditories/auditories-async-actions";
+import { useAppDispatch } from "~/store/store"
+import { Card } from "~/components/ui/common/card"
+import { sortByName } from "~/helpers/sort-by-name"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import EntityField from "~/components/features/entity-field"
+import EntityHeader from "~/components/features/entity-header"
+import { RootContainer } from "~/components/layouts/root-container"
+import { ConfirmWindow } from "~/components/features/confirm-window"
+import { auditoriesSelector } from "~/store/auditories/auditories-slise"
+import { createAuditory, deleteAuditory, updateAuditory } from "~/store/auditories/auditories-async-actions"
 
-interface IFullAuditoryProps {
-  auditoryId: string;
-  auditory: AuditoriesTypes;
+interface Props {
+  auditoryId: string
 }
 
 const initialFormState = {
@@ -28,24 +26,24 @@ const initialFormState = {
   courseNumber: "",
   category: "",
   status: "Активний",
-};
+}
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
   seatsNumber: z.number({ message: "Це поле обов'язкове" }),
   category: z.number({ message: "Це поле обов'язкове" }),
   status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }),
-});
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
-const FullAuditory: FC<IFullAuditoryProps> = ({ auditoryId, auditory }) => {
-  const isUpdate = !isNaN(Number(auditoryId));
+const FullAuditory: FC<Props> = ({ auditoryId }) => {
+  const isUpdate = !isNaN(Number(auditoryId))
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
-  const { auditoriCategories } = useSelector(auditoriesSelector);
+  const { auditoriCategories, auditory } = useSelector(auditoriesSelector)
 
   const formFields = useMemo(
     () => [
@@ -90,58 +88,58 @@ const FullAuditory: FC<IFullAuditoryProps> = ({ auditoryId, auditory }) => {
       },
     ],
     [auditoriCategories],
-  );
+  )
 
-  const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
-  const [showErrors, setShowErrors] = useState(false);
-  const [isPending, setIsPanding] = useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
+  const [showErrors, setShowErrors] = useState(false)
+  const [isPending, setIsPanding] = useState(false)
 
   const formData = {
     ...initialFormState,
     ...auditory,
     category: auditory?.category.id,
     ...userFormData,
-  };
+  }
 
   const validate = () => {
-    const res = formSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
-  };
+    const res = formSchema.safeParse(formData)
+    if (res.success) return
+    return res.error.format()
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
     try {
-      e.preventDefault();
-      setIsPanding(true);
-      const errors = validate();
+      e.preventDefault()
+      setIsPanding(true)
+      const errors = validate()
       if (errors) {
-        setShowErrors(true);
-        return;
+        setShowErrors(true)
+        return
       }
 
       if (isUpdate) {
-        await dispatch(updateAuditory({ ...formData, id: Number(auditoryId) }));
-        navigate("/auditories");
-        return;
+        await dispatch(updateAuditory({ ...formData, id: Number(auditoryId) }))
+        navigate("/auditories")
+        return
       }
 
-      await dispatch(createAuditory(formData));
-      navigate("/auditories");
+      await dispatch(createAuditory(formData))
+      navigate("/auditories")
     } finally {
-      setIsPanding(false);
+      setIsPanding(false)
     }
-  };
+  }
 
   const onDeleteAuditory = async () => {
-    if (!isUpdate) return;
-    const confirmed = await ConfirmWindow(dialogText.confirm.auditories.title, dialogText.confirm.auditories.text);
+    if (!isUpdate) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.auditories.title, dialogText.confirm.auditories.text)
     if (confirmed) {
-      await dispatch(deleteAuditory(Number(auditory)));
-      navigate("/auditories");
+      await dispatch(deleteAuditory(Number(auditory)))
+      navigate("/auditories")
     }
-  };
+  }
 
   return (
     <RootContainer>
@@ -171,7 +169,7 @@ const FullAuditory: FC<IFullAuditoryProps> = ({ auditoryId, auditory }) => {
         <Card className="px-10 pb-12 mb-10">
           <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
           {formFields.map((input) => {
-            const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData];
+            const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
 
             return (
               <EntityField
@@ -184,7 +182,7 @@ const FullAuditory: FC<IFullAuditoryProps> = ({ auditoryId, auditory }) => {
                 inputType={input.inputType as "string" | "number"}
                 variant={input.variant as "input" | "select" | "button"}
               />
-            );
+            )
           })}
         </Card>
       </form>
@@ -206,7 +204,7 @@ const FullAuditory: FC<IFullAuditoryProps> = ({ auditoryId, auditory }) => {
         </Card>
       )}
     </RootContainer>
-  );
-};
+  )
+}
 
-export default FullAuditory;
+export default FullAuditory

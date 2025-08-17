@@ -1,4 +1,4 @@
-import type { makeStore } from "./store";
+import type { store } from "./store"
 
 export enum LoadingStatusTypes {
   LOADING = "LOADING",
@@ -7,6 +7,6 @@ export enum LoadingStatusTypes {
   ERROR = "ERROR",
 }
 
-export type AppStore = ReturnType<typeof makeStore>;
-export type RootState = ReturnType<AppStore["getState"]>;
-export type AppDispatch = AppStore["dispatch"];
+export type AppStore = typeof store
+export type RootState = ReturnType<AppStore["getState"]>
+export type AppDispatch = AppStore["dispatch"]

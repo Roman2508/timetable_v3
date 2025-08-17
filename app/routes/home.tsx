@@ -1,8 +1,9 @@
-import HomePage from '~/pages/home-page'
-import type { Route } from './+types/home'
+import HomePage from "~/pages/home-page"
+import type { Route } from "./+types/home"
+import { META_TAGS } from "~/constants/site-meta-tags"
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: 'ЖБФФК | Головна' }, { name: 'description', content: 'Welcome to React Router!' }]
+  return [{ title: "ЖБФФК | Головна" }, ...META_TAGS]
 }
 
 export default function Home() {

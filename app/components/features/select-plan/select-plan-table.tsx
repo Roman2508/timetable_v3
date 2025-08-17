@@ -1,29 +1,29 @@
-import { useNavigate } from "react-router";
-import { AlignRight, ChevronsUpDown, PenLine } from "lucide-react";
-import { useCallback, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react";
+import { useNavigate } from "react-router"
+import { AlignRight, ChevronsUpDown, PenLine } from "lucide-react"
+import { Fragment, useCallback, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react"
 
-import { cn } from "~/lib/utils";
-import { AlertWindow } from "../alert-window";
-import { useAppDispatch } from "~/store/store";
-import { ConfirmWindow } from "../confirm-window";
-import { Badge } from "~/components/ui/common/badge";
-import { dialogText } from "~/constants/dialogs-text";
-import { ActionsDropdown } from "../actions-dropdown";
-import { Button } from "~/components/ui/common/button";
-import type { PlanActionModalType } from "~/pages/plans-page";
-import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types";
-import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+import { cn } from "~/lib/utils"
+import { AlertWindow } from "../alert-window"
+import { useAppDispatch } from "~/store/store"
+import { ConfirmWindow } from "../confirm-window"
+import { Badge } from "~/components/ui/common/badge"
+import { dialogText } from "~/constants/dialogs-text"
+import { ActionsDropdown } from "../actions-dropdown"
+import { Button } from "~/components/ui/common/button"
+import type { PlanActionModalType } from "~/pages/plans-page"
+import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types"
+import { deletePlan, deletePlanCategory } from "~/store/plans/plans-async-actions"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible"
 
 interface ISelectPlanTableProps {
-  searchValue: string;
-  isEditable?: boolean;
-  selectedPlan?: PlansType | null;
-  plansCategories: PlansCategoriesType[];
-  setModalData?: Dispatch<SetStateAction<PlanActionModalType>>;
-  setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>;
-  setEditablePlan?: React.Dispatch<React.SetStateAction<PlansType | null>>;
-  setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>;
+  searchValue: string
+  isEditable?: boolean
+  selectedPlan?: PlansType | null
+  plansCategories: PlansCategoriesType[]
+  setModalData?: Dispatch<SetStateAction<PlanActionModalType>>
+  setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>
+  setEditablePlan?: React.Dispatch<React.SetStateAction<PlansType | null>>
+  setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>
 }
 
 export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
@@ -36,84 +36,84 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   isEditable = false,
   setEditableCategory,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const [filteredPlanIds, setFilteredPlanIds] = useState<number[]>([]);
+  const [filteredPlanIds, setFilteredPlanIds] = useState<number[]>([])
 
   const onSearchChange = useCallback(() => {
     const filteredByName = plansCategories
       .flatMap((el) => el.plans)
       .filter((el) => el.name.includes(searchValue))
-      .map((el) => el.id);
+      .map((el) => el.id)
 
-    setFilteredPlanIds(filteredByName);
-  }, [plansCategories, searchValue]);
+    setFilteredPlanIds(filteredByName)
+  }, [plansCategories, searchValue])
 
   const onClickCategoryUpdateFunction = (id: number) => {
-    setModalData && setModalData({ isOpen: true, type: "update-category" });
-    const editableCategory = plansCategories.find((el) => el.id === id);
+    setModalData && setModalData({ isOpen: true, type: "update-category" })
+    const editableCategory = plansCategories.find((el) => el.id === id)
     if (editableCategory && setEditableCategory) {
-      setEditableCategory({ id, name: editableCategory.name });
+      setEditableCategory({ id, name: editableCategory.name })
     }
-  };
+  }
 
   const onClickCategoryDeleteFunction = async (id: number) => {
-    if (!id) return;
-    const confirmed = await ConfirmWindow(dialogText.confirm.category.title, dialogText.confirm.category.text);
-    if (!confirmed) return;
+    if (!id) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.category.title, dialogText.confirm.category.text)
+    if (!confirmed) return
 
-    const selectedCategory = plansCategories.find((el) => el.id === id);
+    const selectedCategory = plansCategories.find((el) => el.id === id)
 
-    if (!selectedCategory) return;
+    if (!selectedCategory) return
 
     if (selectedCategory.plans.length > 0) {
-      AlertWindow(dialogText.alert.plan_delete.title, dialogText.alert.plan_delete.text);
-      return;
+      AlertWindow(dialogText.alert.plan_delete.title, dialogText.alert.plan_delete.text)
+      return
     }
 
-    dispatch(deletePlanCategory(id));
-  };
+    dispatch(deletePlanCategory(id))
+  }
 
   const onClickUpdateFunction = (id: number) => {
-    if (!plansCategories) return;
-    const selectedPlan = plansCategories.flatMap((el) => el.plans).find((el) => el.id === id);
-    if (!selectedPlan) return;
-    setEditablePlan && setEditablePlan(selectedPlan);
-    setModalData && setModalData({ isOpen: true, type: "update-plan" });
-  };
+    if (!plansCategories) return
+    const selectedPlan = plansCategories.flatMap((el) => el.plans).find((el) => el.id === id)
+    if (!selectedPlan) return
+    setEditablePlan && setEditablePlan(selectedPlan)
+    setModalData && setModalData({ isOpen: true, type: "update-plan" })
+  }
 
   const onClickReviewFunction = (id: number) => {
-    navigate(`/plans/${id}`);
-  };
+    navigate(`/plans/${id}`)
+  }
 
   const onClickDeleteFunction = async (id: number) => {
-    if (!id) return;
-    const confirmed = await ConfirmWindow(dialogText.confirm.plan_delete.title, dialogText.confirm.plan_delete.text);
+    if (!id) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.plan_delete.title, dialogText.confirm.plan_delete.text)
     if (confirmed) {
-      dispatch(deletePlan(id));
+      dispatch(deletePlan(id))
     }
-  };
+  }
 
   useEffect(() => {
     if (searchValue) {
-      onSearchChange();
+      onSearchChange()
     }
-  }, [searchValue]);
+  }, [searchValue])
 
   return (
     <div className={cn(isEditable ? "" : "min-h-[40vh] max-h-[50vh] overflow-y-auto px-4")}>
       {plansCategories.map((el) => {
-        let filteredPlans: any[] = [];
+        let filteredPlans: any[] = []
 
         if (searchValue) {
-          filteredPlans = el.plans.filter((plan) => filteredPlanIds.includes(plan.id));
+          filteredPlans = el.plans.filter((plan) => filteredPlanIds.includes(plan.id))
         } else {
-          filteredPlans = el.plans;
+          filteredPlans = el.plans
         }
 
-        if (searchValue && !filteredPlans.length) return;
+        if (searchValue && !filteredPlans.length) return
 
         return (
           <Collapsible className="pt-2 border mb-4" key={el.id} defaultOpen>
@@ -159,16 +159,15 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                   {filteredPlans.length ? (
                     filteredPlans.map((plan) => {
                       if (isEditable) {
-                        let isStatusActive = true;
-                        if (plan.status === "Архів") isStatusActive = false;
+                        let isStatusActive = true
+                        if (plan.status === "Архів") isStatusActive = false
 
                         return (
-                          <>
+                          <Fragment key={plan.id}>
                             <div
-                              key={plan.id}
                               onClick={() => {
-                                setSelectedPlan && setSelectedPlan({ name: plan.name, id: plan.id } as PlansType);
-                                onClickReviewFunction(plan.id);
+                                setSelectedPlan && setSelectedPlan({ name: plan.name, id: plan.id } as PlansType)
+                                onClickReviewFunction(plan.id)
                               }}
                               className={cn(
                                 "hover:border hover:border-primary cursor-pointer flex items-center px-4 py-1 border border-white border-t-border",
@@ -210,8 +209,8 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                                 />
                               </div>
                             </div>
-                          </>
-                        );
+                          </Fragment>
+                        )
                       } else {
                         return (
                           <div
@@ -230,7 +229,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                               {plan.subjectsCount > 2 ? plan.subjectsCount - 1 : plan.subjectsCount}
                             </div>
                           </div>
-                        );
+                        )
                       }
                     })
                   ) : (
@@ -240,8 +239,8 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
               </div>
             </CollapsibleContent>
           </Collapsible>
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}

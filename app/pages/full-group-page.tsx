@@ -1,68 +1,67 @@
-import z from "zod";
-import React from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import { GraduationCap, Pencil, Plus, Trash2 } from "lucide-react";
+import z from "zod"
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router"
+import { GraduationCap, Pencil, Plus, Trash2 } from "lucide-react"
+import { useEffect, useMemo, useState, type FC, type MouseEvent } from "react"
 
-import { useAppDispatch } from "~/store/store";
-import { Card } from "~/components/ui/common/card";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import { plansSelector } from "~/store/plans/plans-slice";
-import EntityField from "~/components/features/entity-field";
-import type { GroupsType } from "~/store/groups/groups-types";
-import EntityHeader from "~/components/features/entity-header";
-import { RootContainer } from "~/components/layouts/root-container";
-import { ConfirmWindow } from "~/components/features/confirm-window";
-import { groupsSelector, setGroup } from "~/store/groups/groups-slice";
-import SelectPlanModal from "~/components/features/select-plan/select-plan-modal";
-import SubgroupsModal from "~/components/features/pages/full-group/subgroups-modal";
-import { createGroup, deleteGroup, updateGroup } from "~/store/groups/groups-async-actions";
-import SpecializationModal from "~/components/features/pages/full-group/specialization-modal";
-
-interface IFullGroupProps {
-  groupId: string;
-  group: GroupsType;
-}
+import { useAppDispatch } from "~/store/store"
+import { Card } from "~/components/ui/common/card"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import { plansSelector } from "~/store/plans/plans-slice"
+import EntityField from "~/components/features/entity-field"
+import { groupsSelector } from "~/store/groups/groups-slice"
+import EntityHeader from "~/components/features/entity-header"
+import { RootContainer } from "~/components/layouts/root-container"
+import { ConfirmWindow } from "~/components/features/confirm-window"
+import SelectPlanModal from "~/components/features/select-plan/select-plan-modal"
+import SubgroupsModal from "~/components/features/pages/full-group/subgroups-modal"
+import { createGroup, deleteGroup, updateGroup } from "~/store/groups/groups-async-actions"
+import SpecializationModal from "~/components/features/pages/full-group/specialization-modal"
 
 const initialFormState = {
   name: "",
   yearOfAdmission: new Date().getFullYear(),
-  courseNumber: "",
+  courseNumber: 1,
   students: "",
   formOfEducation: "Денна",
   category: "",
   educationPlan: "",
   status: "Активний",
   calendarId: "",
-};
+}
 
+const message = "Це поле обов'язкове"
 const formSchema = z.object({
-  name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
+  name: z.string({ message }).min(3, { message: "Мінімальна довжина - 3 символа" }),
   yearOfAdmission: z.number().refine((num) => num.toString().length === 4, {
     message: "Не вірно вказано рік початку навчання",
   }),
-  courseNumber: z.number({ message: "Це поле обов'язкове" }).min(1).max(4),
+  courseNumber: z.number({ message }).min(1).max(4),
   students: z.number().optional(),
-  formOfEducation: z.enum(["Денна", "Заочна"], { message: "Це поле обов'язкове" }),
-  category: z.number({ message: "Це поле обов'язкове" }),
-  educationPlan: z.number({ message: "Це поле обов'язкове" }),
-  status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }),
+  formOfEducation: z.enum(["Денна", "Заочна"], { message }),
+  category: z.number({ message }).min(1, message),
+  educationPlan: z.number({ message }).min(1, message),
+  status: z.enum(["Активний", "Архів"], { message }),
   calendarId: z.string().optional(),
-});
+})
 
-export type GroupFormData = z.infer<typeof formSchema>;
+export type GroupFormData = z.infer<typeof formSchema>
 
-const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
-  const isUpdate = !isNaN(Number(groupId));
+interface Props {
+  groupId: string
+}
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+const FullGroup: FC<Props> = ({ groupId }) => {
+  const isUpdate = !isNaN(Number(groupId))
 
-  const { plansCategories } = useSelector(plansSelector);
-  const { groupCategories } = useSelector(groupsSelector);
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
-  const generalInformationFields = React.useMemo(
+  const { plansCategories } = useSelector(plansSelector)
+  const { groupCategories, group } = useSelector(groupsSelector)
+
+  const generalInformationFields = useMemo(
     () => [
       {
         title: "Шифр групи*",
@@ -140,9 +139,9 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
       },
     ],
     [groupCategories],
-  );
+  )
 
-  const educationLoadFormFields = React.useMemo(
+  const educationLoadFormFields = useMemo(
     () => [
       {
         title: "Навчальний план",
@@ -191,13 +190,13 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
       },
     ],
     [plansCategories],
-  );
+  )
 
-  const [openedModalName, setOpenedModalName] = React.useState("plan");
+  const [openedModalName, setOpenedModalName] = useState("plan")
 
-  const [userFormData, setUserFormData] = React.useState<Partial<GroupFormData>>({});
-  const [showErrors, setShowErrors] = React.useState(false);
-  const [isPending, setIsPanding] = React.useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<GroupFormData>>({})
+  const [showErrors, setShowErrors] = useState(false)
+  const [isPending, setIsPanding] = useState(false)
 
   const formData = {
     ...initialFormState,
@@ -206,84 +205,71 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
     students: group?.students.length || 0,
     educationPlan: group?.educationPlan?.id || 0,
     ...userFormData,
-  };
+  }
 
   const validate = () => {
-    const res = formSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
-  };
+    const res = formSchema.safeParse(formData)
+    if (res.success) return
+    return res.error.format()
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
-  /* 
-        <p className="text-error text-sm mt-1">
-            {typeof errors?.[inputKey as keyof typeof errors] === "object" &&
-              "_errors" in (errors[inputKey as keyof typeof errors] ?? {}) &&
-              (errors[inputKey as keyof typeof errors] as { _errors: string[] })._errors.join(", ")}
-        </p>
-  */
-
-  const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
-    const excludedKeys = ["groupLoad", "isHide", "specializationList", "stream", "id"];
+  const handleSubmit = async (e: MouseEvent<HTMLFormElement>) => {
+    const excludedKeys = ["groupLoad", "isHide", "specializationList", "stream", "id"]
     // Виключаю зайві ключі з об'єкта нової групи
     const groupData = Object.fromEntries(
       Object.entries(formData).filter(([key]) => !excludedKeys.includes(key)),
-    ) as GroupFormData;
+    ) as GroupFormData
 
     try {
-      e.preventDefault();
-      setIsPanding(true);
-      const errors = validate();
+      e.preventDefault()
+      setIsPanding(true)
+      const errors = validate()
       if (errors) {
-        setShowErrors(true);
-        return;
+        setShowErrors(true)
+        return
       }
 
       if (isUpdate) {
-        await dispatch(updateGroup({ ...groupData, id: Number(groupId) }));
-        return;
+        await dispatch(updateGroup({ ...groupData, id: Number(groupId) }))
+        return
       }
 
-      await dispatch(createGroup(groupData));
-      navigate("/groups");
+      await dispatch(createGroup(groupData))
+      navigate("/groups")
     } finally {
-      setIsPanding(false);
+      setIsPanding(false)
     }
-  };
+  }
 
   const onDeleteGroup = async () => {
-    if (!isUpdate) return;
-    const confirmed = await ConfirmWindow(dialogText.confirm.groups.title, dialogText.confirm.groups.text);
+    if (!isUpdate) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.groups.title, dialogText.confirm.groups.text)
     if (confirmed) {
-      await dispatch(deleteGroup(Number(groupId)));
-      navigate("/groups");
+      await dispatch(deleteGroup(Number(groupId)))
+      navigate("/groups")
     }
-  };
+  }
 
-  React.useEffect(() => {
-    if (!group) return;
-    dispatch(setGroup(group));
-  }, [groupId]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (openedModalName === "stream") {
       const onGoToStreams = async () => {
-        setOpenedModalName("");
+        setOpenedModalName("")
 
         const confirmed = await ConfirmWindow(
           dialogText.confirm.groups_open_stream_page.title,
           dialogText.confirm.groups_open_stream_page.text,
-        );
+        )
 
         if (confirmed) {
-          navigate("/streams");
+          navigate("/streams")
         }
-      };
+      }
 
-      onGoToStreams();
+      onGoToStreams()
     }
-  }, [openedModalName]);
+  }, [openedModalName])
 
   return (
     <>
@@ -333,7 +319,7 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
           <Card className="px-10 pb-12 mb-10">
             <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
             {generalInformationFields.map((input) => {
-              const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData];
+              const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData]
               return (
                 <EntityField
                   {...input}
@@ -345,14 +331,14 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
                   inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}
                 />
-              );
+              )
             })}
           </Card>
 
           <Card className="px-10 pb-12 mb-10">
             <h3 className="text-xl font-semibold mb-5">Навантаження групи</h3>
             {educationLoadFormFields.map((input) => {
-              const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData];
+              const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData]
               return (
                 <EntityField
                   {...input}
@@ -365,7 +351,7 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
                   inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}
                 />
-              );
+              )
             })}
           </Card>
         </form>
@@ -392,7 +378,7 @@ const FullGroup: React.FC<IFullGroupProps> = ({ groupId, group }) => {
         )}
       </RootContainer>
     </>
-  );
-};
+  )
+}
 
-export default FullGroup;
+export default FullGroup

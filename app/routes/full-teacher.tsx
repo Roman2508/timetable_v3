@@ -1,34 +1,39 @@
-import { useLoaderData } from "react-router";
+import { useEffect } from "react"
+import { useLoaderData } from "react-router"
 
-import { teachersAPI } from "~/api/teachers-api";
-import type { Route } from "./+types/full-teacher";
-import FullTeacher from "~/pages/full-teacher-page";
-import { auditoriesAPI } from "~/api/auditories-api";
-import type { TeachersType } from "~/store/teachers/teachers-types";
-import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
+import { useAppDispatch } from "~/store/store"
+import { teachersAPI } from "~/api/teachers-api"
+import type { Route } from "./+types/full-teacher"
+import FullTeacher from "~/pages/full-teacher-page"
+import { META_TAGS } from "~/constants/site-meta-tags"
+import { setTeacher } from "~/store/teachers/teachers-slice"
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "ЖБФФК | Викладачі" },
-    { name: "description", content: "ЖИТОМИРСЬКИЙ БАЗОВИЙ ФАРМАЦЕВТИЧНИЙ ФАХОВИЙ КОЛЕДЖ ЖИТОМИРСЬКОЇ ОБЛАСНОЇ РАДИ" },
-    { name: "keywords", content: "moodle, MOODLE | ЖБФФК" },
-  ];
+  return [{ title: "ЖБФФК | Викладачі" }, ...META_TAGS]
 }
 
-export async function loader({ params }: Route.LoaderArgs) {
-  const teacherId = params.id;
+export async function clientLoader({ params }: Route.LoaderArgs) {
+  const teacherId = params.id
 
-  const isUpdate = !isNaN(Number(teacherId));
+  const isUpdate = !isNaN(Number(teacherId))
 
   if (isUpdate) {
-    const { data } = await teachersAPI.getTeacher(teacherId);
-    return { teacher: data, teacherId };
+    const { data } = await teachersAPI.getTeacher(teacherId)
+    return { teacher: data, teacherId }
   }
 
-  return { teacherId };
+  return { teacherId }
 }
 
 export default function FullPlan() {
-  const { teacherId, teacher } = useLoaderData() as { teacherId: string; teacher: TeachersType };
-  return <FullTeacher teacherId={teacherId} teacher={teacher} />;
+  const dispatch = useAppDispatch()
+
+  const loaderData = useLoaderData<typeof clientLoader>()
+
+  useEffect(() => {
+    if (!loaderData.teacher) return
+    dispatch(setTeacher(loaderData.teacher))
+  }, [loaderData])
+
+  return <FullTeacher teacherId={loaderData.teacherId} />
 }

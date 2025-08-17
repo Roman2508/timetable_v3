@@ -3,43 +3,43 @@ import {
   type CreateTeacherPayloadType,
   type CreateTeacherCategoryPayloadType,
   type UpdateTeacherCategoryPayloadType,
-} from "./api-types";
-import { instanse } from "./api";
-import { type TeachersCategoryType } from "../store/teachers/teachers-types";
+} from "./api-types"
+import { instanse } from "./api"
+import { type TeachersCategoryType } from "../store/teachers/teachers-types"
 
 export const teachersAPI = {
   /* categories */
   getTeachersCategories() {
-    return instanse.get<TeachersCategoryType[]>(`/teacher-categories`);
+    return instanse.get<TeachersCategoryType[]>(`/teacher-categories`)
   },
   createTeacherCategory(payload: CreateTeacherCategoryPayloadType) {
-    return instanse.post("/teacher-categories/", { name: payload.name });
+    return instanse.post("/teacher-categories/", payload)
   },
   updateTeacherCategory(payload: UpdateTeacherCategoryPayloadType) {
-    const { id, ...rest } = payload;
+    const { id, ...rest } = payload
 
-    return instanse.patch<TeachersCategoryType>(`/teacher-categories/${id}`, rest);
+    return instanse.patch<TeachersCategoryType>(`/teacher-categories/${id}`, rest)
   },
   deleteTeacherCategory(id: number) {
-    return instanse.delete<number>(`/teacher-categories/${id}`);
+    return instanse.delete<number>(`/teacher-categories/${id}`)
   },
 
   /* teachers */
   getTeacher(id: string) {
-    return instanse.get(`/teachers/${id}`);
+    return instanse.get(`/teachers/${id}`)
   },
   createTeacher(payload: CreateTeacherPayloadType) {
-    return instanse.post("/teachers", payload);
+    return instanse.post("/teachers", payload)
   },
   updateTeacher(payload: UpdateTeacherPayloadType) {
-    const { id, ...rest } = payload;
+    const { id, ...rest } = payload
 
-    return instanse.patch(`/teachers/${id}`, rest);
+    return instanse.patch(`/teachers/${id}`, rest)
   },
   handleTeacherVisible(id: number) {
-    return instanse.patch<{ id: number }>(`/teachers/handle-visible/${id}`);
+    return instanse.patch<{ id: number }>(`/teachers/handle-visible/${id}`)
   },
   deleteTeacher(id: number) {
-    return instanse.delete(`/teachers/${id}`);
+    return instanse.delete(`/teachers/${id}`)
   },
-};
+}

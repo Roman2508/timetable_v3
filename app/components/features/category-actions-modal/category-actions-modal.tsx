@@ -1,33 +1,33 @@
-import z from "zod";
-import { useState, type Dispatch, type FC, type MouseEvent, type SetStateAction } from "react";
+import z from "zod"
+import { useState, type Dispatch, type FC, type MouseEvent, type SetStateAction } from "react"
 
-import { Input } from "~/components/ui/common/input";
-import { Button } from "~/components/ui/common/button";
-import { Separator } from "~/components/ui/common/separator";
-import type { CategoryModalStateType, UpdatingCategoryType } from "./category-actions-modal-types";
-import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogDescription } from "~/components/ui/common/dialog";
+import { Input } from "~/components/ui/common/input"
+import { Button } from "~/components/ui/common/button"
+import { Separator } from "~/components/ui/common/separator"
+import type { CategoryModalStateType, UpdatingCategoryType } from "./category-actions-modal-types"
+import { Dialog, DialogTitle, DialogHeader, DialogContent, DialogDescription } from "~/components/ui/common/dialog"
 
 interface ICategoryActionsModalProps {
-  title?: string;
-  isOnlyName?: boolean;
-  nameLabel?: string;
-  shortNameLabel?: string;
-  modalData: CategoryModalStateType;
-  updatingCategory: UpdatingCategoryType | null;
-  onCreateCategory: (data: FormData) => Promise<void>;
-  onUpdateCategory: (data: FormData & { id: number }) => Promise<void>;
-  setModalData: Dispatch<SetStateAction<CategoryModalStateType>>;
-  setUpdatingCategory: Dispatch<SetStateAction<UpdatingCategoryType | null>>;
+  title?: string
+  isOnlyName?: boolean
+  nameLabel?: string
+  shortNameLabel?: string
+  modalData: CategoryModalStateType
+  updatingCategory: UpdatingCategoryType | null
+  onCreateCategory: (data: FormData) => Promise<void>
+  onUpdateCategory: (data: FormData & { id: number }) => Promise<void>
+  setModalData: Dispatch<SetStateAction<CategoryModalStateType>>
+  setUpdatingCategory: Dispatch<SetStateAction<UpdatingCategoryType | null>>
 }
 
-const initialFormData = { name: "", shortName: "" };
+const initialFormData = { name: "", shortName: "" }
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
   shortName: z.string({ message: "Це поле обов'язкове" }).optional(),
-});
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
 const CategoryActionsModal: FC<ICategoryActionsModalProps> = ({
   title,
@@ -41,25 +41,25 @@ const CategoryActionsModal: FC<ICategoryActionsModalProps> = ({
   nameLabel = "Назва підрозділу*",
   shortNameLabel = "Коротка назва*",
 }) => {
-  const [isPending, setIsPending] = useState(false);
-  const [showErrors, setShowErrors] = useState(false);
-  const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
-  
+  const [isPending, setIsPending] = useState(false)
+  const [showErrors, setShowErrors] = useState(false)
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
+
   const formData = {
     ...initialFormData,
     ...updatingCategory,
     ...userFormData,
-  };
+  }
 
   const reset = () => {
-    setUpdatingCategory(null);
-    setUserFormData({});
-  };
+    setUpdatingCategory(null)
+    setUserFormData({})
+  }
 
   const onOpenChange = (value: boolean) => {
-    setModalData((prev) => ({ ...prev, isOpen: value }));
-    if (!value) reset();
-  };
+    setModalData((prev) => ({ ...prev, isOpen: value }))
+    if (!value) reset()
+  }
 
   // const validate = () => {
   //   const res = formSchema.safeParse(formData);
@@ -68,46 +68,48 @@ const CategoryActionsModal: FC<ICategoryActionsModalProps> = ({
   // };
 
   const validate = () => {
-    const res = formSchema.safeParse(formData);
+    const res = formSchema.safeParse(formData)
     if (!res.success) {
-      return res.error.format();
+      return res.error.format()
     }
 
     if (!isOnlyName && !formData.shortName) {
-      return { success: false, shortName: { _errors: ["Це поле обов'язкове"] } };
+      return { success: false, shortName: { _errors: ["Це поле обов'язкове"] } }
     }
-  };
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
   const handleSubmit = async (e: MouseEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const errors = validate();
+    const errors = validate()
 
     if (errors) {
-      setShowErrors(true);
-      return;
+      setShowErrors(true)
+      return
     }
 
     try {
-      setIsPending(true);
+      setIsPending(true)
       if (modalData.actionType === "create") {
-        await onCreateCategory(formData);
-        setModalData({ isOpen: false, actionType: "create" });
-        reset();
-        return;
+        await onCreateCategory(formData)
+        setModalData({ isOpen: false, actionType: "create" })
+        reset()
+        setShowErrors(false)
+        return
       }
 
       if (modalData.actionType === "update" && updatingCategory) {
-        await onUpdateCategory({ id: updatingCategory.id, ...formData });
-        setModalData({ isOpen: false, actionType: "create" });
-        reset();
+        await onUpdateCategory({ id: updatingCategory.id, ...formData })
+        setModalData({ isOpen: false, actionType: "create" })
+        setShowErrors(false)
+        reset()
       }
     } finally {
-      setIsPending(false);
+      setIsPending(false)
     }
-  };
+  }
 
   return (
     <Dialog open={modalData.isOpen} onOpenChange={onOpenChange}>
@@ -154,7 +156,7 @@ const CategoryActionsModal: FC<ICategoryActionsModalProps> = ({
         </DialogDescription>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default CategoryActionsModal;
+export default CategoryActionsModal

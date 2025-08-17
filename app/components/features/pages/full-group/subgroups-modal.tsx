@@ -1,5 +1,5 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React from "react"
+import { useSelector } from "react-redux"
 
 import {
   Dialog,
@@ -8,46 +8,44 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
-} from "~/components/ui/common/dialog";
-import { SubgroupsTable } from "./subgroups-table";
-import { Button } from "~/components/ui/common/button";
-import { plansSelector } from "~/store/plans/plans-slice";
-import SubgroupsCountModal from "./subgroups-count-modal";
-import { Separator } from "~/components/ui/common/separator";
-import type { GroupLoadType } from "~/store/groups/groups-types";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import type { SubgroupsLessonsType } from "~/helpers/group-lesson-by-name-subgroups-and-semester";
-import { groupsSelector } from "~/store/groups/groups-slice";
+} from "~/components/ui/common/dialog"
+import { SubgroupsTable } from "./subgroups-table"
+import { Button } from "~/components/ui/common/button"
+import { plansSelector } from "~/store/plans/plans-slice"
+import SubgroupsCountModal from "./subgroups-count-modal"
+import { Separator } from "~/components/ui/common/separator"
+import type { GroupLoadType } from "~/store/groups/groups-types"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import type { SubgroupsLessonsType } from "~/helpers/group-lesson-by-name-subgroups-and-semester"
+import { groupsSelector } from "~/store/groups/groups-slice"
 
 interface ISubgroupsModalProps {
-  isOpen: boolean;
-  setOpenedModalName: React.Dispatch<React.SetStateAction<string>>;
+  isOpen: boolean
+  setOpenedModalName: React.Dispatch<React.SetStateAction<string>>
 }
 
-const MODAL_NAME = "subgroups";
+const MODAL_NAME = "subgroups"
 
 const SubgroupsModal: React.FC<ISubgroupsModalProps> = ({ isOpen, setOpenedModalName }) => {
-  const {
-    group: { groupLoad },
-  } = useSelector(groupsSelector);
+  const { group } = useSelector(groupsSelector)
 
-  const [isCountModalOpen, setIsCountModalOpen] = React.useState(false);
+  const [isCountModalOpen, setIsCountModalOpen] = React.useState(false)
 
-  const { plansCategories } = useSelector(plansSelector);
+  const { plansCategories } = useSelector(plansSelector)
 
-  const [globalSearch, setGlobalSearch] = React.useState("");
-  const [selectedLesson, setSelectedLesson] = React.useState<SubgroupsLessonsType | null>(null);
+  const [globalSearch, setGlobalSearch] = React.useState("")
+  const [selectedLesson, setSelectedLesson] = React.useState<SubgroupsLessonsType | null>(null)
 
   const onOpenChange = () => {
-    setOpenedModalName((prev) => (prev === MODAL_NAME ? "" : MODAL_NAME));
-  };
+    setOpenedModalName((prev) => (prev === MODAL_NAME ? "" : MODAL_NAME))
+  }
 
   return (
     <>
       <SubgroupsCountModal
-        groupLoad={groupLoad}
         selectedLesson={selectedLesson}
         isCountModalOpen={isCountModalOpen}
+        groupLoad={group ? group.groupLoad : []}
         setIsCountModalOpen={setIsCountModalOpen}
       />
 
@@ -77,9 +75,9 @@ const SubgroupsModal: React.FC<ISubgroupsModalProps> = ({ isOpen, setOpenedModal
                   </Button>
                 </div>
 
-                {groupLoad ? (
+                {group?.groupLoad ? (
                   <SubgroupsTable
-                    groupLoad={groupLoad}
+                    groupLoad={group.groupLoad}
                     globalSearch={globalSearch}
                     selectedLesson={selectedLesson}
                     setGlobalSearch={setGlobalSearch}
@@ -120,7 +118,7 @@ const SubgroupsModal: React.FC<ISubgroupsModalProps> = ({ isOpen, setOpenedModal
         </DialogContent>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default SubgroupsModal;
+export default SubgroupsModal

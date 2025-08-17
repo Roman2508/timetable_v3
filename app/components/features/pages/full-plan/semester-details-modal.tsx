@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { useParams } from "react-router";
-import { useSelector } from "react-redux";
-import { useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { z } from "zod"
+import { useParams } from "react-router"
+import { useSelector } from "react-redux"
+import { useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -10,30 +10,30 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
-} from "~/components/ui/common/dialog";
-import EntityField from "../../entity-field";
-import { useAppDispatch } from "~/store/store";
-import { sortByName } from "~/helpers/sort-by-name";
-import { Button } from "~/components/ui/common/button";
-import { Separator } from "~/components/ui/common/separator";
-import { teachersSelector } from "~/store/teachers/teachers-slice";
-import type { SemesterHoursType } from "~/helpers/group-lessons-by-name";
-import { createPlanSubjects, updatePlanSubjectsName } from "~/store/plans/plans-async-actions";
+} from "~/components/ui/common/dialog"
+import EntityField from "../../entity-field"
+import { useAppDispatch } from "~/store/store"
+import { sortByName } from "~/helpers/sort-by-name"
+import { Button } from "~/components/ui/common/button"
+import { Separator } from "~/components/ui/common/separator"
+import { teachersSelector } from "~/store/teachers/teachers-slice"
+import type { SemesterHoursType } from "~/helpers/group-lessons-by-name"
+import { createPlanSubjects, updatePlanSubjectsName } from "~/store/plans/plans-async-actions"
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }),
-  cmk: z.number({ message: "Це поле обов'язкове" }),
-});
+  cmk: z.number({ message: "Це поле обов'язкове" }).min(1, "Це поле обов'язкове"),
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
 interface ISemesterDetailsModalProps {
-  isOpen: boolean;
-  detailsModalType: "create" | "update";
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  selectedSemesterHours: SemesterHoursType | null;
-  setDetailsModalType: Dispatch<SetStateAction<"create" | "update">>;
-  setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>;
+  isOpen: boolean
+  detailsModalType: "create" | "update"
+  setIsOpen: Dispatch<SetStateAction<boolean>>
+  selectedSemesterHours: SemesterHoursType | null
+  setDetailsModalType: Dispatch<SetStateAction<"create" | "update">>
+  setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>
 }
 
 const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
@@ -44,13 +44,13 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
   selectedSemesterHours,
   setSelectedSemesterHours,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const { id: planId } = useParams();
+  const { id: planId } = useParams()
 
-  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null)
 
-  const { teachersCategories } = useSelector(teachersSelector);
+  const { teachersCategories } = useSelector(teachersSelector)
 
   const formFields = useMemo(
     () => [
@@ -74,49 +74,49 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
       },
     ],
     [],
-  );
+  )
 
-  const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
-  const [showErrors, setShowErrors] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
+  const [showErrors, setShowErrors] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const formData = {
     name: selectedSemesterHours ? selectedSemesterHours.name : "",
     cmk: selectedSemesterHours ? selectedSemesterHours.cmk.id : 0,
     ...userFormData,
-  };
+  }
 
   const validate = () => {
-    const res = formSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
-  };
+    const res = formSchema.safeParse(formData)
+    if (res.success) return
+    return res.error.format()
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
   const onOpenChange = (open: boolean) => {
-    setIsOpen(open);
+    setIsOpen(open)
     if (!open) {
-      setSelectedSemesterHours(null);
-      setDetailsModalType("update");
+      setSelectedSemesterHours(null)
+      setDetailsModalType("update")
     }
-  };
+  }
 
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
     try {
-      e.preventDefault();
-      setIsPending(true);
-      const errors = validate();
+      e.preventDefault()
+      setIsPending(true)
+      const errors = validate()
       if (errors) {
-        setShowErrors(true);
-        return;
+        setShowErrors(true)
+        return
       }
 
       if (detailsModalType === "create") {
-        const payload = { name: formData.name, cmk: formData.cmk, planId: Number(planId) };
-        await dispatch(createPlanSubjects(payload));
-        onOpenChange(false);
-        return;
+        const payload = { name: formData.name, cmk: formData.cmk, planId: Number(planId) }
+        await dispatch(createPlanSubjects(payload))
+        onOpenChange(false)
+        return
       }
 
       if (detailsModalType === "update" && selectedSemesterHours) {
@@ -125,24 +125,24 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
           newName: formData.name,
           planId: Number(planId),
           oldName: selectedSemesterHours.name,
-        };
+        }
 
-        await dispatch(updatePlanSubjectsName(payload));
-        onOpenChange(false);
+        await dispatch(updatePlanSubjectsName(payload))
+        onOpenChange(false)
       }
     } finally {
-      setIsPending(false);
+      setIsPending(false)
     }
-  };
+  }
 
   const onSubmitClick = () => {
     if (submitButtonRef.current) {
-      submitButtonRef.current.click();
+      submitButtonRef.current.click()
     }
-  };
+  }
 
   const deleteSemesterConfirmation = async () => {
-    alert('Якщо раніше був вибраний план - перевіряю чи не вибрано інший')
+    alert("Якщо раніше був вибраний план - перевіряю чи не вибрано інший")
     // // Якщо раніше був вибраний план - перевіряю чи не вибрано інший
     // if (defaultValue !== selectedPlan?.id) {
     //   const result = await onConfirm({ title: CONFIRM_MODAL_TITLE, description: CONFIRM_MODAL_DESC }, dispatch);
@@ -155,7 +155,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
     //   setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
     // }
     // onOpenChange();
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -176,11 +176,12 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
         <DialogDescription>
           <form className="px-4 py-4 max-h-125 overflow-y-auto" onSubmit={handleSubmit}>
             {formFields.map((input) => {
-              const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData];
+              const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
 
               return (
                 <EntityField
                   {...input}
+                  key={input.key}
                   errors={errors}
                   isUpdate={false}
                   inputKey={input.key}
@@ -191,7 +192,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
                   inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}
                 />
-              );
+              )
             })}
 
             <button className="hidden" ref={submitButtonRef}></button>
@@ -213,7 +214,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default SemesterDetailsModal;
+export default SemesterDetailsModal

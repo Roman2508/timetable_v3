@@ -7,30 +7,30 @@ import {
   getFilteredRowModel,
   type SortingState,
   type PaginationState,
-} from "@tanstack/react-table";
-import { useSelector } from "react-redux";
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
+} from "@tanstack/react-table"
+import { useSelector } from "react-redux"
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight } from "lucide-react"
+import { useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react"
 
-import { cn } from "~/lib/utils";
-import { useAppDispatch } from "~/store/store";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
-import { Button } from "~/components/ui/common/button";
-import { teachersSelector } from "~/store/teachers/teachers-slice";
-import type { TeachersType } from "~/store/teachers/teachers-types";
-import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
-import { useItemsByCategory } from "~/hooks/use-items-by-category";
+import { cn } from "~/lib/utils"
+import { useAppDispatch } from "~/store/store"
+import { fuzzyFilter } from "~/helpers/fuzzy-filter"
+import { Button } from "~/components/ui/common/button"
+import { teachersSelector } from "~/store/teachers/teachers-slice"
+import type { TeachersType } from "~/store/teachers/teachers-types"
+import { getTeacherFullname } from "~/helpers/get-teacher-fullname"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select"
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination"
+import { useItemsByCategory } from "~/hooks/use-items-by-category"
 
 interface IDistributionTeacherTableProps {
-  globalFilter: string;
-  selectedTeacherId: number | null;
-  selectedTeacherCategories: { id: number }[];
-  setGlobalFilter: Dispatch<SetStateAction<string>>;
-  setSelectedTeacherId: Dispatch<SetStateAction<number | null>>;
+  globalFilter: string
+  selectedTeacherId: number | null
+  selectedTeacherCategories: { id: number }[]
+  setGlobalFilter: Dispatch<SetStateAction<string>>
+  setSelectedTeacherId: Dispatch<SetStateAction<number | null>>
 }
 
 export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
@@ -40,22 +40,22 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
   setSelectedTeacherId,
   selectedTeacherCategories,
 }) => {
-  const { teachersCategories } = useSelector(teachersSelector);
+  const { teachersCategories } = useSelector(teachersSelector)
 
-  const teachers = useMemo(() => (teachersCategories ?? []).flatMap((el) => el.teachers), [teachersCategories]);
-  const filtredTeachers = useItemsByCategory(teachers, selectedTeacherCategories);
+  const teachers = useMemo(() => (teachersCategories ?? []).flatMap((el) => el.teachers), [teachersCategories])
+  const filtredTeachers = useItemsByCategory(teachers, selectedTeacherCategories)
 
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 })
 
   const handleSelectTeacher = (teacherId: number) => {
     setSelectedTeacherId((prev) => {
-      if (prev === teacherId) return null;
-      else return teacherId;
-    });
-  };
+      if (prev === teacherId) return null
+      else return teacherId
+    })
+  }
 
-  const columnHelper = createColumnHelper<TeachersType>();
+  const columnHelper = createColumnHelper<TeachersType>()
   const columns = useMemo(
     () => [
       columnHelper.accessor((row) => getTeacherFullname(row), {
@@ -72,12 +72,12 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
               <TooltipTrigger>{row.original.category.shortName}</TooltipTrigger>
               <TooltipContent>ЦК {row.original.category.name}</TooltipContent>
             </Tooltip>
-          );
+          )
         },
       }),
     ],
     [teachers],
-  );
+  )
 
   const table = useReactTable({
     data: filtredTeachers,
@@ -87,11 +87,10 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
 
-    globalFilterFn: "fuzzy",
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
 
   return (
     <>
@@ -130,7 +129,7 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
                           </div>
                         )}
                       </TableHead>
-                    );
+                    )
                   })}
                 </TableRow>
               ))}
@@ -138,7 +137,7 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
 
             <TableBody>
               {table.getRowModel().rows.map((row) => {
-                const isSelected = selectedTeacherId === row.original.id;
+                const isSelected = selectedTeacherId === row.original.id
                 return (
                   <TableRow
                     key={row.id}
@@ -156,10 +155,10 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
-                      );
+                      )
                     })}
                   </TableRow>
-                );
+                )
               })}
             </TableBody>
           </Table>
@@ -205,5 +204,5 @@ export const DistributionTeacherTable: FC<IDistributionTeacherTableProps> = ({
         </div>
       )}
     </>
-  );
-};
+  )
+}

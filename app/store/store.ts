@@ -46,7 +46,7 @@ const persistConfig = {
   whiteList: ["general"],
 };
 
-const mainReducer = persistReducer(persistConfig, rootReducer);
+export const mainReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: mainReducer,

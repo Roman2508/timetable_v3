@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux";
-import { useState, type Dispatch, type FC, type SetStateAction } from "react";
+import { useSelector } from "react-redux"
+import { useState, type Dispatch, type FC, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -8,32 +8,30 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
-} from "~/components/ui/common/dialog";
-import { Button } from "~/components/ui/common/button";
-import SpecializationPopover from "./specialization-popover";
-import { Separator } from "~/components/ui/common/separator";
-import { SpecializationTable } from "./specialization-table";
-import { groupsSelector } from "~/store/groups/groups-slice";
-import { InputSearch } from "~/components/ui/custom/input-search";
+} from "~/components/ui/common/dialog"
+import { Button } from "~/components/ui/common/button"
+import SpecializationPopover from "./specialization-popover"
+import { Separator } from "~/components/ui/common/separator"
+import { SpecializationTable } from "./specialization-table"
+import { groupsSelector } from "~/store/groups/groups-slice"
+import { InputSearch } from "~/components/ui/custom/input-search"
 
 interface ISpecializationModalProps {
-  isOpen: boolean;
-  groupId: string;
-  setOpenedModalName: Dispatch<SetStateAction<string>>;
+  isOpen: boolean
+  groupId: string
+  setOpenedModalName: Dispatch<SetStateAction<string>>
 }
 
-const MODAL_NAME = "specialities";
+const MODAL_NAME = "specialities"
 
 const SpecializationModal: FC<ISpecializationModalProps> = ({ isOpen, groupId, setOpenedModalName }) => {
-  const {
-    group: { groupLoad, specializationList },
-  } = useSelector(groupsSelector);
+  const { group } = useSelector(groupsSelector)
 
-  const [globalSearch, setGlobalSearch] = useState("");
+  const [globalSearch, setGlobalSearch] = useState("")
 
   const onOpenChange = () => {
-    setOpenedModalName((prev) => (prev === MODAL_NAME ? "" : MODAL_NAME));
-  };
+    setOpenedModalName((prev) => (prev === MODAL_NAME ? "" : MODAL_NAME))
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -61,12 +59,12 @@ const SpecializationModal: FC<ISpecializationModalProps> = ({ isOpen, groupId, s
             </Button>
           </div>
 
-          {groupLoad ? (
+          {group ? (
             <SpecializationTable
-              groupLoad={groupLoad}
               globalSearch={globalSearch}
+              groupLoad={group.groupLoad || []}
               setGlobalSearch={setGlobalSearch}
-              specializationList={specializationList}
+              specializationList={group.specializationList}
             />
           ) : (
             <div className="flex flex-col justify-center items-center h-[50%]">
@@ -81,11 +79,11 @@ const SpecializationModal: FC<ISpecializationModalProps> = ({ isOpen, groupId, s
         <DialogFooter className="flex !justify-between items-center mt-6 px-4">
           <Button onClick={() => setOpenedModalName("")}>Закрити</Button>
 
-          <SpecializationPopover groupId={+groupId} specializationList={specializationList} />
+          <SpecializationPopover groupId={+groupId} specializationList={group?.specializationList} />
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default SpecializationModal;
+export default SpecializationModal

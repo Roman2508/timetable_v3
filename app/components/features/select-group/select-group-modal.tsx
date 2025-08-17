@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
-import { ChevronsUpDown, Search } from "lucide-react";
-import { useState, type Dispatch, type FC, type SetStateAction } from "react";
+import { useSelector } from "react-redux"
+import { ChevronsUpDown, Search } from "lucide-react"
+import { useState, type Dispatch, type FC, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -10,30 +10,30 @@ import {
   DialogTrigger,
   DialogContent,
   DialogDescription,
-} from "~/components/ui/common/dialog";
-import { Button } from "~/components/ui/common/button";
-import { SelectGroupTable } from "./select-group-table";
-import { Separator } from "~/components/ui/common/separator";
-import { groupsSelector } from "~/store/groups/groups-slice";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import type { GroupsShortType } from "~/store/groups/groups-types";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+} from "~/components/ui/common/dialog"
+import { Button } from "~/components/ui/common/button"
+import { SelectGroupTable } from "./select-group-table"
+import { Separator } from "~/components/ui/common/separator"
+import { groupsSelector } from "~/store/groups/groups-slice"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import type { GroupsShortType } from "~/store/groups/groups-types"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible"
 
 interface ISelectGroupModal {
-  selectedGroup: GroupsShortType | null;
-  setSelectedGroup: Dispatch<SetStateAction<GroupsShortType | null>>;
+  selectedGroup: GroupsShortType | null
+  setSelectedGroup: Dispatch<SetStateAction<GroupsShortType | null>>
 }
 
 const SelectGroupModal: FC<ISelectGroupModal> = ({ selectedGroup, setSelectedGroup }) => {
-  const { groupCategories } = useSelector(groupsSelector);
+  const { groupCategories } = useSelector(groupsSelector)
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [preSelectedGroup, setPreSelectedGroup] = useState<GroupsShortType | null>(selectedGroup);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [preSelectedGroup, setPreSelectedGroup] = useState<GroupsShortType | null>(selectedGroup)
 
   const onSelectedGroup = () => {
-    setSelectedGroup(preSelectedGroup);
-    setIsModalOpen(false);
-  };
+    setSelectedGroup(preSelectedGroup)
+    setIsModalOpen(false)
+  }
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -95,7 +95,7 @@ const SelectGroupModal: FC<ISelectGroupModal> = ({ selectedGroup, setSelectedGro
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default SelectGroupModal;
+export default SelectGroupModal

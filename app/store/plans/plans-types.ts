@@ -1,52 +1,53 @@
-import { LoadingStatusTypes } from "../app-types";
+import { LoadingStatusTypes } from "../app-types"
 
 export type PlansInitialState = {
-  plansCategories: PlansCategoriesType[] | null;
-  plan: Omit<PlanType, "subjects"> | null;
-  planSubjects: PlanSubjectType[] | null;
-  loadingStatus: LoadingStatusTypes;
-};
+  plansCategories: PlansCategoriesType[] | null
+  plan: Omit<PlanType, "subjects"> | null
+  planSubjects: PlanSubjectType[] | null
+  loadingStatus: LoadingStatusTypes
+}
 
 export type PlansCategoriesType = {
-  id: number;
-  name: string;
-  plans: PlansType[];
-};
+  id: number
+  name: string
+  plans: PlansType[]
+}
 
 export type PlansType = {
-  id: number;
-  name: string;
-  subjectsCount: number;
-  status: "Активний" | "Архів";
-  category: { id: number; name: string };
-};
+  id: number
+  name: string
+  subjectsCount: number
+  status: "Активний" | "Архів"
+  category: { id: number; name: string }
+}
 
 export type PlanType = {
-  id: number;
-  name: string;
-  status: "Активний" | "Архів";
-  category: { id: number };
-  subjects: PlanSubjectType[];
-};
+  id: number
+  name: string
+  status: "Активний" | "Архів"
+  category: { id: number }
+  subjects: PlanSubjectType[]
+}
 
 export type PlanSubjectType = {
-  id: number;
-  name: string;
-  totalHours: number;
-  semesterNumber: number;
-  lectures: number;
-  practical: number;
-  laboratory: number;
-  seminars: number;
-  exams: number;
-  examsConsulation: number;
-  metodologicalGuidance: number;
-  independentWork: number;
+  id: number
+  name: string
+  totalHours: number
+  semesterNumber: number
+  lectures: number
+  practical: number
+  laboratory: number
+  seminars: number
+  exams: number
+  examsConsulation: number
+  metodologicalGuidance: number
+  independentWork: number
   plan: {
-    id: number;
-  };
+    id: number
+  }
   cmk: {
-    id: number;
-    name: string;
-  };
-};
+    id: number
+    name: string
+    shortName: string
+  }
+}

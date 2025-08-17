@@ -8,20 +8,20 @@ import {
   type ColumnDef,
   type SortingState,
   type PaginationState,
-} from "@tanstack/react-table";
-import { useSelector } from "react-redux";
-import { useCallback, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
-import { ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+} from "@tanstack/react-table"
+import { useSelector } from "react-redux"
+import { useCallback, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react"
+import { ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 
-import { cn } from "~/lib/utils";
-import { Input } from "~/components/ui/common/input";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
-import { Button } from "~/components/ui/common/button";
-import { plansSelector } from "~/store/plans/plans-slice";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select";
-import { groupLessonsByName, type PlanItemType, type SemesterHoursType } from "~/helpers/group-lessons-by-name";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination";
+import { cn } from "~/lib/utils"
+import { Input } from "~/components/ui/common/input"
+import { fuzzyFilter } from "~/helpers/fuzzy-filter"
+import { Button } from "~/components/ui/common/button"
+import { plansSelector } from "~/store/plans/plans-slice"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/common/select"
+import { groupLessonsByName, type PlanItemType, type SemesterHoursType } from "~/helpers/group-lessons-by-name"
+import { Pagination, PaginationContent, PaginationItem, PaginationLink } from "~/components/ui/common/pagination"
 
 const defaultSemesterData = {
   id: 0,
@@ -34,14 +34,14 @@ const defaultSemesterData = {
   metodologicalGuidance: 0,
   independentWork: 0,
   totalHours: 0,
-};
+}
 
 interface IFullPlanTableProps {
-  globalSearch: string;
-  setGlobalSearch: Dispatch<SetStateAction<string>>;
-  setIsHoursModalOpen: Dispatch<SetStateAction<boolean>>;
-  setIsDetailsModalOpen: Dispatch<SetStateAction<boolean>>;
-  setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>;
+  globalSearch: string
+  setGlobalSearch: Dispatch<SetStateAction<string>>
+  setIsHoursModalOpen: Dispatch<SetStateAction<boolean>>
+  setIsDetailsModalOpen: Dispatch<SetStateAction<boolean>>
+  setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>
 }
 
 export const FullPlanTable: FC<IFullPlanTableProps> = ({
@@ -51,14 +51,14 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
   setIsDetailsModalOpen,
   setSelectedSemesterHours,
 }) => {
-  const { planSubjects } = useSelector(plansSelector);
+  const { planSubjects } = useSelector(plansSelector)
 
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 });
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 })
 
-  const data = useMemo(() => groupLessonsByName(planSubjects ?? []), [planSubjects]);
+  const data = useMemo(() => groupLessonsByName(planSubjects ?? []), [planSubjects])
 
-  const columnHelper = createColumnHelper<PlanItemType>();
+  const columnHelper = createColumnHelper<PlanItemType>()
   const columns = useMemo<ColumnDef<PlanItemType, string>[]>(
     () => [
       columnHelper.accessor((row) => row.name, {
@@ -70,7 +70,7 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
         // rowSpan: 3,
       }),
 
-      columnHelper.accessor((row) => row.cmk.name, {
+      columnHelper.accessor((row) => row.cmk.shortName, {
         id: "cmk",
         header: "ЦК",
         cell: (info) => info.getValue(),
@@ -181,7 +181,7 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
       },
     ],
     [],
-  );
+  )
 
   const table = useReactTable({
     data,
@@ -196,30 +196,30 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalSearch,
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
 
   const handleSelectLesson = useCallback((key: string, planItem: PlanItemType) => {
-    const cellData = planItem[key as keyof PlanItemType];
-    const isCellSemester = key.includes("semester_");
-    const isClickDisabled = key === "totalHours";
+    const cellData = planItem[key as keyof PlanItemType]
+    const isCellSemester = key.includes("semester_")
+    const isClickDisabled = key === "totalHours"
 
-    if (isClickDisabled) return;
+    if (isClickDisabled) return
 
     if (isCellSemester && cellData !== null) {
-      setSelectedSemesterHours(cellData as SemesterHoursType);
-      setIsHoursModalOpen(true);
-      return;
+      setSelectedSemesterHours(cellData as SemesterHoursType)
+      setIsHoursModalOpen(true)
+      return
     }
 
-    const semesterNumber = Number(key.slice(key.length - 1));
-    setSelectedSemesterHours({ ...defaultSemesterData, name: planItem.name, semesterNumber, cmk: planItem.cmk });
+    const semesterNumber = Number(key.slice(key.length - 1))
+    setSelectedSemesterHours({ ...defaultSemesterData, name: planItem.name, semesterNumber, cmk: planItem.cmk })
     if (isCellSemester) {
-      setIsHoursModalOpen(true);
-      return;
+      setIsHoursModalOpen(true)
+      return
     }
 
-    setIsDetailsModalOpen(true);
-  }, []);
+    setIsDetailsModalOpen(true)
+  }, [])
 
   return (
     <>
@@ -254,7 +254,7 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
                       </div>
                     )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -284,10 +284,10 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
-                    );
+                    )
                   })}
                 </TableRow>
-              );
+              )
             })
           )}
         </TableBody>
@@ -345,8 +345,8 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
             max={table.getPageCount()}
             defaultValue={table.getState().pagination.pageIndex + 1}
             onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              table.setPageIndex(page);
+              const page = e.target.value ? Number(e.target.value) - 1 : 0
+              table.setPageIndex(page)
             }}
             className="w-16"
           />
@@ -370,5 +370,5 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
         </Select>
       </div>
     </>
-  );
-};
+  )
+}

@@ -1,121 +1,119 @@
-"use client";
-
-import React from "react";
-import { NavLink } from "react-router";
-import { Plus, User } from "lucide-react";
-import { useSelector } from "react-redux";
-import { useCookies } from "react-cookie";
+import { NavLink } from "react-router"
+import { Plus, User } from "lucide-react"
+import { useSelector } from "react-redux"
+import { useCookies } from "react-cookie"
+import { useEffect, useState } from "react"
 
 import {
   createTeacherCategory,
   deleteTeacherCategory,
+  getTeachersCategories,
   updateTeacherCategory,
-} from "~/store/teachers/teachers-async-actions";
+} from "~/store/teachers/teachers-async-actions"
 import type {
   UpdatingCategoryType,
   CategoryModalStateType,
-} from "~/components/features/category-actions-modal/category-actions-modal-types";
-import { useAppDispatch } from "~/store/store";
-import { Card } from "~/components/ui/common/card";
-import { sortByName } from "~/helpers/sort-by-name";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import { pluralizeWords } from "~/helpers/pluralize-words";
-import { useItemsByStatus } from "~/hooks/use-items-by-status";
-import { AlertWindow } from "~/components/features/alert-window";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import { CategoryCard } from "~/components/features/category-card";
-import { useItemsByCategory } from "~/hooks/use-items-by-category";
-import { teachersSelector } from "~/store/teachers/teachers-slice";
-import { ConfirmWindow } from "~/components/features/confirm-window";
-import { RootContainer } from "~/components/layouts/root-container";
-import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import { TEACHER_FILTERS, TEACHER_STATUS } from "~/constants/cookies-keys";
-import { generalSelector, setTeacherFilters } from "~/store/general/general-slice";
-import { TeachersTable } from "~/components/features/pages/teachers/teachers-table";
-import type { TeachersCategoryType, TeachersType } from "~/store/teachers/teachers-types";
-import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal";
-import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal";
+} from "~/components/features/category-actions-modal/category-actions-modal-types"
+import { useAppDispatch } from "~/store/store"
+import { Card } from "~/components/ui/common/card"
+import { sortByName } from "~/helpers/sort-by-name"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import { pluralizeWords } from "~/helpers/pluralize-words"
+import { useItemsByStatus } from "~/hooks/use-items-by-status"
+import { AlertWindow } from "~/components/features/alert-window"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import { CategoryCard } from "~/components/features/category-card"
+import { useItemsByCategory } from "~/hooks/use-items-by-category"
+import { teachersSelector } from "~/store/teachers/teachers-slice"
+import { ConfirmWindow } from "~/components/features/confirm-window"
+import { RootContainer } from "~/components/layouts/root-container"
+import { PopoverFilter } from "~/components/ui/custom/popover-filter"
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs"
+import { TEACHER_FILTERS, TEACHER_STATUS } from "~/constants/cookies-keys"
+import { generalSelector, setTeacherFilters } from "~/store/general/general-slice"
+import { TeachersTable } from "~/components/features/pages/teachers/teachers-table"
+import type { TeachersCategoryType, TeachersType } from "~/store/teachers/teachers-types"
+import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal"
+import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal"
 
 const TeachersPage = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const [_, setCookie] = useCookies();
+  const [_, setCookie] = useCookies()
 
   const {
     teachers: { categories: filtredCategories, status: defaultStatus },
-  } = useSelector(generalSelector);
-  const { teachersCategories } = useSelector(teachersSelector);
+  } = useSelector(generalSelector)
+  const { teachersCategories } = useSelector(teachersSelector)
 
-  const [globalSearch, setGlobalSearch] = React.useState("");
-  const [updatingCategory, setUpdatingCategory] = React.useState<UpdatingCategoryType | null>(null);
-  const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">(
-    defaultStatus ? defaultStatus : "Всі",
-  );
-  const [selectedCategories, setSelectedCategories] = React.useState(
+  const [globalSearch, setGlobalSearch] = useState("")
+  const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
+  const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
+  const [selectedCategories, setSelectedCategories] = useState(
     filtredCategories.length
       ? filtredCategories
       : teachersCategories
       ? teachersCategories.map((el) => ({ id: el.id }))
       : [],
-  );
-  const [modalData, setModalData] = React.useState<CategoryModalStateType>({
-    isOpen: false,
-    actionType: "create",
-  });
+  )
+  const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
 
   const { filteredItems: visibleTeachers, counts } = useItemsByStatus<TeachersCategoryType>(
     teachersCategories ?? [],
     "teachers",
     activeStatus,
-  ) as { counts: { all: number; active: number; archive: number }; filteredItems: TeachersType[] };
-  const filteredItems = useItemsByCategory(visibleTeachers, selectedCategories);
+  ) as { counts: { all: number; active: number; archive: number }; filteredItems: TeachersType[] }
+  const filteredItems = useItemsByCategory(visibleTeachers, selectedCategories)
 
   const onClickUpdateCategory = (id: number) => {
-    if (!teachersCategories) return;
-    const selectedCategory = teachersCategories.find((el) => el.id === id);
-    if (!selectedCategory) return;
-    const { name, shortName } = selectedCategory;
-    setUpdatingCategory({ id, name, shortName });
-    setModalData({ isOpen: true, actionType: "update" });
-  };
+    if (!teachersCategories) return
+    const selectedCategory = teachersCategories.find((el) => el.id === id)
+    if (!selectedCategory) return
+    const { name, shortName } = selectedCategory
+    setUpdatingCategory({ id, name, shortName })
+    setModalData({ isOpen: true, actionType: "update" })
+  }
 
   const onClickDeleteCategory = async (id: number) => {
-    if (!teachersCategories) return;
-    const selectedCategory = teachersCategories.find((el) => el.id === id);
-    if (!selectedCategory) return;
+    if (!teachersCategories) return
+    const selectedCategory = teachersCategories.find((el) => el.id === id)
+    if (!selectedCategory) return
 
     if (selectedCategory.teachers.length) {
-      AlertWindow(dialogText.alert.teacher_category_delete.title, dialogText.alert.teacher_category_delete.text);
-      return;
+      AlertWindow(dialogText.alert.teacher_category_delete.title, dialogText.alert.teacher_category_delete.text)
+      return
     }
 
-    const confirmed = await ConfirmWindow(dialogText.confirm.cmk.title, dialogText.confirm.cmk.text);
+    const confirmed = await ConfirmWindow(dialogText.confirm.cmk.title, dialogText.confirm.cmk.text)
     if (confirmed) {
-      dispatch(deleteTeacherCategory(id));
+      dispatch(deleteTeacherCategory(id))
     }
-  };
+  }
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
-    setActiveStatus(value);
-    setCookie(TEACHER_STATUS, value);
-  };
+    setActiveStatus(value)
+    setCookie(TEACHER_STATUS, value)
+  }
 
   const onCreateCategory = async (data: FormData) => {
-    await dispatch(createTeacherCategory(data));
-  };
+    await dispatch(createTeacherCategory(data))
+  }
 
   const onUpdateCategory = async (data: FormData & { id: number }) => {
-    await dispatch(updateTeacherCategory(data));
-  };
+    await dispatch(updateTeacherCategory(data))
+  }
 
-  React.useEffect(() => {
-    if (!selectedCategories.length) return;
-    const categoriesIds = selectedCategories.map((el) => el.id);
-    setCookie(TEACHER_FILTERS, categoriesIds);
-    dispatch(setTeacherFilters(selectedCategories));
-  }, [selectedCategories]);
+  useEffect(() => {
+    dispatch(getTeachersCategories())
+  }, [])
+
+  useEffect(() => {
+    if (!selectedCategories.length) return
+    const categoriesIds = selectedCategories.map((el) => el.id)
+    setCookie(TEACHER_FILTERS, categoriesIds)
+    dispatch(setTeacherFilters(selectedCategories))
+  }, [selectedCategories])
 
   return (
     <>
@@ -205,7 +203,7 @@ const TeachersPage = () => {
         )}
       </RootContainer>
     </>
-  );
-};
+  )
+}
 
-export default TeachersPage;
+export default TeachersPage

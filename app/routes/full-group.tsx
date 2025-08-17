@@ -1,32 +1,39 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData } from "react-router"
 
-import type { Route } from "./+types/full-group";
-import FullPlanPage from "~/pages/full-group-page";
-import { groupsAPI } from "~/api/groups-api";
-import type { GroupsType } from "~/store/groups/groups-types";
+import { groupsAPI } from "~/api/groups-api"
+import type { Route } from "./+types/full-group"
+import FullPlanPage from "~/pages/full-group-page"
+import { META_TAGS } from "~/constants/site-meta-tags"
+import type { GroupsType } from "~/store/groups/groups-types"
+import { useAppDispatch } from "~/store/store"
+import { useEffect } from "react"
+import { setGroup } from "~/store/groups/groups-slice"
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "ЖБФФК | Групи" },
-    { name: "description", content: "ЖИТОМИРСЬКИЙ БАЗОВИЙ ФАРМАЦЕВТИЧНИЙ ФАХОВИЙ КОЛЕДЖ ЖИТОМИРСЬКОЇ ОБЛАСНОЇ РАДИ" },
-    { name: "keywords", content: "moodle, MOODLE | ЖБФФК" },
-  ];
+  return [{ title: "ЖБФФК | Групи" }, ...META_TAGS]
 }
 
-export async function loader({ params }: Route.LoaderArgs) {
-  const groupId = params.id;
+export async function clientLoader({ params }: Route.LoaderArgs) {
+  const groupId = params.id
 
-  const isUpdate = !isNaN(Number(groupId));
+  const isUpdate = !isNaN(Number(groupId))
 
   if (isUpdate) {
-    const { data } = await groupsAPI.getGroup(groupId);
-    return { group: data, groupId };
+    const { data } = await groupsAPI.getGroup(groupId)
+    return { group: data, groupId }
   }
 
-  return { groupId };
+  return { groupId }
 }
 
 export default function FullPlan() {
-  const { groupId, group } = useLoaderData() as { groupId: string; group: GroupsType };
-  return <FullPlanPage groupId={groupId} group={group} />;
+  const dispatch = useAppDispatch()
+  const loaderData = useLoaderData<typeof clientLoader>()
+
+  useEffect(() => {
+    if (!loaderData.group) return
+    dispatch(setGroup(loaderData.group))
+  }, [loaderData])
+
+  return <FullPlanPage groupId={loaderData.groupId} />
 }
