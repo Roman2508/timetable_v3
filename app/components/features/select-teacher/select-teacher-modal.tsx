@@ -101,16 +101,16 @@ const SelectTeacherModal: FC<ISelectTeacherModal> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="px-0 max-w-[600px]">
         <DialogHeader className="px-4">
-          <DialogTitle className="pb-4">Виберіть аудиторію:</DialogTitle>
+          <DialogTitle className="pb-4">Виберіть викладача:</DialogTitle>
           <p className="leading-[1.25] opacity-[.6]">
-            Виберіть аудиторію, яка буде використовуватись для подальших дій
+            Виберіть викладача, який буде використовуватись для подальших дій
           </p>
         </DialogHeader>
 
         <Separator />
 
         <DialogDescription>
-          <InputSearch className="mb-4 mx-4 mr-6" placeholder="Знайти аудиторію..." />
+          <InputSearch className="mb-4 mx-4 mr-6" placeholder="Знайти викладача..." />
 
           <div className="min-h-[40vh] max-h-[50vh] overflow-y-auto px-4">
             {(freeTeachers ?? []).map((category) => (

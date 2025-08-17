@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 
 import {
   flexRender,
@@ -9,37 +9,37 @@ import {
   getFilteredRowModel,
   type FilterFn,
   type SortingState,
-} from "@tanstack/react-table";
-import { useCookies } from "react-cookie";
-import { useSelector } from "react-redux";
-import { ArrowDown, ArrowUp } from "lucide-react";
-import { rankItem } from "@tanstack/match-sorter-utils";
+} from "@tanstack/react-table"
+import { useCookies } from "react-cookie"
+import { useSelector } from "react-redux"
+import { ArrowDown, ArrowUp } from "lucide-react"
+import { rankItem } from "@tanstack/match-sorter-utils"
 
-import { cn } from "~/lib/utils";
-import GroupActions from "./group-actions";
-import { Badge } from "~/components/ui/common/badge";
-import { generalSelector } from "~/store/general/general-slice";
-import type { GroupsShortType } from "~/store/groups/groups-types";
-import { GROUP_SORT_KEY, GROUP_SORT_TYPE } from "~/constants/cookies-keys";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
+import { cn } from "~/lib/utils"
+import GroupActions from "./group-actions"
+import { Badge } from "~/components/ui/common/badge"
+import { generalSelector } from "~/store/general/general-slice"
+import type { GroupsShortType } from "~/store/groups/groups-types"
+import { GROUP_SORT_KEY, GROUP_SORT_TYPE } from "~/constants/cookies-keys"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
+import { fuzzyFilter } from "~/helpers/fuzzy-filter"
 
 interface IGroupsTableProps {
-  globalSearch: string;
-  groups: GroupsShortType[];
-  setGlobalSearch: React.Dispatch<React.SetStateAction<string>>;
+  globalSearch: string
+  groups: GroupsShortType[]
+  setGlobalSearch: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch, setGlobalSearch }) => {
-  const [_, setCookie] = useCookies();
+  const [_, setCookie] = useCookies()
 
   const {
     groups: { isOrderDesc, orderField },
-  } = useSelector(generalSelector);
+  } = useSelector(generalSelector)
 
-  const [sorting, setSorting] = React.useState<SortingState>(orderField ? [{ id: orderField, desc: isOrderDesc }] : []);
+  const [sorting, setSorting] = React.useState<SortingState>(orderField ? [{ id: orderField, desc: isOrderDesc }] : [])
 
-  const columnHelper = createColumnHelper<GroupsShortType>();
+  const columnHelper = createColumnHelper<GroupsShortType>()
   const columns = React.useMemo(
     () => [
       columnHelper.accessor("name", { header: "Група" }),
@@ -49,7 +49,7 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("courseNumber", { header: "Курс" }),
-      columnHelper.accessor((row) => row.students.length, {
+      columnHelper.accessor((row) => (row.students || []).length, {
         id: "studentsCount",
         header: "Студентів",
         cell: (info) => info.getValue(),
@@ -59,8 +59,8 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
         id: "status",
         header: "Статус",
         cell: ({ row }) => {
-          let isStatusActive = true;
-          if (row.original.status === "Архів") isStatusActive = false;
+          let isStatusActive = true
+          if (row.original.status === "Архів") isStatusActive = false
           return (
             <Badge
               variant="outline"
@@ -71,19 +71,19 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
             >
               {row.original.status}
             </Badge>
-          );
+          )
         },
       }),
       columnHelper.display({
         id: "actions",
         header: "Дії",
         cell: ({ row }) => {
-          return <GroupActions id={row.original.id} />;
+          return <GroupActions id={row.original.id} />
         },
       }),
     ],
     [],
-  );
+  )
 
   const table = useReactTable({
     data: groups,
@@ -97,17 +97,17 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
     onGlobalFilterChange: setGlobalSearch,
     globalFilterFn: "auto",
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
 
   React.useEffect(() => {
     if (sorting.length) {
-      setCookie(GROUP_SORT_KEY, sorting[0].id);
-      setCookie(GROUP_SORT_TYPE, sorting[0].desc);
+      setCookie(GROUP_SORT_KEY, sorting[0].id)
+      setCookie(GROUP_SORT_TYPE, sorting[0].desc)
     } else {
-      setCookie(GROUP_SORT_KEY, "");
-      setCookie(GROUP_SORT_TYPE, false);
+      setCookie(GROUP_SORT_KEY, "")
+      setCookie(GROUP_SORT_TYPE, false)
     }
-  }, [sorting]);
+  }, [sorting])
 
   return (
     <Table className="w-full">
@@ -147,7 +147,7 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
                     </div>
                   )}
                 </TableHead>
-              );
+              )
             })}
           </TableRow>
         ))}
@@ -155,13 +155,13 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
 
       <TableBody>
         {table.getRowModel().rows.map((groupData, index) => {
-          const group = groupData.original;
+          const group = groupData.original
           return (
             <TableRow key={group.id} className="hover:bg-border/40">
               <TableCell className={cn("truncate max-w-[30px]", "text-left px-2 py-1")}>{index + 1}</TableCell>
 
               {groupData.getVisibleCells().map((cell, index) => {
-                const isActionsCol = index === groupData.getVisibleCells().length - 1;
+                const isActionsCol = index === groupData.getVisibleCells().length - 1
                 return (
                   <TableCell
                     key={cell.id}
@@ -173,12 +173,12 @@ export const GroupsTable: React.FC<IGroupsTableProps> = ({ groups, globalSearch,
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
-                );
+                )
               })}
             </TableRow>
-          );
+          )
         })}
       </TableBody>
     </Table>
-  );
-};
+  )
+}

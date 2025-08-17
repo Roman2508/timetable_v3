@@ -1,61 +1,25 @@
-import { useMemo, useState } from "react";
-import { InfoIcon, ScanEyeIcon, ArrowDown, ArrowUp, Lock } from "lucide-react";
-
-import { Switch } from "~/components/ui/common/switch";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
-
 import {
-  createColumnHelper,
   flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  createColumnHelper,
+} from "@tanstack/react-table"
+import { useSelector } from "react-redux"
+import { useMemo, useState } from "react"
+import { InfoIcon, ScanEyeIcon, ArrowDown, ArrowUp, Lock } from "lucide-react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { cn } from "~/lib/utils";
-import { useSelector } from "react-redux";
-import { rolesSelector } from "~/store/roles/roles-slice";
-import type { RoleType } from "~/store/roles/roles-types";
-
-const tableData = [
-  {
-    name: "Головний адміністратор",
-    users: 1,
-    isReserved: true,
-  },
-  {
-    name: "Адміністратор",
-    users: 4,
-    isReserved: true,
-  },
-  {
-    name: "Викладач",
-    users: 46,
-    isReserved: true,
-  },
-  {
-    name: "Студент",
-    users: 512,
-    isReserved: true,
-  },
-  {
-    name: "Методист",
-    users: 1,
-    isReserved: true,
-  },
-  {
-    name: "Гість",
-    users: 2,
-    isReserved: false,
-  },
-];
+import { cn } from "~/lib/utils"
+import { fuzzyFilter } from "~/helpers/fuzzy-filter"
+import { Switch } from "~/components/ui/common/switch"
+import { rolesSelector } from "~/store/roles/roles-slice"
+import type { RoleType } from "~/store/roles/roles-types"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
 
 const RolesTab = () => {
-  const { roles } = useSelector(rolesSelector);
+  const { roles } = useSelector(rolesSelector)
 
   const defaultItems = [
     {
@@ -76,14 +40,14 @@ const RolesTab = () => {
       description: "Receive emails about your account security.",
       checked: true,
     },
-  ];
+  ]
 
-  const [items, setItems] = useState(defaultItems);
+  const [items, setItems] = useState(defaultItems)
 
-  const [globalSearch, setGlobalSearch] = useState("");
+  const [globalSearch, setGlobalSearch] = useState("")
 
   // const columnHelper = createColumnHelper<(typeof tableData)[number]>();
-  const columnHelper = createColumnHelper<RoleType>();
+  const columnHelper = createColumnHelper<RoleType>()
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -96,7 +60,7 @@ const RolesTab = () => {
               {row.original.key === "root_admin" && <Lock size={14} />}
               {/* {row.original.isReserved && <Lock size={14} />} */}
             </div>
-          );
+          )
         },
       }),
       columnHelper.accessor((row) => 10, {
@@ -113,17 +77,17 @@ const RolesTab = () => {
               111
               {/* <GroupActions id={row.original.id} /> */}
             </div>
-          );
+          )
         },
       }),
     ],
     [],
-  );
+  )
 
   const table = useReactTable({
     data: roles || [],
     columns,
-    // state: { sorting, globalFilter: globalSearch },
+    state: { globalFilter: globalSearch },
     // onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -132,7 +96,7 @@ const RolesTab = () => {
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalSearch,
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
 
   return (
     <>
@@ -189,7 +153,7 @@ const RolesTab = () => {
                       </div>
                     )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -197,13 +161,13 @@ const RolesTab = () => {
 
         <TableBody>
           {table.getRowModel().rows.map((groupData, index) => {
-            const group = groupData.original;
+            const group = groupData.original
             return (
               <TableRow key={index} className="hover:bg-border/40">
                 <TableCell className={cn("truncate max-w-[30px]", "text-left px-2 py-1")}>{index + 1}</TableCell>
 
                 {groupData.getVisibleCells().map((cell, index) => {
-                  const isActionsCol = index === groupData.getVisibleCells().length - 1;
+                  const isActionsCol = index === groupData.getVisibleCells().length - 1
                   return (
                     <TableCell
                       key={cell.id}
@@ -215,10 +179,10 @@ const RolesTab = () => {
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
-                  );
+                  )
                 })}
               </TableRow>
-            );
+            )
           })}
         </TableBody>
       </Table>
@@ -259,10 +223,10 @@ const RolesTab = () => {
                     setItems((prev) => {
                       return prev.map((p) => {
                         if (p.id === el.id) {
-                          return { ...p, checked };
+                          return { ...p, checked }
                         }
-                        return p;
-                      });
+                        return p
+                      })
                     })
                   }
                 />
@@ -293,7 +257,7 @@ const RolesTab = () => {
         </div>
       ))}
     </>
-  );
-};
+  )
+}
 
-export default RolesTab;
+export default RolesTab

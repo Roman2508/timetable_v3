@@ -14,6 +14,10 @@ export function meta({}: Route.MetaArgs) {
   return [{ title: "ЖБФФК | Налаштування" }, ...META_TAGS]
 }
 
+export const shouldRevalidate = () => {
+  return false // Отключаем повторный вызов лоадера при навигации
+}
+
 export async function clientLoader() {
   const { data: roles } = await rolesAPI.getAll()
   const { data: users } = await authAPI.getUsers({})
@@ -25,8 +29,8 @@ export default function Settings() {
   const loaderData = useLoaderData<typeof clientLoader>()
 
   useEffect(() => {
-    dispatch(setRoles(loaderData.roles))
-    dispatch(setUsers(loaderData.users[0]))
+    if (loaderData.roles) dispatch(setRoles(loaderData.roles))
+    if (loaderData.users) dispatch(setUsers(loaderData.users[0]))
   }, [loaderData])
 
   return <SettingsPage />

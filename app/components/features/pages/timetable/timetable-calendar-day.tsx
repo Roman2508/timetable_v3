@@ -1,19 +1,19 @@
-import type { Dayjs } from "dayjs";
-import tinycolor from "tinycolor2";
-import { Fragment, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react";
+import type { Dayjs } from "dayjs"
+import tinycolor from "tinycolor2"
+import { Fragment, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react"
 
-import { cn } from "~/lib/utils";
-import { customDayjs } from "~/lib/dayjs";
-import { useAppDispatch } from "~/store/store";
-import type { WeekType } from "~/helpers/get-calendar-week";
-import type { ISelectedLesson } from "~/pages/timetable-page";
-import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
-import type { SettingsType } from "~/store/settings/settings-types";
-import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types";
-import { getAuditoryOverlay } from "~/store/schedule-lessons/schedule-lessons-async-actions";
-import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
+import { cn } from "~/lib/utils"
+import { customDayjs } from "~/lib/dayjs"
+import { useAppDispatch } from "~/store/store"
+import type { WeekType } from "~/helpers/get-calendar-week"
+import type { ISelectedLesson } from "~/pages/timetable-page"
+import { getTeacherFullname } from "~/helpers/get-teacher-fullname"
+import type { SettingsType } from "~/store/settings/settings-types"
+import type { AuditoriesTypes } from "~/store/auditories/auditories-types"
+import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types"
+import { getAuditoryOverlay } from "~/store/schedule-lessons/schedule-lessons-async-actions"
 
-const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
+const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"]
 
 export const colorsInitialState = {
   lectures: "rgb(255, 255, 255)",
@@ -22,7 +22,7 @@ export const colorsInitialState = {
   seminars: "rgb(255, 255, 255)",
   exams: "rgb(255, 255, 255)",
   examsConsulation: "rgb(255, 255, 255)",
-};
+}
 
 export const convertColorKeys = {
   ["ЛК"]: "lectures",
@@ -31,33 +31,33 @@ export const convertColorKeys = {
   ["СЕМ"]: "seminars",
   ["ЕКЗ"]: "exams",
   ["КОНС"]: "examsConsulation",
-} as const;
+} as const
 
 function makeColorDarken(color: string, factor = 0.6) {
-  const tColor = tinycolor(color);
-  return tColor.darken(factor * 100).toString();
+  const tColor = tinycolor(color)
+  return tColor.darken(factor * 100).toString()
 }
 
 interface ICalendarDayProps {
-  index: number;
-  day: WeekType;
-  selectedSemester: number;
-  settings: SettingsType | null;
-  isPossibleToCreateLessons: boolean;
-  selectedLesson: ISelectedLesson | null;
-  groupOverlay: ScheduleLessonType[] | null;
-  teacherLessons: ScheduleLessonType[] | null;
-  scheduleLessons: ScheduleLessonType[] | null;
-  setIsAddNewLesson: Dispatch<SetStateAction<boolean>>;
-  onTimeSlotClick: (data: Dayjs, lessonNumber: number) => void;
-  setSelectedAuditory: Dispatch<SetStateAction<AuditoriesTypes | null>>;
-  setSeveralLessonsList: Dispatch<SetStateAction<ScheduleLessonType[]>>;
+  index: number
+  day: WeekType
+  selectedSemester: number
+  settings: SettingsType | null
+  isPossibleToCreateLessons: boolean
+  selectedLesson: ISelectedLesson | null
+  groupOverlay: ScheduleLessonType[] | null
+  teacherLessons: ScheduleLessonType[] | null
+  scheduleLessons: ScheduleLessonType[] | null
+  setIsAddNewLesson: Dispatch<SetStateAction<boolean>>
+  onTimeSlotClick: (data: Dayjs, lessonNumber: number) => void
+  setSelectedAuditory: Dispatch<SetStateAction<AuditoriesTypes | null>>
+  setSeveralLessonsList: Dispatch<SetStateAction<ScheduleLessonType[]>>
   handleOpenSeveralLessonModal: (
     scheduledElement: ScheduleLessonType,
     date: Dayjs,
     lessonNumber: number,
     auditoryId: number | null,
-  ) => void;
+  ) => void
 }
 
 const TimetableCalendarDay: FC<ICalendarDayProps> = ({
@@ -76,42 +76,42 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
   isPossibleToCreateLessons,
   handleOpenSeveralLessonModal,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const isToday = customDayjs().format("MM.DD.YYYY") === day.data.format("MM.DD.YYYY");
+  const isToday = customDayjs().format("MM.DD.YYYY") === day.data.format("MM.DD.YYYY")
 
-  const [colors, setColors] = useState(colorsInitialState);
+  const [colors, setColors] = useState(colorsInitialState)
   // if true day is outside the semester
-  const [isDayOutsideTheSemester, setIsDayOutsideTheSemester] = useState(false);
+  const [isDayOutsideTheSemester, setIsDayOutsideTheSemester] = useState(false)
 
   const onGetAuditoryOverlay = (_date: Dayjs, lessonNumber: number, auditoryId: number) => {
-    const date = customDayjs(_date).format("YYYY.MM.DD");
-    dispatch(getAuditoryOverlay({ date, lessonNumber, auditoryId }));
-  };
+    const date = customDayjs(_date).format("YYYY.MM.DD")
+    dispatch(getAuditoryOverlay({ date, lessonNumber, auditoryId }))
+  }
 
   const checkIsAvailable = () => {
     // if return true day is outside the semester
-    if (!settings) return false;
+    if (!settings) return false
 
     const semesterStart =
-      settings && selectedSemester === 1 ? settings.firstSemesterStart : settings.secondSemesterStart;
-    const semesterEnd = settings && selectedSemester === 1 ? settings.firstSemesterEnd : settings.secondSemesterEnd;
+      settings && selectedSemester === 1 ? settings.firstSemesterStart : settings.secondSemesterStart
+    const semesterEnd = settings && selectedSemester === 1 ? settings.firstSemesterEnd : settings.secondSemesterEnd
 
-    const isDayBeforeStartOfSemester = customDayjs(day.data).isBefore(semesterStart);
-    const isDayAfterEndOfSemester = customDayjs(day.data).isAfter(semesterEnd);
+    const isDayBeforeStartOfSemester = customDayjs(day.data).isBefore(semesterStart)
+    const isDayAfterEndOfSemester = customDayjs(day.data).isAfter(semesterEnd)
 
-    if (isDayBeforeStartOfSemester || isDayAfterEndOfSemester) return true;
-    else return false;
-  };
-
-  useEffect(() => {
-    setIsDayOutsideTheSemester(checkIsAvailable());
-  }, [selectedSemester]);
+    if (isDayBeforeStartOfSemester || isDayAfterEndOfSemester) return true
+    else return false
+  }
 
   useEffect(() => {
-    if (!settings) return;
-    setColors(settings.colors);
-  }, [settings]);
+    setIsDayOutsideTheSemester(checkIsAvailable())
+  }, [selectedSemester])
+
+  useEffect(() => {
+    if (!settings) return
+    setColors(settings.colors)
+  }, [settings])
 
   return (
     <div className="border-t">
@@ -124,25 +124,23 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
 
       {[1, 2, 3, 4, 5, 6, 7].map((lessonNumber) => {
         const lesson = scheduleLessons?.filter((el) => {
-          const lessonDate = customDayjs(el.date).format("DD.MM");
-          return lessonDate === day.start && el.lessonNumber === lessonNumber;
-        });
+          const lessonDate = customDayjs(el.date).format("DD.MM.YY")
+          return lessonDate === day.start && el.lessonNumber === lessonNumber
+        })
 
         // Накладки викладача
         const overlayTeacher = teacherLessons?.find((el) => {
-          const lessonDate = customDayjs(el.date).format("DD.MM");
-          return lessonDate === day.start && el.lessonNumber === lessonNumber;
-        });
+          const lessonDate = customDayjs(el.date).format("DD.MM.YY")
+          return lessonDate === day.start && el.lessonNumber === lessonNumber
+        })
 
         // Накладки групи (якщо вона об'єднана в потік)
         const overlayGroup = groupOverlay?.find((el) => {
-          const lessonDate = customDayjs(el.date).format("DD.MM");
-          return lessonDate === day.start && el.lessonNumber === lessonNumber;
-        });
+          const lessonDate = customDayjs(el.date).format("DD.MM.YY")
+          return lessonDate === day.start && el.lessonNumber === lessonNumber
+        })
 
-        const overlay = overlayGroup ? overlayGroup : overlayTeacher;
-
-        const overlayTeacherName = overlay ? getTeacherFullname(overlay.teacher, "short") : "";
+        const overlay = overlayGroup ? overlayGroup : overlayTeacher
 
         return (
           <Fragment key={`${day.start}-${lessonNumber}`}>
@@ -153,7 +151,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
               >
                 {!!lesson.length &&
                   lesson.map((l) => {
-                    const teacherName = lesson && lesson[0] ? getTeacherFullname(l.teacher, "short") : "";
+                    const teacherName = lesson && lesson[0] ? getTeacherFullname(l.teacher, "short") : ""
 
                     const severalLessonsClassName =
                       lesson.length === 1
@@ -162,7 +160,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
                         ? "lesson-2"
                         : lesson.length === 3
                         ? "lesson-3"
-                        : "lesson-4";
+                        : "lesson-4"
 
                     const isSame =
                       selectedLesson?.group?.id !== undefined &&
@@ -171,15 +169,15 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
                       selectedLesson?.typeRu === l.typeRu &&
                       selectedLesson?.subgroupNumber === l.subgroupNumber &&
                       selectedLesson?.stream?.id === l.stream?.id &&
-                      selectedLesson?.name === l.name;
+                      selectedLesson?.name === l.name
 
                     return (
                       <div
                         key={l.id}
                         onClick={() => {
-                          setSeveralLessonsList(lesson);
-                          setSelectedAuditory(l.auditory); // Перевірити чи не буде багів коли одночасно виставлено декілька уроків
-                          handleOpenSeveralLessonModal(l, day.data, lessonNumber, l.auditory ? l.auditory.id : null);
+                          setSeveralLessonsList(lesson)
+                          setSelectedAuditory(l.auditory) // Перевірити чи не буде багів коли одночасно виставлено декілька уроків
+                          handleOpenSeveralLessonModal(l, day.data, lessonNumber, l.auditory ? l.auditory.id : null)
                         }}
                         className={cn(severalLessonsClassName, { selected: isSame })}
                         style={{
@@ -214,7 +212,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
                         <p>{teacherName}</p>
                         <p>{l.auditory ? `${l.auditory.name} ауд.` : "Дистанційно"}</p>
                       </div>
-                    );
+                    )
                   })}
               </div>
             )}
@@ -237,7 +235,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
                       {overlay.specialization ? `${overlay.specialization} спец.` : ""}
                     </p>
 
-                    <p>{overlayTeacherName}</p>
+                    <p>{getTeacherFullname(overlay.teacher, "short")}</p>
                     <p>{overlay.auditory ? `${overlay.auditory.name} ауд.` : "Дистанційно"}</p>
                   </>
                 )}
@@ -256,21 +254,21 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
                   if (!isDayOutsideTheSemester) {
                     // Чи план !== факт
                     if (!isPossibleToCreateLessons) {
-                      return alert("Виставлено всі ел. розкладу");
+                      return alert("Виставлено всі ел. розкладу")
                     }
 
-                    setIsAddNewLesson(true);
-                    onTimeSlotClick(day.data, lessonNumber);
-                    onGetAuditoryOverlay(day.data, lessonNumber, 0);
+                    setIsAddNewLesson(true)
+                    onTimeSlotClick(day.data, lessonNumber)
+                    onGetAuditoryOverlay(day.data, lessonNumber, 0)
                   }
                 }}
               ></div>
             )}
           </Fragment>
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}
 
-export default TimetableCalendarDay;
+export default TimetableCalendarDay

@@ -10,7 +10,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       closeButton
       position="bottom-right"
       className="toaster group [&>li]:rounded-0"
-      toastOptions={{ duration: 300000 }}
+      toastOptions={{ duration: 3000 }}
       theme={theme as ToasterProps["theme"]}
       style={
         {

@@ -1,52 +1,52 @@
-import type { Dayjs } from "dayjs";
-import { useSelector } from "react-redux";
-import { useCookies } from "react-cookie";
-import { useState, useEffect, type FC, type Dispatch, type SetStateAction, useCallback, useMemo } from "react";
+import type { Dayjs } from "dayjs"
+import { useSelector } from "react-redux"
+import { useCookies } from "react-cookie"
+import { useState, useEffect, type FC, type Dispatch, type SetStateAction, useCallback, useMemo } from "react"
 
 import {
   clearTeacherOverlay,
   clearAuditoryOverlay,
   scheduleLessonsSelector,
-} from "~/store/schedule-lessons/schedule-lessons-slice";
+} from "~/store/schedule-lessons/schedule-lessons-slice"
 import {
   getTeacherOverlay,
   getTeacherLessons,
   getAuditoryOverlay,
   getScheduleLessons,
-} from "~/store/schedule-lessons/schedule-lessons-async-actions";
-import { cn } from "~/lib/utils";
-import { customDayjs } from "~/lib/dayjs";
-import { useAppDispatch } from "~/store/store";
-import { Button } from "~/components/ui/common/button";
-import { LoadingStatusTypes } from "~/store/app-types";
-import LessonActionsModal from "./lesson-actions-modal";
-import getCalendarWeek from "~/helpers/get-calendar-week";
-import { TIMETABLE_WEEK } from "~/constants/cookies-keys";
-import SeveralLessonsModal from "./several-lessons-modal";
-import TimetableCalendarDay from "./timetable-calendar-day";
-import CopyingTimetableModal from "./copying-timetable-modal";
-import type { ISelectedLesson } from "~/pages/timetable-page";
-import { settingsSelector } from "~/store/settings/settings-slice";
-import type { TeachersType } from "~/store/teachers/teachers-types";
-import SelectTeacherModal from "../../select-teacher/select-teacher-modal";
-import type { AuditoriesTypes } from "~/store/auditories/auditories-types";
-import SelectAuditoryModal from "../../select-auditory/select-auditory-modal";
-import { generalSelector, setTimetableData } from "~/store/general/general-slice";
-import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types";
+} from "~/store/schedule-lessons/schedule-lessons-async-actions"
+import { cn } from "~/lib/utils"
+import { customDayjs } from "~/lib/dayjs"
+import { useAppDispatch } from "~/store/store"
+import { Button } from "~/components/ui/common/button"
+import { LoadingStatusTypes } from "~/store/app-types"
+import LessonActionsModal from "./lesson-actions-modal"
+import getCalendarWeek from "~/helpers/get-calendar-week"
+import { TIMETABLE_WEEK } from "~/constants/cookies-keys"
+import SeveralLessonsModal from "./several-lessons-modal"
+import TimetableCalendarDay from "./timetable-calendar-day"
+import CopyingTimetableModal from "./copying-timetable-modal"
+import type { ISelectedLesson } from "~/pages/timetable-page"
+import { settingsSelector } from "~/store/settings/settings-slice"
+import type { TeachersType } from "~/store/teachers/teachers-types"
+import SelectTeacherModal from "../../select-teacher/select-teacher-modal"
+import type { AuditoriesTypes } from "~/store/auditories/auditories-types"
+import SelectAuditoryModal from "../../select-auditory/select-auditory-modal"
+import { generalSelector, setTimetableData } from "~/store/general/general-slice"
+import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types"
 
 export interface ISelectedTimeSlot {
-  data: Dayjs;
-  lessonNumber: number;
+  data: Dayjs
+  lessonNumber: number
 }
 
 interface ITimetableCalendarProps {
-  weeksCount: number;
-  slectedGroupId: number | null;
-  selectedTeacherId: number | null;
-  isPossibleToCreateLessons: boolean;
-  selectedLesson: ISelectedLesson | null;
-  setSelectedTeacherId: Dispatch<SetStateAction<number | null>>;
-  setSelectedLesson: Dispatch<SetStateAction<ISelectedLesson | null>>;
+  weeksCount: number
+  slectedGroupId: number | null
+  selectedTeacherId: number | null
+  isPossibleToCreateLessons: boolean
+  selectedLesson: ISelectedLesson | null
+  setSelectedTeacherId: Dispatch<SetStateAction<number | null>>
+  setSelectedLesson: Dispatch<SetStateAction<ISelectedLesson | null>>
 }
 
 const TimetableCalendar: FC<ITimetableCalendarProps> = ({
@@ -58,115 +58,115 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
   setSelectedTeacherId,
   isPossibleToCreateLessons,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const [_, setCookie] = useCookies();
+  const [_, setCookie] = useCookies()
 
   const {
     timetable: { semester, week, item, type },
-  } = useSelector(generalSelector);
-  const { settings } = useSelector(settingsSelector);
-  const { scheduleLessons, teacherLessons, groupOverlay, loadingStatus } = useSelector(scheduleLessonsSelector);
+  } = useSelector(generalSelector)
+  const { settings } = useSelector(settingsSelector)
+  const { scheduleLessons, teacherLessons, groupOverlay, loadingStatus } = useSelector(scheduleLessonsSelector)
 
-  const [isRemote, setIsRemote] = useState(false);
-  const [isAddNewLesson, setIsAddNewLesson] = useState(false);
+  const [isRemote, setIsRemote] = useState(false)
+  const [isAddNewLesson, setIsAddNewLesson] = useState(false)
 
-  const [actionsModalVisible, setActionsModalVisible] = useState(false);
-  const [teacherModalVisible, setTeacherModalVisible] = useState(false);
-  const [auditoryModalVisible, setAuditoryModalVisible] = useState(false);
-  const [severalLessonsModalVisible, setSeveralLessonsModalVisible] = useState(false);
-  const [copingTimetableModalVisible, setCopingTimetableModalVisible] = useState(false);
+  const [actionsModalVisible, setActionsModalVisible] = useState(false)
+  const [teacherModalVisible, setTeacherModalVisible] = useState(false)
+  const [auditoryModalVisible, setAuditoryModalVisible] = useState(false)
+  const [severalLessonsModalVisible, setSeveralLessonsModalVisible] = useState(false)
+  const [copingTimetableModalVisible, setCopingTimetableModalVisible] = useState(false)
 
-  const [currentWeekDays, setCurrentWeekDays] = useState(getCalendarWeek(week || 1));
-  const [replacementTeacher, setReplacementTeacher] = useState<TeachersType | null>(null);
-  const [selectedAuditory, setSelectedAuditory] = useState<AuditoriesTypes | null>(null);
-  const [severalLessonsList, setSeveralLessonsList] = useState<ScheduleLessonType[]>([]);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<ISelectedTimeSlot | null>(null);
-
-  useEffect(() => {
-    if (!item) return;
-    const payload = { id: item, semester: semester || 1, type: type as "group" | "teacher" | "auditory" };
-    dispatch(getScheduleLessons(payload));
-  }, [semester, type, item]);
+  const [currentWeekDays, setCurrentWeekDays] = useState(getCalendarWeek(week || 1))
+  const [replacementTeacher, setReplacementTeacher] = useState<TeachersType | null>(null)
+  const [selectedAuditory, setSelectedAuditory] = useState<AuditoriesTypes | null>(null)
+  const [severalLessonsList, setSeveralLessonsList] = useState<ScheduleLessonType[]>([])
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<ISelectedTimeSlot | null>(null)
 
   useEffect(() => {
-    if (!selectedTeacherId) return;
-    dispatch(getTeacherLessons({ id: selectedTeacherId, semester: semester || 1, type: "teacher" }));
-  }, [selectedTeacherId, semester]);
+    if (!item) return
+    const payload = { id: item, semester: semester || 1, type: type as "group" | "teacher" | "auditory" }
+    dispatch(getScheduleLessons(payload))
+  }, [semester, type, item])
 
   useEffect(() => {
-    if (!settings) return;
-    const { firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd } = settings;
+    if (!selectedTeacherId) return
+    dispatch(getTeacherLessons({ id: selectedTeacherId, semester: semester || 1, type: "teacher" }))
+  }, [selectedTeacherId, semester])
+
+  useEffect(() => {
+    if (!settings) return
+    const { firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd } = settings
 
     if (semester === 1) {
-      setCurrentWeekDays(getCalendarWeek(week || 1, firstSemesterStart, firstSemesterEnd));
+      setCurrentWeekDays(getCalendarWeek(week || 1, firstSemesterStart, firstSemesterEnd))
     }
     if (semester === 2) {
-      setCurrentWeekDays(getCalendarWeek(week || 1, secondSemesterStart, secondSemesterEnd));
+      setCurrentWeekDays(getCalendarWeek(week || 1, secondSemesterStart, secondSemesterEnd))
     }
-  }, [week, settings, semester]);
+  }, [week, settings, semester])
 
   useEffect(() => {
-    if (!selectedTimeSlot) return;
-    const date = customDayjs(selectedTimeSlot?.data, { format: "YYYY.MM.DD" }).format("YYYY.MM.DD");
+    if (!selectedTimeSlot) return
+    const date = customDayjs(selectedTimeSlot?.data, { format: "YYYY.MM.DD" }).format("YYYY.MM.DD")
     // Очищаю список накладок які вже були завантажені
-    dispatch(clearTeacherOverlay());
+    dispatch(clearTeacherOverlay())
     // Отримаю список нових (актуальних) накладок
-    dispatch(getTeacherOverlay({ date, lessonNumber: selectedTimeSlot.lessonNumber }));
-  }, [selectedTimeSlot]);
+    dispatch(getTeacherOverlay({ date, lessonNumber: selectedTimeSlot.lessonNumber }))
+  }, [selectedTimeSlot])
 
   const setToday = useCallback(() => {
-    if (!settings) return;
+    if (!settings) return
 
-    const now = customDayjs();
-    const { firstSemesterStart, firstSemesterEnd, secondSemesterEnd, secondSemesterStart } = settings;
+    const now = customDayjs()
+    const { firstSemesterStart, firstSemesterEnd, secondSemesterEnd, secondSemesterStart } = settings
 
-    [...Array(weeksCount)].forEach((_, index) => {
-      const weekNumber = index + 1;
+    ;[...Array(weeksCount)].forEach((_, index) => {
+      const weekNumber = index + 1
 
-      let weekDays;
+      let weekDays
 
       if (semester === 1) {
-        weekDays = getCalendarWeek(weekNumber, firstSemesterStart, firstSemesterEnd);
+        weekDays = getCalendarWeek(weekNumber, firstSemesterStart, firstSemesterEnd)
       } else {
-        weekDays = getCalendarWeek(weekNumber, secondSemesterStart, secondSemesterEnd);
+        weekDays = getCalendarWeek(weekNumber, secondSemesterStart, secondSemesterEnd)
       }
 
-      const isAfter = now.isAfter(weekDays[0].data);
-      const isBefore = now.isBefore(weekDays[6].data);
+      const isAfter = now.isAfter(weekDays[0].data)
+      const isBefore = now.isBefore(weekDays[6].data)
 
       if (isBefore && isAfter) {
-        setCookie(TIMETABLE_WEEK, weekNumber);
-        dispatch(setTimetableData({ week: weekNumber }));
+        setCookie(TIMETABLE_WEEK, weekNumber)
+        dispatch(setTimetableData({ week: weekNumber }))
       }
-    });
-  }, [settings, weeksCount, semester, dispatch]);
+    })
+  }, [settings, weeksCount, semester, dispatch])
 
   const isTodayDisabled = useMemo(() => {
-    if (!settings || weeksCount < 1) return true;
+    if (!settings || weeksCount < 1) return true
 
-    const { firstSemesterStart, firstSemesterEnd, secondSemesterEnd, secondSemesterStart } = settings;
+    const { firstSemesterStart, firstSemesterEnd, secondSemesterEnd, secondSemesterStart } = settings
 
-    let semesterStart;
-    let semesterEnd;
+    let semesterStart
+    let semesterEnd
 
     if (semester === 2) {
-      semesterStart = getCalendarWeek(1, secondSemesterStart, secondSemesterEnd)[0];
-      semesterEnd = getCalendarWeek(weeksCount, secondSemesterStart, secondSemesterEnd)[6];
+      semesterStart = getCalendarWeek(1, secondSemesterStart, secondSemesterEnd)[0]
+      semesterEnd = getCalendarWeek(weeksCount, secondSemesterStart, secondSemesterEnd)[6]
     } else {
-      semesterStart = getCalendarWeek(1, firstSemesterStart, firstSemesterEnd)[0];
-      semesterEnd = getCalendarWeek(weeksCount, firstSemesterStart, firstSemesterEnd)[6];
+      semesterStart = getCalendarWeek(1, firstSemesterStart, firstSemesterEnd)[0]
+      semesterEnd = getCalendarWeek(weeksCount, firstSemesterStart, firstSemesterEnd)[6]
     }
 
-    const isTodayBeforeFirstSemesterDate = customDayjs().isBefore(semesterStart.data);
-    const isTodayAfterLastSemesterDate = customDayjs().isAfter(semesterEnd.data);
+    const isTodayBeforeFirstSemesterDate = customDayjs().isBefore(semesterStart.data)
+    const isTodayAfterLastSemesterDate = customDayjs().isAfter(semesterEnd.data)
 
     if (isTodayBeforeFirstSemesterDate || isTodayAfterLastSemesterDate) {
-      return true;
+      return true
     }
 
-    return false;
-  }, [settings, weeksCount, semester]);
+    return false
+  }, [settings, weeksCount, semester])
 
   // select date and time and open creating lessons modal
   const onTimeSlotClick = (data: Dayjs, lessonNumber: number, skip = true) => {
@@ -174,23 +174,23 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
     // бо був клік на виставлений ел.розкладу в календарі
     if (!selectedLesson && skip) {
       //   toast.warning("Дисципліна не вибрана", { duration: 3000 });
-      return;
+      return
     }
     // if (!selectedLesson) return alert("Дисципліна не вибрана")
-    setSelectedTimeSlot({ data, lessonNumber });
-    setActionsModalVisible(true);
-  };
+    setSelectedTimeSlot({ data, lessonNumber })
+    setActionsModalVisible(true)
+  }
 
   const onGetAuditoryOverlay = (_date: Dayjs, lessonNumber: number, auditoryId: number) => {
-    const date = customDayjs(_date).format("YYYY.MM.DD");
-    dispatch(clearAuditoryOverlay()); // Очищаю старі накладки
-    dispatch(getAuditoryOverlay({ date, lessonNumber, auditoryId })); // Отримую нові (актуальні) накладки для вибраного ел.розкладу
-  };
+    const date = customDayjs(_date).format("YYYY.MM.DD")
+    dispatch(clearAuditoryOverlay()) // Очищаю старі накладки
+    dispatch(getAuditoryOverlay({ date, lessonNumber, auditoryId })) // Отримую нові (актуальні) накладки для вибраного ел.розкладу
+  }
 
   // on click in schedule lesson item
   const onEditLesson = (lesson: ScheduleLessonType, data: Dayjs, lessonNumber: number) => {
-    const auditory = lesson.auditory ? lesson.auditory.id : null;
-    setIsRemote(!auditory);
+    const auditory = lesson.auditory ? lesson.auditory.id : null
+    setIsRemote(!auditory)
     setSelectedLesson({
       id: lesson.id,
       name: lesson.name,
@@ -204,12 +204,12 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
       specialization: lesson.specialization,
       currentLessonHours: lesson.currentLessonHours,
       group: { id: lesson.group.id, name: lesson.group.name },
-    });
-    setSelectedTeacherId(lesson.teacher.id);
-    const replacementTeacher = lesson.replacement ? lesson.replacement : null;
-    setReplacementTeacher(replacementTeacher);
-    onTimeSlotClick(data, lessonNumber, false);
-  };
+    })
+    setSelectedTeacherId(lesson.teacher.id)
+    const replacementTeacher = lesson.replacement ? lesson.replacement : null
+    setReplacementTeacher(replacementTeacher)
+    onTimeSlotClick(data, lessonNumber, false)
+  }
 
   const handleOpenSeveralLessonModal = (
     scheduledElement: ScheduleLessonType,
@@ -220,13 +220,13 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
     // selectedLesson - елемент розкладу, який зараз вибраний
     // scheduledElement - елемент розкладу, який вже виставлений
 
-    const auditory = auditoryId ? auditoryId : 0;
+    const auditory = auditoryId ? auditoryId : 0
 
     if (!selectedLesson) {
-      onEditLesson(scheduledElement, date, lessonNumber);
-      dispatch(clearAuditoryOverlay()); // Очищаю старі накладки
-      onGetAuditoryOverlay(date, lessonNumber, auditory); // Отримую нові (актуальні) накладки для вибраного ел.розкладу
-      return;
+      onEditLesson(scheduledElement, date, lessonNumber)
+      dispatch(clearAuditoryOverlay()) // Очищаю старі накладки
+      onGetAuditoryOverlay(date, lessonNumber, auditory) // Отримую нові (актуальні) накладки для вибраного ел.розкладу
+      return
     }
 
     const isLessonsSame =
@@ -235,33 +235,33 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
       scheduledElement.stream?.id === selectedLesson?.stream?.id &&
       scheduledElement.subgroupNumber === selectedLesson?.subgroupNumber &&
       scheduledElement.typeRu === selectedLesson?.typeRu &&
-      scheduledElement.specialization === selectedLesson?.specialization;
+      scheduledElement.specialization === selectedLesson?.specialization
 
     // Якщо виставлений ел. розкладу і вибраний - це одна і та ж дисципліна
     if (isLessonsSame) {
-      onEditLesson(scheduledElement, date, lessonNumber);
-      dispatch(clearAuditoryOverlay()); // Очищаю старі накладки
-      onGetAuditoryOverlay(date, lessonNumber, auditory); // Отримую нові (актуальні) накладки для вибраного ел.розкладу
-      return;
+      onEditLesson(scheduledElement, date, lessonNumber)
+      dispatch(clearAuditoryOverlay()) // Очищаю старі накладки
+      onGetAuditoryOverlay(date, lessonNumber, auditory) // Отримую нові (актуальні) накладки для вибраного ел.розкладу
+      return
     }
 
     // Якщо дисципліна на яку нажато в календарі немає підгруп або спецгруп - вона не може читатись одночасно з іншою
-    const isScheduleElementCanStandWithOther = scheduledElement.subgroupNumber || scheduledElement.specialization;
+    const isScheduleElementCanStandWithOther = scheduledElement.subgroupNumber || scheduledElement.specialization
     // Дисципліна яку вибрано може читатись одночасно з іншими коли вона має підгрупу або спецгрупу
-    const isSelectedLessonHasSubgroupsOrSpecialization = selectedLesson.subgroupNumber || selectedLesson.specialization;
+    const isSelectedLessonHasSubgroupsOrSpecialization = selectedLesson.subgroupNumber || selectedLesson.specialization
 
     if (isScheduleElementCanStandWithOther && isSelectedLessonHasSubgroupsOrSpecialization) {
       // Перевіряю чи може вибрана дисципліна стояти з іншими в один час
       // Може якщо вона розбита на підгрупи або якщо вона має спец. групи
       // if (selectedLesson.subgroupNumber || selectedLesson.specialization) {
-      setSelectedTimeSlot({ data: date, lessonNumber });
-      setSeveralLessonsModalVisible(true);
+      setSelectedTimeSlot({ data: date, lessonNumber })
+      setSeveralLessonsModalVisible(true)
     } else {
       // Якщо дисципліна не поділена на підгрупи і не має спец. груп
-      onEditLesson(scheduledElement, date, lessonNumber);
-      onGetAuditoryOverlay(date, lessonNumber, auditory);
+      onEditLesson(scheduledElement, date, lessonNumber)
+      onGetAuditoryOverlay(date, lessonNumber, auditory)
     }
-  };
+  }
 
   return (
     <>
@@ -340,8 +340,8 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
                 disabled={week === 1 || !week}
                 onClick={() => {
                   if (week) {
-                    setCookie(TIMETABLE_WEEK, week - 1);
-                    dispatch(setTimetableData({ week: week - 1 }));
+                    setCookie(TIMETABLE_WEEK, week - 1)
+                    dispatch(setTimetableData({ week: week - 1 }))
                   }
                 }}
               >
@@ -355,8 +355,8 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
                 disabled={week === weeksCount}
                 onClick={() => {
                   if (week) {
-                    setCookie(TIMETABLE_WEEK, week + 1);
-                    dispatch(setTimetableData({ week: week + 1 }));
+                    setCookie(TIMETABLE_WEEK, week + 1)
+                    dispatch(setTimetableData({ week: week + 1 }))
                   }
                 }}
               >
@@ -384,12 +384,12 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
             <div className="h-8 border-t h-[33px]"></div>
 
             {[1, 2, 3, 4, 5, 6, 7].map((lessonNumber) => {
-              const classNames = lessonNumber === 7 ? "h-[101px] border-y" : "h-25 border-t";
+              const classNames = lessonNumber === 7 ? "h-[101px] border-y" : "h-25 border-t"
               return (
                 <div className={cn("text-xs font-bold p-2", classNames)} key={lessonNumber}>
                   {lessonNumber}
                 </div>
-              );
+              )
             })}
           </div>
 
@@ -416,13 +416,13 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
                   isPossibleToCreateLessons={isPossibleToCreateLessons}
                   handleOpenSeveralLessonModal={handleOpenSeveralLessonModal}
                 />
-              );
+              )
             })}
           </div>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default TimetableCalendar;
+export default TimetableCalendar

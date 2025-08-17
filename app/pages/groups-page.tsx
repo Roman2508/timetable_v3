@@ -54,10 +54,7 @@ const GroupsPage = () => {
   const [selectedCategories, setSelectedCategories] = useState<GroupCategoriesType[]>(
     filtredCategories.length ? filtredCategories : groupCategories ? groupCategories.map((el) => ({ id: el.id })) : [],
   )
-  const [modalData, setModalData] = useState<CategoryModalStateType>({
-    isOpen: false,
-    actionType: "create",
-  })
+  const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
 
   const { filteredItems: visibleGroups, counts } = useItemsByStatus<GroupCategoriesType>(
     groupCategories,
