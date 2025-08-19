@@ -1,36 +1,36 @@
-import React from "react";
-import { Maximize2 } from "lucide-react";
-import type { ZodFormattedError } from "zod";
+import React from "react"
+import { Maximize2 } from "lucide-react"
+import type { ZodFormattedError } from "zod"
 
-import { cn } from "~/lib/utils";
-import { Input } from "../ui/common/input";
-import { Button } from "../ui/common/button";
-import EntitiesDropdown from "./entities-dropdown";
-import { MultiSelect } from "../ui/custom/multi-select";
-import type { GroupFormData } from "~/pages/full-group-page";
+import { cn } from "~/lib/utils"
+import { Input } from "../ui/common/input"
+import { Button } from "../ui/common/button"
+import EntitiesDropdown from "./entities-dropdown"
+import { MultiSelect } from "../ui/custom/multi-select"
+import type { GroupFormData } from "~/pages/full-group-page"
 
 type ItemType = {
-  id: number | string;
-  name: string;
-  [key: string]: any;
-};
+  id: number | string
+  name: string
+  [key: string]: any
+}
 
 interface IEntityFieldProps {
-  text: string;
-  title: string;
-  inputKey: string;
-  isUpdate: boolean;
-  classNames?: string;
-  isEditable: boolean;
-  labelClassNames?: string;
-  items: ItemType[] | null;
-  inputType: "string" | "number";
-  variant: "input" | "select" | "multi-select" | "button";
-  errors?: ZodFormattedError<GroupFormData>;
-  currentValue: string | string[] | number | undefined;
+  text: string
+  title: string
+  inputKey: string
+  isUpdate: boolean
+  classNames?: string
+  isEditable: boolean
+  labelClassNames?: string
+  items: ItemType[] | null
+  inputType: "string" | "number"
+  variant: "input" | "select" | "multi-select" | "button"
+  errors?: ZodFormattedError<GroupFormData>
+  currentValue: string | string[] | number | undefined
   // currentValue: GroupFormData[keyof GroupFormData];
-  setOpenedModalName?: React.Dispatch<React.SetStateAction<string>>;
-  setUserFormData: React.Dispatch<React.SetStateAction<Partial<any>>>;
+  setOpenedModalName?: React.Dispatch<React.SetStateAction<string>>
+  setUserFormData: React.Dispatch<React.SetStateAction<Partial<any>>>
   // setUserFormData: React.Dispatch<React.SetStateAction<Partial<GroupFormData>>>;
 }
 
@@ -50,8 +50,8 @@ const EntityField: React.FC<IEntityFieldProps> = ({
   labelClassNames,
   setOpenedModalName,
 }) => {
-  const disabledWhenCreateKeys = ["students", "stream", "subgroups", "specialities", "calendarId"];
-  const isDisabled = !isUpdate && disabledWhenCreateKeys.includes(inputKey);
+  const disabledWhenCreateKeys = ["students", "stream", "subgroups", "specialities", "calendarId"]
+  const isDisabled = !isUpdate && disabledWhenCreateKeys.includes(inputKey)
 
   if (variant === "input") {
     return (
@@ -69,8 +69,8 @@ const EntityField: React.FC<IEntityFieldProps> = ({
             readOnly={!isEditable}
             className={cn("hover:bg-accent", !isEditable ? "cursor-default" : "")}
             onChange={(e) => {
-              const value = inputType === "number" ? Number(e.target.value) : e.target.value;
-              setUserFormData((prev) => ({ ...prev, [inputKey]: value }));
+              const value = inputType === "number" ? Number(e.target.value) : e.target.value
+              setUserFormData((prev) => ({ ...prev, [inputKey]: value }))
             }}
           />
           {/* <p className="text-error text-sm mt-1">{errors?.[inputKey as keyof typeof errors]?._errors.join(", ")}</p> */}
@@ -81,7 +81,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   if (variant === "select") {
@@ -89,7 +89,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
       ? items.find((el) => String(el.id) === String(currentValue))
       : items
       ? items[0]
-      : { name: "", id: "" };
+      : { name: "", id: "" }
 
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)}>
@@ -104,8 +104,8 @@ const EntityField: React.FC<IEntityFieldProps> = ({
             items={items ? items : []}
             onChangeSelected={(value) =>
               setUserFormData((prev) => {
-                const currentValue = inputKey === "status" || inputKey === "status" ? value : Number(value);
-                return { ...prev, [inputKey]: currentValue };
+                const currentValue = inputKey === "status" || inputKey === "status" ? value : Number(value)
+                return { ...prev, [inputKey]: currentValue }
               })
             }
           />
@@ -116,11 +116,11 @@ const EntityField: React.FC<IEntityFieldProps> = ({
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   if (variant === "multi-select") {
-    const activeItems = currentValue as any[];
+    const activeItems = currentValue as any[]
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)}>
         <div className={cn("min-w-90", labelClassNames)}>
@@ -134,9 +134,9 @@ const EntityField: React.FC<IEntityFieldProps> = ({
             items={items ? items : []}
             onChangeSelected={(newItem) => {
               setUserFormData((prev) => {
-                const currentPrev = typeof prev[inputKey] === "undefined" ? { ...prev, [inputKey]: [] } : prev;
-                return { ...currentPrev, [inputKey]: newItem };
-              });
+                const currentPrev = typeof prev[inputKey] === "undefined" ? { ...prev, [inputKey]: [] } : prev
+                return { ...currentPrev, [inputKey]: newItem }
+              })
             }}
           />
           <p className="text-error text-sm mt-1">
@@ -146,12 +146,15 @@ const EntityField: React.FC<IEntityFieldProps> = ({
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   if (variant === "button") {
-    const selectedPlan = inputKey === "educationPlan" ? items?.find((el) => el.id === Number(currentValue)) : null;
-    const buttonText = inputKey === "educationPlan" ? (selectedPlan ? selectedPlan.name : "Редагувати") : "Редагувати";
+    const selectedPlan =
+      inputKey === "educationPlan"
+        ? (items ? items.flatMap((el) => el.plans) : [])?.find((el) => el.id === Number(currentValue))
+        : null
+    const buttonText = inputKey === "educationPlan" ? (selectedPlan ? selectedPlan.name : "Редагувати") : "Редагувати"
 
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)} key={title}>
@@ -178,8 +181,8 @@ const EntityField: React.FC<IEntityFieldProps> = ({
           </p>
         </div>
       </div>
-    );
+    )
   }
-};
+}
 
-export default EntityField;
+export default EntityField

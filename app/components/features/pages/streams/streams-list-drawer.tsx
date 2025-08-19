@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
-import { ChevronsUpDown, Plus, Trash } from "lucide-react";
-import { type Dispatch, type FC, type SetStateAction } from "react";
+import { useSelector } from "react-redux"
+import { type Dispatch, type FC, type SetStateAction } from "react"
+import { ChevronsUpDown, CirclePlus, Plus, Trash, X } from "lucide-react"
 
 import {
   Drawer,
@@ -11,93 +11,100 @@ import {
   DrawerTrigger,
   DrawerContent,
   DrawerDescription,
-} from "~/components/ui/common/drawer";
+} from "~/components/ui/common/drawer"
 import type {
   UpdatingCategoryType,
   CategoryModalStateType,
-} from "../../category-actions-modal/category-actions-modal-types";
-import { cn } from "~/lib/utils";
-import { useAppDispatch } from "~/store/store";
-import { AlertWindow } from "../../alert-window";
-import { Card } from "~/components/ui/common/card";
-import { ConfirmWindow } from "../../confirm-window";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import { ActionsDropdown } from "../../actions-dropdown";
-import { streamsSelector } from "~/store/streams/streams-slice";
-import type { StreamsType } from "~/store/streams/streams-types";
-import { deleteStream } from "~/store/streams/streams-async-actions";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+} from "../../category-actions-modal/category-actions-modal-types"
+import { cn } from "~/lib/utils"
+import { useAppDispatch } from "~/store/store"
+import { AlertWindow } from "../../alert-window"
+import { Card } from "~/components/ui/common/card"
+import { ConfirmWindow } from "../../confirm-window"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import { ActionsDropdown } from "../../actions-dropdown"
+import { streamsSelector } from "~/store/streams/streams-slice"
+import type { StreamsType } from "~/store/streams/streams-types"
+import type { GroupsShortType } from "~/store/groups/groups-types"
+import { deleteStream } from "~/store/streams/streams-async-actions"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible"
 
 interface IStreamsListDrawerProps {
-  isDrawerOpen: boolean;
-  selectedStream: StreamsType | null;
-  preSelectedStream: StreamsType | null;
-  setIsDrawerOpen: Dispatch<SetStateAction<boolean>>;
-  setModalData: Dispatch<SetStateAction<CategoryModalStateType>>;
-  setSelectedStream: Dispatch<SetStateAction<StreamsType | null>>;
-  setPreSelectedStream: Dispatch<SetStateAction<StreamsType | null>>;
-  setUpdatingStream: Dispatch<SetStateAction<UpdatingCategoryType | null>>;
+  isDrawerOpen: boolean
+  selectedStream: StreamsType | null
+  selectedGroup: GroupsShortType | null
+  preSelectedStream: StreamsType | null
+  setIsDrawerOpen: Dispatch<SetStateAction<boolean>>
+  setIsSelectGroupModalOpen: Dispatch<SetStateAction<boolean>>
+  setModalData: Dispatch<SetStateAction<CategoryModalStateType>>
+  setSelectedStream: Dispatch<SetStateAction<StreamsType | null>>
+  setPreSelectedStream: Dispatch<SetStateAction<StreamsType | null>>
+  setSelectedStreamIdToAddGroup: Dispatch<SetStateAction<number | null>>
+  setUpdatingStream: Dispatch<SetStateAction<UpdatingCategoryType | null>>
 }
 
 const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
   isDrawerOpen,
   setModalData,
+  selectedGroup,
   selectedStream,
   setIsDrawerOpen,
   setSelectedStream,
   setUpdatingStream,
   preSelectedStream,
   setPreSelectedStream,
+  setIsSelectGroupModalOpen,
+  setSelectedStreamIdToAddGroup,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const { streams } = useSelector(streamsSelector);
+  const { streams } = useSelector(streamsSelector)
 
   const onPreSelectStream = (stream: StreamsType) => {
     setPreSelectedStream((prev) => {
-      if (!prev) return stream;
-      if (prev.id !== stream.id) return stream;
-      return null;
-    });
-  };
+      if (!prev) return stream
+      if (prev.id !== stream.id) return stream
+      return null
+    })
+  }
 
   const onSelectStream = () => {
-    if (!preSelectedStream) return;
-    setSelectedStream(preSelectedStream);
-    setIsDrawerOpen(false);
-  };
+    if (!preSelectedStream) return
+    setSelectedStream(preSelectedStream)
+    setIsDrawerOpen(false)
+  }
 
   const onClickUpdateFunction = (id: number) => {
-    if (!streams) return;
-    const selectedStream = streams.find((el) => el.id === id);
+    if (!streams) return
+    const selectedStream = streams.find((el) => el.id === id)
     if (selectedStream) {
-      setUpdatingStream(selectedStream);
-      setModalData({ isOpen: true, actionType: "update" });
+      setUpdatingStream(selectedStream)
+      setModalData({ isOpen: true, actionType: "update" })
     }
-  };
+  }
 
   const onClickDeleteFunction = async (id: number) => {
-    if (!streams) return;
-    const selectedStream = streams.find((el) => el.id === id);
-    if (!selectedStream) return;
+    if (!streams) return
+    const selectedStream = streams.find((el) => el.id === id)
+    if (!selectedStream) return
 
     if (selectedStream.groups.length) {
-      AlertWindow(dialogText.alert.stream_delete.title, dialogText.alert.stream_delete.text);
-      return;
+      AlertWindow(dialogText.alert.stream_delete.title, dialogText.alert.stream_delete.text)
+      return
     }
 
-    const confirmed = await ConfirmWindow(dialogText.confirm.streams.title, dialogText.confirm.streams.text);
+    const confirmed = await ConfirmWindow(dialogText.confirm.streams.title, dialogText.confirm.streams.text)
     if (confirmed) {
-      dispatch(deleteStream(id));
+      dispatch(deleteStream(id))
     }
-  };
+  }
 
   const handleChangeOpen = () => {
-    if (isDrawerOpen) setPreSelectedStream(null);
-    else setPreSelectedStream(selectedStream);
-  };
+    if (isDrawerOpen) setPreSelectedStream(null)
+    else setPreSelectedStream(selectedStream)
+  }
 
   return (
     <Drawer direction="right" open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
@@ -141,6 +148,16 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
                     itemId={stream.id}
                     onClickDeleteFunction={onClickDeleteFunction}
                     onClickUpdateFunction={onClickUpdateFunction}
+                    additionalItems={[
+                      {
+                        label: "Додати групу",
+                        icon: <CirclePlus />,
+                        onClick: (streamId: number) => {
+                          setSelectedStreamIdToAddGroup(streamId)
+                          setIsSelectGroupModalOpen(true)
+                        },
+                      },
+                    ]}
                   />
 
                   <CollapsibleTrigger asChild>
@@ -200,7 +217,7 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  );
-};
+  )
+}
 
-export default StreamsListDrawer;
+export default StreamsListDrawer

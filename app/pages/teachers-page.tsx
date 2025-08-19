@@ -1,7 +1,6 @@
 import { NavLink } from "react-router"
 import { Plus, User } from "lucide-react"
 import { useSelector } from "react-redux"
-import { useCookies } from "react-cookie"
 import { useEffect, useState } from "react"
 
 import {
@@ -30,7 +29,6 @@ import { ConfirmWindow } from "~/components/features/confirm-window"
 import { RootContainer } from "~/components/layouts/root-container"
 import { PopoverFilter } from "~/components/ui/custom/popover-filter"
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs"
-import { TEACHER_FILTERS, TEACHER_STATUS } from "~/constants/cookies-keys"
 import { generalSelector, setTeacherFilters } from "~/store/general/general-slice"
 import { TeachersTable } from "~/components/features/pages/teachers/teachers-table"
 import type { TeachersCategoryType, TeachersType } from "~/store/teachers/teachers-types"
@@ -40,8 +38,6 @@ import CategoryActionsModal from "~/components/features/category-actions-modal/c
 const TeachersPage = () => {
   const dispatch = useAppDispatch()
 
-  const [_, setCookie] = useCookies()
-
   const {
     teachers: { categories: filtredCategories, status: defaultStatus },
   } = useSelector(generalSelector)
@@ -50,11 +46,11 @@ const TeachersPage = () => {
   const [globalSearch, setGlobalSearch] = useState("")
   const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
-  const [selectedCategories, setSelectedCategories] = useState(
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
     filtredCategories.length
       ? filtredCategories
       : teachersCategories
-      ? teachersCategories.map((el) => ({ id: el.id }))
+      ? teachersCategories.map((el) => ({ id: el.id, name: el.name }))
       : [],
   )
   const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
@@ -87,21 +83,54 @@ const TeachersPage = () => {
 
     const confirmed = await ConfirmWindow(dialogText.confirm.cmk.title, dialogText.confirm.cmk.text)
     if (confirmed) {
-      dispatch(deleteTeacherCategory(id))
+      try {
+        const deletedCategoryId = await dispatch(deleteTeacherCategory(id)).unwrap()
+        if (deletedCategoryId) {
+          setSelectedCategories((prev) => prev.filter((el) => el.id !== deletedCategoryId))
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
     setActiveStatus(value)
-    setCookie(TEACHER_STATUS, value)
   }
 
   const onCreateCategory = async (data: FormData) => {
-    await dispatch(createTeacherCategory(data))
+    try {
+      const newData = await dispatch(createTeacherCategory(data)).unwrap()
+      if (newData) {
+        setSelectedCategories((prev) => {
+          return [...prev, { id: newData.id, name: newData.name }]
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const onUpdateCategory = async (data: FormData & { id: number }) => {
     await dispatch(updateTeacherCategory(data))
+
+    try {
+      const newData = await dispatch(updateTeacherCategory(data)).unwrap()
+      if (newData) {
+        setSelectedCategories((prev) => {
+          const newCategories = prev.map((el) => {
+            if (el.id === newData.id) {
+              return { id: newData.id, name: newData.name }
+            }
+
+            return el
+          })
+          return newCategories
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -110,8 +139,6 @@ const TeachersPage = () => {
 
   useEffect(() => {
     if (!selectedCategories.length) return
-    const categoriesIds = selectedCategories.map((el) => el.id)
-    setCookie(TEACHER_FILTERS, categoriesIds)
     dispatch(setTeacherFilters(selectedCategories))
   }, [selectedCategories])
 

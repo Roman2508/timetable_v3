@@ -1,5 +1,5 @@
-import React from "react";
-import { ArrowUpDown, Ellipsis, PenLine, Reply, Trash } from "lucide-react";
+import React, { type ForwardRefExoticComponent, type RefAttributes } from "react"
+import { ArrowUpDown, Ellipsis, PenLine, Reply, Trash, type LucideProps } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -11,31 +11,31 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-} from "~/components/ui/common/dropdown-menu";
-import { Button } from "~/components/ui/common/button";
+} from "~/components/ui/common/dropdown-menu"
+import { Button } from "~/components/ui/common/button"
 
 type AdditionalDropdownItemsType = {
-  label: string;
-  onClick: (id: number) => void;
-  icon?: React.ReactNode;
-};
+  label: string
+  onClick: (id: number) => void
+  icon?: React.ReactNode
+}
 
 type CategoriesType = {
-  id: number;
-  name: string;
-  count: number;
-  [key: string]: any;
-};
+  id: number
+  name: string
+  count: number
+  [key: string]: any
+}
 
 interface IActionsDropdownProps {
-  itemId: number;
-  categoryPrefix?: string;
-  categoriesList?: CategoriesType[];
-  onClickUpdateFunction?: (id: number) => void;
-  onClickDeleteFunction?: (id: number) => void;
-  changeStatusFunction?: (id: number) => void;
-  additionalItems?: AdditionalDropdownItemsType[];
-  changeCategoryFunction?: (id: number, categoryId: number) => void;
+  itemId: number
+  categoryPrefix?: string
+  categoriesList?: CategoriesType[]
+  onClickUpdateFunction?: (id: number) => void
+  onClickDeleteFunction?: (id: number) => void
+  changeStatusFunction?: (id: number) => void
+  additionalItems?: AdditionalDropdownItemsType[]
+  changeCategoryFunction?: (id: number, categoryId: number) => void
 }
 
 const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
@@ -61,8 +61,8 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={(e) => {
-              e.stopPropagation();
-              onClickUpdateFunction(itemId);
+              e.stopPropagation()
+              onClickUpdateFunction(itemId)
             }}
           >
             <PenLine />
@@ -76,8 +76,8 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
               key={item.label}
               className="cursor-pointer"
               onClick={(e) => {
-                e.stopPropagation();
-                item.onClick(itemId);
+                e.stopPropagation()
+                item.onClick(itemId)
               }}
             >
               {item.icon}
@@ -99,7 +99,7 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
                       <DropdownMenuItem key={item.id} onClick={() => changeCategoryFunction(itemId, item.id)}>
                         {categoryPrefix} {item.name} ({item.count})
                       </DropdownMenuItem>
-                    );
+                    )
                   })}
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
@@ -111,8 +111,8 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={(e) => {
-              e.stopPropagation();
-              changeStatusFunction(itemId);
+              e.stopPropagation()
+              changeStatusFunction(itemId)
             }}
           >
             <ArrowUpDown />
@@ -124,8 +124,8 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={(e) => {
-              e.stopPropagation();
-              onClickDeleteFunction(itemId);
+              e.stopPropagation()
+              onClickDeleteFunction(itemId)
             }}
           >
             <Trash />
@@ -134,7 +134,7 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}
 
-export { ActionsDropdown };
+export { ActionsDropdown }

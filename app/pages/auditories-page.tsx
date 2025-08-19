@@ -1,123 +1,142 @@
-"use client";
-
-import React from "react";
-import { NavLink } from "react-router";
-import { Plus, User } from "lucide-react";
-import { useSelector } from "react-redux";
+import { NavLink } from "react-router"
+import { Plus, User } from "lucide-react"
+import { useSelector } from "react-redux"
+import { useState, useEffect } from "react"
 
 import {
   createAuditoryCategory,
   deleteAuditoryCategory,
   updateAuditoryCategory,
-} from "~/store/auditories/auditories-async-actions";
+} from "~/store/auditories/auditories-async-actions"
 import type {
   UpdatingCategoryType,
   CategoryModalStateType,
-} from "~/components/features/category-actions-modal/category-actions-modal-types";
-import { useCookies } from "react-cookie";
-import { useAppDispatch } from "~/store/store";
-import { Card } from "~/components/ui/common/card";
-import { sortByName } from "~/helpers/sort-by-name";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import { pluralizeWords } from "~/helpers/pluralize-words";
-import { useItemsByStatus } from "~/hooks/use-items-by-status";
-import { AlertWindow } from "~/components/features/alert-window";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import { CategoryCard } from "~/components/features/category-card";
-import { useItemsByCategory } from "~/hooks/use-items-by-category";
-import { ConfirmWindow } from "~/components/features/confirm-window";
-import { RootContainer } from "~/components/layouts/root-container";
-import { PopoverFilter } from "~/components/ui/custom/popover-filter";
-import { auditoriesSelector } from "~/store/auditories/auditories-slise";
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs";
-import { AUDITORY_FILTERS, AUDITORY_STATUS } from "~/constants/cookies-keys";
-import { generalSelector, setAuditoryFilters } from "~/store/general/general-slice";
-import { AuditoriesTable } from "~/components/features/pages/auditories/auditories-table";
-import type { AuditoriesTypes, AuditoryCategoriesTypes } from "~/store/auditories/auditories-types";
-import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal";
-import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal";
+} from "~/components/features/category-actions-modal/category-actions-modal-types"
+import { useAppDispatch } from "~/store/store"
+import { Card } from "~/components/ui/common/card"
+import { sortByName } from "~/helpers/sort-by-name"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import { pluralizeWords } from "~/helpers/pluralize-words"
+import { useItemsByStatus } from "~/hooks/use-items-by-status"
+import { AlertWindow } from "~/components/features/alert-window"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import { CategoryCard } from "~/components/features/category-card"
+import { useItemsByCategory } from "~/hooks/use-items-by-category"
+import { ConfirmWindow } from "~/components/features/confirm-window"
+import { RootContainer } from "~/components/layouts/root-container"
+import { PopoverFilter } from "~/components/ui/custom/popover-filter"
+import { auditoriesSelector } from "~/store/auditories/auditories-slise"
+import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs"
+import { generalSelector, setAuditoryFilters } from "~/store/general/general-slice"
+import { AuditoriesTable } from "~/components/features/pages/auditories/auditories-table"
+import type { AuditoriesTypes, AuditoryCategoriesTypes } from "~/store/auditories/auditories-types"
+import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal"
+import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal"
 
 const AuditoriesPage = () => {
-  const dispatch = useAppDispatch();
-
-  const [_, setCookie] = useCookies();
+  const dispatch = useAppDispatch()
 
   const {
     auditories: { categories: filtredCategories, status: defaultStatus },
-  } = useSelector(generalSelector);
-  const { auditoriCategories } = useSelector(auditoriesSelector);
+  } = useSelector(generalSelector)
+  const { auditoriCategories } = useSelector(auditoriesSelector)
 
-  const [globalSearch, setGlobalSearch] = React.useState("");
-  const [updatingCategory, setUpdatingCategory] = React.useState<UpdatingCategoryType | null>(null);
-  const [activeStatus, setActiveStatus] = React.useState<"Всі" | "Активний" | "Архів">(
-    defaultStatus ? defaultStatus : "Всі",
-  );
-  const [selectedCategories, setSelectedCategories] = React.useState(
+  const [globalSearch, setGlobalSearch] = useState("")
+  const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
+  const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
     filtredCategories.length
       ? filtredCategories
       : auditoriCategories
-      ? auditoriCategories.map((el) => ({ id: el.id }))
+      ? auditoriCategories.map((el) => ({ id: el.id, name: el.name }))
       : [],
-  );
-  const [modalData, setModalData] = React.useState<CategoryModalStateType>({
-    isOpen: false,
-    actionType: "create",
-  });
+  )
+  const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
 
   const { filteredItems: visibleAuditories, counts } = useItemsByStatus<AuditoryCategoriesTypes>(
     auditoriCategories ?? [],
     "auditories",
     activeStatus,
-  ) as { counts: { all: number; active: number; archive: number }; filteredItems: AuditoriesTypes[] };
-  const filteredItems = useItemsByCategory(visibleAuditories, selectedCategories);
+  ) as { counts: { all: number; active: number; archive: number }; filteredItems: AuditoriesTypes[] }
+  const filteredItems = useItemsByCategory(visibleAuditories, selectedCategories)
 
   const onClickUpdateCategory = (id: number) => {
-    if (!auditoriCategories) return;
-    const selectedCategory = auditoriCategories.find((el) => el.id === id);
-    if (!selectedCategory) return;
-    const { name, shortName } = selectedCategory;
-    setUpdatingCategory({ id, name, shortName });
-    setModalData({ isOpen: true, actionType: "update" });
-  };
+    if (!auditoriCategories) return
+    const selectedCategory = auditoriCategories.find((el) => el.id === id)
+    if (!selectedCategory) return
+    const { name, shortName } = selectedCategory
+    setUpdatingCategory({ id, name, shortName })
+    setModalData({ isOpen: true, actionType: "update" })
+  }
 
   const onClickDeleteCategory = async (id: number) => {
-    if (!auditoriCategories) return;
-    const selectedCategory = auditoriCategories.find((el) => el.id === id);
-    if (!selectedCategory) return;
+    if (!auditoriCategories) return
+    const selectedCategory = auditoriCategories.find((el) => el.id === id)
+    if (!selectedCategory) return
 
     if (selectedCategory.auditories.length) {
-      AlertWindow(dialogText.alert.auditory_category_delete.title, dialogText.alert.auditory_category_delete.text);
-      return;
+      AlertWindow(dialogText.alert.auditory_category_delete.title, dialogText.alert.auditory_category_delete.text)
+      return
     }
 
-    const confirmed = await ConfirmWindow(dialogText.confirm.category.title, dialogText.confirm.category.text);
+    const confirmed = await ConfirmWindow(dialogText.confirm.category.title, dialogText.confirm.category.text)
     if (confirmed) {
-      dispatch(deleteAuditoryCategory(id));
+      try {
+        const deletedCategoryId = await dispatch(deleteAuditoryCategory(id)).unwrap()
+        if (deletedCategoryId) {
+          setSelectedCategories((prev) => prev.filter((el) => el.id !== deletedCategoryId))
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
-  };
+  }
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
-    setActiveStatus(value);
-    setCookie(AUDITORY_STATUS, value);
-  };
+    setActiveStatus(value)
+  }
 
   const onCreateCategory = async (data: FormData) => {
-    const { name, shortName } = data;
-    await dispatch(createAuditoryCategory({ name, shortName: String(shortName) }));
-  };
+    try {
+      const { name, shortName } = data
+      const newData = await dispatch(createAuditoryCategory({ name, shortName: String(shortName) })).unwrap()
+      if (newData) {
+        setSelectedCategories((prev) => {
+          return [...prev, { id: newData.id, name: newData.name }]
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const onUpdateCategory = async (data: FormData & { id: number }) => {
-    const { id, name, shortName } = data;
-    await dispatch(updateAuditoryCategory({ id, name, shortName: String(shortName) }));
-  };
+    try {
+      const { id, name, shortName } = data
+      const newData = await dispatch(updateAuditoryCategory({ id, name, shortName: String(shortName) })).unwrap()
 
-  React.useEffect(() => {
-    if (!selectedCategories.length) return;
-    const categoriesIds = selectedCategories.map((el) => el.id);
-    setCookie(AUDITORY_FILTERS, categoriesIds);
-    dispatch(setAuditoryFilters(selectedCategories));
-  }, [selectedCategories]);
+      if (newData) {
+        setSelectedCategories((prev) => {
+          const newCategories = prev.map((el) => {
+            if (el.id === newData.id) {
+              return { id: newData.id, name: newData.name }
+            }
+
+            return el
+          })
+          return newCategories
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (!selectedCategories.length) return
+    dispatch(setAuditoryFilters(selectedCategories))
+  }, [selectedCategories])
 
   return (
     <>
@@ -207,7 +226,7 @@ const AuditoriesPage = () => {
         )}
       </RootContainer>
     </>
-  );
-};
+  )
+}
 
-export default AuditoriesPage;
+export default AuditoriesPage

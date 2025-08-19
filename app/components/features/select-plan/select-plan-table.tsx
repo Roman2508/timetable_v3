@@ -23,6 +23,7 @@ interface ISelectPlanTableProps {
   setModalData?: Dispatch<SetStateAction<PlanActionModalType>>
   setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>
   setEditablePlan?: React.Dispatch<React.SetStateAction<PlansType | null>>
+  setSelectedCategories: Dispatch<SetStateAction<{ id: number; name: string }[]>>
   setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>
 }
 
@@ -35,6 +36,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   plansCategories,
   isEditable = false,
   setEditableCategory,
+  setSelectedCategories,
 }) => {
   const dispatch = useAppDispatch()
 
@@ -73,7 +75,14 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
       return
     }
 
-    dispatch(deletePlanCategory(id))
+    try {
+      const deletedCategoryId = await dispatch(deletePlanCategory(id)).unwrap()
+      if (deletedCategoryId) {
+        setSelectedCategories((prev) => prev.filter((el) => el.id !== deletedCategoryId))
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const onClickUpdateFunction = (id: number) => {

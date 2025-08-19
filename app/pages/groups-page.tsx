@@ -1,7 +1,6 @@
 import { NavLink } from "react-router"
 import { Plus, User } from "lucide-react"
 import { useSelector } from "react-redux"
-import { useCookies } from "react-cookie"
 import { useEffect, useState } from "react"
 
 import {
@@ -32,7 +31,6 @@ import { useItemsByCategory } from "~/hooks/use-items-by-category"
 import { ConfirmWindow } from "~/components/features/confirm-window"
 import { RootContainer } from "~/components/layouts/root-container"
 import { PopoverFilter } from "~/components/ui/custom/popover-filter"
-import { GROUP_FILTERS, GROUP_STATUS } from "~/constants/cookies-keys"
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs"
 import { GroupsTable } from "~/components/features/pages/groups/groups-table"
 import { generalSelector, setGroupFilters } from "~/store/general/general-slice"
@@ -40,8 +38,6 @@ import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups
 
 const GroupsPage = () => {
   const dispatch = useAppDispatch()
-
-  const [_, setCookie] = useCookies()
 
   const {
     groups: { categories: filtredCategories, status: defaultStatus },
@@ -51,8 +47,12 @@ const GroupsPage = () => {
   const [globalSearch, setGlobalSearch] = useState("")
   const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
-  const [selectedCategories, setSelectedCategories] = useState<GroupCategoriesType[]>(
-    filtredCategories.length ? filtredCategories : groupCategories ? groupCategories.map((el) => ({ id: el.id })) : [],
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
+    filtredCategories.length
+      ? filtredCategories
+      : groupCategories
+      ? groupCategories.map((el) => ({ id: el.id, name: el.id }))
+      : [],
   )
   const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
 
@@ -84,23 +84,54 @@ const GroupsPage = () => {
 
     const confirmed = await ConfirmWindow(dialogText.confirm.unit.title, dialogText.confirm.unit.text)
     if (confirmed) {
-      dispatch(deleteGroupCategory(id))
+      try {
+        const deletedCategoryId = await dispatch(deleteGroupCategory(id)).unwrap()
+        if (deletedCategoryId) {
+          setSelectedCategories((prev) => prev.filter((el) => el.id !== deletedCategoryId))
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
     setActiveStatus(value)
-    setCookie(GROUP_STATUS, value)
   }
 
   const onCreateCategory = async (data: FormData) => {
-    const { name, shortName } = data
-    await dispatch(createGroupCategory({ name, shortName: String(shortName) }))
+    try {
+      const { name, shortName } = data
+      const newData = await dispatch(createGroupCategory({ name, shortName: String(shortName) })).unwrap()
+      if (newData) {
+        setSelectedCategories((prev) => {
+          return [...prev, { id: newData.id, name: newData.name }]
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const onUpdateCategory = async (data: FormData & { id: number }) => {
-    const { id, name, shortName } = data
-    await dispatch(updateGroupCategory({ id, name, shortName: String(shortName) }))
+    try {
+      const { id, name, shortName } = data
+      const newData = await dispatch(updateGroupCategory({ id, name, shortName: String(shortName) })).unwrap()
+      if (newData) {
+        setSelectedCategories((prev) => {
+          const newCategories = prev.map((el) => {
+            if (el.id === newData.id) {
+              return { id: newData.id, name: newData.name }
+            }
+
+            return el
+          })
+          return newCategories
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -109,8 +140,6 @@ const GroupsPage = () => {
 
   useEffect(() => {
     if (!selectedCategories.length) return
-    const categoriesIds = selectedCategories.map((el) => el.id)
-    setCookie(GROUP_FILTERS, categoriesIds)
     dispatch(setGroupFilters(selectedCategories))
   }, [selectedCategories])
 

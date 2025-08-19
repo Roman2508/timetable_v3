@@ -53,11 +53,11 @@ export default function PlansPage() {
   const { plansCategories } = useSelector(plansSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
-  const [selectedCategories, setSelectedCategories] = useState(
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
     filtredCategories.length
       ? filtredCategories
       : plansCategories
-      ? plansCategories.map((el: any) => ({ id: el.id }))
+      ? plansCategories.map((el: any) => ({ id: el.id, name: el.name }))
       : [],
   )
   const [editablePlan, setEditablePlan] = useState<PlansType | null>(null)
@@ -82,8 +82,8 @@ export default function PlansPage() {
 
   useEffect(() => {
     if (!selectedCategories.length) return
-    const categoriesIds = selectedCategories.map((el: { id: number }) => el.id)
-    setCookie(PLAN_FILTERS, categoriesIds)
+    // const categoriesIds = selectedCategories.map((el: { id: number }) => el.id)
+    // setCookie(PLAN_FILTERS, categoriesIds)
     dispatch(setPlanFilters(selectedCategories))
   }, [selectedCategories])
 
@@ -95,6 +95,7 @@ export default function PlansPage() {
         editablePlan={editablePlan}
         editableCategory={editableCategory}
         setEditableCategory={setEditableCategory}
+        setSelectedCategories={setSelectedCategories}
       />
 
       <RootContainer>
@@ -148,6 +149,7 @@ export default function PlansPage() {
             setModalData={setModalData}
             setEditablePlan={setEditablePlan}
             setEditableCategory={setEditableCategory}
+            setSelectedCategories={setSelectedCategories}
             plansCategories={visiblePlans ? visiblePlans : []}
           />
         ) : (

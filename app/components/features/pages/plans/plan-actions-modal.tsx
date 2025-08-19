@@ -18,6 +18,7 @@ interface IPlanActionsModalProps {
   editablePlan?: PlansType | null
   editableCategory: { id: number; name: string } | null
   setModalData: Dispatch<SetStateAction<PlanActionModalType>>
+  setSelectedCategories: Dispatch<SetStateAction<{ id: number; name: string }[]>>
   setEditableCategory: Dispatch<SetStateAction<{ id: number; name: string } | null>>
 }
 
@@ -43,6 +44,7 @@ const PlanActionsModal: FC<IPlanActionsModalProps> = ({
   editablePlan,
   editableCategory,
   setEditableCategory,
+  setSelectedCategories,
 }) => {
   const dispatch = useAppDispatch()
 
@@ -102,14 +104,32 @@ const PlanActionsModal: FC<IPlanActionsModalProps> = ({
     try {
       setIsPending(true)
       if (modalData.type === "create-category") {
-        await dispatch(createPlanCategory({ name: formData.name }))
+        const newData = await dispatch(createPlanCategory({ name: formData.name })).unwrap()
+        if (newData) {
+          setSelectedCategories((prev) => {
+            return [...prev, { id: newData.id, name: newData.name }]
+          })
+        }
         setModalData({ isOpen: false, type: "create-plan" })
         reset()
         return
       }
 
       if (modalData.type === "update-category" && editableCategory) {
-        await dispatch(updatePlanCategory({ id: editableCategory.id, name: formData.name }))
+        const newData = await dispatch(updatePlanCategory({ id: editableCategory.id, name: formData.name })).unwrap()
+
+        if (newData) {
+          setSelectedCategories((prev) => {
+            const newCategories = prev.map((el) => {
+              if (el.id === newData.id) {
+                return { id: newData.id, name: newData.name }
+              }
+
+              return el
+            })
+            return newCategories
+          })
+        }
         setModalData({ isOpen: false, type: "create-plan" })
         reset()
       }

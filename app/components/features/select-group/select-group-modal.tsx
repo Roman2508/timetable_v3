@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import { ChevronsUpDown, Search } from "lucide-react"
-import { useState, type Dispatch, type FC, type SetStateAction } from "react"
+import { useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -20,29 +20,54 @@ import type { GroupsShortType } from "~/store/groups/groups-types"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible"
 
 interface ISelectGroupModal {
+  hideTrigger?: boolean
+  defaultOpen?: boolean
   selectedGroup: GroupsShortType | null
+  setDefaultOpen?: Dispatch<SetStateAction<boolean>>
+  onClickSelect?: (group: GroupsShortType | null) => void
   setSelectedGroup: Dispatch<SetStateAction<GroupsShortType | null>>
 }
 
-const SelectGroupModal: FC<ISelectGroupModal> = ({ selectedGroup, setSelectedGroup }) => {
+const SelectGroupModal: FC<ISelectGroupModal> = ({
+  onClickSelect,
+  selectedGroup,
+  setDefaultOpen,
+  setSelectedGroup,
+  hideTrigger = false,
+  defaultOpen = false,
+}) => {
   const { groupCategories } = useSelector(groupsSelector)
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(defaultOpen)
   const [preSelectedGroup, setPreSelectedGroup] = useState<GroupsShortType | null>(selectedGroup)
 
   const onSelectedGroup = () => {
     setSelectedGroup(preSelectedGroup)
     setIsModalOpen(false)
+    setDefaultOpen && setDefaultOpen(false)
+    onClickSelect && onClickSelect(preSelectedGroup)
   }
 
+  useEffect(() => {
+    setIsModalOpen(defaultOpen)
+  }, [defaultOpen])
+
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger>
-        <Button onClick={() => setIsModalOpen(true)}>
-          <Search />
-          Вибрати групу
-        </Button>
-      </DialogTrigger>
+    <Dialog
+      open={isModalOpen}
+      onOpenChange={(open) => {
+        setIsModalOpen(open)
+        setDefaultOpen && setDefaultOpen(open)
+      }}
+    >
+      {!hideTrigger && (
+        <DialogTrigger>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Search />
+            Вибрати групу
+          </Button>
+        </DialogTrigger>
+      )}
 
       <DialogContent className="px-0 max-w-[600px]">
         <DialogHeader className="px-4">

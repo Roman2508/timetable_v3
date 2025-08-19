@@ -1,29 +1,29 @@
-import React from "react";
-import { ChevronDown, ListFilter } from "lucide-react";
+import { ChevronDown, ListFilter } from "lucide-react"
+import { type Dispatch, type FC, type SetStateAction } from "react"
 
-import { Checkbox } from "../common/checkbox";
-import { Button, type ButtonSize, type ButtonVariant } from "../common/button";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
+import { Checkbox } from "../common/checkbox"
+import { Button, type ButtonSize, type ButtonVariant } from "../common/button"
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover"
 
 type IPopoverItem = {
-  id: number;
-  name: string;
-} & any;
+  id: number
+  name: string
+} & any
 
 interface IPopoverFilterProps {
-  label?: string;
-  disabled?: boolean;
-  items: IPopoverItem[];
-  itemsPrefix?: string;
-  selectAllLabel?: string;
-  filterSize?: ButtonSize;
-  enableSelectAll?: boolean;
-  selectedItems: IPopoverItem[];
-  filterVariant?: ButtonVariant;
-  setSelectedItems: React.Dispatch<React.SetStateAction<IPopoverItem[]>>;
+  label?: string
+  disabled?: boolean
+  items: IPopoverItem[]
+  itemsPrefix?: string
+  selectAllLabel?: string
+  filterSize?: ButtonSize
+  enableSelectAll?: boolean
+  selectedItems: IPopoverItem[]
+  filterVariant?: ButtonVariant
+  setSelectedItems: Dispatch<SetStateAction<IPopoverItem[]>>
 }
 
-export const PopoverFilter: React.FC<IPopoverFilterProps> = ({
+export const PopoverFilter: FC<IPopoverFilterProps> = ({
   items,
   selectedItems,
   setSelectedItems,
@@ -37,35 +37,35 @@ export const PopoverFilter: React.FC<IPopoverFilterProps> = ({
 }) => {
   const handleSelected = (id: number) => {
     setSelectedItems((prev) => {
-      const isItemSelected = prev.some((el) => el.id === id);
+      const isItemSelected = prev.some((el) => el.id === id)
       if (isItemSelected) {
-        return prev.filter((el) => el.id !== id).map((el) => ({ id: el.id }));
+        return prev.filter((el) => el.id !== id).map((el) => ({ id: el.id }))
       }
 
-      const newItem = items.find((el) => el.id === id);
+      const newItem = items.find((el) => el.id === id)
       if (newItem) {
-        return [...prev, { id: newItem.id }];
+        return [...prev, { id: newItem.id }]
       }
 
-      return prev;
-    });
-  };
+      return prev
+    })
+  }
 
   const handleSelectAll = () => {
     setSelectedItems((prev) => {
       if (prev.length) {
-        return [];
+        return []
       }
-      return items;
-    });
-  };
+      return items
+    })
+  }
 
   const checkIsSelected = (id?: number) => {
     if (id) {
-      return selectedItems.some((el) => el.id === id);
+      return selectedItems.some((el) => el.id === id)
     }
-    return items.length === selectedItems.length;
-  };
+    return items.length === selectedItems.length
+  }
 
   return (
     <Popover>
@@ -102,10 +102,10 @@ export const PopoverFilter: React.FC<IPopoverFilterProps> = ({
                   {itemsPrefix} {item.name}
                 </label>
               </div>
-            );
+            )
           })}
         </div>
       </PopoverContent>
     </Popover>
-  );
-};
+  )
+}
