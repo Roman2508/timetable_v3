@@ -4,32 +4,34 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   createColumnHelper,
-  type SortingState,
   getFilteredRowModel,
-} from "@tanstack/react-table";
-import { useSelector } from "react-redux";
-import { ArrowDown, ArrowUp } from "lucide-react";
-import { useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react";
+  type SortingState,
+} from "@tanstack/react-table"
+import { ArrowDown, ArrowUp } from "lucide-react"
+import { useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react"
 
-import { cn } from "~/lib/utils";
-import StudentsActions from "./students-actions";
-import { Badge } from "~/components/ui/common/badge";
-import { studentsSelector } from "~/store/students/students-slice";
-import type { StudentType } from "~/store/students/students-types";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
-import { Checkbox } from "~/components/ui/common/checkbox";
+import { cn } from "~/lib/utils"
+import StudentsActions from "./students-actions"
+import { fuzzyFilter } from "~/helpers/fuzzy-filter"
+import { Badge } from "~/components/ui/common/badge"
+import { Checkbox } from "~/components/ui/common/checkbox"
+import type { StudentType } from "~/store/students/students-types"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
 
 interface IStudentsAccountsTableProps {
-  globalFilter: string;
-  studentsIdsToDelete: number[];
-  actionMode: "delete" | "create" | "update";
-  handleAddStudentToDelete: (id: number) => void;
-  setGlobalFilter: Dispatch<SetStateAction<string>>;
-  setStudentsIdsToDelete: Dispatch<SetStateAction<number[]>>;
+  isLoading: boolean
+  globalFilter: string
+  students: StudentType[]
+  studentsIdsToDelete: number[]
+  actionMode: "delete" | "create" | "update"
+  handleAddStudentToDelete: (id: number) => void
+  setGlobalFilter: Dispatch<SetStateAction<string>>
+  setStudentsIdsToDelete: Dispatch<SetStateAction<number[]>>
 }
 
 export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
+  students,
+  isLoading,
   actionMode,
   globalFilter,
   setGlobalFilter,
@@ -37,11 +39,9 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
   setStudentsIdsToDelete,
   handleAddStudentToDelete,
 }) => {
-  const { students } = useSelector(studentsSelector);
+  const [sorting, setSorting] = useState<SortingState>([])
 
-  const [sorting, setSorting] = useState<SortingState>([]);
-
-  const columnHelper = createColumnHelper<StudentType>();
+  const columnHelper = createColumnHelper<StudentType>()
   const columns = useMemo(
     () => [
       columnHelper.accessor("name", { header: "ПІБ" }),
@@ -53,7 +53,7 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
         id: "status",
         header: "Статус",
         cell: ({ row }) => {
-          const status = row.original.status;
+          const status = row.original.status
           return (
             <Badge
               variant="outline"
@@ -66,19 +66,19 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
             >
               {status}
             </Badge>
-          );
+          )
         },
       }),
       columnHelper.display({
         id: "actions",
         header: "Дії",
         cell: ({ row }) => {
-          return <StudentsActions {...row.original} />;
+          return <StudentsActions {...row.original} />
         },
       }),
     ],
     [],
-  );
+  )
 
   const table = useReactTable({
     data: students || [],
@@ -92,14 +92,18 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
     filterFns: { fuzzy: fuzzyFilter },
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
+
+  if (isLoading) {
+    return <div className="font-mono text-center py-4">Завантаження...</div>
+  }
 
   if (!students) {
-    return <div className="font-mono text-center py-4">Пусто.</div>;
+    return <div className="font-mono text-center py-4">Пусто.</div>
   }
 
   if (students && !students.length) {
-    return <div className="font-mono text-center py-4">Студентів ще не зараховано до групи.</div>;
+    return <div className="font-mono text-center py-4">Пусто.</div>
   }
 
   return (
@@ -113,10 +117,10 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
                   <Checkbox
                     onCheckedChange={() => {
                       if (studentsIdsToDelete.length === students.length) {
-                        setStudentsIdsToDelete([]);
+                        setStudentsIdsToDelete([])
                       } else {
-                        const allIds = students.map((student) => student.id);
-                        setStudentsIdsToDelete(allIds);
+                        const allIds = students.map((student) => student.id)
+                        setStudentsIdsToDelete(allIds)
                       }
                     }}
                   />
@@ -163,7 +167,7 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
                       </div>
                     )}
                   </TableHead>
-                );
+                )
               })}
             </TableRow>
           ))}
@@ -171,7 +175,7 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
 
         <TableBody>
           {table.getRowModel().rows.map((row, rowIndex) => {
-            const isAddedToDelete = studentsIdsToDelete.some((id) => id === row.original.id);
+            const isAddedToDelete = studentsIdsToDelete.some((id) => id === row.original.id)
             return (
               <TableRow key={row.id} className="hover:bg-border/40 cursor-pointer">
                 {actionMode === "delete" && (
@@ -186,8 +190,8 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
                 <TableCell className={cn("truncate max-w-[30px]", "text-left px-2")}>{rowIndex + 1}</TableCell>
 
                 {row.getVisibleCells().map((cell, index) => {
-                  const isLastCol = index === row.getVisibleCells().length - 1;
-                  const isFirstCol = index === 0;
+                  const isLastCol = index === row.getVisibleCells().length - 1
+                  const isFirstCol = index === 0
                   return (
                     <TableCell
                       key={cell.id}
@@ -199,13 +203,13 @@ export const StudentsAccountsTable: FC<IStudentsAccountsTableProps> = ({
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
-                  );
+                  )
                 })}
               </TableRow>
-            );
+            )
           })}
         </TableBody>
       </Table>
     </div>
-  );
-};
+  )
+}

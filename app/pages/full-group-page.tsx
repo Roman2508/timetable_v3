@@ -10,7 +10,7 @@ import { dialogText } from "~/constants/dialogs-text"
 import { Button } from "~/components/ui/common/button"
 import { plansSelector } from "~/store/plans/plans-slice"
 import EntityField from "~/components/features/entity-field"
-import { groupsSelector } from "~/store/groups/groups-slice"
+import { groupsSelector, setGroup } from "~/store/groups/groups-slice"
 import EntityHeader from "~/components/features/entity-header"
 import { RootContainer } from "~/components/layouts/root-container"
 import { ConfirmWindow } from "~/components/features/confirm-window"
@@ -270,6 +270,12 @@ const FullGroup: FC<Props> = ({ groupId }) => {
       onGoToStreams()
     }
   }, [openedModalName])
+
+  useEffect(() => {
+    if (!isUpdate) {
+      dispatch(setGroup())
+    }
+  }, [isUpdate])
 
   return (
     <>

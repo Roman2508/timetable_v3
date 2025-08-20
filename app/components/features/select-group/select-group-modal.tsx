@@ -37,7 +37,7 @@ const SelectGroupModal: FC<ISelectGroupModal> = ({
   defaultOpen = false,
 }) => {
   const { groupCategories } = useSelector(groupsSelector)
-
+  
   const [isModalOpen, setIsModalOpen] = useState(defaultOpen)
   const [preSelectedGroup, setPreSelectedGroup] = useState<GroupsShortType | null>(selectedGroup)
 
@@ -109,7 +109,7 @@ const SelectGroupModal: FC<ISelectGroupModal> = ({
         <Separator />
 
         <DialogFooter className="flex !justify-between items-center pt-2 px-4">
-          <Button onClick={() => onSelectedGroup()}>Вибрати</Button>
+          <Button onClick={onSelectedGroup}>Вибрати</Button>
 
           {preSelectedGroup && (
             <div className="font-mono mr-3">

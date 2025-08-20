@@ -18,7 +18,7 @@ interface IPlanActionsModalProps {
   editablePlan?: PlansType | null
   editableCategory: { id: number; name: string } | null
   setModalData: Dispatch<SetStateAction<PlanActionModalType>>
-  setSelectedCategories: Dispatch<SetStateAction<{ id: number; name: string }[]>>
+  setSelectedCategories: Dispatch<SetStateAction<{ id: number }[]>>
   setEditableCategory: Dispatch<SetStateAction<{ id: number; name: string } | null>>
 }
 

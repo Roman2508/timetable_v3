@@ -1,85 +1,85 @@
-import * as XLSX from "xlsx";
-import { ArrowRightFromLine, Download, MessageCircleQuestion } from "lucide-react";
-import { useRef, useState, type Dispatch, type FC, type SetStateAction } from "react";
+import * as XLSX from "xlsx"
+import { ArrowRightFromLine, Download, MessageCircleQuestion } from "lucide-react"
+import { useRef, useState, type Dispatch, type FC, type SetStateAction } from "react"
 
-import { useAppDispatch } from "~/store/store";
-import { Button } from "~/components/ui/common/button";
-import type { CreateStudentsPayloadType } from "~/api/api-types";
-import { createStudent } from "~/store/students/students-async-actions";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
+import { useAppDispatch } from "~/store/store"
+import { Button } from "~/components/ui/common/button"
+import type { CreateStudentsPayloadType } from "~/api/api-types"
+import { createStudent } from "~/store/students/students-async-actions"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip"
 
 interface IImportStudentsAccountsProps {
-  setHelperModalOpen: Dispatch<SetStateAction<boolean>>;
+  setHelperModalOpen: Dispatch<SetStateAction<boolean>>
 }
 
 const ImportStudentsAccounts: FC<IImportStudentsAccountsProps> = ({ setHelperModalOpen }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const fileRef = useRef<HTMLInputElement | null>(null);
-  const [disabledUploadButton, setDisabledUploadButton] = useState(false);
+  const fileRef = useRef<HTMLInputElement | null>(null)
+  const [disabledUploadButton, setDisabledUploadButton] = useState(false)
 
   const onClickUpload = () => {
-    if (!fileRef.current) return;
-    fileRef.current.click();
-  };
+    if (!fileRef.current) return
+    fileRef.current.click()
+  }
 
   const handleChangeUpload = (e: any /* Event */) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const files = (e.target as HTMLInputElement).files;
+    const files = (e.target as HTMLInputElement).files
 
-    if (!files?.length) return;
+    if (!files?.length) return
 
-    const f = files[0];
-    const reader = new FileReader();
+    const f = files[0]
+    const reader = new FileReader()
 
     reader.onload = function (e) {
-      if (e.target === null) return;
+      if (e.target === null) return
 
-      const data = e.target.result;
-      let readedData = XLSX.read(data, { type: "binary" });
-      const wsname = readedData.SheetNames[0];
-      const ws = readedData.Sheets[wsname];
+      const data = e.target.result
+      let readedData = XLSX.read(data, { type: "binary" })
+      const wsname = readedData.SheetNames[0]
+      const ws = readedData.Sheets[wsname]
 
       /* Convert array to json*/
-      const dataParse = XLSX.utils.sheet_to_json(ws, { header: 1 });
+      const dataParse = XLSX.utils.sheet_to_json(ws, { header: 1 })
 
       const newStudents = dataParse
         .map((el, index) => {
-          if (index === 0) return;
+          if (index === 0) return
 
-          const element = el as string[];
+          const element = el as string[]
 
           const obj: CreateStudentsPayloadType = {
-            name: element[0],
-            login: element[1],
-            password: element[2],
-            email: element[3],
+            name: String(element[0]),
+            login: String(element[1]),
+            password: String(element[2]),
+            email: String(element[3]),
             group: element[4],
-          };
+          }
 
-          return obj;
+          return obj
         })
-        .filter((el) => !!el);
+        .filter((el) => !!el)
 
       Promise.all(
         newStudents.map(async (el) => {
-          if (!el) return;
+          if (!el) return
           try {
-            setDisabledUploadButton(true);
-            dispatch(createStudent(el));
+            setDisabledUploadButton(true)
+            dispatch(createStudent(el))
           } catch (err) {
-            console.log(err);
+            console.log(err)
           } finally {
-            setDisabledUploadButton(false);
+            setDisabledUploadButton(false)
           }
         }),
-      );
-    };
-    reader.readAsBinaryString(f);
-    if (!fileRef.current) return;
-    fileRef.current.value = "";
-  };
+      )
+    }
+    reader.readAsBinaryString(f)
+    if (!fileRef.current) return
+    fileRef.current.value = ""
+  }
 
   return (
     <>
@@ -102,7 +102,7 @@ const ImportStudentsAccounts: FC<IImportStudentsAccountsProps> = ({ setHelperMod
         <TooltipContent>Імпортувати студентів до групи</TooltipContent>
       </Tooltip>
     </>
-  );
-};
+  )
+}
 
-export default ImportStudentsAccounts;
+export default ImportStudentsAccounts

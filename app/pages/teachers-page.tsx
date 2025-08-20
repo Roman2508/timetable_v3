@@ -34,6 +34,7 @@ import { TeachersTable } from "~/components/features/pages/teachers/teachers-tab
 import type { TeachersCategoryType, TeachersType } from "~/store/teachers/teachers-types"
 import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal"
 import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal"
+import { LoadingStatusTypes } from "~/store/app-types"
 
 const TeachersPage = () => {
   const dispatch = useAppDispatch()
@@ -41,25 +42,25 @@ const TeachersPage = () => {
   const {
     teachers: { categories: filtredCategories, status: defaultStatus },
   } = useSelector(generalSelector)
-  const { teachersCategories } = useSelector(teachersSelector)
+  const { teachersCategories, loadingStatus } = useSelector(teachersSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
   const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
-  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number }[]>(
     filtredCategories.length
       ? filtredCategories
       : teachersCategories
-      ? teachersCategories.map((el) => ({ id: el.id, name: el.name }))
+      ? teachersCategories.map((el) => ({ id: el.id }))
       : [],
   )
   const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
 
-  const { filteredItems: visibleTeachers, counts } = useItemsByStatus<TeachersCategoryType>(
+  const { filteredItems: visibleTeachers, counts } = useItemsByStatus<TeachersCategoryType, "teachers", TeachersType>(
     teachersCategories ?? [],
     "teachers",
     activeStatus,
-  ) as { counts: { all: number; active: number; archive: number }; filteredItems: TeachersType[] }
+  )
   const filteredItems = useItemsByCategory(visibleTeachers, selectedCategories)
 
   const onClickUpdateCategory = (id: number) => {
@@ -225,6 +226,8 @@ const TeachersPage = () => {
 
         {filteredItems.length ? (
           <TeachersTable teachers={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+        ) : loadingStatus === LoadingStatusTypes.LOADING ? (
+          <div className="font-mono text-center">Завантаження...</div>
         ) : (
           <div className="font-mono text-center">Пусто</div>
         )}

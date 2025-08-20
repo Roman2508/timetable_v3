@@ -31,8 +31,11 @@ export default function FullPlan() {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (!loaderData.student) return
-    dispatch(setStudent(loaderData.student))
+    if (loaderData.student) {
+      dispatch(setStudent(loaderData.student))
+    } else {
+      dispatch(setStudent())
+    }
   }, [loaderData])
 
   return <FullStudent studentId={loaderData.studentId} />

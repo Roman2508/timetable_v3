@@ -1,6 +1,6 @@
 import z from "zod"
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router"
+import { useLocation, useNavigate } from "react-router"
 import { Pencil, Plus, Trash2, User } from "lucide-react"
 import { useMemo, useState, type FC, type MouseEvent } from "react"
 
@@ -16,6 +16,7 @@ import { studentsSelector } from "~/store/students/students-slice"
 import { RootContainer } from "~/components/layouts/root-container"
 import { ConfirmWindow } from "~/components/features/confirm-window"
 import type { GroupCategoriesType } from "~/store/groups/groups-types"
+import type { CreateStudentsPayloadType, UpdateStudentsPayloadType } from "~/api/api-types"
 import { createStudent, deleteStudent, updateStudent } from "~/store/students/students-async-actions"
 
 interface Props {
@@ -36,7 +37,7 @@ const formSchema = z.object({
   login: z.string({ message: "Це поле обов'язкове" }),
   email: z.string({ message: "Це поле обов'язкове" }).email({ message: "Не вірний формат пошти" }),
   password: z.string().optional(),
-  group: z.number({ message: "Це поле обов'язкове" }),
+  group: z.number({ message: "Це поле обов'язкове" }).optional(),
   status: z.enum(["Навчається", "Академічна відпустка", "Відраховано"], { message: "Це поле обов'язкове" }),
 })
 
@@ -124,7 +125,7 @@ const FullStudent: FC<Props> = ({ studentId }) => {
     ...student,
     group: student?.group.id,
     ...userFormData,
-  }
+  } as FormData
 
   const conditionalFormSchema = formSchema.superRefine((data, ctx) => {
     if (!isUpdate && !data.password) {
@@ -154,21 +155,21 @@ const FullStudent: FC<Props> = ({ studentId }) => {
         return
       }
 
-      if (isUpdate) {
-        await dispatch(updateStudent({ ...formData, id: student.id }))
-        navigate("/students")
+      if (isUpdate && student) {
+        await dispatch(updateStudent({ ...formData, id: student.id } as UpdateStudentsPayloadType))
+        navigate(`/students?group=${formData.group}`)
         return
       }
 
-      await dispatch(createStudent(formData))
-      navigate("/students")
+      await dispatch(createStudent(formData as CreateStudentsPayloadType))
+      navigate(`/students?group=${formData.group}`)
     } finally {
       setIsPanding(false)
     }
   }
 
   const onDeleteStudent = async () => {
-    if (!isUpdate) return
+    if (!isUpdate || !student) return
     const confirmed = await ConfirmWindow(dialogText.confirm.students.title, dialogText.confirm.students.text)
     if (confirmed) {
       await dispatch(deleteStudent(Number(student.id)))
@@ -180,7 +181,7 @@ const FullStudent: FC<Props> = ({ studentId }) => {
     <RootContainer>
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between items-center mb-6">
-          {isUpdate ? (
+          {isUpdate && student ? (
             <EntityHeader Icon={User} label="СТУДЕНТ" status={student.status} name={student.name} />
           ) : (
             <h2 className="flex items-center h-14 text-2xl font-semibold">Створити студента</h2>

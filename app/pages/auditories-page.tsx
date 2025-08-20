@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import {
   createAuditoryCategory,
   deleteAuditoryCategory,
+  getAuditoryCategories,
   updateAuditoryCategory,
 } from "~/store/auditories/auditories-async-actions"
 import type {
@@ -33,6 +34,7 @@ import { AuditoriesTable } from "~/components/features/pages/auditories/auditori
 import type { AuditoriesTypes, AuditoryCategoriesTypes } from "~/store/auditories/auditories-types"
 import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal"
 import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal"
+import { LoadingStatusTypes } from "~/store/app-types"
 
 const AuditoriesPage = () => {
   const dispatch = useAppDispatch()
@@ -40,25 +42,25 @@ const AuditoriesPage = () => {
   const {
     auditories: { categories: filtredCategories, status: defaultStatus },
   } = useSelector(generalSelector)
-  const { auditoriCategories } = useSelector(auditoriesSelector)
+  const { auditoriCategories, loadingStatus } = useSelector(auditoriesSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
   const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
-  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number }[]>(
     filtredCategories.length
       ? filtredCategories
       : auditoriCategories
-      ? auditoriCategories.map((el) => ({ id: el.id, name: el.name }))
+      ? auditoriCategories.map((el) => ({ id: el.id }))
       : [],
   )
   const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
 
-  const { filteredItems: visibleAuditories, counts } = useItemsByStatus<AuditoryCategoriesTypes>(
-    auditoriCategories ?? [],
+  const { filteredItems: visibleAuditories, counts } = useItemsByStatus<
+    AuditoryCategoriesTypes,
     "auditories",
-    activeStatus,
-  ) as { counts: { all: number; active: number; archive: number }; filteredItems: AuditoriesTypes[] }
+    AuditoriesTypes
+  >(auditoriCategories ?? [], "auditories", activeStatus)
   const filteredItems = useItemsByCategory(visibleAuditories, selectedCategories)
 
   const onClickUpdateCategory = (id: number) => {
@@ -137,6 +139,11 @@ const AuditoriesPage = () => {
     if (!selectedCategories.length) return
     dispatch(setAuditoryFilters(selectedCategories))
   }, [selectedCategories])
+
+  useEffect(() => {
+    if (auditoriCategories) return
+    dispatch(getAuditoryCategories())
+  }, [auditoriCategories])
 
   return (
     <>
@@ -221,6 +228,8 @@ const AuditoriesPage = () => {
 
         {filteredItems.length ? (
           <AuditoriesTable auditories={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+        ) : loadingStatus === LoadingStatusTypes.LOADING ? (
+          <div className="font-mono text-center">Завантаження...</div>
         ) : (
           <div className="font-mono text-center">Пусто</div>
         )}

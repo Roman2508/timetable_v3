@@ -22,8 +22,8 @@ interface ISelectPlanTableProps {
   plansCategories: PlansCategoriesType[]
   setModalData?: Dispatch<SetStateAction<PlanActionModalType>>
   setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>
+  setSelectedCategories: Dispatch<SetStateAction<{ id: number }[]>>
   setEditablePlan?: React.Dispatch<React.SetStateAction<PlansType | null>>
-  setSelectedCategories: Dispatch<SetStateAction<{ id: number; name: string }[]>>
   setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>
 }
 

@@ -1,12 +1,11 @@
+import { useEffect } from "react"
 import { useLoaderData } from "react-router"
 
 import { groupsAPI } from "~/api/groups-api"
+import { useAppDispatch } from "~/store/store"
 import type { Route } from "./+types/full-group"
 import FullPlanPage from "~/pages/full-group-page"
 import { META_TAGS } from "~/constants/site-meta-tags"
-import type { GroupsType } from "~/store/groups/groups-types"
-import { useAppDispatch } from "~/store/store"
-import { useEffect } from "react"
 import { setGroup } from "~/store/groups/groups-slice"
 
 export function meta({}: Route.MetaArgs) {

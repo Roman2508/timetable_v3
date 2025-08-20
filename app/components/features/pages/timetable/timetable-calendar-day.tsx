@@ -15,13 +15,14 @@ import { getAuditoryOverlay } from "~/store/schedule-lessons/schedule-lessons-as
 
 const dayNames = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"]
 
+// default: rgb(255, 255, 255)
 export const colorsInitialState = {
-  lectures: "rgb(255, 255, 255)",
-  practical: "rgb(255, 255, 255)",
-  laboratory: "rgb(255, 255, 255)",
-  seminars: "rgb(255, 255, 255)",
-  exams: "rgb(255, 255, 255)",
-  examsConsulation: "rgb(255, 255, 255)",
+  lectures: "rgba(255, 255, 0, 1)",
+  practical: "rgba(37, 148, 204, 1)",
+  laboratory: "rgba(37, 204, 118, 1)",
+  seminars: "rgba(227, 0, 244, 1)",
+  exams: "rgba(244, 0, 106, 1)",
+  examsConsulation: "rgba(203, 0, 244, 1)",
 }
 
 export const convertColorKeys = {
@@ -110,7 +111,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
 
   useEffect(() => {
     if (!settings) return
-    setColors(settings.colors)
+    // setColors(settings.colors)
   }, [settings])
 
   return (

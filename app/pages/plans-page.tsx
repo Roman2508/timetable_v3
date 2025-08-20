@@ -53,11 +53,11 @@ export default function PlansPage() {
   const { plansCategories } = useSelector(plansSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
-  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number }[]>(
     filtredCategories.length
       ? filtredCategories
       : plansCategories
-      ? plansCategories.map((el: any) => ({ id: el.id, name: el.name }))
+      ? plansCategories.map((el: any) => ({ id: el.id }))
       : [],
   )
   const [editablePlan, setEditablePlan] = useState<PlansType | null>(null)
@@ -65,7 +65,11 @@ export default function PlansPage() {
   const [modalData, setModalData] = useState<PlanActionModalType>({ isOpen: false, type: "create-plan" })
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
 
-  const { filteredItems, counts } = useItemsByStatus<PlansCategoriesType>(plansCategories, "plans", activeStatus)
+  const { filteredItems, counts } = useItemsByStatus<PlansCategoriesType, "plans", PlansType>(
+    plansCategories,
+    "plans",
+    activeStatus,
+  )
   const visiblePlans = useMemo(
     () => getVisiblePlanCategories(plansCategories, selectedCategories, filteredItems),
     [plansCategories, selectedCategories, filteredItems],

@@ -18,8 +18,9 @@ const plansSlice = createSlice({
     setLoadingStatus(state, action) {
       state.loadingStatus = action.payload
     },
-    setStudent(state, action: PayloadAction<StudentType>) {
-      state.student = action.payload
+    setStudent(state, action: PayloadAction<StudentType | undefined>) {
+      if (action.payload) state.student = action.payload
+      else state.student = null
     },
     clearStudents(state) {
       state.students = []

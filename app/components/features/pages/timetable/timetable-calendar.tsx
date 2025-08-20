@@ -78,9 +78,9 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
   const [copingTimetableModalVisible, setCopingTimetableModalVisible] = useState(false)
 
   const [currentWeekDays, setCurrentWeekDays] = useState(getCalendarWeek(week || 1))
-  const [replacementTeacher, setReplacementTeacher] = useState<TeachersType | null>(null)
   const [selectedAuditory, setSelectedAuditory] = useState<AuditoriesTypes | null>(null)
   const [severalLessonsList, setSeveralLessonsList] = useState<ScheduleLessonType[]>([])
+  const [replacementTeacher, setReplacementTeacher] = useState<TeachersType | null>(null)
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<ISelectedTimeSlot | null>(null)
 
   useEffect(() => {

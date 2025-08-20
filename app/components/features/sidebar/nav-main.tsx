@@ -1,9 +1,6 @@
-"use client";
-
-import { useSelector } from "react-redux";
-import { useCookies } from "react-cookie";
-import { Link, useLocation } from "react-router";
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { useSelector } from "react-redux"
+import { Link, useLocation } from "react-router"
+import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import {
   SidebarMenu,
@@ -13,52 +10,38 @@ import {
   SidebarMenuButton,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
-} from "~/components/ui/common/sidebar";
-import { cn } from "~/lib/utils";
-import { useAppDispatch } from "~/store/store";
-import { EXPANDED_SIDEBAR_ITEMS } from "~/constants/cookies-keys";
-import { changeExpandSidebarItems, generalSelector } from "~/store/general/general-slice";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible";
+} from "~/components/ui/common/sidebar"
+import { cn } from "~/lib/utils"
+import { useAppDispatch } from "~/store/store"
+import { changeExpandSidebarItems, generalSelector } from "~/store/general/general-slice"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible"
 
 interface INavMainItem {
-  id: string;
-  key: string;
-  title: string;
-  icon?: LucideIcon;
-  items?: { id: string; title: string; url: string }[];
+  id: string
+  key: string
+  title: string
+  icon?: LucideIcon
+  items?: { id: string; title: string; url: string }[]
 }
 
 interface INavMain {
-  items: INavMainItem[];
+  items: INavMainItem[]
 }
 
 const NavMain: React.FC<INavMain> = ({ items }) => {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
 
-  const [_, setCookie] = useCookies();
+  const dispatch = useAppDispatch()
 
-  const dispatch = useAppDispatch();
-
-  const { sidebar } = useSelector(generalSelector);
-
-  const getExpanded = (item: string) => {
-    const isExpanded = sidebar.expandedItems.some((el) => el === item);
-    if (isExpanded) {
-      return sidebar.expandedItems.filter((el) => el !== item);
-    } else {
-      return [...sidebar.expandedItems, item];
-    }
-  };
+  const { sidebar } = useSelector(generalSelector)
 
   const onChangeExpanded = (item: string) => {
-    dispatch(changeExpandSidebarItems(item));
-    const expandedItemsStr = getExpanded(item).join(",");
-    setCookie(EXPANDED_SIDEBAR_ITEMS, expandedItemsStr);
-  };
+    dispatch(changeExpandSidebarItems(item))
+  }
 
   const checkIsExpanded = (id: string) => {
-    return sidebar.expandedItems.some((el) => el === id);
-  };
+    return sidebar.expandedItems.some((el) => el === id)
+  }
 
   return (
     <SidebarGroup>
@@ -101,7 +84,7 @@ const NavMain: React.FC<INavMain> = ({ items }) => {
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  );
-};
+  )
+}
 
-export { NavMain };
+export { NavMain }

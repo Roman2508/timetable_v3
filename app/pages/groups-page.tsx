@@ -21,6 +21,7 @@ import { Card } from "~/components/ui/common/card"
 import { sortByName } from "~/helpers/sort-by-name"
 import { dialogText } from "~/constants/dialogs-text"
 import { Button } from "~/components/ui/common/button"
+import { LoadingStatusTypes } from "~/store/app-types"
 import { pluralizeWords } from "~/helpers/pluralize-words"
 import { groupsSelector } from "~/store/groups/groups-slice"
 import { useItemsByStatus } from "~/hooks/use-items-by-status"
@@ -42,25 +43,22 @@ const GroupsPage = () => {
   const {
     groups: { categories: filtredCategories, status: defaultStatus },
   } = useSelector(generalSelector)
-  const { groupCategories } = useSelector(groupsSelector)
+  const { groupCategories, loadingStatus } = useSelector(groupsSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
   const [updatingCategory, setUpdatingCategory] = useState<UpdatingCategoryType | null>(null)
   const [activeStatus, setActiveStatus] = useState<"Всі" | "Активний" | "Архів">(defaultStatus ? defaultStatus : "Всі")
-  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string }[]>(
-    filtredCategories.length
-      ? filtredCategories
-      : groupCategories
-      ? groupCategories.map((el) => ({ id: el.id, name: el.id }))
-      : [],
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number }[]>(
+    filtredCategories.length ? filtredCategories : groupCategories ? groupCategories.map((el) => ({ id: el.id })) : [],
   )
   const [modalData, setModalData] = useState<CategoryModalStateType>({ isOpen: false, actionType: "create" })
 
-  const { filteredItems: visibleGroups, counts } = useItemsByStatus<GroupCategoriesType>(
+  const { filteredItems: visibleGroups, counts } = useItemsByStatus<GroupCategoriesType, "groups", GroupsShortType>(
     groupCategories,
     "groups",
     activeStatus,
-  ) as { counts: { all: number; active: number; archive: number }; filteredItems: GroupsShortType[] }
+  )
+
   const filteredItems = useItemsByCategory(visibleGroups, selectedCategories)
 
   const onClickUpdateCategory = (id: number) => {
@@ -226,6 +224,8 @@ const GroupsPage = () => {
 
         {filteredItems.length ? (
           <GroupsTable groups={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+        ) : loadingStatus === LoadingStatusTypes.LOADING ? (
+          <div className="font-mono text-center">Завантаження...</div>
         ) : (
           <div className="font-mono text-center">Пусто</div>
         )}
