@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { z } from "zod"
+import { useRef, useState, type Dispatch, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -8,18 +8,21 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
-} from "~/components/ui/common/dialog";
-import { cn } from "~/lib/utils";
-import EntityField from "../../entity-field";
-import { useAppDispatch } from "~/store/store";
-import { Button } from "~/components/ui/common/button";
-import { Separator } from "~/components/ui/common/separator";
-import type { SemesterHoursType } from "~/helpers/group-lessons-by-name";
-import { updatePlanSubjectsHours } from "~/store/plans/plans-async-actions";
+} from "~/components/ui/common/dialog"
+import { cn } from "~/lib/utils"
+import EntityField from "../../entity-field"
+import { useAppDispatch } from "~/store/store"
+import { Button } from "~/components/ui/common/button"
+import { Separator } from "~/components/ui/common/separator"
+import type { SemesterHoursType } from "~/helpers/group-lessons-by-name"
+import { deletePlanSubjects, updatePlanSubjectsHours } from "~/store/plans/plans-async-actions"
+import { useParams } from "react-router"
+import { ConfirmWindow } from "../../confirm-window"
+import { dialogText } from "~/constants/dialogs-text"
 
 const calculateTotalHours = (hours: SemesterHoursType): number => {
-  return hours.lectures + hours.practical + hours.laboratory + hours.seminars + hours.independentWork;
-};
+  return hours.lectures + hours.practical + hours.laboratory + hours.seminars + hours.independentWork
+}
 
 const formFields = [
   {
@@ -103,7 +106,7 @@ const formFields = [
     variant: "input",
     items: [],
   },
-];
+]
 
 const initialFormData = {
   lectures: 0,
@@ -115,7 +118,7 @@ const initialFormData = {
   metodologicalGuidance: 0,
   independentWork: 0,
   totalHours: 0,
-};
+}
 
 const formSchema = z.object({
   lectures: z.number({ message: "Це поле обов'язкове" }).optional(),
@@ -127,15 +130,15 @@ const formSchema = z.object({
   metodologicalGuidance: z.number({ message: "Це поле обов'язкове" }).optional(),
   independentWork: z.number({ message: "Це поле обов'язкове" }).optional(),
   totalHours: z.number({ message: "Це поле обов'язкове" }),
-});
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
 interface ISemesterHoursModalProps {
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  selectedSemesterHours: SemesterHoursType | null;
-  setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>;
+  isOpen: boolean
+  setIsOpen: Dispatch<SetStateAction<boolean>>
+  selectedSemesterHours: SemesterHoursType | null
+  setSelectedSemesterHours: Dispatch<SetStateAction<SemesterHoursType | null>>
 }
 
 const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
@@ -144,77 +147,84 @@ const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
   selectedSemesterHours,
   setSelectedSemesterHours,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
+  const params = useParams()
 
-  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null)
 
-  const [userFormData, setUserFormData] = useState({});
-  const [showErrors, setShowErrors] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [userFormData, setUserFormData] = useState({})
+  const [showErrors, setShowErrors] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const formData = {
     ...initialFormData,
     ...selectedSemesterHours,
     ...userFormData,
-  } as SemesterHoursType;
+  } as SemesterHoursType
 
   const validate = () => {
-    const res = formSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
-  };
+    const res = formSchema.safeParse(formData)
+    if (res.success) return
+    return res.error.format()
+  }
 
-  const errors = showErrors ? validate() : undefined;
+  const errors = showErrors ? validate() : undefined
 
   const onOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    if (!open) setSelectedSemesterHours(null);
-  };
+    setIsOpen(open)
+    if (!open) setSelectedSemesterHours(null)
+  }
 
   const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
+    const planId = params.id
+    if (!planId || isNaN(+planId)) return
     try {
-      e.preventDefault();
-      setIsPending(true);
-      const errors = validate();
+      e.preventDefault()
+      setIsPending(true)
+      const errors = validate()
       if (errors) {
-        setShowErrors(true);
-        return;
+        setShowErrors(true)
+        return
       }
 
-      await dispatch(updatePlanSubjectsHours({ ...formData, planId: 1, cmk: formData.cmk.id }));
+      await dispatch(updatePlanSubjectsHours({ ...formData, planId: +planId, cmk: formData.cmk.id }))
     } finally {
-      setIsOpen(false);
-      setIsPending(false);
-      setSelectedSemesterHours(null);
+      setIsOpen(false)
+      setIsPending(false)
+      setSelectedSemesterHours(null)
     }
-  };
+  }
 
   const deleteSemesterConfirmation = async () => {
-    // // Якщо раніше був вибраний план - перевіряю чи не вибрано інший
-    // if (defaultValue !== selectedPlan?.id) {
-    //   const result = await onConfirm({ title: CONFIRM_MODAL_TITLE, description: CONFIRM_MODAL_DESC }, dispatch);
-    //   if (result && selectedPlan) {
-    //     setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
-    //   }
-    // } else {
-    //   // Якщо раніше плану не було (створення нової групи) - зберігаю вибраний план
-    //   if (!selectedPlan) return;
-    //   setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
-    // }
-    // onOpenChange();
-  };
+    if (!selectedSemesterHours) return
+
+    setIsOpen(false)
+
+    const confirmed = await ConfirmWindow(
+      dialogText.confirm.plan_hours_delete.title,
+      dialogText.confirm.plan_hours_delete.text,
+    )
+
+    if (confirmed) {
+      await dispatch(deletePlanSubjects(selectedSemesterHours.id))
+      setSelectedSemesterHours(null)
+      return
+    }
+
+    setIsOpen(true)
+  }
 
   const onSubmitClick = () => {
     if (submitButtonRef.current) {
-      submitButtonRef.current.click();
+      submitButtonRef.current.click()
     }
-  };
+  }
 
   const checkDisabled = () => {
-    return isPending || !formData.totalHours || calculateTotalHours(formData) !== formData.totalHours;
-  };
+    return isPending || !formData.totalHours || calculateTotalHours(formData) !== formData.totalHours
+  }
 
-  if (!selectedSemesterHours) return;
+  if (!selectedSemesterHours) return
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -243,7 +253,7 @@ const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
         <DialogDescription>
           <form className="px-4 py-4 max-h-125 overflow-y-auto" onSubmit={handleSubmit}>
             {formFields.map((input) => {
-              const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData];
+              const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
 
               return (
                 <EntityField
@@ -259,7 +269,7 @@ const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
                   inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}
                 />
-              );
+              )
             })}
 
             <button className="hidden" ref={submitButtonRef}></button>
@@ -278,7 +288,7 @@ const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default SemesterHoursModal;
+export default SemesterHoursModal

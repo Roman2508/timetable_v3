@@ -20,8 +20,8 @@ interface INavMainItem {
   id: string
   key: string
   title: string
-  icon?: LucideIcon
-  items?: { id: string; title: string; url: string }[]
+  icon: LucideIcon
+  items?: { id: string; title: string; url: string; icon: LucideIcon }[]
 }
 
 interface INavMain {

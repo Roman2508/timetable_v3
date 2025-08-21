@@ -24,6 +24,7 @@ import {
 } from "./plans-async-actions"
 import type { RootState } from "../app-types"
 import { LoadingStatusTypes } from "../app-types"
+import { store } from "../store"
 
 const plansInitialState: PlansInitialState = {
   plansCategories: null,
@@ -140,7 +141,11 @@ const plansSlice = createSlice({
 
         const subjects = state.planSubjects.map((el) => {
           if (el.id === action.payload[0].id) {
-            return { ...el, name: action.payload[0].name, cmk: { id: action.payload[0].cmk } }
+            return {
+              ...el,
+              cmk: action.payload[0].cmk,
+              name: action.payload[0].name,
+            }
           }
 
           return el

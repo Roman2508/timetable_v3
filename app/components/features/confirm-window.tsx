@@ -1,8 +1,8 @@
-import "animate.css";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
+import "animate.css"
+import Swal from "sweetalert2"
+import withReactContent from "sweetalert2-react-content"
 
-const MySwal = withReactContent(Swal);
+const MySwal = withReactContent(Swal)
 
 export const ConfirmWindow = async (title: string, text?: string): Promise<boolean> => {
   const result = await MySwal.fire({
@@ -25,7 +25,7 @@ export const ConfirmWindow = async (title: string, text?: string): Promise<boole
       cancelButton:
         "!bg-background !text-sidebar-foreground !border !border-border !rounded-none !h-10 !px-4 !py-2 !m-0  !hover:bg-accent !hover:text-accent-foreground",
     },
-  });
+  })
 
-  return result.isConfirmed;
-};
+  return result.isConfirmed
+}

@@ -1,38 +1,17 @@
-import cookie from "cookie"
-import { useEffect, useMemo, type FC } from "react"
+import { type FC } from "react"
 import { CookiesProvider } from "react-cookie"
-import { Provider as ReduxProvider, useSelector } from "react-redux"
-import { Outlet, redirect, useLoaderData, useLocation, type LoaderFunctionArgs } from "react-router"
+import { Outlet, useLocation } from "react-router"
+import { Provider as ReduxProvider } from "react-redux"
+import { PersistGate } from "redux-persist/integration/react"
 
-import {
-  preloadPlans,
-  preloadGroups,
-  preloadGeteral,
-  preloadStreams,
-  preloadTeachers,
-  preloadTimetable,
-  preloadAuditories,
-} from "~/loaders"
-import { instanse } from "~/api/api"
-// import { makeStore, useAppDispatch } from "~/store/store";
+import AuthLayout from "./auth-layout"
 import SidebarLayout from "./sidebar-layout"
 import { Toaster } from "../ui/common/sonner"
 import Footer from "../features/footer/footer"
-import { settingsAPI } from "~/api/settings-api"
-import type { RootState } from "~/store/app-types"
-import { getAccessToken, setAccessToken } from "~/helpers/session"
-import { TooltipProvider } from "../ui/common/tooltip"
-import { getProfile } from "~/store/auth/auth-async-actions"
-import { Header } from "~/components/features/header/header"
-import { setSettings } from "~/store/settings/settings-slice"
-import { LoadingBar } from "../features/loading-bar/loading-bar"
-import { authSelector, setUser } from "~/store/auth/auth-slice"
-import jwtDecode from "jwt-decode"
-import type { SessionType } from "~/api/api-types"
-import AuthLayout from "./auth-layout"
 import { persistor, store } from "~/store/store"
-import { PersistGate } from "redux-persist/integration/react"
-import { authAPI } from "~/api/auth-api"
+import { TooltipProvider } from "../ui/common/tooltip"
+import { Header } from "~/components/features/header/header"
+import { LoadingBar } from "../features/loading-bar/loading-bar"
 
 const RootLayout: FC = () => {
   const { pathname } = useLocation()
@@ -44,7 +23,6 @@ const RootLayout: FC = () => {
         <PersistGate loading={null} persistor={persistor}>
           <TooltipProvider>
             <Toaster />
-
             {pathname !== "/auth" ? (
               <AuthLayout>
                 <SidebarLayout>

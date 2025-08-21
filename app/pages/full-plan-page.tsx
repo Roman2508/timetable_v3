@@ -1,54 +1,55 @@
-import { useSelector } from "react-redux";
-import { useState, type FC, type KeyboardEvent } from "react";
-import { ChevronDown, ListFilter, PenLine, Plus } from "lucide-react";
+import { useSelector } from "react-redux"
+import { useState, type FC, type KeyboardEvent } from "react"
+import { ChevronDown, ListFilter, PenLine, Plus } from "lucide-react"
 
-import { useAppDispatch } from "~/store/store";
-import { Input } from "~/components/ui/common/input";
-import { Button } from "~/components/ui/common/button";
-import { plansSelector } from "~/store/plans/plans-slice";
-import { Checkbox } from "~/components/ui/common/checkbox";
-import { updatePlan } from "~/store/plans/plans-async-actions";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import { RootContainer } from "~/components/layouts/root-container";
-import type { SemesterHoursType } from "~/helpers/group-lessons-by-name";
-import { FullPlanTable } from "~/components/features/pages/full-plan/full-plan-table";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover";
-import SemesterHoursModal from "~/components/features/pages/full-plan/semester-hours-modal";
-import SemesterDetailsModal from "~/components/features/pages/full-plan/semester-details-modal";
+import { useAppDispatch } from "~/store/store"
+import { Input } from "~/components/ui/common/input"
+import { Button } from "~/components/ui/common/button"
+import { plansSelector } from "~/store/plans/plans-slice"
+import { Checkbox } from "~/components/ui/common/checkbox"
+import { updatePlan } from "~/store/plans/plans-async-actions"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import { RootContainer } from "~/components/layouts/root-container"
+import type { SemesterHoursType } from "~/helpers/group-lessons-by-name"
+import { FullPlanTable } from "~/components/features/pages/full-plan/full-plan-table"
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover"
+import SemesterHoursModal from "~/components/features/pages/full-plan/semester-hours-modal"
+import SemesterDetailsModal from "~/components/features/pages/full-plan/semester-details-modal"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip"
 
 const FullPlanPage: FC = ({}) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const { plan } = useSelector(plansSelector);
+  const { plan } = useSelector(plansSelector)
 
-  const [isEditMode, setEditMode] = useState(false);
-  const [globalSearch, setGlobalSearch] = useState("");
-  const [planName, setPlanName] = useState(plan?.name ?? "");
-  const [isHoursModalOpen, setIsHoursModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [detailsModalType, setDetailsModalType] = useState<"create" | "update">("update");
-  const [selectedSemesterHours, setSelectedSemesterHours] = useState<SemesterHoursType | null>(null);
+  const [isEditMode, setEditMode] = useState(false)
+  const [globalSearch, setGlobalSearch] = useState("")
+  const [planName, setPlanName] = useState(plan?.name ?? "")
+  const [isHoursModalOpen, setIsHoursModalOpen] = useState(false)
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false)
+  const [detailsModalType, setDetailsModalType] = useState<"create" | "update">("update")
+  const [selectedSemesterHours, setSelectedSemesterHours] = useState<SemesterHoursType | null>(null)
 
   const handleChangeEditMode = () => {
-    setEditMode((prev) => !prev);
-    setPlanName(plan?.name ?? "");
-  };
+    setEditMode((prev) => !prev)
+    setPlanName(plan?.name ?? "")
+  }
 
   const onChangePlanName = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      if (!plan) return;
+      if (!plan) return
 
       const payload = {
         id: plan.id,
         name: planName,
         status: plan.status,
         categoryId: plan.category.id,
-      };
+      }
 
-      await dispatch(updatePlan(payload));
-      setEditMode(false);
+      await dispatch(updatePlan(payload))
+      setEditMode(false)
     }
-  };
+  }
 
   return (
     <>
@@ -81,10 +82,15 @@ const FullPlanPage: FC = ({}) => {
             ) : (
               <span>{plan?.name}</span>
             )}
-     
-            <Button variant="ghost" onClick={handleChangeEditMode}>
-              <PenLine />
-            </Button>
+
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger>
+                <Button variant="ghost" onClick={handleChangeEditMode}>
+                  <PenLine />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{isEditMode ? "Завержити редагування" : "Змінити назву"}</TooltipContent>
+            </Tooltip>
           </h1>
 
           <div className="flex items-center gap-4 mb-8">
@@ -127,7 +133,7 @@ const FullPlanPage: FC = ({}) => {
                           Семестр {item}
                         </label>
                       </div>
-                    );
+                    )
                   })}
                 </div>
               </PopoverContent>
@@ -136,8 +142,8 @@ const FullPlanPage: FC = ({}) => {
             <Button
               variant="default"
               onClick={() => {
-                setDetailsModalType("create");
-                setIsDetailsModalOpen(true);
+                setDetailsModalType("create")
+                setIsDetailsModalOpen(true)
               }}
             >
               <Plus />
@@ -155,7 +161,7 @@ const FullPlanPage: FC = ({}) => {
         </div>
       </RootContainer>
     </>
-  );
-};
+  )
+}
 
-export default FullPlanPage;
+export default FullPlanPage
