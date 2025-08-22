@@ -4,11 +4,11 @@ import { useLoaderData } from "react-router"
 import { plansAPI } from "~/api/plans-api"
 import type { Route } from "./+types/home"
 import { useAppDispatch } from "~/store/store"
+import { teachersAPI } from "~/api/teachers-api"
 import FullPlanPage from "~/pages/full-plan-page"
 import { META_TAGS } from "~/constants/site-meta-tags"
 import { planSubjectsAPI } from "~/api/plan-subjects-api"
 import { setPlan, setPlanSubjects } from "~/store/plans/plans-slice"
-import { teachersAPI } from "~/api/teachers-api"
 import { setTeacherCategories } from "~/store/teachers/teachers-slice"
 
 export function meta({}: Route.MetaArgs) {

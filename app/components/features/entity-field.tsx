@@ -120,7 +120,6 @@ const EntityField: React.FC<IEntityFieldProps> = ({
   }
 
   if (variant === "multi-select") {
-    const activeItems = currentValue as any[]
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)}>
         <div className={cn("min-w-90", labelClassNames)}>
@@ -130,7 +129,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
 
         <div className="w-full">
           <MultiSelect
-            activeItems={activeItems}
+            activeItems={currentValue as any[]}
             items={items ? items : []}
             onChangeSelected={(newItem) => {
               setUserFormData((prev) => {

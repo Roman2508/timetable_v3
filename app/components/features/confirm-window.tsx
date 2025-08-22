@@ -17,8 +17,9 @@ export const ConfirmWindow = async (title: string, text?: string): Promise<boole
     backdrop: "color-mix(in oklab, var(--color-black) 80%, transparent)",
     customClass: {
       title: "!px-4",
-      popup: "!rounded-none",
+      popup: "!rounded-none !z-60",
       htmlContainer: "!px-4 !pt-2",
+      container: "!z-60",
       actions: "!mt-4 !mr-4 justify-end !gap-2 w-full",
       confirmButton:
         "!bg-destructive !text-white !rounded-none !h-10 !px-4 !py-2 !m-0 !hover:bg-destructive/90 !focus-visible:ring-destructive/20",

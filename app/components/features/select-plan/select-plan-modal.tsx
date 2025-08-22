@@ -1,5 +1,5 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector } from "react-redux"
+import { useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -8,65 +8,69 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
-} from "~/components/ui/common/dialog";
-import { ConfirmWindow } from "../confirm-window";
-import { SelectPlanTable } from "./select-plan-table";
-import { dialogText } from "~/constants/dialogs-text";
-import { Button } from "~/components/ui/common/button";
-import { plansSelector } from "~/store/plans/plans-slice";
-import { Separator } from "~/components/ui/common/separator";
-import type { GroupFormData } from "~/pages/full-group-page";
-import { InputSearch } from "~/components/ui/custom/input-search";
-import type { PlansCategoriesType } from "~/store/plans/plans-types";
+} from "~/components/ui/common/dialog"
+import { ConfirmWindow } from "../confirm-window"
+import { SelectPlanTable } from "./select-plan-table"
+import { dialogText } from "~/constants/dialogs-text"
+import { Button } from "~/components/ui/common/button"
+import { plansSelector } from "~/store/plans/plans-slice"
+import { Separator } from "~/components/ui/common/separator"
+import type { GroupFormData } from "~/pages/full-group-page"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types"
 
 interface IChangePlanModalProps {
-  isOpen: boolean;
-  defaultValue?: number;
-  setOpenedModalName: React.Dispatch<React.SetStateAction<string>>;
-  setUserFormData: React.Dispatch<React.SetStateAction<Partial<GroupFormData>>>;
+  isOpen: boolean
+  defaultValue?: number
+  setOpenedModalName: Dispatch<SetStateAction<string>>
+  setUserFormData: Dispatch<SetStateAction<Partial<GroupFormData>>>
 }
 
-const MODAL_NAME = "educationPlan";
+const MODAL_NAME = "educationPlan"
 
 const findPlanById = (categories: PlansCategoriesType[] | null, planId?: number) => {
-  if (!planId || !categories) return null;
+  if (!planId || !categories) return null
   for (const category of categories) {
-    const foundPlan = category.plans.find((plan) => plan.id === planId);
-    if (foundPlan) return foundPlan;
+    const foundPlan = category.plans.find((plan) => plan.id === planId)
+    if (foundPlan) return foundPlan
   }
-  return null;
-};
+  return null
+}
 
-const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
-  isOpen,
-  defaultValue,
-  setUserFormData,
-  setOpenedModalName,
-}) => {
-  const { plansCategories } = useSelector(plansSelector);
+const SelectPlanModal: FC<IChangePlanModalProps> = ({ isOpen, defaultValue, setUserFormData, setOpenedModalName }) => {
+  const { plansCategories } = useSelector(plansSelector)
 
-  const [searchValue, setSearchValue] = React.useState("");
-  const [selectedPlan, setSelectedPlan] = React.useState(findPlanById(plansCategories, defaultValue));
+  const [searchValue, setSearchValue] = useState("")
+  const [selectedPlan, setSelectedPlan] = useState(findPlanById(plansCategories, defaultValue))
+  const [preSelectedPlan, setPreSelectedPlan] = useState(selectedPlan)
 
   const onOpenChange = () => {
-    setOpenedModalName((prev) => (prev === MODAL_NAME ? "" : MODAL_NAME));
-  };
+    setOpenedModalName((prev) => (prev === MODAL_NAME ? "" : MODAL_NAME))
+  }
 
   const onClickConfirm = async () => {
     // Якщо раніше був вибраний план - перевіряю чи не вибрано інший
-    if (defaultValue && defaultValue !== selectedPlan?.id) {
-      const confirmed = await ConfirmWindow(dialogText.confirm.plan_change.title, dialogText.confirm.plan_change.text);
+    if (defaultValue && defaultValue !== preSelectedPlan?.id) {
+      onOpenChange()
+      const confirmed = await ConfirmWindow(dialogText.confirm.plan_change.title, dialogText.confirm.plan_change.text)
 
-      if (confirmed && selectedPlan) {
-        setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
+      if (confirmed && preSelectedPlan) {
+        setSelectedPlan(preSelectedPlan)
+        setUserFormData((prev) => ({ ...prev, educationPlan: preSelectedPlan.id }))
       }
     } else {
       // Якщо раніше плану не було (створення нової групи) - зберігаю вибраний план
-      if (!selectedPlan) return;
-      setUserFormData((prev) => ({ ...prev, educationPlan: selectedPlan.id }));
+      if (!preSelectedPlan) return
+      setUserFormData((prev) => ({ ...prev, educationPlan: preSelectedPlan.id }))
     }
-    onOpenChange();
-  };
+    onOpenChange()
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      setPreSelectedPlan(findPlanById(plansCategories, defaultValue) || selectedPlan)
+    }
+  }, [isOpen, plansCategories, defaultValue, selectedPlan])
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -92,8 +96,8 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
 
               <SelectPlanTable
                 searchValue={searchValue}
-                selectedPlan={selectedPlan}
-                setSelectedPlan={setSelectedPlan}
+                selectedPlan={preSelectedPlan}
+                setSelectedPlan={setPreSelectedPlan}
                 plansCategories={plansCategories}
               />
             </>
@@ -111,15 +115,15 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
         <Separator />
 
         <DialogFooter className="flex !justify-between items-center pt-2 px-4">
-          <Button disabled={!selectedPlan?.id} onClick={() => onClickConfirm()}>
+          <Button disabled={!preSelectedPlan?.id} onClick={onClickConfirm}>
             Зберегти
           </Button>
 
           <div className="font-mono mr-3 text-right flex flex-col">
-            {selectedPlan?.name ? (
+            {preSelectedPlan?.name ? (
               <>
-                <p className="font-bold leading-5">Вибраний навчальний план:</p>
-                <span className="text-sm">{selectedPlan.name}</span>
+                <p className="font-bold leading-5">Вибрано навчальний план:</p>
+                <span className="text-sm">{preSelectedPlan.name}</span>
               </>
             ) : (
               "Навчальний план не вибрано"
@@ -128,7 +132,7 @@ const SelectPlanModal: React.FC<IChangePlanModalProps> = ({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default SelectPlanModal;
+export default SelectPlanModal

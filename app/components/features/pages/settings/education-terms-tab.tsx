@@ -1,51 +1,55 @@
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { useSelector } from "react-redux"
+import { useEffect, useState } from "react"
+import { Calendar as CalendarIcon } from "lucide-react"
 
-import { useAppDispatch } from "~/store/store";
-import { Button } from "~/components/ui/common/button";
-import { settingsSelector } from "~/store/settings/settings-slice";
-import { InputCalendar } from "~/components/ui/custom/input-calendar";
-import { updateSemesterTerms } from "~/store/settings/settings-async-actions";
+import { useAppDispatch } from "~/store/store"
+import { Button } from "~/components/ui/common/button"
+import { settingsSelector } from "~/store/settings/settings-slice"
+import { InputCalendar } from "~/components/ui/custom/input-calendar"
+import { updateSemesterTerms } from "~/store/settings/settings-async-actions"
 
 // MM.DD.YYYY
 const semesterTermsInitialState = {
-  firstSemesterStart: "09.01.2023",
-  firstSemesterEnd: "12.24.2023",
-  secondSemesterStart: "02.01.2024",
-  secondSemesterEnd: "06.30.2024",
-};
+  firstSemesterStart: "",
+  firstSemesterEnd: "",
+  secondSemesterStart: "",
+  secondSemesterEnd: "",
+  // firstSemesterStart: "09.01.2023",
+  // firstSemesterEnd: "12.24.2023",
+  // secondSemesterStart: "02.01.2024",
+  // secondSemesterEnd: "06.30.2024",
+}
 
 const EducationTermsTab = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const { settings } = useSelector(settingsSelector);
+  const { settings } = useSelector(settingsSelector)
 
-  const [isFetching, setIsFetching] = useState(false);
-  const [semesterTerms, setSemesterTerms] = useState(semesterTermsInitialState);
+  const [isFetching, setIsFetching] = useState(false)
+  const [semesterTerms, setSemesterTerms] = useState(semesterTermsInitialState)
 
   const handleChangeSemesterTerms = (key: keyof typeof semesterTermsInitialState, value: string) => {
-    setSemesterTerms((prev) => ({ ...prev, [key]: value }));
-  };
+    setSemesterTerms((prev) => ({ ...prev, [key]: value }))
+  }
 
   const fetchSemesterTerms = async () => {
     try {
-      setIsFetching(true);
-      await dispatch(updateSemesterTerms(semesterTerms));
+      setIsFetching(true)
+      await dispatch(updateSemesterTerms(semesterTerms))
     } catch (error) {
-      console.log(error);
+      console.log(error)
     } finally {
-      setIsFetching(false);
+      setIsFetching(false)
     }
-  };
+  }
 
   useEffect(() => {
-    if (!settings) return;
+    if (!settings) return
     setSemesterTerms((prev) => {
-      const { firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd } = settings;
-      return { ...prev, firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd };
-    });
-  }, [settings]);
+      const { firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd } = settings
+      return { ...prev, firstSemesterStart, firstSemesterEnd, secondSemesterStart, secondSemesterEnd }
+    })
+  }, [settings])
 
   return (
     <>
@@ -88,7 +92,7 @@ const EducationTermsTab = () => {
         </Button>
       </div>
     </>
-  );
-};
+  )
+}
 
-export { EducationTermsTab };
+export { EducationTermsTab }

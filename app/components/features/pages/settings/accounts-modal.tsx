@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { useSelector } from "react-redux";
-import { useMemo, useRef, useState, type Dispatch, type FC, type MouseEvent, type SetStateAction } from "react";
+import { z } from "zod"
+import { useSelector } from "react-redux"
+import { useMemo, useRef, useState, type Dispatch, type FC, type MouseEvent, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -9,45 +9,52 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
-} from "~/components/ui/common/dialog";
-import EntityField from "../../entity-field";
-import { useAppDispatch } from "~/store/store";
-import { sortByName } from "~/helpers/sort-by-name";
-import { Button } from "~/components/ui/common/button";
-import type { UserType } from "~/store/auth/auth-types";
-import { rolesSelector } from "~/store/roles/roles-slice";
-import { Separator } from "~/components/ui/common/separator";
+} from "~/components/ui/common/dialog"
+import EntityField from "../../entity-field"
+import { useAppDispatch } from "~/store/store"
+import { sortByName } from "~/helpers/sort-by-name"
+import { Button } from "~/components/ui/common/button"
+import type { UserType } from "~/store/auth/auth-types"
+import { rolesSelector } from "~/store/roles/roles-slice"
+import { Separator } from "~/components/ui/common/separator"
+import { createUser, updateUser } from "~/store/auth/auth-async-actions"
+
+const defaultFormData = {
+  name: "",
+  email: "",
+  password: "",
+  roles: [],
+}
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }),
   email: z.string({ message: "Це поле обов'язкове" }),
   password: z.string({ message: "Це поле обов'язкове" }).optional(),
   roles: z.array(z.string()).min(1, "Оберіть хоча б один варіант"),
-});
+})
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormData = z.infer<typeof formSchema>
 
 interface Props {
-  isOpen: boolean;
-  user: UserType | null;
-  modalType: "create" | "update";
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-  setModalType: Dispatch<SetStateAction<"create" | "update">>;
+  isOpen: boolean
+  user: UserType | null
+  modalType: "create" | "update"
+  setIsOpen: Dispatch<SetStateAction<boolean>>
 }
 
-const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModalType }) => {
-  const dispatch = useAppDispatch();
+const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
+  const dispatch = useAppDispatch()
 
-  const submitButtonRef = useRef<HTMLButtonElement | null>(null);
+  const submitButtonRef = useRef<HTMLButtonElement | null>(null)
 
-  const { roles } = useSelector(rolesSelector);
+  const { roles } = useSelector(rolesSelector)
 
   const formFields = useMemo(
     () => [
       {
-        title: "Дисципліна*",
+        title: "ПІБ*",
         key: "name",
-        text: "Назва дисципліни, що відображається в розкладі",
+        text: "Прізвище, ім'я та побатькові користувача",
         isEditable: true,
         inputType: "text",
         variant: "input",
@@ -56,7 +63,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModal
       {
         title: "Пошта*",
         key: "email",
-        text: "Використовується для розподілу навчального навантаження",
+        text: "Адреса електронної пошти для доступу до свого облікового запису",
         isEditable: true,
         inputType: "email",
         variant: "input",
@@ -65,7 +72,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModal
       {
         title: "Пароль*",
         key: "password",
-        text: "Використовується для розподілу навчального навантаження",
+        text: "Пароль користувача для доступу до свого облікового запису",
         isEditable: true,
         inputType: "text",
         variant: "input",
@@ -74,7 +81,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModal
       {
         title: "Ролі*",
         key: "roles",
-        text: "Використовується для розподілу навчального навантаження",
+        text: "Використовується для дозволу проводити дії на платформі",
         isEditable: true,
         inputType: "text",
         variant: "multi-select",
@@ -82,84 +89,72 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModal
       },
     ],
     [],
-  );
+  )
 
-  const [userFormData, setUserFormData] = useState<Partial<FormData>>({});
-  const [showErrors, setShowErrors] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
+  const [showErrors, setShowErrors] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const formData = {
-    ...(user ? user : {}),
+    ...defaultFormData,
+    ...(user ? { ...user, roles: user.roles.map((el) => String(el.id)) } : {}),
     ...userFormData,
-  };
+  }
 
   const validate = () => {
-    const res = formSchema.safeParse(formData);
-    if (res.success) return;
-    return res.error.format();
-  };
+    const res = formSchema.safeParse(formData)
+    if (res.success) return
+    return res.error.format()
+  }
 
-  const errors = showErrors ? validate() : undefined;
-
-  const onOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    if (!open) {
-      setModalType("update");
-    }
-  };
+  const errors = showErrors ? validate() : undefined
 
   const handleSubmit = async (e: MouseEvent<HTMLFormElement>) => {
     try {
-      // e.preventDefault();
-      // setIsPending(true);
-      // const errors = validate();
-      // if (errors) {
-      //   setShowErrors(true);
-      //   return;
-      // }
-      // if (modalType === "create") {
-      //   const payload = { name: formData.name, cmk: formData.cmk, planId: Number(planId) };
-      //   await dispatch(createPlanSubjects(payload));
-      //   onOpenChange(false);
-      //   return;
-      // }
-      // if (modalType === "update" && user) {
-      //   const payload = {
-      //     cmk: formData.cmk,
-      //     newName: formData.name,
-      //     planId: Number(planId),
-      //     oldName: user.name,
-      //   };
-      //   await dispatch(updatePlanSubjectsName(payload));
-      //   onOpenChange(false);
-      // }
+      e.preventDefault()
+      setIsPending(true)
+      const errors = validate()
+      if (errors) {
+        setShowErrors(true)
+        return
+      }
+
+      if (modalType === "create") {
+        const roles = (formData.roles || []).map((el) => +el)
+        await dispatch(createUser({ ...formData, roles }))
+        setIsOpen(false)
+        return
+      }
+      if (modalType === "update" && user) {
+        const roles = (formData.roles || []).map((el) => +el)
+        await dispatch(updateUser({ ...formData, roles, id: user.id }))
+        setIsOpen(false)
+      }
     } finally {
-      setIsPending(false);
+      setIsPending(false)
     }
-  };
+  }
 
   const onSubmitClick = () => {
     if (submitButtonRef.current) {
-      submitButtonRef.current.click();
+      submitButtonRef.current.click()
     }
-  };
+  }
+
+  // console.log(formData)
 
   const deleteSemesterConfirmation = async () => {
-    alert("Якщо раніше був вибраний план - перевіряю чи не вибрано інший");
-  };
+    alert("Якщо раніше був вибраний план - перевіряю чи не вибрано інший")
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="px-0 !py-4 max-w-[600px] gap-0">
         <DialogHeader className="px-4 pb-4">
           <DialogTitle className="flex items-center gap-1">
             {user && modalType === "update" && user.name}
-            {modalType === "create" && "Нова дисципліна"}
+            {modalType === "create" && "Новий користувач"}
           </DialogTitle>
-
-          <div className="flex justify-between items-center leading-[1.25] opacity-[.6] text-sm">
-            <p>{user ? `ЦК ${user.id}` : ""}</p>
-          </div>
         </DialogHeader>
 
         <Separator />
@@ -167,7 +162,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModal
         <DialogDescription>
           <form className="px-6 py-4" onSubmit={handleSubmit}>
             {formFields.map((input) => {
-              const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData];
+              const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
 
               return (
                 <EntityField
@@ -183,7 +178,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModal
                   inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}
                 />
-              );
+              )
             })}
 
             <button className="hidden" ref={submitButtonRef}></button>
@@ -205,7 +200,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setModal
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default AccountsModal;
+export default AccountsModal

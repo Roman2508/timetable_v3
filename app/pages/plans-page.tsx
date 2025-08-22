@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux"
-import { useCookies } from "react-cookie"
 import { useEffect, useMemo, useState } from "react"
 
 import { useAppDispatch } from "~/store/store"
@@ -8,7 +7,6 @@ import { Button } from "~/components/ui/common/button"
 import { plansSelector } from "~/store/plans/plans-slice"
 import { InputSearch } from "~/components/ui/custom/input-search"
 import { RootContainer } from "~/components/layouts/root-container"
-import { PLAN_FILTERS, PLAN_STATUS } from "~/constants/cookies-keys"
 import { PopoverFilter } from "~/components/ui/custom/popover-filter"
 import { getPlansCategories } from "~/store/plans/plans-async-actions"
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs"
@@ -44,8 +42,6 @@ const getVisiblePlanCategories = (
 export default function PlansPage() {
   const dispatch = useAppDispatch()
 
-  const [_, setCookie] = useCookies()
-
   // !!! Доробити expanded:
   const {
     plans: { status: defaultStatus, categories: filtredCategories },
@@ -77,7 +73,7 @@ export default function PlansPage() {
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
     setActiveStatus(value)
-    setCookie(PLAN_STATUS, value)
+    // setCookie(PLAN_STATUS, value)
   }
 
   useEffect(() => {
@@ -86,8 +82,6 @@ export default function PlansPage() {
 
   useEffect(() => {
     if (!selectedCategories.length) return
-    // const categoriesIds = selectedCategories.map((el: { id: number }) => el.id)
-    // setCookie(PLAN_FILTERS, categoriesIds)
     dispatch(setPlanFilters(selectedCategories))
   }, [selectedCategories])
 

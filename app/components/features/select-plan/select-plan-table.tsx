@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router"
 import { AlignRight, ChevronsUpDown, PenLine } from "lucide-react"
-import { Fragment, useCallback, useEffect, useState, type Dispatch, type FC, type SetStateAction } from "react"
+import { Fragment, type Dispatch, type FC, type SetStateAction } from "react"
 
 import { cn } from "~/lib/utils"
 import { AlertWindow } from "../alert-window"
@@ -22,7 +22,7 @@ interface ISelectPlanTableProps {
   plansCategories: PlansCategoriesType[]
   setModalData?: Dispatch<SetStateAction<PlanActionModalType>>
   setSelectedPlan?: Dispatch<SetStateAction<PlansType | null>>
-  setSelectedCategories: Dispatch<SetStateAction<{ id: number }[]>>
+  setSelectedCategories?: Dispatch<SetStateAction<{ id: number }[]>>
   setEditablePlan?: React.Dispatch<React.SetStateAction<PlansType | null>>
   setEditableCategory?: Dispatch<SetStateAction<{ id: number; name: string } | null>>
 }
@@ -41,17 +41,6 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
   const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
-
-  const [filteredPlanIds, setFilteredPlanIds] = useState<number[]>([])
-
-  const onSearchChange = useCallback(() => {
-    const filteredByName = plansCategories
-      .flatMap((el) => el.plans)
-      .filter((el) => el.name.includes(searchValue))
-      .map((el) => el.id)
-
-    setFilteredPlanIds(filteredByName)
-  }, [plansCategories, searchValue])
 
   const onClickCategoryUpdateFunction = (id: number) => {
     setModalData && setModalData({ isOpen: true, type: "update-category" })
@@ -77,7 +66,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
 
     try {
       const deletedCategoryId = await dispatch(deletePlanCategory(id)).unwrap()
-      if (deletedCategoryId) {
+      if (deletedCategoryId && setSelectedCategories) {
         setSelectedCategories((prev) => prev.filter((el) => el.id !== deletedCategoryId))
       }
     } catch (err) {
@@ -105,19 +94,13 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
     }
   }
 
-  useEffect(() => {
-    if (searchValue) {
-      onSearchChange()
-    }
-  }, [searchValue])
-
   return (
     <div className={cn(isEditable ? "" : "min-h-[40vh] max-h-[50vh] overflow-y-auto px-4")}>
       {plansCategories.map((el) => {
         let filteredPlans: any[] = []
 
         if (searchValue) {
-          filteredPlans = el.plans.filter((plan) => filteredPlanIds.includes(plan.id))
+          filteredPlans = el.plans.filter((plan) => plan.name.toLowerCase().includes(searchValue.toLowerCase()))
         } else {
           filteredPlans = el.plans
         }
@@ -168,9 +151,6 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                   {filteredPlans.length ? (
                     filteredPlans.map((plan) => {
                       if (isEditable) {
-                        let isStatusActive = true
-                        if (plan.status === "Архів") isStatusActive = false
-
                         return (
                           <Fragment key={plan.id}>
                             <div
@@ -191,7 +171,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                                   variant="outline"
                                   className={cn(
                                     "border-0",
-                                    isStatusActive
+                                    plan.status !== "Архів"
                                       ? "text-success bg-success-background"
                                       : "text-error bg-error-background",
                                   )}
@@ -220,7 +200,9 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                             </div>
                           </Fragment>
                         )
-                      } else {
+                      }
+
+                      if (!isEditable) {
                         return (
                           <div
                             key={plan.id}

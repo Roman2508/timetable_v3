@@ -9,6 +9,8 @@ import SettingsPage from "~/pages/settings-page"
 import { setUsers } from "~/store/auth/auth-slice"
 import { setRoles } from "~/store/roles/roles-slice"
 import { META_TAGS } from "~/constants/site-meta-tags"
+import { settingsAPI } from "~/api/settings-api"
+import { setSettings } from "~/store/settings/settings-slice"
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "ЖБФФК | Налаштування" }, ...META_TAGS]
@@ -21,7 +23,8 @@ export const shouldRevalidate = () => {
 export async function clientLoader() {
   const { data: roles } = await rolesAPI.getAll()
   const { data: users } = await authAPI.getUsers({})
-  return { roles, users }
+  const { data: settings } = await settingsAPI.getSettings()
+  return { roles, users, settings }
 }
 
 export default function Settings() {
@@ -31,6 +34,7 @@ export default function Settings() {
   useEffect(() => {
     if (loaderData.roles) dispatch(setRoles(loaderData.roles))
     if (loaderData.users) dispatch(setUsers(loaderData.users[0]))
+    if (loaderData.settings) dispatch(setSettings(loaderData.settings))
   }, [loaderData])
 
   return <SettingsPage />

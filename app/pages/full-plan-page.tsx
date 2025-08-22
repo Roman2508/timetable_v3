@@ -13,9 +13,11 @@ import { RootContainer } from "~/components/layouts/root-container"
 import type { SemesterHoursType } from "~/helpers/group-lessons-by-name"
 import { FullPlanTable } from "~/components/features/pages/full-plan/full-plan-table"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/common/popover"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip"
 import SemesterHoursModal from "~/components/features/pages/full-plan/semester-hours-modal"
 import SemesterDetailsModal from "~/components/features/pages/full-plan/semester-details-modal"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip"
+
+const semesters = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
 const FullPlanPage: FC = ({}) => {
   const dispatch = useAppDispatch()
@@ -122,9 +124,9 @@ const FullPlanPage: FC = ({}) => {
                     </label>
                   </div>
 
-                  {["1", "2", "3", "4", "5", "6", "7", "8"].map((item) => {
+                  {semesters.map((item) => {
                     return (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2" key={item}>
                         <Checkbox id={item} />
                         <label
                           htmlFor={item}

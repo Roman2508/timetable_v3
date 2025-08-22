@@ -10,10 +10,10 @@ import { dialogText } from "~/constants/dialogs-text"
 import { Button } from "~/components/ui/common/button"
 import { plansSelector } from "~/store/plans/plans-slice"
 import EntityField from "~/components/features/entity-field"
-import { groupsSelector, setGroup } from "~/store/groups/groups-slice"
 import EntityHeader from "~/components/features/entity-header"
 import { RootContainer } from "~/components/layouts/root-container"
 import { ConfirmWindow } from "~/components/features/confirm-window"
+import { groupsSelector, setGroup } from "~/store/groups/groups-slice"
 import SelectPlanModal from "~/components/features/select-plan/select-plan-modal"
 import SubgroupsModal from "~/components/features/pages/full-group/subgroups-modal"
 import { createGroup, deleteGroup, updateGroup } from "~/store/groups/groups-async-actions"
@@ -192,7 +192,7 @@ const FullGroup: FC<Props> = ({ groupId }) => {
     [plansCategories],
   )
 
-  const [openedModalName, setOpenedModalName] = useState("plan")
+  const [openedModalName, setOpenedModalName] = useState("")
 
   const [userFormData, setUserFormData] = useState<Partial<GroupFormData>>({})
   const [showErrors, setShowErrors] = useState(false)
