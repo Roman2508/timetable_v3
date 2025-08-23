@@ -1,8 +1,8 @@
 import z from "zod"
-import { useMemo, useState, type FC, type MouseEvent } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router"
 import { Pencil, Plus, Trash2, User } from "lucide-react"
+import { useMemo, useState, type FC, type MouseEvent } from "react"
 
 import { useAppDispatch } from "~/store/store"
 import { Card } from "~/components/ui/common/card"
@@ -19,7 +19,6 @@ import { createTeacher, deleteTeacher, updateTeacher } from "~/store/teachers/te
 
 interface Props {
   teacherId: string
-  // teacher: TeachersType
 }
 
 const initialFormState = {
@@ -33,18 +32,31 @@ const initialFormState = {
   status: "Активний",
 }
 
+const requiredMessage = "Це поле обов'язкове"
 const formSchema = z.object({
-  firstName: z.string({ message: "Це поле обов'язкове" }),
-  middleName: z.string({ message: "Це поле обов'язкове" }),
-  lastName: z.string({ message: "Це поле обов'язкове" }),
-  email: z.string({ message: "Це поле обов'язкове" }).email({ message: "Не вірний формат пошти" }),
-  password: z.string().optional(),
+  firstName: z.string({ message: requiredMessage }).nonempty(requiredMessage),
+  middleName: z.string({ message: requiredMessage }).nonempty(requiredMessage),
+  lastName: z.string({ message: requiredMessage }).nonempty(requiredMessage),
+  email: z.string({ message: requiredMessage }).email({ message: "Не вірний формат пошти" }),
+  password: z.string().optional(), //
   calendarId: z.string().optional(),
-  category: z.number({ message: "Це поле обов'язкове" }),
-  status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }),
+  category: z.number({ message: requiredMessage }),
+  status: z.enum(["Активний", "Архів"], { message: requiredMessage }),
 })
 
+// при создании пароль обязателен
+// export const createTeacherSchema = formSchema.extend({
+//   password: z.string().nonempty("Це поле обов'язкове"),
+// })
+
+// // при обновлении пароль не обязателен
+// export const updateTeacherSchema = formSchema.extend({
+//   password: z.string().optional(),
+// })
+
 export type FormData = z.infer<typeof formSchema>
+// export type CreateTeacherData = z.infer<typeof createTeacherSchema>
+// export type UpdateTeacherData = z.infer<typeof updateTeacherSchema>
 
 const FullTeacher: FC<Props> = ({ teacherId }) => {
   const isUpdate = !isNaN(Number(teacherId))
@@ -141,11 +153,9 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
 
   const formData = {
     ...initialFormState,
-    ...teacher,
-    category: teacher?.category.id,
-    email: teacher?.user.email,
+    ...(teacher ? { ...teacher, category: teacher.category.id, email: teacher.user.email } : {}),
     ...userFormData,
-  }
+  } as FormData
 
   const conditionalFormSchema = formSchema.superRefine((data, ctx) => {
     if (!isUpdate && !data.password) {
@@ -158,7 +168,9 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
   })
 
   const validate = () => {
-    // const res = formSchema.safeParse(formData);
+    // const schema = isUpdate ? updateTeacherSchema : createTeacherSchema
+    // const res = schema.safeParse(formData)
+
     const res = conditionalFormSchema.safeParse(formData)
     if (res.success) return
     return res.error.format()
@@ -203,7 +215,7 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
     <RootContainer>
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between items-center mb-6">
-          {isUpdate ? (
+          {isUpdate && teacher ? (
             <EntityHeader Icon={User} label="ВИКЛАДАЧ" status={teacher.status} name={getTeacherFullname(teacher)} />
           ) : (
             <h2 className="flex items-center h-14 text-2xl font-semibold">Створити викладача</h2>

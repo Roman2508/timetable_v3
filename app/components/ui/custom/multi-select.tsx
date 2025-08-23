@@ -32,13 +32,9 @@ const MultiSelect: FC<Props> = ({ items, disabled, activeItems, onChangeSelected
     }
 
     if (activeItems && activeItems.length) {
-      // const activeOptions = activeItems.map((el) => String(el))
-      // setActiveOptions(activeOptions)
       setActiveOptions(activeItems)
     }
   }, [items, activeItems])
-
-  console.log(activeOptions)
 
   return (
     <div>
@@ -47,8 +43,7 @@ const MultiSelect: FC<Props> = ({ items, disabled, activeItems, onChangeSelected
         animation={2}
         options={options}
         variant="inverted"
-        value={activeOptions}
-        // defaultValue={activeOptions}
+        defaultValue={activeOptions}
         onValueChange={(val) => {
           setActiveOptions(val)
           onChangeSelected(val)

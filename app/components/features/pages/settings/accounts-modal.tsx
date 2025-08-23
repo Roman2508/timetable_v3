@@ -1,6 +1,16 @@
+import {
+  useRef,
+  useMemo,
+  useState,
+  useEffect,
+  type FC,
+  type Dispatch,
+  type MouseEvent,
+  type SetStateAction,
+} from "react"
 import { z } from "zod"
+import { toast } from "sonner"
 import { useSelector } from "react-redux"
-import { useMemo, useRef, useState, type Dispatch, type FC, type MouseEvent, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -16,8 +26,13 @@ import { sortByName } from "~/helpers/sort-by-name"
 import { Button } from "~/components/ui/common/button"
 import type { UserType } from "~/store/auth/auth-types"
 import { rolesSelector } from "~/store/roles/roles-slice"
+import type { RoleType } from "~/store/roles/roles-types"
 import { Separator } from "~/components/ui/common/separator"
+import useTeacherFields from "~/hooks/form/use-teacher-fields"
+import useStudentFields from "~/hooks/form/use-student-fields"
 import { createUser, updateUser } from "~/store/auth/auth-async-actions"
+import { getGroupCategories } from "~/store/groups/groups-async-actions"
+import { getTeachersCategories } from "~/store/teachers/teachers-async-actions"
 
 const defaultFormData = {
   name: "",
@@ -40,6 +55,49 @@ interface Props {
   user: UserType | null
   modalType: "create" | "update"
   setIsOpen: Dispatch<SetStateAction<boolean>>
+}
+
+const findRole = (roles: RoleType[], wantedRoleIds: string[], wantedRoleName: string) => {
+  const wantedRole = roles.find((el) => el.name === wantedRoleName)
+
+  if (!wantedRole) return false
+
+  const roleSelected = wantedRoleIds.find((id) => +id === wantedRole.id)
+
+  if (roleSelected) {
+    return true
+  }
+  return false
+}
+
+const setAvailableRoles = (roles: RoleType[], wantedRoleIds: string[]) => {
+  const teacherRole = roles.find((el) => el.name === "Викладач")
+  const studentRole = roles.find((el) => el.name === "Студент")
+
+  if (!teacherRole || !studentRole) return wantedRoleIds
+
+  const teacherId = String(teacherRole.id)
+  const studentId = String(studentRole.id)
+
+  const hasTeacher = wantedRoleIds.includes(teacherId)
+  const hasStudent = wantedRoleIds.includes(studentId)
+
+  if (hasTeacher && hasStudent) {
+    toast.info('Для користувача одночасно можна вибрати роль "Викладач" або "Студент"', { duration: 5000 })
+    // ищем, кто идёт первым в списке
+    const firstIndexTeacher = wantedRoleIds.indexOf(teacherId)
+    const firstIndexStudent = wantedRoleIds.indexOf(studentId)
+
+    if (firstIndexTeacher < firstIndexStudent) {
+      // "Викладач" идёт раньше → убираем "Студент"
+      return wantedRoleIds.filter((id) => id !== studentId)
+    } else {
+      // "Студент" идёт раньше → убираем "Викладач"
+      return wantedRoleIds.filter((id) => id !== teacherId)
+    }
+  }
+
+  return wantedRoleIds
 }
 
 const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
@@ -91,6 +149,9 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
     [],
   )
 
+  const { teacherFormFields } = useTeacherFields("small")
+  const { studentFormFields } = useStudentFields("small")
+
   const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
   const [showErrors, setShowErrors] = useState(false)
   const [isPending, setIsPending] = useState(false)
@@ -141,11 +202,18 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
     }
   }
 
-  // console.log(formData)
-
   const deleteSemesterConfirmation = async () => {
     alert("Якщо раніше був вибраний план - перевіряю чи не вибрано інший")
   }
+
+  useEffect(() => {
+    dispatch(getTeachersCategories())
+    dispatch(getGroupCategories())
+  }, [])
+
+  useEffect(() => {
+    setUserFormData((prev) => ({ ...prev, roles: setAvailableRoles(roles || [], formData.roles) }))
+  }, [formData.roles])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -159,7 +227,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
 
         <Separator />
 
-        <DialogDescription>
+        <DialogDescription className="max-h-[75vh] overflow-y-auto">
           <form className="px-6 py-4" onSubmit={handleSubmit}>
             {formFields.map((input) => {
               const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
@@ -180,6 +248,60 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
                 />
               )
             })}
+
+            {/*  */}
+
+            {findRole(roles || [], formData.roles, "Викладач") && (
+              <>
+                <Separator />
+                <h3 className="font-bold text-xl my-4">Викладач</h3>
+                {teacherFormFields.map((input) => {
+                  const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
+                  return (
+                    <EntityField
+                      {...input}
+                      errors={errors}
+                      isUpdate={false}
+                      inputKey={input.key}
+                      isEditable={!isPending}
+                      labelClassNames="min-w-65"
+                      classNames="flex-col gap-1"
+                      currentValue={currentValue}
+                      setUserFormData={setUserFormData}
+                      inputType={input.inputType as "string" | "number"}
+                      variant={input.variant as "input" | "select" | "button"}
+                    />
+                  )
+                })}
+              </>
+            )}
+
+            {/*  */}
+
+            {findRole(roles || [], formData.roles, "Студент") && (
+              <>
+                <Separator />
+                <h3 className="font-bold text-xl my-4">Студент</h3>
+                {studentFormFields.map((input) => {
+                  const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
+                  return (
+                    <EntityField
+                      {...input}
+                      errors={errors}
+                      isUpdate={false}
+                      inputKey={input.key}
+                      isEditable={!isPending}
+                      labelClassNames="min-w-65"
+                      classNames="flex-col gap-1"
+                      currentValue={currentValue}
+                      setUserFormData={setUserFormData}
+                      inputType={input.inputType as "string" | "number"}
+                      variant={input.variant as "input" | "select" | "button"}
+                    />
+                  )
+                })}
+              </>
+            )}
 
             <button className="hidden" ref={submitButtonRef}></button>
           </form>

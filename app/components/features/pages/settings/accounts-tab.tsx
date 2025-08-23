@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 import { useSelector } from "react-redux"
-import { ArrowDown, ArrowUp, InfoIcon } from "lucide-react"
+import { ArrowDown, ArrowUp, InfoIcon, Plus } from "lucide-react"
 
 import { cn } from "~/lib/utils"
 import AccountsModal from "./accounts-modal"
@@ -19,6 +19,8 @@ import type { UserType } from "~/store/auth/auth-types"
 import { formatLastLogin } from "~/helpers/format-last-login"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import { Button } from "~/components/ui/common/button"
 
 const AccountsTab = () => {
   const { users } = useSelector(authSelector)
@@ -33,8 +35,14 @@ const AccountsTab = () => {
     const editedUser = users.find((el) => el.id === id)
     if (!editedUser) return
     setEditedUser(editedUser)
-    setIsModalOpen(true)
     setModalType("update")
+    setIsModalOpen(true)
+  }
+
+  const onCreateUser = () => {
+    setModalType("create")
+    setEditedUser(null)
+    setIsModalOpen(true)
   }
 
   const columnHelper = createColumnHelper<UserType>()
@@ -45,12 +53,15 @@ const AccountsTab = () => {
         header: "ПІБ",
         cell: ({ row }) => {
           let isStatusActive = true
-          // if (row.original.status === "Архів") isStatusActive = false;
+          // if (row.original.status === "Архів") isStatusActive = false; "https://github.com/shadcn.png"
+
+          const initials = row.original.name.split(" ").filter((el) => !!el)
+
           return (
             <div className="flex items-center gap-2">
               <Avatar>
-                <AvatarImage src={row.original.picture ? row.original.picture : "https://github.com/shadcn.png"} />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={row.original.picture ? row.original.picture : undefined} />
+                <AvatarFallback>{`${initials[0][0]}${initials[1] ? initials[1][0] : ""}`}</AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-semibold">{row.original.name ? row.original.name : "-"}</p>
@@ -112,6 +123,14 @@ const AccountsTab = () => {
         </p>
       </div>
 
+      <div className="flex items-center gap-2 mb-6">
+        <InputSearch className="flex-1" placeholder="Знайти..." />
+
+        <Button variant="outline" onClick={onCreateUser}>
+          <Plus /> Створити користувача
+        </Button>
+      </div>
+
       <Table className="w-full">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -157,7 +176,6 @@ const AccountsTab = () => {
 
         <TableBody>
           {table.getRowModel().rows.map((groupData, index) => {
-            const group = groupData.original
             return (
               <TableRow key={index} className="hover:bg-border/40">
                 <TableCell className={cn("truncate max-w-[30px]", "text-left px-2 py-1")}>{index + 1}</TableCell>
