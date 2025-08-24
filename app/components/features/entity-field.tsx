@@ -25,6 +25,7 @@ interface IEntityFieldProps {
   labelClassNames?: string
   items: ItemType[] | null
   inputType: "string" | "number"
+  onChange?: (...args: any[]) => void
   variant: "input" | "select" | "multi-select" | "button"
   errors?: ZodFormattedError<GroupFormData>
   currentValue: string | string[] | number | undefined
@@ -42,6 +43,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
   variant,
   inputKey,
   isUpdate,
+  onChange,
   inputType,
   isEditable,
   classNames,
@@ -129,6 +131,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
 
         <div className="w-full">
           <MultiSelect
+            onChange={onChange}
             activeItems={currentValue as any[]}
             items={items ? items : []}
             onChangeSelected={(newItem) => {

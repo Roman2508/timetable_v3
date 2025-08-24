@@ -18,10 +18,11 @@ interface Props {
   disabled?: boolean
   itemPrefix?: string
   activeItems?: string[]
+  onChange?: (...args: any[]) => void
   onChangeSelected: (value: string[]) => void
 }
 
-const MultiSelect: FC<Props> = ({ items, disabled, activeItems, onChangeSelected }) => {
+const MultiSelect: FC<Props> = ({ items, disabled, onChange, activeItems, onChangeSelected }) => {
   const [activeOptions, setActiveOptions] = useState<string[]>([])
   const [options, setOptions] = useState<Option[]>([])
 
@@ -47,6 +48,7 @@ const MultiSelect: FC<Props> = ({ items, disabled, activeItems, onChangeSelected
         onValueChange={(val) => {
           setActiveOptions(val)
           onChangeSelected(val)
+          onChange && onChange(val)
         }}
       />
     </div>

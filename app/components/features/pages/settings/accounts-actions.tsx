@@ -1,22 +1,26 @@
-import { type FC } from "react";
+import { type FC } from "react"
 
-import { ConfirmWindow } from "../../confirm-window";
-import { dialogText } from "~/constants/dialogs-text";
-import { ActionsDropdown } from "../../actions-dropdown";
+import { useAppDispatch } from "~/store/store"
+import { ConfirmWindow } from "../../confirm-window"
+import { dialogText } from "~/constants/dialogs-text"
+import { ActionsDropdown } from "../../actions-dropdown"
+import { deleteUser } from "~/store/auth/auth-async-actions"
 
 interface Props {
-  id: number;
-  onEditUser: (id: number) => void;
+  id: number
+  onEditUser: (id: number) => void
 }
 
 const AccountsActions: FC<Props> = ({ id, onEditUser }) => {
+  const dispatch = useAppDispatch()
+
   const onClickDeleteUser = async (id: number) => {
-    if (!id) return;
-    const confirmed = await ConfirmWindow(dialogText.confirm.accounts.title, dialogText.confirm.accounts.text);
+    if (!id) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.accounts.title, dialogText.confirm.accounts.text)
     if (confirmed) {
-      alert("aaa");
+      dispatch(deleteUser(id))
     }
-  };
+  }
 
   return (
     <ActionsDropdown
@@ -24,7 +28,7 @@ const AccountsActions: FC<Props> = ({ id, onEditUser }) => {
       onClickDeleteFunction={onClickDeleteUser}
       onClickUpdateFunction={(id) => onEditUser(id)}
     />
-  );
-};
+  )
+}
 
-export default AccountsActions;
+export default AccountsActions

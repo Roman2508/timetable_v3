@@ -229,7 +229,7 @@ export const createIndividualTeacherWork = createAsyncThunk(
 
     toast.promise(promise, {
       loading: "Завантаження...",
-      success: "Додано діяльність до індивідуального плану",
+      success: "Додано нову діяльність",
       error: (error) => {
         thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR));
         return (error as any)?.response?.data?.message || error.message;

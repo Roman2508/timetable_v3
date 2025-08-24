@@ -6,7 +6,7 @@ import {
   createColumnHelper,
   getFilteredRowModel,
 } from "@tanstack/react-table"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import { ArrowDown, ArrowUp, InfoIcon, Plus } from "lucide-react"
 
@@ -21,8 +21,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avat
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
 import { InputSearch } from "~/components/ui/custom/input-search"
 import { Button } from "~/components/ui/common/button"
+import { getTeachersCategories } from "~/store/teachers/teachers-async-actions"
+import { getGroupCategories } from "~/store/groups/groups-async-actions"
+import { useAppDispatch } from "~/store/store"
 
 const AccountsTab = () => {
+  const dispatch = useAppDispatch()
+
   const { users } = useSelector(authSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
@@ -103,9 +108,20 @@ const AccountsTab = () => {
     getFilteredRowModel: getFilteredRowModel(),
   })
 
+  useEffect(() => {
+    dispatch(getTeachersCategories())
+    dispatch(getGroupCategories())
+  }, [])
+
   return (
     <>
-      <AccountsModal user={editedUser} isOpen={isModalOpen} modalType={modalType} setIsOpen={setIsModalOpen} />
+      <AccountsModal
+        user={editedUser}
+        isOpen={isModalOpen}
+        modalType={modalType}
+        setIsOpen={setIsModalOpen}
+        setEditedUser={setEditedUser}
+      />
 
       <h2 className="text-xl font-semibold flex items-center gap-2 mb-6">
         <InfoIcon className="w-5" /> Загальна інформація

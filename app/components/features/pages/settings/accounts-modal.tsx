@@ -1,16 +1,7 @@
-import {
-  useRef,
-  useMemo,
-  useState,
-  useEffect,
-  type FC,
-  type Dispatch,
-  type MouseEvent,
-  type SetStateAction,
-} from "react"
 import { z } from "zod"
 import { toast } from "sonner"
 import { useSelector } from "react-redux"
+import { useRef, useMemo, useState, type FC, type Dispatch, type MouseEvent, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -23,6 +14,8 @@ import {
 import EntityField from "../../entity-field"
 import { useAppDispatch } from "~/store/store"
 import { sortByName } from "~/helpers/sort-by-name"
+import { ConfirmWindow } from "../../confirm-window"
+import { dialogText } from "~/constants/dialogs-text"
 import { Button } from "~/components/ui/common/button"
 import type { UserType } from "~/store/auth/auth-types"
 import { rolesSelector } from "~/store/roles/roles-slice"
@@ -30,9 +23,7 @@ import type { RoleType } from "~/store/roles/roles-types"
 import { Separator } from "~/components/ui/common/separator"
 import useTeacherFields from "~/hooks/form/use-teacher-fields"
 import useStudentFields from "~/hooks/form/use-student-fields"
-import { createUser, updateUser } from "~/store/auth/auth-async-actions"
-import { getGroupCategories } from "~/store/groups/groups-async-actions"
-import { getTeachersCategories } from "~/store/teachers/teachers-async-actions"
+import { createUser, deleteUser, updateUser } from "~/store/auth/auth-async-actions"
 
 const defaultFormData = {
   name: "",
@@ -55,6 +46,7 @@ interface Props {
   user: UserType | null
   modalType: "create" | "update"
   setIsOpen: Dispatch<SetStateAction<boolean>>
+  setEditedUser: Dispatch<SetStateAction<UserType | null>>
 }
 
 const findRole = (roles: RoleType[], wantedRoleIds: string[], wantedRoleName: string) => {
@@ -100,12 +92,16 @@ const setAvailableRoles = (roles: RoleType[], wantedRoleIds: string[]) => {
   return wantedRoleIds
 }
 
-const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
+const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setEditedUser }) => {
   const dispatch = useAppDispatch()
 
   const submitButtonRef = useRef<HTMLButtonElement | null>(null)
 
   const { roles } = useSelector(rolesSelector)
+
+  const onChangeRole = (selectedRoles: string[]) => {
+    setUserFormData((prev) => ({ ...prev, roles: setAvailableRoles(roles || [], selectedRoles) }))
+  }
 
   const formFields = useMemo(
     () => [
@@ -143,6 +139,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
         isEditable: true,
         inputType: "text",
         variant: "multi-select",
+        onChange: onChangeRole,
         items: sortByName(roles),
       },
     ],
@@ -202,21 +199,21 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
     }
   }
 
-  const deleteSemesterConfirmation = async () => {
-    alert("Якщо раніше був вибраний план - перевіряю чи не вибрано інший")
+  const onDeleteUser = async () => {
+    if (!user) return
+    const confirmed = await ConfirmWindow(dialogText.confirm.accounts.title, dialogText.confirm.accounts.text)
+    if (confirmed) {
+      dispatch(deleteUser(user.id))
+    }
   }
 
-  useEffect(() => {
-    dispatch(getTeachersCategories())
-    dispatch(getGroupCategories())
-  }, [])
-
-  useEffect(() => {
-    setUserFormData((prev) => ({ ...prev, roles: setAvailableRoles(roles || [], formData.roles) }))
-  }, [formData.roles])
+  const onOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (!open) setUserFormData({})
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="px-0 !py-4 max-w-[600px] gap-0">
         <DialogHeader className="px-4 pb-4">
           <DialogTitle className="flex items-center gap-1">
@@ -311,7 +308,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType }) => {
 
         <DialogFooter className="flex items-center pt-4 px-4">
           {modalType === "update" && (
-            <Button disabled={isPending} onClick={deleteSemesterConfirmation} variant="destructive">
+            <Button disabled={isPending} onClick={onDeleteUser} variant="destructive">
               Видалити
             </Button>
           )}

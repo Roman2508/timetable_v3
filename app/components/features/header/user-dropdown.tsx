@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import { Bell, LogOut, Sparkles, BadgeCheck, CreditCard, ChevronsUpDown } from "lucide-react";
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router"
+import { Bell, LogOut, Sparkles, BadgeCheck, CreditCard, ChevronsUpDown } from "lucide-react"
 
 import {
   DropdownMenu,
@@ -10,26 +10,26 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuSeparator,
-} from "~/components/ui/common/dropdown-menu";
-import { useAppDispatch } from "~/store/store";
-import { authSelector } from "~/store/auth/auth-slice";
-import { authLogout } from "~/store/auth/auth-async-actions";
-import { SidebarMenuButton } from "~/components/ui/common/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar";
+} from "~/components/ui/common/dropdown-menu"
+import { useAppDispatch } from "~/store/store"
+import { authSelector } from "~/store/auth/auth-slice"
+import { authLogout } from "~/store/auth/auth-async-actions"
+import { SidebarMenuButton } from "~/components/ui/common/sidebar"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar"
 
 const UserDropdown: React.FC = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const { user } = useSelector(authSelector);
+  const { user } = useSelector(authSelector)
 
   const onClickLogout = async () => {
     if (window.confirm("Ви впевнені, що хочете вийти?")) {
-      const { payload } = await dispatch(authLogout());
-      if (payload) navigate("/auth");
+      const { payload } = await dispatch(authLogout())
+      if (payload) navigate("/auth")
     }
-  };
+  }
 
   return (
     <DropdownMenu>
@@ -40,12 +40,12 @@ const UserDropdown: React.FC = () => {
             className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground !py-1 !h-10"
           >
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={user.picture || ""} alt={user.login} className="" />
+              <AvatarImage src={user.picture || ""} alt={user.name} className="" />
               <AvatarFallback className="rounded-lg select-none">ПР</AvatarFallback>
             </Avatar>
 
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold select-none">{"user.login"}</span>
+              <span className="truncate font-semibold select-none">{user.name}</span>
               <span className="truncate text-xs select-none">{user.email}</span>
             </div>
 
@@ -55,7 +55,7 @@ const UserDropdown: React.FC = () => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        align="end"
+        align="end" 
         sideOffset={4}
         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
       >
@@ -63,12 +63,12 @@ const UserDropdown: React.FC = () => {
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.picture || ""} alt={user.login} className="" />
+                <AvatarImage src={user.picture || ""} alt={user.name} className="" />
                 <AvatarFallback className="rounded-lg select-none">ПР</AvatarFallback>
               </Avatar>
 
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold select-none">{"user.login"}</span>
+                <span className="truncate font-semibold select-none">{user.name}</span>
                 <span className="truncate text-xs select-none">{user.email}</span>
               </div>
             </div>
@@ -109,7 +109,7 @@ const UserDropdown: React.FC = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}
 
-export default UserDropdown;
+export default UserDropdown
