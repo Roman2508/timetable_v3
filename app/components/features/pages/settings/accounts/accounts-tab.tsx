@@ -6,24 +6,24 @@ import {
   createColumnHelper,
   getFilteredRowModel,
 } from "@tanstack/react-table"
-import { useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
+import { useEffect, useMemo, useState } from "react"
 import { ArrowDown, ArrowUp, InfoIcon, Plus } from "lucide-react"
 
 import { cn } from "~/lib/utils"
 import AccountsModal from "./accounts-modal"
+import { useAppDispatch } from "~/store/store"
 import AccountsActions from "./accounts-actions"
 import { fuzzyFilter } from "~/helpers/fuzzy-filter"
 import { authSelector } from "~/store/auth/auth-slice"
+import { Button } from "~/components/ui/common/button"
 import type { UserType } from "~/store/auth/auth-types"
 import { formatLastLogin } from "~/helpers/format-last-login"
+import { InputSearch } from "~/components/ui/custom/input-search"
+import { getGroupCategories } from "~/store/groups/groups-async-actions"
+import { getTeachersCategories } from "~/store/teachers/teachers-async-actions"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/common/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
-import { InputSearch } from "~/components/ui/custom/input-search"
-import { Button } from "~/components/ui/common/button"
-import { getTeachersCategories } from "~/store/teachers/teachers-async-actions"
-import { getGroupCategories } from "~/store/groups/groups-async-actions"
-import { useAppDispatch } from "~/store/store"
 
 const AccountsTab = () => {
   const dispatch = useAppDispatch()

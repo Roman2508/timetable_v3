@@ -11,12 +11,12 @@ import {
   DialogContent,
   DialogDescription,
 } from "~/components/ui/common/dialog"
-import EntityField from "../../entity-field"
 import { useAppDispatch } from "~/store/store"
+import EntityField from "../../../entity-field"
 import { sortByName } from "~/helpers/sort-by-name"
-import { ConfirmWindow } from "../../confirm-window"
 import { dialogText } from "~/constants/dialogs-text"
 import { Button } from "~/components/ui/common/button"
+import { ConfirmWindow } from "../../../confirm-window"
 import type { UserType } from "~/store/auth/auth-types"
 import { rolesSelector } from "~/store/roles/roles-slice"
 import type { RoleType } from "~/store/roles/roles-types"
