@@ -12,26 +12,35 @@ import { InfoIcon, ScanEyeIcon, ArrowDown, ArrowUp, Lock, Plus } from "lucide-re
 
 import { cn } from "~/lib/utils"
 import RolesModal from "./roles-modal"
+import Permissions from "./permissions"
 import RolesActions from "./roles-actions"
-import { useAppDispatch } from "~/store/store"
-import { navData } from "../../../sidebar/nav-data"
 import { fuzzyFilter } from "~/helpers/fuzzy-filter"
-import { Switch } from "~/components/ui/common/switch"
 import type { RoleType } from "~/store/roles/roles-types"
 import { rolesSelector } from "~/store/roles/roles-slice"
-import { getFullRole } from "~/store/roles/roles-async-actions"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "~/components/ui/common/collapsible"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
 
 const RolesTab = () => {
-  const dispatch = useAppDispatch()
-
-  const { roles, role } = useSelector(rolesSelector)
+  const { roles } = useSelector(rolesSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editedRole, setEditedRole] = useState<RoleType | null>(null)
   const [modalType, setModalType] = useState<"create" | "update">("create")
+
+  const onCreateRole = () => {
+    setEditedRole(null)
+    setModalType("create")
+    setIsModalOpen(true)
+  }
+
+  const onUpdateRole = (id: number) => {
+    if (!roles) return
+    const role = roles.find((el) => el.id === id)
+    if (!role) return
+    setEditedRole(role)
+    setModalType("update")
+    setIsModalOpen(true)
+  }
 
   const columnHelper = createColumnHelper<RoleType>()
   const columns = useMemo(
@@ -57,14 +66,7 @@ const RolesTab = () => {
         id: "actions",
         header: "Дії",
         cell: ({ row }) => {
-          return (
-            <RolesActions
-              id={row.original.id}
-              onEditUser={(id) => {
-                dispatch(getFullRole(id))
-              }}
-            />
-          )
+          return <RolesActions id={row.original.id} roleKey={row.original.key} onEditUser={onUpdateRole} />
         },
       }),
     ],
@@ -101,7 +103,7 @@ const RolesTab = () => {
 
       <div className="mt-10 mb-4">
         <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
-          <InfoIcon className="w-5" /> Ролі
+          <InfoIcon className="w-5" /> Список ролей
         </h2>
 
         <p className="text-muted-foreground">
@@ -182,69 +184,15 @@ const RolesTab = () => {
         </TableBody>
       </Table>
 
-      <button className="flex justify-center items-center gap-1 w-full text-sm border border-border border-dashed py-2 mt-2 cursor-pointer hover:bg-border/20 transition-colors">
+      <button
+        onClick={onCreateRole}
+        className="flex justify-center items-center gap-1 w-full text-sm border border-border border-dashed py-2 mt-2 cursor-pointer hover:bg-border/20 transition-colors"
+      >
         <Plus size={18} />
         Додати нову роль
       </button>
 
-      {role && (
-        <>
-          <div className="mt-10 mb-4">
-            <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
-              <InfoIcon className="w-5" /> Ролі
-            </h2>
-
-            <p className="text-muted-foreground">
-              Тут відображається пароль від вашого облікового запису. <br />
-              Якщо у вас виникли проблеми зі входом або ви хочете змінити свої облікові дані - зверніться до системного
-              адміністратора
-            </p>
-          </div>
-
-          {navData.navMain.map((navMain, index) => (
-            <div className="my-10" key={index}>
-              <h2 className="text-xl font-semibold flex items-center gap-2 mb-4">
-                {<navMain.icon className="w-5" />}
-                {navMain.title}
-              </h2>
-
-              {navMain.items.map((navItem) => (
-                <div className="border p-3 mb-3 border p-3 mb-3">
-                  <div className="flex flex-row items-center justify-between">
-                    <div className="space-y-0.5">
-                      <div className="font-semibold">{navItem.title}</div>
-                      <div className="text-sm text-muted-foreground">{"el.description"}</div>
-                    </div>
-
-                    <Switch checked={false} onCheckedChange={(checked) => {}} />
-                  </div>
-
-                  <Collapsible>
-                    <CollapsibleTrigger className="text-sm underline cursor-pointer">Деталі</CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <ul className="mt-2">
-                        <li className="flex items-center gap-2 mb-2">
-                          <Switch checked={false} onCheckedChange={() => {}} />
-                          <label htmlFor="" className="text-sm">
-                            Перегляд
-                          </label>
-                        </li>
-
-                        <li className="flex items-center gap-2">
-                          <Switch checked={false} onCheckedChange={() => {}} />
-                          <label htmlFor="" className="text-sm">
-                            Редагування
-                          </label>
-                        </li>
-                      </ul>
-                    </CollapsibleContent>
-                  </Collapsible>
-                </div>
-              ))}
-            </div>
-          ))}
-        </>
-      )}
+      <Permissions />
     </>
   )
 }

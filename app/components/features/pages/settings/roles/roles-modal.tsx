@@ -14,16 +14,14 @@ import EntityField from "../../../entity-field"
 import { dialogText } from "~/constants/dialogs-text"
 import { Button } from "~/components/ui/common/button"
 import { ConfirmWindow } from "../../../confirm-window"
-import type { UserType } from "~/store/auth/auth-types"
+import type { RoleType } from "~/store/roles/roles-types"
 import { deleteUser } from "~/store/auth/auth-async-actions"
 import { Separator } from "~/components/ui/common/separator"
-import type { RoleType } from "~/store/roles/roles-types"
+import { createRole, updateRole } from "~/store/roles/roles-async-actions"
 
 const defaultFormData = {
   name: "",
-  email: "",
-  password: "",
-  roles: [],
+  key: "",
 }
 
 const formSchema = z.object({
@@ -76,7 +74,7 @@ const RolesModal: FC<Props> = ({ editedRole, isOpen, setIsOpen, modalType, setEd
 
   const formData = {
     ...defaultFormData,
-    ...{},
+    ...(editedRole ? { name: editedRole.name, key: editedRole.key } : {}),
     ...userFormData,
   }
 
@@ -92,23 +90,24 @@ const RolesModal: FC<Props> = ({ editedRole, isOpen, setIsOpen, modalType, setEd
     try {
       e.preventDefault()
       setIsPending(true)
+
       const errors = validate()
+
       if (errors) {
         setShowErrors(true)
         return
       }
 
-      //   if (modalType === "create") {
-      //     const roles = (formData.roles || []).map((el) => +el)
-      //     await dispatch(createUser({ ...formData, roles }))
-      //     setIsOpen(false)
-      //     return
-      //   }
-      //   if (modalType === "update" && user) {
-      //     const roles = (formData.roles || []).map((el) => +el)
-      //     await dispatch(updateUser({ ...formData, roles, id: user.id }))
-      //     setIsOpen(false)
-      //   }
+      if (modalType === "create") {
+        await dispatch(createRole(formData))
+        setIsOpen(false)
+        return
+      }
+      if (modalType === "update" && editedRole) {
+        await dispatch(updateRole({ ...formData, id: editedRole.id }))
+        setIsOpen(false)
+        setEditedRole(null)
+      }
     } finally {
       setIsPending(false)
     }
@@ -120,7 +119,7 @@ const RolesModal: FC<Props> = ({ editedRole, isOpen, setIsOpen, modalType, setEd
     }
   }
 
-  const onDeleteUser = async () => {
+  const onDeleteRole = async () => {
     if (!editedRole) return
     const confirmed = await ConfirmWindow(dialogText.confirm.accounts.title, dialogText.confirm.accounts.text)
     if (confirmed) {
@@ -175,7 +174,7 @@ const RolesModal: FC<Props> = ({ editedRole, isOpen, setIsOpen, modalType, setEd
 
         <DialogFooter className="flex items-center pt-4 px-4">
           {modalType === "update" && (
-            <Button disabled={isPending} onClick={onDeleteUser} variant="destructive">
+            <Button disabled={isPending} onClick={onDeleteRole} variant="destructive">
               Видалити
             </Button>
           )}

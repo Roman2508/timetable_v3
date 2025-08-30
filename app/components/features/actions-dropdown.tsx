@@ -18,6 +18,7 @@ type AdditionalDropdownItemsType = {
   label: string
   onClick: (id: number) => void
   icon?: React.ReactNode
+  disabled?: boolean
 }
 
 type CategoriesType = {
@@ -30,6 +31,8 @@ type CategoriesType = {
 interface IActionsDropdownProps {
   itemId: number
   categoryPrefix?: string
+  updateDisabled?: boolean
+  deleteDisabled?: boolean
   categoriesList?: CategoriesType[]
   onClickUpdateFunction?: (id: number) => void
   onClickDeleteFunction?: (id: number) => void
@@ -43,6 +46,8 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
   categoryPrefix,
   categoriesList,
   additionalItems,
+  deleteDisabled,
+  updateDisabled,
   changeStatusFunction,
   onClickUpdateFunction,
   onClickDeleteFunction,
@@ -60,6 +65,7 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
         {onClickUpdateFunction && (
           <DropdownMenuItem
             className="cursor-pointer"
+            disabled={updateDisabled}
             onClick={(e) => {
               e.stopPropagation()
               onClickUpdateFunction(itemId)
@@ -74,6 +80,7 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
           additionalItems.map((item) => (
             <DropdownMenuItem
               key={item.label}
+              disabled={item.disabled}
               className="cursor-pointer"
               onClick={(e) => {
                 e.stopPropagation()
@@ -122,6 +129,7 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
 
         {onClickDeleteFunction && (
           <DropdownMenuItem
+            disabled={deleteDisabled}
             className="cursor-pointer"
             onClick={(e) => {
               e.stopPropagation()
