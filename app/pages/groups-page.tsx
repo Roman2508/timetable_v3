@@ -36,6 +36,7 @@ import { Tabs, TabsList, TabsTrigger } from "~/components/ui/common/tabs"
 import { GroupsTable } from "~/components/features/pages/groups/groups-table"
 import { generalSelector, setGroupFilters } from "~/store/general/general-slice"
 import type { GroupCategoriesType, GroupsShortType } from "~/store/groups/groups-types"
+import { Skeleton } from "~/components/ui/common/skeleton"
 
 const GroupsPage = () => {
   const dispatch = useAppDispatch()
@@ -176,29 +177,33 @@ const GroupsPage = () => {
         </div>
 
         <div className="grid grid-cols-1 2xs:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-4 flex-wrap mb-10">
-          {(groupCategories ? sortByName(groupCategories) : []).map((item) => (
-            <CategoryCard
-              key={item.id}
-              name={item.name}
-              ItemsIcon={User}
-              label="Підрозділ"
-              itemId={Number(item.id)}
-              count={item.groups.length}
-              onClickUpdateFunction={onClickUpdateCategory}
-              onClickDeleteFunction={onClickDeleteCategory}
-              itemsLabel={pluralizeWords(item.groups.length, "group")}
-            />
-          ))}
+          {groupCategories
+            ? sortByName(groupCategories).map((item) => (
+                <CategoryCard
+                  key={item.id}
+                  name={item.name}
+                  ItemsIcon={User}
+                  label="Підрозділ"
+                  itemId={Number(item.id)}
+                  count={item.groups.length}
+                  onClickUpdateFunction={onClickUpdateCategory}
+                  onClickDeleteFunction={onClickDeleteCategory}
+                  itemsLabel={pluralizeWords(item.groups.length, "group")}
+                />
+              ))
+            : [...Array(3)].map((_, index) => <Skeleton key={index} className="h-[130px]" />)}
 
-          <Card
-            onClick={() => setModalData({ isOpen: true, actionType: "create" })}
-            className="shadow-none hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
-          >
-            <p className="flex items-center gap-1">
-              <Plus className="w-4" />
-              <span className="text-sm">Створити новий</span>
-            </p>
-          </Card>
+          {groupCategories && (
+            <Card
+              onClick={() => setModalData({ isOpen: true, actionType: "create" })}
+              className="shadow-none hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
+            >
+              <p className="flex items-center gap-1">
+                <Plus className="w-4" />
+                <span className="text-sm">Створити новий</span>
+              </p>
+            </Card>
+          )}
         </div>
 
         <h2 className="text-xl mb-4">Склад підрозділів</h2>

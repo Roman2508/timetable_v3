@@ -414,6 +414,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
                   setSelectedAuditory={setSelectedAuditory}
                   setSeveralLessonsList={setSeveralLessonsList}
                   isPossibleToCreateLessons={isPossibleToCreateLessons}
+                  isLoading={loadingStatus === LoadingStatusTypes.LOADING}
                   handleOpenSeveralLessonModal={handleOpenSeveralLessonModal}
                 />
               )

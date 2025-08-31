@@ -43,8 +43,8 @@ export const rootReducer = combineReducers({
 const persistConfig = {
   key: "timetable",
   storage,
-  whiteList: ["general", "settings"],
-  blackList: [
+  whitelist: ["general", "settings"],
+  blacklist: [
     "auth",
     "roles",
     "plans",

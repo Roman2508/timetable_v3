@@ -42,6 +42,7 @@ function makeColorDarken(color: string, factor = 0.6) {
 interface ICalendarDayProps {
   index: number
   day: WeekType
+  isLoading: boolean
   selectedSemester: number
   settings: SettingsType | null
   isPossibleToCreateLessons: boolean
@@ -65,6 +66,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
   day,
   index,
   settings,
+  isLoading,
   groupOverlay,
   selectedLesson,
   teacherLessons,
@@ -173,16 +175,21 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
                       selectedLesson?.name === l.name
 
                     return (
-                      <div
+                      <button
                         key={l.id}
+                        disabled={isLoading}
                         onClick={() => {
                           setSeveralLessonsList(lesson)
                           setSelectedAuditory(l.auditory) // Перевірити чи не буде багів коли одночасно виставлено декілька уроків
                           handleOpenSeveralLessonModal(l, day.data, lessonNumber, l.auditory ? l.auditory.id : null)
                         }}
-                        className={cn(severalLessonsClassName, { selected: isSame })}
+                        className={cn(
+                          severalLessonsClassName,
+                          { selected: isSame },
+                          "w-full flex flex-col text-left cursor-pointer",
+                        )}
                         style={{
-                          backgroundColor: colors[convertColorKeys[l.typeRu]],
+                          // backgroundColor: colors[convertColorKeys[l.typeRu]],
                           color: makeColorDarken(colors[convertColorKeys[l.typeRu]]),
                         }}
                       >
@@ -212,7 +219,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
 
                         <p>{teacherName}</p>
                         <p>{l.auditory ? `${l.auditory.name} ауд.` : "Дистанційно"}</p>
-                      </div>
+                      </button>
                     )
                   })}
               </div>

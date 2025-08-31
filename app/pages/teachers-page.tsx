@@ -35,6 +35,7 @@ import type { TeachersCategoryType, TeachersType } from "~/store/teachers/teache
 import type { FormData } from "~/components/features/category-actions-modal/category-actions-modal"
 import CategoryActionsModal from "~/components/features/category-actions-modal/category-actions-modal"
 import { LoadingStatusTypes } from "~/store/app-types"
+import { Skeleton } from "~/components/ui/common/skeleton"
 
 const TeachersPage = () => {
   const dispatch = useAppDispatch()
@@ -178,29 +179,33 @@ const TeachersPage = () => {
         </div>
 
         <div className="grid grid-cols-5 gap-4 flex-wrap mb-10">
-          {(teachersCategories ? sortByName(teachersCategories) : []).map((item) => (
-            <CategoryCard
-              key={item.id}
-              name={item.name}
-              ItemsIcon={User}
-              label="Циклова комісія"
-              itemId={Number(item.id)}
-              count={item.teachers.length}
-              onClickUpdateFunction={onClickUpdateCategory}
-              onClickDeleteFunction={onClickDeleteCategory}
-              itemsLabel={pluralizeWords(item.teachers.length, "teachers")}
-            />
-          ))}
+          {teachersCategories
+            ? sortByName(teachersCategories).map((item) => (
+                <CategoryCard
+                  key={item.id}
+                  name={item.name}
+                  ItemsIcon={User}
+                  label="Циклова комісія"
+                  itemId={Number(item.id)}
+                  count={item.teachers.length}
+                  onClickUpdateFunction={onClickUpdateCategory}
+                  onClickDeleteFunction={onClickDeleteCategory}
+                  itemsLabel={pluralizeWords(item.teachers.length, "teachers")}
+                />
+              ))
+            : [...Array(3)].map((_, index) => <Skeleton key={index} className="h-[130px]" />)}
 
-          <Card
-            onClick={() => setModalData({ isOpen: true, actionType: "create" })}
-            className="shadow-none hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
-          >
-            <p className="flex items-center gap-1">
-              <Plus className="w-4" />
-              <span className="text-sm">Створити нову</span>
-            </p>
-          </Card>
+          {teachersCategories && (
+            <Card
+              onClick={() => setModalData({ isOpen: true, actionType: "create" })}
+              className="shadow-none hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
+            >
+              <p className="flex items-center gap-1">
+                <Plus className="w-4" />
+                <span className="text-sm">Створити нову</span>
+              </p>
+            </Card>
+          )}
         </div>
 
         <h2 className="text-xl mb-4">Кадровий склад</h2>

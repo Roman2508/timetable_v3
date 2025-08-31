@@ -160,19 +160,19 @@ export const navData = {
         {
           id: "13",
           title: "Контроль вичитки",
-          url: "#",
+          url: "/timetable-control",
           icon: CalendarSearch,
         },
         {
           id: "14",
           title: "Мій розклад",
-          url: "#",
+          url: "/my-timetable",
           icon: Calendar,
         },
         {
           id: "15",
           title: "Пошук вільної аудиторії",
-          url: "#",
+          url: "/find-free-auditory",
           icon: FileSearch,
         },
       ],

@@ -15,6 +15,8 @@ import { generalSelector, setPlanFilters } from "~/store/general/general-slice"
 import type { PlansCategoriesType, PlansType } from "~/store/plans/plans-types"
 import PlanActionsModal from "~/components/features/pages/plans/plan-actions-modal"
 import { SelectPlanTable } from "~/components/features/select-plan/select-plan-table"
+import { LoadingStatusTypes } from "~/store/app-types"
+import { Skeleton } from "~/components/ui/common/skeleton"
 
 export type PlanActionModalType = {
   isOpen: boolean
@@ -46,7 +48,7 @@ export default function PlansPage() {
   const {
     plans: { status: defaultStatus, categories: filtredCategories },
   } = useSelector(generalSelector)
-  const { plansCategories } = useSelector(plansSelector)
+  const { plansCategories, loadingStatus } = useSelector(plansSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
   const [selectedCategories, setSelectedCategories] = useState<{ id: number }[]>(
@@ -139,6 +141,14 @@ export default function PlansPage() {
           placeholder="Пошук..."
           onChange={(e) => setGlobalSearch(e.target.value)}
         />
+
+        {!plansCategories && loadingStatus === LoadingStatusTypes.LOADING && (
+          <div>
+            <Skeleton className="w-full h-10 mb-4" disableAnimation />
+            <Skeleton className="w-full h-10 mb-4" disableAnimation />
+            <Skeleton className="w-full h-10 mb-4" disableAnimation />
+          </div>
+        )}
 
         {plansCategories?.length ? (
           <SelectPlanTable
