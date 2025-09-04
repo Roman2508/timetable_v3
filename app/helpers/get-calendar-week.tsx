@@ -1,8 +1,9 @@
 import type { Dayjs } from "dayjs"
 import { customDayjs } from "~/lib/dayjs"
 
-const testStart = "2024-01-01"
-const testEnd = "2024-03-03"
+const currentYear = new Date().getFullYear()
+const testStart = `01.09.${currentYear}`
+const testEnd = `20.12.${currentYear}`
 
 export type WeekType = {
   data: Dayjs
@@ -18,9 +19,11 @@ const getCalendarWeek = (
 ): WeekType[] => {
   const weeks = []
 
-  if (!customDayjs(start).isValid()) return []
+  const fixedStart = `${start.slice(3, 5)}.${start.slice(0, 2)}.${start.slice(6, 10)}`
 
-  let week = customDayjs(start)
+  if (!customDayjs(fixedStart).isValid()) return []
+
+  let week = customDayjs(fixedStart)
 
   while (!week.isAfter(customDayjs(end).add(1, "week"))) {
     if (weeks.length > 30) break

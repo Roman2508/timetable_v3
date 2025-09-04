@@ -2,7 +2,7 @@ import type { UserRolesType } from "~/api/api-types"
 import { LoadingStatusTypes } from "../app-types"
 
 export type RolesInitialState = {
-  roles: RoleType[] | null
+  roles: Omit<UserRolesType, "permissions">[] | null
   role: UserRolesType | null
   loadingStatus: LoadingStatusTypes
 }

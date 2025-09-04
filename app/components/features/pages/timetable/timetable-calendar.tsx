@@ -20,7 +20,6 @@ import { useAppDispatch } from "~/store/store"
 import { Button } from "~/components/ui/common/button"
 import { LoadingStatusTypes } from "~/store/app-types"
 import LessonActionsModal from "./lesson-actions-modal"
-import getCalendarWeek from "~/helpers/get-calendar-week"
 import { TIMETABLE_WEEK } from "~/constants/cookies-keys"
 import SeveralLessonsModal from "./several-lessons-modal"
 import TimetableCalendarDay from "./timetable-calendar-day"
@@ -30,6 +29,7 @@ import { settingsSelector } from "~/store/settings/settings-slice"
 import type { TeachersType } from "~/store/teachers/teachers-types"
 import SelectTeacherModal from "../../select-teacher/select-teacher-modal"
 import type { AuditoriesTypes } from "~/store/auditories/auditories-types"
+import getCalendarWeek, { type WeekType } from "~/helpers/get-calendar-week"
 import SelectAuditoryModal from "../../select-auditory/select-auditory-modal"
 import { generalSelector, setTimetableData } from "~/store/general/general-slice"
 import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types"
@@ -77,7 +77,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
   const [severalLessonsModalVisible, setSeveralLessonsModalVisible] = useState(false)
   const [copingTimetableModalVisible, setCopingTimetableModalVisible] = useState(false)
 
-  const [currentWeekDays, setCurrentWeekDays] = useState(getCalendarWeek(week || 1))
+  const [currentWeekDays, setCurrentWeekDays] = useState<WeekType[]>([])
   const [selectedAuditory, setSelectedAuditory] = useState<AuditoriesTypes | null>(null)
   const [severalLessonsList, setSeveralLessonsList] = useState<ScheduleLessonType[]>([])
   const [replacementTeacher, setReplacementTeacher] = useState<TeachersType | null>(null)
@@ -340,7 +340,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
                 disabled={week === 1 || !week}
                 onClick={() => {
                   if (week) {
-                    setCookie(TIMETABLE_WEEK, week - 1)
+                    // setCookie(TIMETABLE_WEEK, week - 1)
                     dispatch(setTimetableData({ week: week - 1 }))
                   }
                 }}
@@ -355,7 +355,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
                 disabled={week === weeksCount}
                 onClick={() => {
                   if (week) {
-                    setCookie(TIMETABLE_WEEK, week + 1)
+                    // setCookie(TIMETABLE_WEEK, week + 1)
                     dispatch(setTimetableData({ week: week + 1 }))
                   }
                 }}

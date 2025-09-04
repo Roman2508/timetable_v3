@@ -5,35 +5,35 @@ import {
   getSortedRowModel,
   createColumnHelper,
   getFilteredRowModel,
-} from "@tanstack/react-table";
-import { useSelector } from "react-redux";
-import { ArrowDown, ArrowUp } from "lucide-react";
-import { useMemo, useEffect, type Dispatch, type SetStateAction } from "react";
+} from "@tanstack/react-table"
+import { useSelector } from "react-redux"
+import { ArrowDown, ArrowUp } from "lucide-react"
+import { useMemo, useEffect, type Dispatch, type SetStateAction } from "react"
 
-import { cn } from "~/lib/utils";
-import { useAppDispatch } from "~/store/store";
-import { fuzzyFilter } from "~/helpers/fuzzy-filter";
-import { LoadingStatusTypes } from "~/store/app-types";
-import type { ISelectedLesson } from "~/pages/timetable-page";
-import { getLessonRemark } from "~/helpers/get-lesson-remark";
-import { generalSelector } from "~/store/general/general-slice";
-import type { GroupLoadType } from "~/store/groups/groups-types";
-import LoadingSpinner from "~/components/ui/icons/loading-spinner";
-import { getTeacherFullname } from "~/helpers/get-teacher-fullname";
-import { getTimetableTableLessons } from "~/helpers/get-timetable-table-lessons";
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip";
-import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types";
-import { findLessonsForSchedule } from "~/store/schedule-lessons/schedule-lessons-async-actions";
-import { findLessonsCountForLessonsTable } from "~/helpers/find-lessons-count-for-lessons-table";
-import { clearGroupLoad, scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table";
+import { cn } from "~/lib/utils"
+import { useAppDispatch } from "~/store/store"
+import { fuzzyFilter } from "~/helpers/fuzzy-filter"
+import { LoadingStatusTypes } from "~/store/app-types"
+import type { ISelectedLesson } from "~/pages/timetable-page"
+import { getLessonRemark } from "~/helpers/get-lesson-remark"
+import { generalSelector } from "~/store/general/general-slice"
+import type { GroupLoadType } from "~/store/groups/groups-types"
+import LoadingSpinner from "~/components/ui/icons/loading-spinner"
+import { getTeacherFullname } from "~/helpers/get-teacher-fullname"
+import { getTimetableTableLessons } from "~/helpers/get-timetable-table-lessons"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/common/tooltip"
+import type { ScheduleLessonType } from "~/store/schedule-lessons/schedule-lessons-types"
+import { findLessonsForSchedule } from "~/store/schedule-lessons/schedule-lessons-async-actions"
+import { findLessonsCountForLessonsTable } from "~/helpers/find-lessons-count-for-lessons-table"
+import { clearGroupLoad, scheduleLessonsSelector } from "~/store/schedule-lessons/schedule-lessons-slice"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/common/table"
 
 interface ILessonsTableProps {
-  selectedSemester: number | null;
-  selectedLesson: ISelectedLesson | null;
-  setSelectedTeacherId: Dispatch<SetStateAction<number | null>>;
-  setIsPossibleToCreateLessons: Dispatch<SetStateAction<boolean>>;
-  setSelectedLesson: Dispatch<SetStateAction<ISelectedLesson | null>>;
+  selectedSemester: number | null
+  selectedLesson: ISelectedLesson | null
+  setSelectedTeacherId: Dispatch<SetStateAction<number | null>>
+  setIsPossibleToCreateLessons: Dispatch<SetStateAction<boolean>>
+  setSelectedLesson: Dispatch<SetStateAction<ISelectedLesson | null>>
 }
 
 export const LessonsTable: React.FC<ILessonsTableProps> = ({
@@ -43,18 +43,18 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
   setSelectedTeacherId,
   setIsPossibleToCreateLessons,
 }) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   const {
     timetable: { item, type },
-  } = useSelector(generalSelector);
-  const { groupLoad, loadingStatus, scheduleLessons } = useSelector(scheduleLessonsSelector);
+  } = useSelector(generalSelector)
+  const { groupLoad, loadingStatus, scheduleLessons } = useSelector(scheduleLessonsSelector)
   // const [sorting, setSorting] = React.useState<SortingState>(orderField ? [{ id: orderField, desc: isOrderDesc }] : []);
 
   const handleSelectLesson = (lesson: GroupLoadType | ScheduleLessonType) => {
-    if (!lesson || !lesson.teacher) return;
+    if (!lesson || !lesson.teacher) return
 
-    const studentsCount = typeof lesson.students === "number" ? lesson.students : lesson.students?.length;
+    const studentsCount = typeof lesson.students === "number" ? lesson.students : lesson.students?.length
 
     setSelectedLesson({
       id: lesson.id,
@@ -69,11 +69,11 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
       subgroupNumber: lesson.subgroupNumber,
       specialization: lesson.specialization,
       group: { id: lesson.group.id, name: lesson.group.name },
-    });
-    setSelectedTeacherId(lesson.teacher.id);
-  };
+    })
+    setSelectedTeacherId(lesson.teacher.id)
+  }
 
-  const columnHelper = createColumnHelper<GroupLoadType | ScheduleLessonType>();
+  const columnHelper = createColumnHelper<GroupLoadType | ScheduleLessonType>()
   const columns = useMemo(
     () => [
       columnHelper.accessor("name", { header: "Дисципліна" }),
@@ -87,9 +87,9 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
         id: "remark",
         header: "Примітка",
         cell: ({ row }) => {
-          const { stream, typeRu, subgroupNumber, specialization, group } = row.original;
-          const streamGroups = stream?.groups.map((group) => group.name).join(", ");
-          const remark = getLessonRemark({ stream, typeRu, subgroupNumber, specialization });
+          const { stream, typeRu, subgroupNumber, specialization, group } = row.original
+          const streamGroups = stream?.groups.map((group) => group.name).join(", ")
+          const remark = getLessonRemark({ stream, typeRu, subgroupNumber, specialization })
 
           return (
             <Tooltip delayDuration={500}>
@@ -100,7 +100,7 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
                   ${stream ? ` ⋅ Групи потоку: ${streamGroups}` : ""}`}
               </TooltipContent>
             </Tooltip>
-          );
+          )
         },
       }),
 
@@ -110,25 +110,18 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
         id: "fact",
         header: "Факт",
         cell: ({ row }) => {
-          const exhibitedLessonsCount = findLessonsCountForLessonsTable(
-            row.original.name,
-            row.original.group.id,
-            row.original.subgroupNumber,
-            row.original.stream?.id,
-            row.original.typeRu,
-            scheduleLessons,
-          );
-          return exhibitedLessonsCount;
+          // @ts-ignore
+          return row.original.fact
         },
       }),
     ],
     [],
-  );
+  )
 
   const tableData = useMemo(
     () => getTimetableTableLessons(groupLoad, scheduleLessons, type),
     [groupLoad, scheduleLessons, type],
-  );
+  )
 
   const table = useReactTable({
     data: tableData,
@@ -138,26 +131,25 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
 
-    // globalFilterFn: "fuzzy",
     filterFns: { fuzzy: fuzzyFilter },
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
 
   const isEmptyTable =
-    type !== "auditory" ? !groupLoad || !groupLoad.length : !scheduleLessons || !scheduleLessons.length;
+    type !== "auditory" ? !groupLoad || !groupLoad.length : !scheduleLessons || !scheduleLessons.length
 
   useEffect(() => {
-    if (!item) return;
+    if (!item) return
 
     if (type === "group" || type === "teacher") {
-      dispatch(clearGroupLoad());
-      const semester = !isNaN(Number(selectedSemester)) ? Number(selectedSemester) : 1;
-      dispatch(findLessonsForSchedule({ semester, itemId: item, scheduleType: type }));
+      dispatch(clearGroupLoad())
+      const semester = !isNaN(Number(selectedSemester)) ? Number(selectedSemester) : 1
+      dispatch(findLessonsForSchedule({ semester, itemId: item, scheduleType: type }))
     }
-  }, [item, selectedSemester]);
+  }, [item, selectedSemester])
 
   useEffect(() => {
-    if (!selectedLesson) return;
+    if (!selectedLesson) return
     // К-ть виставлених годин
     const exhibitedLessonsCount = findLessonsCountForLessonsTable(
       selectedLesson.name,
@@ -166,16 +158,16 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
       selectedLesson.stream?.id,
       selectedLesson.typeRu,
       scheduleLessons,
-    );
+    )
 
     if (exhibitedLessonsCount === selectedLesson.totalHours) {
       // Якщо виставлено ел.розкладу стільки скільки заплановано
       // false === заборонено створювати нові ел.розкладу
-      setIsPossibleToCreateLessons(false);
+      setIsPossibleToCreateLessons(false)
     } else {
-      setIsPossibleToCreateLessons(true);
+      setIsPossibleToCreateLessons(true)
     }
-  }, [selectedLesson, scheduleLessons]);
+  }, [selectedLesson, scheduleLessons])
 
   return (
     <Table className="w-full">
@@ -187,7 +179,7 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
                 <TableHead key={header.id} colSpan={header.colSpan} className="text-sm">
                   {header.isPlaceholder ? null : (
                     <div
-                      className={cn(index !== 6 ? "cursor-pointer select-none text-left" : "text-right")}
+                      className={cn(index !== 4 ? "cursor-pointer select-none text-left" : "text-right")}
                       onClick={header.column.getToggleSortingHandler()}
                       title={
                         header.column.getCanSort()
@@ -209,7 +201,7 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
                     </div>
                   )}
                 </TableHead>
-              );
+              )
             })}
           </TableRow>
         ))}
@@ -231,11 +223,11 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
         ) : null}
 
         {table.getRowModel().rows.map((lessonsData) => {
-          const lesson = lessonsData.original;
+          const lesson = lessonsData.original
           return (
             <TableRow key={lesson.id} className="hover:bg-border/40" onClick={() => handleSelectLesson(lesson)}>
               {lessonsData.getVisibleCells().map((cell, index) => {
-                const isActionsCol = index === lessonsData.getVisibleCells().length - 1;
+                const isLastCol = index === lessonsData.getVisibleCells().length - 1
 
                 const exhibitedLessonsCount = findLessonsCountForLessonsTable(
                   lesson.name,
@@ -244,9 +236,9 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
                   lesson.stream?.id,
                   lesson.typeRu,
                   scheduleLessons,
-                );
+                )
 
-                const isEqualPlannedAndActuallyHours = exhibitedLessonsCount === lesson.hours;
+                const isEqualPlannedAndActuallyHours = exhibitedLessonsCount === lesson.hours
 
                 const isSelected =
                   lesson.name === selectedLesson?.name &&
@@ -254,14 +246,14 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
                   lesson.stream?.id === selectedLesson?.stream?.id &&
                   lesson.subgroupNumber === selectedLesson?.subgroupNumber &&
                   lesson.typeRu === selectedLesson?.typeRu &&
-                  lesson.specialization === selectedLesson?.specialization;
+                  lesson.specialization === selectedLesson?.specialization
 
                 return (
                   <TableCell
                     key={cell.id}
                     className={cn(
                       "text-left px-2 py-1 text-xs cursor-pointer",
-                      isActionsCol ? "!text-right" : "",
+                      isLastCol ? "!text-right" : "",
                       index === 0 ? "truncate max-w-[160px]" : "",
                       isSelected ? "!text-primary !bg-primary-light" : "",
                       isEqualPlannedAndActuallyHours ? "opacity-[0.4]" : "",
@@ -269,12 +261,12 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
-                );
+                )
               })}
             </TableRow>
-          );
+          )
         })}
       </TableBody>
     </Table>
-  );
-};
+  )
+}

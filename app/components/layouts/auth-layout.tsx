@@ -1,12 +1,12 @@
 import jwtDecode from "jwt-decode"
 import React, { useEffect } from "react"
 import { useSelector } from "react-redux"
+import { useNavigate } from "react-router"
 
 import { useAppDispatch } from "~/store/store"
 import type { SessionType } from "~/api/api-types"
 import { getAccessToken } from "~/helpers/session"
 import { authSelector, setUser } from "~/store/auth/auth-slice"
-import { useNavigate } from "react-router"
 
 const AuthLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
   const dispatch = useAppDispatch()

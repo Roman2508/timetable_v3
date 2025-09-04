@@ -5,11 +5,11 @@ import { authAPI } from "~/api/auth-api"
 import { rolesAPI } from "~/api/roles-api"
 import type { Route } from "./+types/settings"
 import { useAppDispatch } from "~/store/store"
+import { settingsAPI } from "~/api/settings-api"
 import SettingsPage from "~/pages/settings-page"
 import { setUsers } from "~/store/auth/auth-slice"
 import { setRoles } from "~/store/roles/roles-slice"
 import { META_TAGS } from "~/constants/site-meta-tags"
-import { settingsAPI } from "~/api/settings-api"
 import { setSettings } from "~/store/settings/settings-slice"
 
 export function meta({}: Route.MetaArgs) {

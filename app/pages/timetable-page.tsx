@@ -48,7 +48,6 @@ const TimetablePage = () => {
   // set weeks count in current semester
   useEffect(() => {
     if (!settings) return
-
     if (!semester || semester === 1) {
       const startDate = getDate(settings.firstSemesterStart)
       const endDate = getDate(settings.firstSemesterEnd)

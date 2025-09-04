@@ -15,7 +15,7 @@ const generalInitialState: GeneralSliceInitialState = {
 
   streams: { semesters: "" },
 
-  timetable: { semester: null, week: null, item: null, category: null, type: null },
+  timetable: { semester: 1, week: 1, item: null, category: null, type: null },
 }
 
 const generalSlice = createSlice({

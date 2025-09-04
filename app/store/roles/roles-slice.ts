@@ -28,7 +28,7 @@ const rolesSlice = createSlice({
       state.loadingStatus = action.payload
     },
 
-    setRoles(state, action: PayloadAction<RoleType[]>) {
+    setRoles(state, action: PayloadAction<Omit<UserRolesType, "permissions">[]>) {
       state.roles = action.payload
     },
 

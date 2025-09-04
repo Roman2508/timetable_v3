@@ -119,8 +119,10 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
   return (
     <div className="border-t">
       <div
-        className={cn("border-b p-2 border-r text-xs font-bold h-[33px]", isToday ? "" : "")}
-        style={isToday ? { backgroundColor: "rgba(22, 119, 255, 0.08)", fontWeight: "700" } : { whiteSpace: "nowrap" }}
+        className={cn(
+          "border-b p-2 border-r text-xs font-bold h-[33px] whitespace-nowrap",
+          isToday ? "text-primary bg-primary-light" : "",
+        )}
       >
         {dayNames[index]} {day.start}
       </div>

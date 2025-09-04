@@ -2,7 +2,7 @@ import { cn } from "~/lib/utils"
 
 function Skeleton({
   className,
-  disableAnimation,
+  disableAnimation = true,
   ...props
 }: React.ComponentProps<"div"> & { disableAnimation?: boolean }) {
   return (
