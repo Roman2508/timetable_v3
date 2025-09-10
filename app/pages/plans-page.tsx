@@ -150,7 +150,7 @@ export default function PlansPage() {
           </div>
         )}
 
-        {plansCategories?.length ? (
+        {!!plansCategories?.length && (
           <SelectPlanTable
             isEditable
             searchValue={globalSearch}
@@ -160,7 +160,9 @@ export default function PlansPage() {
             setSelectedCategories={setSelectedCategories}
             plansCategories={visiblePlans ? visiblePlans : []}
           />
-        ) : (
+        )}
+
+        {!plansCategories?.length && loadingStatus !== LoadingStatusTypes.LOADING && (
           <div className="font-mono py-20 text-center">Пусто</div>
         )}
       </RootContainer>

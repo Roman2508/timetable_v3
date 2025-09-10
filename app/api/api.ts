@@ -53,6 +53,7 @@ instanse.interceptors.request.use(
 
     // Термін дії токена вийшов і ще не було запиту на refresh
     if (!refreshTokenPromise) {
+      console.log("11111")
       refreshTokenPromise = authAPI
         .refresh()
         .then((res) => {
@@ -71,8 +72,12 @@ instanse.interceptors.request.use(
     }
 
     // Був запит на refresh - очікуємо результат
-    await refreshTokenPromise
+    const result = await refreshTokenPromise
 
+    if (!result) {
+      window.location.href = "/auth"
+      return Promise.reject(new axios.AxiosError("Помилка авторизації"))
+    }
     return config
   },
   (error: AxiosError) => Promise.reject(error),

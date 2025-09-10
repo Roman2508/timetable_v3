@@ -1,7 +1,8 @@
+import type { AxiosError } from "axios"
 import { isRouteErrorResponse, Links, Meta, Navigate, Outlet, redirect, Scripts, ScrollRestoration } from "react-router"
 
-import type { Route } from "./+types/root"
 import "./app.css"
+import type { Route } from "./+types/root"
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -43,13 +44,11 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let details = "An unexpected error occurred."
   let stack: string | undefined
 
-  if (isRouteErrorResponse(error)) {
-    console.log("error.status", error.status)
-    if (error.status === 401) {
-      // <Navigate to="/auth" />
-      return redirect("/auth")
-    }
+  if ((error as AxiosError).status === 403) {
+    return <Navigate to="/" replace />
+  }
 
+  if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? "404" : "Error"
     details = error.status === 404 ? "The requested page could not be found." : error.statusText || details
   } else if (import.meta.env.DEV && error && error instanceof Error) {

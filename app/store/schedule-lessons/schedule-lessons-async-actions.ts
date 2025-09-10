@@ -57,7 +57,7 @@ export const getGroupLoadByCurrentCourse = createAsyncThunk(
     const promise = groupLoadLessonsAPI.getGroupLoadByCurrentCourse(id);
 
     toast.promise(promise, {
-      // loading: "Завантаження...",
+      loading: "Завантаження...",
       error: (error) => {
         thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR));
         return (error as any)?.response?.data?.message || error.message;
