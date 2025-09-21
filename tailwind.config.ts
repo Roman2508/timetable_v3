@@ -18,7 +18,7 @@ module.exports = {
       },
     },
   },
-  content: ["./app/**/*.{html,js,ts,jsx,tsx}"],
+  content: ["./src/**/*.{html,js,ts,jsx,tsx}"],
   sidebar: {
     DEFAULT: "hsl(var(--sidebar-background))",
     foreground: "hsl(var(--sidebar-foreground))",
@@ -29,4 +29,4 @@ module.exports = {
     border: "hsl(var(--sidebar-border))",
     ring: "hsl(var(--sidebar-ring))",
   },
-};
+}
