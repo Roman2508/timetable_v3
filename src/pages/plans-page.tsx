@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from "react"
 import { useAppDispatch } from "@/store/store"
 import { sortByName } from "@/helpers/sort-by-name"
 import { Button } from "@/components/ui/common/button"
+import { LoadingStatusTypes } from "@/store/app-types"
 import { plansSelector } from "@/store/plans/plans-slice"
+import { Skeleton } from "@/components/ui/common/skeleton"
 import { InputSearch } from "@/components/ui/custom/input-search"
 import { RootContainer } from "@/components/layouts/root-container"
 import { PopoverFilter } from "@/components/ui/custom/popover-filter"
@@ -15,8 +17,6 @@ import { generalSelector, setPlanFilters } from "@/store/general/general-slice"
 import type { PlansCategoriesType, PlansType } from "@/store/plans/plans-types"
 import PlanActionsModal from "@/components/features/pages/plans/plan-actions-modal"
 import { SelectPlanTable } from "@/components/features/select-plan/select-plan-table"
-import { LoadingStatusTypes } from "@/store/app-types"
-import { Skeleton } from "@/components/ui/common/skeleton"
 
 export type PlanActionModalType = {
   isOpen: boolean
@@ -75,7 +75,6 @@ export default function PlansPage() {
 
   const changeActiveStatus = (value: "Всі" | "Активний" | "Архів") => {
     setActiveStatus(value)
-    // setCookie(PLAN_STATUS, value)
   }
 
   useEffect(() => {
@@ -83,7 +82,12 @@ export default function PlansPage() {
   }, [])
 
   useEffect(() => {
-    if (!selectedCategories.length) return
+    if (selectedCategories.length || !plansCategories) return
+    const categories = plansCategories.map((el: any) => ({ id: el.id }))
+    setSelectedCategories(categories)
+  }, [plansCategories])
+
+  useEffect(() => {
     dispatch(setPlanFilters(selectedCategories))
   }, [selectedCategories])
 

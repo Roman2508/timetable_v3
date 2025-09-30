@@ -138,7 +138,12 @@ const GroupsPage = () => {
   }, [])
 
   useEffect(() => {
-    if (!selectedCategories.length) return
+    if (selectedCategories.length || !groupCategories) return
+    const categories = groupCategories.map((el: any) => ({ id: el.id }))
+    setSelectedCategories(categories)
+  }, [groupCategories])
+
+  useEffect(() => {
     dispatch(setGroupFilters(selectedCategories))
   }, [selectedCategories])
 

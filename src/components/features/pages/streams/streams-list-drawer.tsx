@@ -30,6 +30,8 @@ import type { GroupsShortType } from "@/store/groups/groups-types"
 import { deleteStream } from "@/store/streams/streams-async-actions"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/common/tooltip"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/common/collapsible"
+import { Skeleton } from "@/components/ui/common/skeleton"
+import LoadingSpinner from "@/components/ui/icons/loading-spinner"
 
 interface IStreamsListDrawerProps {
   isDrawerOpen: boolean
@@ -127,6 +129,8 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
               <span className="text-sm">Створити новий</span>
             </p>
           </Card>
+
+          {!streams && <LoadingSpinner classNames="my-10" />}
 
           {(streams ?? []).map((stream) => (
             <Collapsible

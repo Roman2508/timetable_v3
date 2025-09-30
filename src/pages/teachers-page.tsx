@@ -18,6 +18,8 @@ import { Card } from "@/components/ui/common/card"
 import { sortByName } from "@/helpers/sort-by-name"
 import { dialogText } from "@/constants/dialogs-text"
 import { Button } from "@/components/ui/common/button"
+import { LoadingStatusTypes } from "@/store/app-types"
+import { Skeleton } from "@/components/ui/common/skeleton"
 import { pluralizeWords } from "@/helpers/pluralize-words"
 import { useItemsByStatus } from "@/hooks/use-items-by-status"
 import { AlertWindow } from "@/components/features/alert-window"
@@ -34,8 +36,6 @@ import { TeachersTable } from "@/components/features/pages/teachers/teachers-tab
 import type { TeachersCategoryType, TeachersType } from "@/store/teachers/teachers-types"
 import type { FormData } from "@/components/features/category-actions-modal/category-actions-modal"
 import CategoryActionsModal from "@/components/features/category-actions-modal/category-actions-modal"
-import { LoadingStatusTypes } from "@/store/app-types"
-import { Skeleton } from "@/components/ui/common/skeleton"
 
 const TeachersPage = () => {
   const dispatch = useAppDispatch()
@@ -140,9 +140,14 @@ const TeachersPage = () => {
   }, [])
 
   useEffect(() => {
-    if (!selectedCategories.length) return
     dispatch(setTeacherFilters(selectedCategories))
   }, [selectedCategories])
+
+  useEffect(() => {
+    if (selectedCategories.length || !teachersCategories) return
+    const categories = teachersCategories.map((el: any) => ({ id: el.id }))
+    setSelectedCategories(categories)
+  }, [teachersCategories])
 
   return (
     <>

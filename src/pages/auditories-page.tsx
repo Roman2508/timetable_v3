@@ -18,6 +18,8 @@ import { Card } from "@/components/ui/common/card"
 import { sortByName } from "@/helpers/sort-by-name"
 import { dialogText } from "@/constants/dialogs-text"
 import { Button } from "@/components/ui/common/button"
+import { LoadingStatusTypes } from "@/store/app-types"
+import { Skeleton } from "@/components/ui/common/skeleton"
 import { pluralizeWords } from "@/helpers/pluralize-words"
 import { useItemsByStatus } from "@/hooks/use-items-by-status"
 import { AlertWindow } from "@/components/features/alert-window"
@@ -34,8 +36,6 @@ import { AuditoriesTable } from "@/components/features/pages/auditories/auditori
 import type { AuditoriesTypes, AuditoryCategoriesTypes } from "@/store/auditories/auditories-types"
 import type { FormData } from "@/components/features/category-actions-modal/category-actions-modal"
 import CategoryActionsModal from "@/components/features/category-actions-modal/category-actions-modal"
-import { LoadingStatusTypes } from "@/store/app-types"
-import { Skeleton } from "@/components/ui/common/skeleton"
 
 const AuditoriesPage = () => {
   const dispatch = useAppDispatch()
@@ -137,13 +137,18 @@ const AuditoriesPage = () => {
   }
 
   useEffect(() => {
-    if (!selectedCategories.length) return
+    if (auditoriCategories) return
+    dispatch(getAuditoryCategories())
+  }, [auditoriCategories])
+
+  useEffect(() => {
     dispatch(setAuditoryFilters(selectedCategories))
   }, [selectedCategories])
 
   useEffect(() => {
-    if (auditoriCategories) return
-    dispatch(getAuditoryCategories())
+    if (selectedCategories.length || !auditoriCategories) return
+    const categories = auditoriCategories.map((el: any) => ({ id: el.id }))
+    setSelectedCategories(categories)
   }, [auditoriCategories])
 
   return (
