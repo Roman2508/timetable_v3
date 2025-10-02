@@ -1,3 +1,4 @@
+import { useParams } from "react-router"
 import { useState, type FC } from "react"
 import { Pencil, Trash, Check, X } from "lucide-react"
 
@@ -8,12 +9,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/common/
 import { createSpecialization, deleteSpecialization, updateSpecialization } from "@/store/groups/groups-async-actions"
 
 interface Props {
-  groupId: number
   specializationList: string[]
 }
 
-const SpecializationPopover: FC<Props> = ({ groupId, specializationList }) => {
+const SpecializationPopover: FC<Props> = ({ specializationList }) => {
   const dispatch = useAppDispatch()
+
+  const { id: groupId } = useParams()
 
   const [specName, setSpecName] = useState("")
   const [isPending, setIsPending] = useState(false)

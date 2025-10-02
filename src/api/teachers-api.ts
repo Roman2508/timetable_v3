@@ -25,7 +25,7 @@ export const teachersAPI = {
   },
 
   /* teachers */
-  getTeacher(id: string) {
+  getTeacher(id: number) {
     return instanse.get(`/teachers/${id}`)
   },
   createTeacher(payload: CreateTeacherPayloadType) {

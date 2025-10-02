@@ -3,7 +3,7 @@ import { type PayloadAction, createSlice } from "@reduxjs/toolkit"
 import type { RootState } from "../app-types"
 import { LoadingStatusTypes } from "../app-types"
 import { type StudentType, type StudentsInitialState } from "./students-types"
-import { createStudent, deleteStudent, updateStudent, getStudentsByGroupId } from "./students-async-actions"
+import { createStudent, deleteStudent, updateStudent, getStudentsByGroupId, getStudent } from "./students-async-actions"
 
 const plansInitialState: StudentsInitialState = {
   students: null,
@@ -30,6 +30,11 @@ const plansSlice = createSlice({
     /* getStudentsByGroupId */
     builder.addCase(getStudentsByGroupId.fulfilled, (state, action: PayloadAction<StudentType[]>) => {
       state.students = action.payload
+    })
+
+    /* getStudent */
+    builder.addCase(getStudent.fulfilled, (state, action: PayloadAction<StudentType>) => {
+      state.student = action.payload
     })
 
     /* createStudent */

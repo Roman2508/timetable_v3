@@ -18,13 +18,12 @@ import { InputSearch } from "@/components/ui/custom/input-search"
 
 interface ISpecializationModalProps {
   isOpen: boolean
-  groupId: string
   setOpenedModalName: Dispatch<SetStateAction<string>>
 }
 
 const MODAL_NAME = "specialities"
 
-const SpecializationModal: FC<ISpecializationModalProps> = ({ isOpen, groupId, setOpenedModalName }) => {
+const SpecializationModal: FC<ISpecializationModalProps> = ({ isOpen, setOpenedModalName }) => {
   const { group } = useSelector(groupsSelector)
 
   const [globalSearch, setGlobalSearch] = useState("")
@@ -79,7 +78,7 @@ const SpecializationModal: FC<ISpecializationModalProps> = ({ isOpen, groupId, s
         <DialogFooter className="flex !justify-between items-center mt-6 px-4">
           <Button onClick={() => setOpenedModalName("")}>Закрити</Button>
 
-          <SpecializationPopover groupId={+groupId} specializationList={group?.specializationList} />
+          <SpecializationPopover specializationList={group?.specializationList} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

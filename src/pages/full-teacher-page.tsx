@@ -18,7 +18,7 @@ import { ConfirmWindow } from "@/components/features/confirm-window"
 import { createTeacher, deleteTeacher, updateTeacher } from "@/store/teachers/teachers-async-actions"
 
 interface Props {
-  teacherId: string
+  teacherId?: string
 }
 
 const initialFormState = {
@@ -29,7 +29,7 @@ const initialFormState = {
   password: "",
   calendarId: "",
   category: "",
-  status: "Активний",
+  status: "Активний" as "Активний" | "Архів",
 }
 
 const requiredMessage = "Це поле обов'язкове"
@@ -44,19 +44,32 @@ const formSchema = z.object({
   status: z.enum(["Активний", "Архів"], { message: requiredMessage }),
 })
 
-// при создании пароль обязателен
-// export const createTeacherSchema = formSchema.extend({
-//   password: z.string().nonempty("Це поле обов'язкове"),
+// const baseFormSchema = z.object({
+//   firstName: z.string({ message: requiredMessage }).nonempty(requiredMessage),
+//   middleName: z.string({ message: requiredMessage }).nonempty(requiredMessage),
+//   lastName: z.string({ message: requiredMessage }).nonempty(requiredMessage),
+//   email: z.string({ message: requiredMessage }).email({ message: "Не вірний формат пошти" }),
+//   calendarId: z.string().optional(),
+//   category: z.number({ message: requiredMessage }),
+//   status: z.enum(["Активний", "Архів"], { message: requiredMessage }),
 // })
 
-// // при обновлении пароль не обязателен
-// export const updateTeacherSchema = formSchema.extend({
+// // при создании пароль обязателен
+// const createFormSchema = baseFormSchema.extend({
+//   password: z.string().min(8, "Пароль має містити мінімум 8 символів"),
+// })
+
+// // // при обновлении пароль не обязателен
+// const updateFormSchema = baseFormSchema.extend({
 //   password: z.string().optional(),
 // })
 
+// const formSchema = z.discriminatedUnion("mode", [
+//   createFormSchema.extend({ mode: z.literal("create") }),
+//   updateFormSchema.extend({ mode: z.literal("update") }),
+// ])
+
 export type FormData = z.infer<typeof formSchema>
-// export type CreateTeacherData = z.infer<typeof createTeacherSchema>
-// export type UpdateTeacherData = z.infer<typeof updateTeacherSchema>
 
 const FullTeacher: FC<Props> = ({ teacherId }) => {
   const isUpdate = !isNaN(Number(teacherId))
@@ -149,7 +162,7 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
 
   const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
   const [showErrors, setShowErrors] = useState(false)
-  const [isPending, setIsPanding] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
   const formData = {
     ...initialFormState,
@@ -181,7 +194,8 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
   const handleSubmit = async (e: MouseEvent<HTMLFormElement>) => {
     try {
       e.preventDefault()
-      setIsPanding(true)
+      setIsPending(true)
+
       const errors = validate()
       if (errors) {
         setShowErrors(true)
@@ -198,9 +212,37 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
       const { payload } = await dispatch(createTeacher(formData))
       if (payload) navigate("/teachers")
     } finally {
-      setIsPanding(false)
+      setIsPending(false)
     }
   }
+
+  // const handleSubmit = async (e: React.MouseEvent<HTMLFormElement>) => {
+  //   try {
+  //     e.preventDefault()
+  //     setIsPending(true)
+
+  //     const mode = isUpdate ? "update" : "create"
+
+  //     const parseResult = formSchema.safeParse({ ...formData, mode })
+
+  //     if (!parseResult.success) {
+  //       setShowErrors(true)
+  //       console.log(parseResult.error.format())
+  //       return
+  //     }
+
+  //     if (isUpdate) {
+  //       const { payload } = await dispatch(updateTeacher({ ...parseResult.data, id: Number(teacherId) }))
+  //       if (payload) navigate("/teachers")
+  //       return
+  //     }
+
+  //     const { payload } = await dispatch(createTeacher(parseResult.data))
+  //     if (payload) navigate("/teachers")
+  //   } finally {
+  //     setIsPending(false)
+  //   }
+  // }
 
   const onDeleteTeacher = async () => {
     if (!isUpdate) return

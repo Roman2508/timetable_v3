@@ -17,7 +17,7 @@ import { auditoriesSelector } from "@/store/auditories/auditories-slise"
 import { createAuditory, deleteAuditory, updateAuditory } from "@/store/auditories/auditories-async-actions"
 
 interface Props {
-  auditoryId: string
+  auditoryId?: string
 }
 
 const initialFormState = {
@@ -25,7 +25,7 @@ const initialFormState = {
   seatsNumber: 0,
   courseNumber: "",
   category: "",
-  status: "Активний",
+  status: "Активний" as "Активний" | "Архів",
 }
 
 const formSchema = z.object({
@@ -97,7 +97,7 @@ const FullAuditory: FC<Props> = ({ auditoryId }) => {
   const formData = {
     ...initialFormState,
     ...auditory,
-    category: auditory?.category.id,
+    category: auditory?.category.id || 0,
     ...userFormData,
   }
 
@@ -146,7 +146,12 @@ const FullAuditory: FC<Props> = ({ auditoryId }) => {
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between items-center mb-6">
           {isUpdate ? (
-            <EntityHeader Icon={Building2} label="АУДИТОРІЯ" name={auditory.name} status={auditory.status} />
+            <EntityHeader
+              Icon={Building2}
+              label="АУДИТОРІЯ"
+              name={auditory?.name || ""}
+              status={auditory?.status || "Активний"}
+            />
           ) : (
             <h2 className="flex items-center h-14 text-2xl font-semibold">Створити аудиторію</h2>
           )}

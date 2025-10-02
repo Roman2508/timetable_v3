@@ -26,7 +26,6 @@ import ViewDistributionLoad from "./routes/view-distribution-load"
 import IndividualTeacherWork from "./routes/individual-teacher-work"
 import InstructionalMaterials from "./routes/instructional-materials"
 import TeacherActivitiesTypes from "./routes/teacher-activities-types"
-import { streamsAPI } from "./api/streams-api"
 
 export const router = createBrowserRouter([
   {

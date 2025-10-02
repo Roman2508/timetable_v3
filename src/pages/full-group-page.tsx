@@ -49,7 +49,7 @@ const formSchema = z.object({
 export type GroupFormData = z.infer<typeof formSchema>
 
 interface Props {
-  groupId: string
+  groupId?: string
 }
 
 const FullGroup: FC<Props> = ({ groupId }) => {
@@ -272,9 +272,8 @@ const FullGroup: FC<Props> = ({ groupId }) => {
   }, [openedModalName])
 
   useEffect(() => {
-    if (!isUpdate) {
-      dispatch(setGroup())
-    }
+    if (isUpdate) return
+    dispatch(setGroup())
   }, [isUpdate])
 
   return (
@@ -286,17 +285,9 @@ const FullGroup: FC<Props> = ({ groupId }) => {
         isOpen={openedModalName === "educationPlan"}
       />
 
-      <SubgroupsModal
-        /*  */
-        setOpenedModalName={setOpenedModalName}
-        isOpen={openedModalName === "subgroups"}
-      />
+      <SubgroupsModal setOpenedModalName={setOpenedModalName} isOpen={openedModalName === "subgroups"} />
 
-      <SpecializationModal
-        groupId={groupId}
-        setOpenedModalName={setOpenedModalName}
-        isOpen={openedModalName === "specialities"}
-      />
+      <SpecializationModal setOpenedModalName={setOpenedModalName} isOpen={openedModalName === "specialities"} />
 
       <RootContainer>
         <form onSubmit={handleSubmit}>

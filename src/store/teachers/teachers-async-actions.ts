@@ -125,6 +125,23 @@ export const deleteTeacherCategory = createAsyncThunk(
 
 /* teachers */
 
+export const getTeacher = createAsyncThunk("teachers/getTeacher", async (id: number, thunkAPI) => {
+  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
+
+  const promise = teachersAPI.getTeacher(id)
+
+  toast.promise(promise, {
+    error: (error) => {
+      thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
+      return (error as any)?.response?.data?.message || error.message
+    },
+  })
+
+  const { data } = await promise
+  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS))
+  return data
+})
+
 export const createTeacher = createAsyncThunk(
   "teachers/createTeacher",
   async (payload: CreateTeacherPayloadType, thunkAPI) => {

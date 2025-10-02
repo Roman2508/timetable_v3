@@ -1,6 +1,6 @@
 import z from "zod"
 import { useSelector } from "react-redux"
-import { useLocation, useNavigate } from "react-router"
+import { useNavigate } from "react-router"
 import { Pencil, Plus, Trash2, User } from "lucide-react"
 import { useMemo, useState, type FC, type MouseEvent } from "react"
 
@@ -20,7 +20,7 @@ import type { CreateStudentsPayloadType, UpdateStudentsPayloadType } from "@/api
 import { createStudent, deleteStudent, updateStudent } from "@/store/students/students-async-actions"
 
 interface Props {
-  studentId: string
+  studentId?: string
 }
 
 const initialFormState = {
