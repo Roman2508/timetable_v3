@@ -17,7 +17,7 @@ import { plansSelector } from "@/store/plans/plans-slice"
 import { Separator } from "@/components/ui/common/separator"
 import type { GroupFormData } from "@/pages/full-group-page"
 import { InputSearch } from "@/components/ui/custom/input-search"
-import type { PlansCategoriesType, PlansType } from "@/store/plans/plans-types"
+import type { PlansCategoriesType } from "@/store/plans/plans-types"
 
 interface IChangePlanModalProps {
   isOpen: boolean

@@ -52,6 +52,8 @@ const FullStudent: FC<Props> = ({ studentId }) => {
   const { student } = useSelector(studentsSelector)
   const { groupCategories } = useSelector(groupsSelector)
 
+  const isLoading = isUpdate && !student
+
   const generalInformationFields = useMemo(
     () => [
       {
@@ -181,8 +183,14 @@ const FullStudent: FC<Props> = ({ studentId }) => {
     <RootContainer>
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between items-center mb-6">
-          {isUpdate && student ? (
-            <EntityHeader Icon={User} label="СТУДЕНТ" status={student.status} name={student.name} />
+          {isUpdate ? (
+            <EntityHeader
+              Icon={User}
+              label="СТУДЕНТ"
+              isLoading={isLoading}
+              name={student ? student.name : ""}
+              status={student ? student.status : "student"}
+            />
           ) : (
             <h2 className="flex items-center h-14 text-2xl font-semibold">Створити студента</h2>
           )}
@@ -210,11 +218,12 @@ const FullStudent: FC<Props> = ({ studentId }) => {
             return (
               <EntityField
                 {...input}
+                key={input.key}
                 errors={errors}
                 isUpdate={isUpdate}
+                disabled={isLoading}
                 inputKey={input.key}
                 currentValue={currentValue}
-                // @ts-ignore
                 setUserFormData={setUserFormData}
                 inputType={input.inputType as "string" | "number"}
                 variant={input.variant as "input" | "select" | "button"}
@@ -236,7 +245,7 @@ const FullStudent: FC<Props> = ({ studentId }) => {
               <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
             </div>
 
-            <Button variant="destructive" onClick={onDeleteStudent}>
+            <Button variant="destructive" onClick={onDeleteStudent} disabled={isLoading}>
               <Trash2 />
               Видалити студента
             </Button>

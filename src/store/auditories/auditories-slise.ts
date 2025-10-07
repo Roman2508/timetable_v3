@@ -8,6 +8,7 @@ import {
   createAuditoryCategory,
   deleteAuditoryCategory,
   updateAuditoryCategory,
+  getAuditory,
 } from "./auditories-async-actions"
 import type { RootState } from "../app-types"
 import { LoadingStatusTypes } from "../app-types"
@@ -75,6 +76,12 @@ const auditoriesSlice = createSlice({
     })
 
     /* --- auditories --- */
+    
+    /* getAuditory */
+    builder.addCase(getAuditory.fulfilled, (state, action: PayloadAction<AuditoriesTypes>) => {
+      state.auditory = action.payload
+      state.loadingStatus = LoadingStatusTypes.SUCCESS
+    })
 
     /* createAuditory */
     builder.addCase(createAuditory.fulfilled, (state, action: PayloadAction<AuditoriesTypes>) => {

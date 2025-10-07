@@ -93,7 +93,7 @@ export const PopoverFilter: FC<IPopoverFilterProps> = ({
 
           {items.map((item: any) => {
             return (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2" key={item.id}>
                 <Checkbox id={item.id} checked={checkIsSelected(item.id)} onClick={() => handleSelected(item.id)} />
                 <label
                   htmlFor={item.id}

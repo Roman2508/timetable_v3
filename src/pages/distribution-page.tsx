@@ -1,9 +1,11 @@
-import { useState } from "react"
 import { useSelector } from "react-redux"
+import { useEffect, useState } from "react"
 import { GraduationCap } from "lucide-react"
+import { useSearchParams } from "react-router"
 
 import { Card } from "@/components/ui/common/card"
 import { sortByName } from "@/helpers/sort-by-name"
+import { groupsSelector } from "@/store/groups/groups-slice"
 import EntityHeader from "@/components/features/entity-header"
 import { InputSearch } from "@/components/ui/custom/input-search"
 import type { GroupsShortType } from "@/store/groups/groups-types"
@@ -17,6 +19,9 @@ import { DistributionTeacherTable } from "@/components/features/pages/distributi
 import { DistributionLessonsTable } from "@/components/features/pages/distribution/distribution-lessons-table"
 
 const DistributionPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const { groupCategories } = useSelector(groupsSelector)
   const { teachersCategories } = useSelector(teachersSelector)
 
   const [selectedGroup, setSelectedGroup] = useState<GroupsShortType | null>(null)
@@ -31,6 +36,20 @@ const DistributionPage = () => {
 
   const [selectedTeacherId, setSelectedTeacherId] = useState<number | null>(null)
   const [selectedLesson, setSelectedLesson] = useState<DistributionLessonType | null>(null)
+
+  useEffect(() => {
+    if (!selectedGroup) return
+    setSearchParams({ group: String(selectedGroup.id) })
+  }, [selectedGroup])
+
+  useEffect(() => {
+    const selectedGroup = searchParams.get("group")
+    if (!selectedGroup || isNaN(Number(selectedGroup))) return
+    if (!groupCategories) return
+    const group = groupCategories.flatMap((el) => el.groups).find((el) => el.id === +selectedGroup)
+    if (!group) return
+    setSelectedGroup(group)
+  }, [selectedGroup, groupCategories])
 
   return (
     <RootContainer>

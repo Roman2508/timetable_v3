@@ -15,6 +15,7 @@ import { teachersSelector } from "@/store/teachers/teachers-slice"
 import { RootContainer } from "@/components/layouts/root-container"
 import { getTeacherFullname } from "@/helpers/get-teacher-fullname"
 import { ConfirmWindow } from "@/components/features/confirm-window"
+import type { CreateTeacherPayloadType, UpdateTeacherPayloadType } from "@/api/api-types"
 import { createTeacher, deleteTeacher, updateTeacher } from "@/store/teachers/teachers-async-actions"
 
 interface Props {
@@ -78,6 +79,8 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
   const navigate = useNavigate()
 
   const { teachersCategories, teacher } = useSelector(teachersSelector)
+
+  const isLoading = isUpdate && !teacher
 
   const generalInformationFields = useMemo(
     () => [
@@ -203,13 +206,15 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
       }
 
       if (isUpdate) {
-        const { payload } = await dispatch(updateTeacher({ ...formData, id: Number(teacherId) }))
+        const { payload } = await dispatch(
+          updateTeacher({ ...formData, id: Number(teacherId) } as unknown as UpdateTeacherPayloadType),
+        )
         if (payload) navigate("/teachers")
 
         return
       }
 
-      const { payload } = await dispatch(createTeacher(formData))
+      const { payload } = await dispatch(createTeacher(formData as CreateTeacherPayloadType))
       if (payload) navigate("/teachers")
     } finally {
       setIsPending(false)
@@ -257,8 +262,14 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
     <RootContainer>
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between items-center mb-6">
-          {isUpdate && teacher ? (
-            <EntityHeader Icon={User} label="ВИКЛАДАЧ" status={teacher.status} name={getTeacherFullname(teacher)} />
+          {isUpdate ? (
+            <EntityHeader
+              Icon={User}
+              label="ВИКЛАДАЧ"
+              isLoading={isLoading}
+              name={getTeacherFullname(teacher)}
+              status={teacher ? teacher.status : ""}
+            />
           ) : (
             <h2 className="flex items-center h-14 text-2xl font-semibold">Створити викладача</h2>
           )}
@@ -286,8 +297,10 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
             return (
               <EntityField
                 {...input}
+                key={input.key}
                 errors={errors}
                 isUpdate={isUpdate}
+                disabled={isLoading}
                 inputKey={input.key}
                 currentValue={currentValue}
                 setUserFormData={setUserFormData}
@@ -311,7 +324,7 @@ const FullTeacher: FC<Props> = ({ teacherId }) => {
               <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
             </div>
 
-            <Button variant="destructive" onClick={onDeleteTeacher}>
+            <Button variant="destructive" onClick={onDeleteTeacher} disabled={isLoading}>
               <Trash2 />
               Видалити викладача
             </Button>

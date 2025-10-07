@@ -16,15 +16,15 @@ import { cn } from "@/lib/utils"
 import { useAppDispatch } from "@/store/store"
 import { fuzzyFilter } from "@/helpers/fuzzy-filter"
 import { Button } from "@/components/ui/common/button"
-import type { GroupLoadType, GroupsShortType } from "@/store/groups/groups-types"
 import LoadingSpinner from "@/components/ui/icons/loading-spinner"
+import { useItemsBySemesters } from "@/hooks/use-items-by-semesters"
+import type { GroupLoadType, GroupsShortType } from "@/store/groups/groups-types"
 import { getGroupLoadByCurrentCourse } from "@/store/schedule-lessons/schedule-lessons-async-actions"
 import { clearGroupLoad, scheduleLessonsSelector } from "@/store/schedule-lessons/schedule-lessons-slice"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/common/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/common/select"
 import { groupLessonsforDistribution, type DistributionLessonType } from "@/helpers/get-lesson-for-distribution"
 import { Pagination, PaginationItem, PaginationLink, PaginationContent } from "@/components/ui/common/pagination"
-import { useItemsBySemesters } from "@/hooks/use-items-by-semesters"
 
 interface IDistributionLessonsTableProps {
   globalFilter: string

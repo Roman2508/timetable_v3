@@ -45,6 +45,8 @@ const FullAuditory: FC<Props> = ({ auditoryId }) => {
 
   const { auditoriCategories, auditory } = useSelector(auditoriesSelector)
 
+  const isLoading = isUpdate && !auditory
+  console.log(isUpdate && !auditory, isUpdate, auditory)
   const formFields = useMemo(
     () => [
       {
@@ -149,6 +151,7 @@ const FullAuditory: FC<Props> = ({ auditoryId }) => {
             <EntityHeader
               Icon={Building2}
               label="АУДИТОРІЯ"
+              isLoading={isLoading}
               name={auditory?.name || ""}
               status={auditory?.status || "Активний"}
             />
@@ -179,8 +182,10 @@ const FullAuditory: FC<Props> = ({ auditoryId }) => {
             return (
               <EntityField
                 {...input}
+                key={input.key}
                 errors={errors}
                 isUpdate={isUpdate}
+                disabled={isLoading}
                 inputKey={input.key}
                 currentValue={currentValue}
                 setUserFormData={setUserFormData}
@@ -201,7 +206,7 @@ const FullAuditory: FC<Props> = ({ auditoryId }) => {
               <p className="text-black/40 text-md">Аудиторія буде видалена назавжди. Цю дію не можна відмінити.</p>
             </div>
 
-            <Button variant="destructive" onClick={onDeleteAuditory}>
+            <Button variant="destructive" onClick={onDeleteAuditory} disabled={isLoading}>
               <Trash2 />
               Видалити аудиторію
             </Button>

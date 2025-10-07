@@ -20,6 +20,7 @@ interface IEntityFieldProps {
   title: string
   inputKey: string
   isUpdate: boolean
+  disabled?: boolean
   classNames?: string
   isEditable: boolean
   labelClassNames?: string
@@ -42,6 +43,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
   errors,
   variant,
   inputKey,
+  disabled,
   isUpdate,
   onChange,
   inputType,
@@ -67,7 +69,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
           <Input
             type={inputType}
             value={currentValue}
-            disabled={isDisabled}
+            disabled={disabled || isDisabled}
             readOnly={!isEditable}
             className={cn("hover:bg-accent", !isEditable ? "cursor-default" : "")}
             onChange={(e) => {
@@ -102,6 +104,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
 
         <div className="w-full">
           <EntitiesDropdown
+            disabled={disabled}
             activeItem={activeItem}
             items={items ? items : []}
             onChangeSelected={(value) =>
@@ -131,6 +134,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
 
         <div className="w-full">
           <MultiSelect
+            disabled={disabled}
             onChange={onChange}
             activeItems={currentValue as any[]}
             items={items ? items : []}
@@ -169,7 +173,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
           <Button
             type="button"
             variant="secondary"
-            disabled={isDisabled}
+            disabled={disabled || isDisabled}
             className="w-full border !justify-between px-3 bg-sidebar"
             onClick={() => setOpenedModalName && setOpenedModalName(inputKey)}
           >

@@ -9,6 +9,7 @@ import {
   deleteTeacherCategory,
   getTeachersCategories,
   updateTeacherCategory,
+  getTeacher,
 } from "./teachers-async-actions"
 import type { RootState } from "../app-types"
 import { LoadingStatusTypes } from "../app-types"
@@ -80,6 +81,12 @@ const teachersSlice = createSlice({
     })
 
     /* --- teachers --- */
+
+    /* getTeacher */
+    builder.addCase(getTeacher.fulfilled, (state, action: PayloadAction<TeachersType>) => {
+      state.teacher = action.payload
+      state.loadingStatus = LoadingStatusTypes.SUCCESS
+    })
 
     /* createTeacher */
     builder.addCase(createTeacher.fulfilled, (state, action: PayloadAction<TeachersType>) => {

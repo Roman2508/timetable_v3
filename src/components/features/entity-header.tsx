@@ -3,15 +3,25 @@ import type { LucideProps } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "../ui/common/badge"
+import LoadingSpinner from "../ui/icons/loading-spinner"
 
 interface IEntityHeaderProps {
   name: string
   label: string
   status: string
+  isLoading?: boolean
   Icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>
 }
 
-const EntityHeader: React.FC<IEntityHeaderProps> = ({ label, name, status, Icon }) => {
+const EntityHeader: React.FC<IEntityHeaderProps> = ({ label, name, status, Icon, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div className="h-[56px] flex items-center ml-1">
+        <LoadingSpinner size={30} />
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="flex items-center gap-2">

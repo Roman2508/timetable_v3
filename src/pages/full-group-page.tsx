@@ -61,6 +61,8 @@ const FullGroup: FC<Props> = ({ groupId }) => {
   const { plansCategories } = useSelector(plansSelector)
   const { groupCategories, group } = useSelector(groupsSelector)
 
+  const isLoading = isUpdate && !group.id
+
   const generalInformationFields = useMemo(
     () => [
       {
@@ -293,7 +295,13 @@ const FullGroup: FC<Props> = ({ groupId }) => {
         <form onSubmit={handleSubmit}>
           <div className="flex justify-between items-center mb-6">
             {isUpdate ? (
-              <EntityHeader Icon={GraduationCap} label="ГРУПА" name={group.name} status={group.status} />
+              <EntityHeader
+                label="ГРУПА"
+                name={group.name}
+                Icon={GraduationCap}
+                isLoading={isLoading}
+                status={group.status}
+              />
             ) : (
               <h2 className="flex items-center h-14 text-2xl font-semibold">Створити групу</h2>
             )}
@@ -320,9 +328,11 @@ const FullGroup: FC<Props> = ({ groupId }) => {
               return (
                 <EntityField
                   {...input}
+                  key={input.key}
                   errors={errors}
                   isUpdate={isUpdate}
                   inputKey={input.key}
+                  disabled={isLoading}
                   currentValue={currentValue}
                   setUserFormData={setUserFormData}
                   inputType={input.inputType as "string" | "number"}
@@ -339,6 +349,7 @@ const FullGroup: FC<Props> = ({ groupId }) => {
               return (
                 <EntityField
                   {...input}
+                  key={input.key}
                   errors={errors}
                   isUpdate={isUpdate}
                   inputKey={input.key}
@@ -366,7 +377,7 @@ const FullGroup: FC<Props> = ({ groupId }) => {
                 <p className="text-black/40 text-md">Цю дію не можна відмінити.</p>
               </div>
 
-              <Button variant="destructive" onClick={onDeleteGroup}>
+              <Button variant="destructive" onClick={onDeleteGroup} disabled={isLoading}>
                 <Trash2 />
                 Видалити групу
               </Button>
