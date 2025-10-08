@@ -147,6 +147,7 @@ export const createTeacher = createAsyncThunk(
   async (payload: CreateTeacherPayloadType, thunkAPI) => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
+    
     const promise = teachersAPI.createTeacher(payload)
 
     toast.promise(promise, {
