@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/common/button"
 import { teacherProfileSelector } from "@/store/teacher-profile/teacher-profile-slice"
 import type { IndividualWorkPlanType } from "@/store/teacher-profile/teacher-profile-types"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/common/table"
+import { LoadingStatusTypes } from "@/store/app-types"
+import LoadingSpinner from "@/components/ui/icons/loading-spinner"
 
 interface Props {
   globalSearch: string
@@ -31,7 +33,7 @@ export const TeacherActivitiesTypesTable: FC<Props> = ({
   setIsOpenModal,
   setGlobalSearch,
 }) => {
-  const { individualWorkPlan } = useSelector(teacherProfileSelector)
+  const { individualWorkPlan, loadingStatus } = useSelector(teacherProfileSelector)
 
   const [sorting, setSorting] = useState<SortingState>([])
 
@@ -124,6 +126,26 @@ export const TeacherActivitiesTypesTable: FC<Props> = ({
       </TableHeader>
 
       <TableBody>
+        {loadingStatus === LoadingStatusTypes.LOADING && !individualWorkPlan ? (
+          <TableRow>
+            <TableCell colSpan={5} className="h-24">
+              <div className="flex justify-center pt-10">
+                <LoadingSpinner />
+              </div>
+            </TableCell>
+          </TableRow>
+        ) : null}
+
+        {loadingStatus !== LoadingStatusTypes.LOADING && individualWorkPlan && !individualWorkPlan?.length ? (
+          <TableRow>
+            <TableCell colSpan={5} className="h-24">
+              <div className="flex justify-center py-10">
+                <p className="text-md font-mono">Нічого не знайдено</p>
+              </div>
+            </TableCell>
+          </TableRow>
+        ) : null}
+
         {table.getRowModel().rows.map((groupData, index) => {
           const group = groupData.original
           return (

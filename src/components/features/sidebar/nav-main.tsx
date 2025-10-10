@@ -39,6 +39,8 @@ const NavMain: React.FC<INavMain> = ({ items }) => {
     dispatch(changeExpandSidebarItems(item))
   }
 
+  console.log(sidebar.expandedItems)
+
   const checkIsExpanded = (id: string) => {
     return sidebar.expandedItems.some((el) => el === id)
   }
