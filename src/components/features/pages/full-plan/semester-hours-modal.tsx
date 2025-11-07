@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { useParams } from "react-router"
 import { useRef, useState, type Dispatch, type SetStateAction } from "react"
 
 import {
@@ -12,13 +13,12 @@ import {
 import { cn } from "@/lib/utils"
 import EntityField from "../../entity-field"
 import { useAppDispatch } from "@/store/store"
+import { ConfirmWindow } from "../../confirm-window"
+import { dialogText } from "@/constants/dialogs-text"
 import { Button } from "@/components/ui/common/button"
 import { Separator } from "@/components/ui/common/separator"
 import type { SemesterHoursType } from "@/helpers/group-lessons-by-name"
 import { deletePlanSubjects, updatePlanSubjectsHours } from "@/store/plans/plans-async-actions"
-import { useParams } from "react-router"
-import { ConfirmWindow } from "../../confirm-window"
-import { dialogText } from "@/constants/dialogs-text"
 
 const calculateTotalHours = (hours: SemesterHoursType): number => {
   return hours.lectures + hours.practical + hours.laboratory + hours.seminars + hours.independentWork
@@ -188,6 +188,7 @@ const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
       }
 
       await dispatch(updatePlanSubjectsHours({ ...formData, planId: +planId, cmk: formData.cmk.id }))
+      setUserFormData({})
     } finally {
       setIsOpen(false)
       setIsPending(false)

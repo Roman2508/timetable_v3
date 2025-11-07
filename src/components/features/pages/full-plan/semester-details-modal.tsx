@@ -116,9 +116,10 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
         const payload = { name: formData.name, cmk: formData.cmk, planId: Number(planId) }
         await dispatch(createPlanSubjects(payload))
         onOpenChange(false)
+        setUserFormData({})
         return
       }
-
+      
       if (detailsModalType === "update" && selectedSemesterHours) {
         const payload = {
           cmk: formData.cmk,
@@ -126,9 +127,10 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
           planId: Number(planId),
           oldName: selectedSemesterHours.name,
         }
-
+        
         await dispatch(updatePlanSubjectsName(payload))
         onOpenChange(false)
+        setUserFormData({})
       }
     } finally {
       setIsPending(false)
