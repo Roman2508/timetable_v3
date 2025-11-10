@@ -76,7 +76,7 @@ const auditoriesSlice = createSlice({
     })
 
     /* --- auditories --- */
-    
+
     /* getAuditory */
     builder.addCase(getAuditory.fulfilled, (state, action: PayloadAction<AuditoriesTypes>) => {
       state.auditory = action.payload
@@ -89,7 +89,8 @@ const auditoriesSlice = createSlice({
 
       const newAuditories = state.auditoriCategories.map((el) => {
         if (el.id === action.payload.category.id) {
-          return { ...el, auditories: [...el.auditories, action.payload] }
+          const updatedAuditory = { ...action.payload, category: { id: el.id, name: el.name } }
+          return { ...el, auditories: [...el.auditories, updatedAuditory] }
         }
 
         return el

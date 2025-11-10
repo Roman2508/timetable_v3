@@ -95,15 +95,18 @@ instanse.interceptors.request.use(
 
 */
 
-// instanse.interceptors.response.use(
-//   (res) => res,
-//   async (error) => {
-//     if (error.response?.status === 401) {
-//       window.location.href = "/auth"
-//     }
-//     return Promise.reject(error)
-//   },
-// )
+instanse.interceptors.response.use(
+  (res) => res,
+  async (error) => {
+    if (window.location.pathname === "/auth") {
+      return Promise.reject(error)
+    }
+    if (error.response?.status === 401) {
+      window.location.href = "/auth"
+    }
+    return Promise.reject(error)
+  },
+)
 
 /* 
 

@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/common/input"
 import { fuzzyFilter } from "@/helpers/fuzzy-filter"
 import { Button } from "@/components/ui/common/button"
 import { plansSelector } from "@/store/plans/plans-slice"
+import LoadingSpinner from "@/components/ui/icons/loading-spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/common/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/common/select"
 import { groupLessonsByName, type PlanItemType, type SemesterHoursType } from "@/helpers/group-lessons-by-name"
@@ -261,7 +262,13 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
         </TableHeader>
 
         <TableBody>
-          {!planSubjects?.length ? (
+          {!planSubjects ? (
+            <TableRow className="hover:bg-white">
+              <TableCell colSpan={11} className="text-center py-10 font-mono">
+                <LoadingSpinner />
+              </TableCell>
+            </TableRow>
+          ) : !planSubjects?.length ? (
             <TableRow className="hover:bg-white">
               <TableCell colSpan={11} className="text-center py-10 font-mono">
                 Пусто

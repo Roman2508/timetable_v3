@@ -73,7 +73,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
         items: sortByName(teachersCategories),
       },
     ],
-    [],
+    [teachersCategories],
   )
 
   const [userFormData, setUserFormData] = useState<Partial<FormData>>({})
@@ -119,7 +119,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
         setUserFormData({})
         return
       }
-      
+
       if (detailsModalType === "update" && selectedSemesterHours) {
         const payload = {
           cmk: formData.cmk,
@@ -127,7 +127,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
           planId: Number(planId),
           oldName: selectedSemesterHours.name,
         }
-        
+
         await dispatch(updatePlanSubjectsName(payload))
         onOpenChange(false)
         setUserFormData({})

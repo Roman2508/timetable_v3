@@ -24,7 +24,6 @@ import {
 } from "./plans-async-actions"
 import type { RootState } from "../app-types"
 import { LoadingStatusTypes } from "../app-types"
-import { store } from "../store"
 
 const plansInitialState: PlansInitialState = {
   plansCategories: null,

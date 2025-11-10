@@ -103,6 +103,17 @@ const FullPlanPage: FC = ({}) => {
               onChange={(e) => setGlobalSearch(e.target.value)}
             />
 
+            <Button
+              variant="default"
+              onClick={() => {
+                setDetailsModalType("create")
+                setIsDetailsModalOpen(true)
+              }}
+            >
+              <Plus />
+              <span>Створити</span>
+            </Button>
+
             <Popover>
               <PopoverTrigger asChild>
                 <Button disabled>
@@ -140,17 +151,6 @@ const FullPlanPage: FC = ({}) => {
                 </div>
               </PopoverContent>
             </Popover>
-
-            <Button
-              variant="default"
-              onClick={() => {
-                setDetailsModalType("create")
-                setIsDetailsModalOpen(true)
-              }}
-            >
-              <Plus />
-              <span>Створити</span>
-            </Button>
           </div>
 
           <FullPlanTable

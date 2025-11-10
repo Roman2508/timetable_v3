@@ -183,7 +183,7 @@ const TeachersPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-5 gap-4 flex-wrap mb-10">
+        <div className="grid grid-cols-1 2xs:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5 gap-4 flex-wrap mb-10">
           {teachersCategories
             ? sortByName(teachersCategories).map((item) => (
                 <CategoryCard

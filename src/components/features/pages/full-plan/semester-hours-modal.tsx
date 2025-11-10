@@ -235,7 +235,7 @@ const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
 
           <div className="flex justify-between items-center leading-[1.25] opacity-[.6] text-sm">
             <div>
-              <p>{selectedSemesterHours ? `ЦК ${selectedSemesterHours.cmk.name}` : ""}</p>
+              <p>{selectedSemesterHours ? `${selectedSemesterHours.cmk.name}` : ""}</p>
               <p>Cеместр: {selectedSemesterHours.semesterNumber}</p>
             </div>
 

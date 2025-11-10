@@ -23,6 +23,7 @@ import { dialogText } from "@/constants/dialogs-text"
 import { Button } from "@/components/ui/common/button"
 import { LoadingStatusTypes } from "@/store/app-types"
 import { pluralizeWords } from "@/helpers/pluralize-words"
+import { Skeleton } from "@/components/ui/common/skeleton"
 import { groupsSelector } from "@/store/groups/groups-slice"
 import { useItemsByStatus } from "@/hooks/use-items-by-status"
 import { AlertWindow } from "@/components/features/alert-window"
@@ -36,7 +37,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/common/tabs"
 import { GroupsTable } from "@/components/features/pages/groups/groups-table"
 import { generalSelector, setGroupFilters } from "@/store/general/general-slice"
 import type { GroupCategoriesType, GroupsShortType } from "@/store/groups/groups-types"
-import { Skeleton } from "@/components/ui/common/skeleton"
 
 const GroupsPage = () => {
   const dispatch = useAppDispatch()

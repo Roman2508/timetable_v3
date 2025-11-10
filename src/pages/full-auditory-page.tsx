@@ -24,14 +24,14 @@ const initialFormState = {
   name: "",
   seatsNumber: 0,
   courseNumber: "",
-  category: "",
+  category: 0,
   status: "Активний" as "Активний" | "Архів",
 }
 
 const formSchema = z.object({
   name: z.string({ message: "Це поле обов'язкове" }).min(3, { message: "Мінімальна довжина - 3 символа" }),
   seatsNumber: z.number({ message: "Це поле обов'язкове" }),
-  category: z.number({ message: "Це поле обов'язкове" }),
+  category: z.number({ message: "Це поле обов'язкове" }).min(1, { message: "Це поле обов'язкове" }),
   status: z.enum(["Активний", "Архів"], { message: "Це поле обов'язкове" }),
 })
 
@@ -46,7 +46,7 @@ const FullAuditory: FC<Props> = ({ auditoryId }) => {
   const { auditoriCategories, auditory } = useSelector(auditoriesSelector)
 
   const isLoading = isUpdate && !auditory
-  console.log(isUpdate && !auditory, isUpdate, auditory)
+
   const formFields = useMemo(
     () => [
       {
