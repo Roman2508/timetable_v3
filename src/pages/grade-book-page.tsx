@@ -1,7 +1,9 @@
-import { useState } from "react"
 import { useSelector } from "react-redux"
+import { useEffect, useState } from "react"
 import { useSearchParams } from "react-router"
+import { ListFilter, NotebookPen, Printer, UnfoldVertical } from "lucide-react"
 
+import { useAppDispatch } from "@/store/store"
 import { Card } from "@/components/ui/common/card"
 import { Button } from "@/components/ui/common/button"
 import { LoadingStatusTypes } from "@/store/app-types"
@@ -9,13 +11,15 @@ import LoadingSpinner from "@/components/ui/icons/loading-spinner"
 import { WideContainer } from "@/components/layouts/wide-container"
 import { getTeacherFullname } from "@/helpers/get-teacher-fullname"
 import { gradeBookSelector } from "@/store/gradeBook/grade-book-slice"
-import { ListFilter, NotebookPen, Printer, UnfoldVertical } from "lucide-react"
+import { getGroupCategories } from "@/store/groups/groups-async-actions"
 import { GradeBookTable } from "@/components/features/pages/grade-book/grade-book-table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/common/tooltip"
 import SelectGradeBookModal from "@/components/features/pages/grade-book/select-grade-book-modal"
 import GradeBookSummaryModal from "@/components/features/pages/grade-book/grade-book-summary-modal"
 
-export default function PlansPage() {
+export default function GradeBookPage() {
+  const dispatch = useAppDispatch()
+
   const [searchParams, setSearchParams] = useSearchParams()
 
   const { gradeBook, loadingStatus } = useSelector(gradeBookSelector)
@@ -23,6 +27,10 @@ export default function PlansPage() {
   const [isOpenFilterModal, setIsOpenFilterModal] = useState(false)
   const [isOpenSummaryModal, setIsOpenSummaryModal] = useState(false)
   const [gradeBookLessonDates, setGradeBookLessonDates] = useState<{ date: string }[]>([])
+
+  useEffect(() => {
+    dispatch(getGroupCategories())
+  }, [])
 
   return (
     <>
@@ -36,7 +44,7 @@ export default function PlansPage() {
 
       <GradeBookSummaryModal open={isOpenSummaryModal} setOpen={setIsOpenSummaryModal} />
 
-      <WideContainer>
+      <WideContainer classNames="h-full flex flex-col">
         <div className="flex justify-between mb-6 items-center">
           {gradeBook ? (
             <div className="flex gap-5">
@@ -100,7 +108,7 @@ export default function PlansPage() {
 
         {!gradeBook && loadingStatus !== LoadingStatusTypes.LOADING ? (
           searchParams.toString() === "" ? (
-            <Card className="py-10 text-center">
+            <Card className="py-10 flex justify-center items-center flex-1">
               <p className="font-mono">Виберіть параметри для пошуку журналу</p>
             </Card>
           ) : (

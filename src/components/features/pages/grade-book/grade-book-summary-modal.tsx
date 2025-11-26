@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
-import { useSearchParams } from "react-router"
-import { useEffect, useMemo, useState, type Dispatch, type FC, type SetStateAction } from "react"
+import { ChevronDown, Trash as DeleteIcon } from "lucide-react"
+import { useState, type Dispatch, type FC, type SetStateAction } from "react"
 
 import {
   Dialog,
@@ -10,30 +10,22 @@ import {
   DialogContent,
   DialogDescription,
 } from "@/components/ui/common/dialog"
-import { SEMESTERS_LIST } from "@/constants"
-import { useAppDispatch } from "@/store/store"
-import { Button } from "@/components/ui/common/button"
-import { groupsSelector } from "@/store/groups/groups-slice"
-import { Separator } from "@/components/ui/common/separator"
-import { sortItemsByKey } from "@/helpers/sort-items-by-key"
-import { scheduleLessonsAPI } from "@/api/schedule-lessons-api"
-import DropdownSelect from "@/components/ui/custom/dropdown-select"
-import { clearGradeBook, deleteSummaryGradesLocally, gradeBookSelector } from "@/store/gradeBook/grade-book-slice"
-import type { GradeBookSummaryType, GradeBookType } from "@/store/gradeBook/grade-book-types"
-import { addSummary, deleteSummary, getGradeBook, getLessonThemes } from "@/store/gradeBook/grade-book-async-actions"
-import { lessonsForGradeBookSelector } from "@/store/schedule-lessons/schedule-lessons-slice"
-import { findLessonsForSchedule } from "@/store/schedule-lessons/schedule-lessons-async-actions"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/common/tabs"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/common/select"
-import { ChevronDown, Trash as DeleteIcon } from "lucide-react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/common/tooltip"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
 } from "@/components/ui/common/dropdown-menu"
-import { cn } from "@/lib/utils"
+import { useAppDispatch } from "@/store/store"
+import { Button } from "@/components/ui/common/button"
+import { summaryTypes } from "@/constants/summary-types"
+import { Separator } from "@/components/ui/common/separator"
+import { sortItemsByKey } from "@/helpers/sort-items-by-key"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/common/tabs"
+import type { GradeBookSummaryType } from "@/store/gradeBook/grade-book-types"
+import { addSummary, deleteSummary } from "@/store/gradeBook/grade-book-async-actions"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/common/tooltip"
+import { deleteSummaryGradesLocally, gradeBookSelector } from "@/store/gradeBook/grade-book-slice"
 
 interface IGradeBookFilterFields {
   type: (typeof summaryTypes)[number]["value"]
@@ -43,17 +35,6 @@ interface IGradeBookFilterFields {
 const lessonsTabs = [
   { label: "Створити", name: "add" },
   { label: "Видалити", name: "delete" },
-] as const
-
-export const summaryTypes = [
-  { label: "Тематична оцінка (ср.знач.)", value: "MODULE_AVERAGE" },
-  { label: "Рейтинг з модуля (сума)", value: "MODULE_SUM" },
-  { label: "Семестрова оцінка (ср.знач.)", value: "LESSON_AVERAGE" },
-  { label: "Рейтинг з дисципліни (сума)", value: "LESSON_SUM" },
-  { label: "Модульний контроль", value: "MODULE_TEST" },
-  { label: "Додатковий рейтинг", value: "ADDITIONAL_RATE" },
-  { label: "Поточний рейтинг", value: "CURRENT_RATE" },
-  { label: "Екзамен", value: "EXAM" },
 ] as const
 
 const defaultUserFormData: IGradeBookFilterFields = { type: summaryTypes[0].value, afterLesson: 1 }

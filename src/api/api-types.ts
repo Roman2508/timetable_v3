@@ -5,20 +5,9 @@ import { LessonsTypeRu } from "../store/schedule-lessons/schedule-lessons-types"
 import { type EditorJSItemType, type TeachersType } from "../store/teachers/teachers-types"
 import { GradeBookSummaryTypes, type GradeType } from "../store/gradeBook/grade-book-types"
 import { IndividualTeacherWordTypes, type TeacherReportFileType } from "../store/teacher-profile/teacher-profile-types"
+import type { summaryTypes } from "@/constants/summary-types"
 
 /* Global */
-
-/* Коли буде компонент "../components/GradeBookPage/AddSummaryModal"; це потрібно перенести туди:*/
-export const summaryTypes = [
-  { label: "Тематична оцінка (ср.знач.)", value: "MODULE_AVERAGE" },
-  { label: "Рейтинг з модуля (сума)", value: "MODULE_SUM" },
-  { label: "Семестрова оцінка (ср.знач.)", value: "LESSON_AVERAGE" },
-  { label: "Рейтинг з дисципліни (сума)", value: "LESSON_SUM" },
-  { label: "Модульний контроль", value: "MODULE_TEST" },
-  { label: "Додатковий рейтинг", value: "ADDITIONAL_RATE" },
-  { label: "Поточний рейтинг", value: "CURRENT_RATE" },
-  { label: "Екзамен", value: "EXAM" },
-] as const
 
 export type CreateGroupCategoryPayloadType = { name: string; shortName: string }
 export type UpdateGroupCategoryPayloadType = { id: number; name: string; shortName: string }
