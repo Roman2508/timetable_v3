@@ -411,10 +411,10 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
 
           <div className="w-full border-l grid" style={{ gridTemplateColumns: `repeat(${weeksPerPage || 7}, 1fr)` }}>
             {currentWeekDays.map((day, index) => {
-              // Приховати суботу та неділю
-              if (weeksPerPage === 5 && (index === 5 || index === 6)) return
               // Приховати неділю
               if (weeksPerPage === 6 && index === 6) return
+              // Приховати суботу та неділю
+              if (weeksPerPage === 5 && (index === 5 || index === 6)) return
 
               return (
                 <TimetableCalendarDay
