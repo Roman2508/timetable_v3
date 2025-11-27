@@ -77,13 +77,13 @@ export const GradeBookTable: FC<IGradeBookTableProps> = ({ gradeBookLessonDates 
 
   return (
     <>
-      <div className="block max-w-full">
-        <table className="block w-full overflow-auto border max-h-[calc(100vh-165px)] relative">
+      <div className="block max-w-full flex-1">
+        <table className="block w-full overflow-auto border h-full max-h-[calc(100vh-165px)] relative">
           <GradeBookTableHead gradeBook={gradeBook} gradeBookLessonDates={gradeBookLessonDates} />
 
           <tbody>
             {gradeBookGrades.map((grade: StudentGradesType, rowIndex: number) => (
-              <tr key={grade.id}>
+              <tr key={grade.id} className="border border-b">
                 <td className="truncate max-w-[300px] border-l sticky left-0 z-10 bg-background translate-x-[-1px] p-0 px-2 border-t text-sm">
                   {rowIndex + 1}. {grade.student.name}
                 </td>
