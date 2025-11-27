@@ -261,11 +261,11 @@ const SemesterHoursModal: React.FC<ISemesterHoursModalProps> = ({
                   {...input}
                   errors={errors}
                   isUpdate={false}
-                  classNames="mb-2"
                   inputKey={input.key}
                   isEditable={!isPending}
                   labelClassNames="min-w-70"
                   currentValue={currentValue}
+                  classNames="mb-2 items-center"
                   setUserFormData={setUserFormData}
                   inputType={input.inputType as "string" | "number"}
                   variant={input.variant as "input" | "select" | "button"}

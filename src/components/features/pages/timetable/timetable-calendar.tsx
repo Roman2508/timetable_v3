@@ -33,6 +33,8 @@ import getCalendarWeek, { type WeekType } from "@/helpers/get-calendar-week"
 import SelectAuditoryModal from "../../select-auditory/select-auditory-modal"
 import { generalSelector, setTimetableData } from "@/store/general/general-slice"
 import type { ScheduleLessonType } from "@/store/schedule-lessons/schedule-lessons-types"
+import { Select } from "@/components/ui/common/select"
+import DropdownSelect from "@/components/ui/custom/dropdown-select"
 
 export interface ISelectedTimeSlot {
   data: Dayjs
@@ -63,7 +65,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
   const [_, setCookie] = useCookies()
 
   const {
-    timetable: { semester, week, item, type },
+    timetable: { semester, week, item, type, weeksPerPage },
   } = useSelector(generalSelector)
   const { settings } = useSelector(settingsSelector)
   const { scheduleLessons, teacherLessons, groupOverlay, loadingStatus } = useSelector(scheduleLessonsSelector)
@@ -327,7 +329,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
 
       <div className="w-7/10 border-t">
         <div className="flex border-x">
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between w-full 2xl:flex-row flex-col items-center">
             <div className="flex gap-2 p-2">
               <Button variant="outline" className="select-none" size="sm" disabled={isTodayDisabled} onClick={setToday}>
                 Сьогодні
@@ -364,8 +366,22 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
               </Button>
             </div>
 
-            {type === "group" && (
-              <div className="p-2">
+            <div className="2xl:p-2 pb-2 flex gap-2">
+              <DropdownSelect
+                isLabelInside
+                size="sm"
+                classNames="2xl:w-45 w-36"
+                label="Днів на тиждень"
+                selectedItem={weeksPerPage || 7}
+                items={[
+                  { id: 5, name: "5" },
+                  { id: 6, name: "6" },
+                  { id: 7, name: "7" },
+                ]}
+                onChange={(weeksPerPage) => dispatch(setTimetableData({ weeksPerPage }))}
+              />
+
+              {type === "group" && (
                 <Button
                   size="sm"
                   variant="outline"
@@ -374,8 +390,8 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
                 >
                   Копіювати розклад
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
@@ -384,7 +400,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
             <div className="h-8 border-t h-[33px]"></div>
 
             {[1, 2, 3, 4, 5, 6, 7].map((lessonNumber) => {
-              const classNames = lessonNumber === 7 ? "h-[101px] border-y" : "h-25 border-t"
+              const classNames = lessonNumber === 7 ? "2xl:h-[101px] h-[81px] border-y" : "2xl:h-25 h-20 border-t"
               return (
                 <div className={cn("text-xs font-bold p-2", classNames)} key={lessonNumber}>
                   {lessonNumber}
@@ -393,10 +409,12 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
             })}
           </div>
 
-          <div className="w-full border-l grid grid-cols-7">
+          <div className="w-full border-l grid" style={{ gridTemplateColumns: `repeat(${weeksPerPage || 7}, 1fr)` }}>
             {currentWeekDays.map((day, index) => {
-              // Приховати вихідні
-              // if (index === 5 || index === 6) return;
+              // Приховати суботу та неділю
+              if (weeksPerPage === 5 && (index === 5 || index === 6)) return
+              // Приховати неділю
+              if (weeksPerPage === 6 && index === 6) return
 
               return (
                 <TimetableCalendarDay

@@ -171,12 +171,12 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
 
   return (
     <Table className="w-full">
-      <TableHeader className="h-12">
+      <TableHeader className="2xl:h-12 !h-10">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="hover:bg-white">
             {headerGroup.headers.map((header, index) => {
               return (
-                <TableHead key={header.id} colSpan={header.colSpan} className="text-sm">
+                <TableHead key={header.id} colSpan={header.colSpan} className="2xl:text-sm !text-[11px]">
                   {header.isPlaceholder ? null : (
                     <div
                       className={cn(index !== 4 ? "cursor-pointer select-none text-left" : "text-right")}
@@ -252,7 +252,7 @@ export const LessonsTable: React.FC<ILessonsTableProps> = ({
                   <TableCell
                     key={cell.id}
                     className={cn(
-                      "text-left px-2 py-1 text-xs cursor-pointer",
+                      "text-left px-2 py-1 2xl:text-xs text-[11px] cursor-pointer",
                       isLastCol ? "!text-right" : "",
                       index === 0 ? "truncate max-w-[160px]" : "",
                       isSelected ? "!text-primary !bg-primary-light" : "",

@@ -29,5 +29,6 @@ export type GeneralSliceInitialState = {
     item: number | null
     category: number | null
     type: string | null
+    weeksPerPage: number
   }
 }

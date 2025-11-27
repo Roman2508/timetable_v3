@@ -143,10 +143,10 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
   }, [defaultCategoriesList, defaultItemsList])
 
   return (
-    <div className="flex justify-between mb-4">
+    <div className="flex 2xl:justify-between items-center mb-4 2xl:gap-0 gap-3 2xl:flex-row flex-col">
       <div className="flex gap-3">
         <DropdownSelect
-          classNames="w-75"
+          classNames="2xl:w-75 w-60 2xl:!px-4 !px-2 2xl:h-10 h-8 2xl:text-sm text-[12px]"
           label="Категорії"
           items={categoriesList}
           onChange={(category) => onCategoryChange(category)}
@@ -154,7 +154,7 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
         />
 
         <DropdownSelect
-          classNames="w-55"
+          classNames="2xl:w-55 w-35 2xl:!px-4 !px-2 2xl:h-10 h-8 2xl:text-sm text-[12px]"
           items={itemsList}
           selectedItem={item || null}
           onChange={(item) => dispatch(setTimetableData({ item }))}
@@ -162,7 +162,7 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
         />
 
         <DropdownSelect
-          classNames="w-30"
+          classNames="2xl:w-30 w-25 2xl:!px-4 !px-2 2xl:h-10 h-8 2xl:text-sm text-[12px]"
           label="Семестр"
           items={semesters}
           selectedItem={semester || null}
@@ -171,7 +171,7 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
 
         <DropdownSelect
           sortBy="id"
-          classNames="w-30"
+          classNames="2xl:w-30 w-25 2xl:!px-4 !px-2 2xl:h-10 h-8 2xl:text-sm text-[12px]"
           label="Тиждень"
           items={weeksList()}
           selectedItem={week || null}
@@ -181,13 +181,13 @@ const TimetableHeader: FC<ITimetableHeaderProps> = ({ weeksCount, setSelectedLes
 
       <Tabs defaultValue={type || "group"} onValueChange={(value) => onTabChange(value)}>
         <TabsList className="h-full">
-          <TabsTrigger value="group" className="h-10">
+          <TabsTrigger value="group" className="2xl:h-10 h-8">
             Групи
           </TabsTrigger>
-          <TabsTrigger value="teacher" className="h-10">
+          <TabsTrigger value="teacher" className="2xl:h-10 h-8">
             Викладачі
           </TabsTrigger>
-          <TabsTrigger value="auditory" className="h-10">
+          <TabsTrigger value="auditory" className="2xl:h-10 h-8">
             Аудиторії
           </TabsTrigger>
         </TabsList>

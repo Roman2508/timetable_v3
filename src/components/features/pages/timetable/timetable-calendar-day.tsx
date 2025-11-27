@@ -120,7 +120,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
     <div className="border-t">
       <div
         className={cn(
-          "border-b p-2 border-r text-xs font-bold h-[33px] whitespace-nowrap",
+          "border-b p-2 border-r 2xl:text--xs text-[11px] font-bold h-[33px] whitespace-nowrap",
           isToday ? "text-primary bg-primary-light" : "",
         )}
       >
@@ -151,7 +151,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
           <Fragment key={`${day.start}-${lessonNumber}`}>
             {!!lesson?.length && (
               <div
-                className="h-25 border-b text-xs border-r overflow-hidden cursor-pointer"
+                className="2xl:h-25 h-20 border-b 2xl:text--xs text-[11px] border-r overflow-hidden cursor-pointer"
                 style={lesson && lesson[0] ? { backgroundColor: colors[convertColorKeys[lesson[0].typeRu]] } : {}}
               >
                 {!!lesson.length &&
@@ -230,7 +230,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
             {/* Накладки викладача або групи */}
             {!lesson?.length && overlay && (
               <div
-                className="h-25 border-b p-2 text-xs border-r overflow-hidden"
+                className="2xl:h-25 h-20 border-b p-2 2xl:text--xs text-[11px] border-r overflow-hidden"
                 style={{ color: "red", cursor: "default", padding: "2px 4px" }}
               >
                 {overlay && (
@@ -256,7 +256,7 @@ const TimetableCalendarDay: FC<ICalendarDayProps> = ({
             {!lesson?.length && !overlay && (
               <div
                 className={cn(
-                  "h-25 border-b p-2 text-xs border-r overflow-hidden  cursor-pointer",
+                  "2xl:h-25 h-20 border-b p-2 text-xs border-r overflow-hidden  cursor-pointer",
                   isDayOutsideTheSemester ? "bg-sidebar cursor-default" : "",
                 )}
                 onClick={() => {

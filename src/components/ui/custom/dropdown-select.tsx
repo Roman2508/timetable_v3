@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC } from "react"
 import { ChevronDown } from "lucide-react"
+import { useLayoutEffect, useMemo, useRef, useState, type FC } from "react"
 
 import {
   DropdownMenu,
@@ -19,6 +19,8 @@ interface IDropdownSelectProps {
   items: IItem[]
   classNames?: string
   sortBy?: "name" | "id"
+  size?: "sm" | "lg"
+  isLabelInside?: boolean
   selectedItem?: IItem | null
   onChange: (id: number) => void
 }
@@ -27,9 +29,11 @@ const DropdownSelect: FC<IDropdownSelectProps> = ({
   items,
   onChange,
   label = "",
+  size = "lg",
   classNames = "",
   sortBy = "name",
   selectedItem = null,
+  isLabelInside = false,
 }) => {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
 
@@ -51,14 +55,23 @@ const DropdownSelect: FC<IDropdownSelectProps> = ({
     }
   }, [])
 
+  const dropdownLabel = active ? `${isLabelInside ? `${label}: ` : ""}${active.name}` : label
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={cn("flex justify-between shadow-0 relative", classNames)} ref={triggerRef}>
-          <span className="absolute top-[-8px] font-sm" style={{ fontSize: "12px" }}>
-            {label}
-          </span>
-          <span className="truncate">{active ? active.name : label}</span>
+        <Button
+          size={size}
+          variant="outline"
+          className={cn("flex justify-between shadow-0 relative", classNames)}
+          ref={triggerRef}
+        >
+          {!isLabelInside && (
+            <span className="absolute top-[-8px] font-sm" style={{ fontSize: "12px" }}>
+              {label}
+            </span>
+          )}
+          <span className="truncate">{dropdownLabel}</span>
           <ChevronDown />
         </Button>
       </DropdownMenuTrigger>
@@ -69,6 +82,7 @@ const DropdownSelect: FC<IDropdownSelectProps> = ({
             Пусто
           </DropdownMenuCheckboxItem>
         )}
+
         {memorizedItems.map((item) => (
           <DropdownMenuCheckboxItem
             key={item.id}

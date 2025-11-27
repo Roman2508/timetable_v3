@@ -70,20 +70,24 @@ export const groupLessonsByName = (subjects: PlanSubjectType[]): PlanItemType[] 
 
   const groupedSubjectsValues: PlanSubjectType[][] = Object.values(groupedSubjects)
 
-  const planItems = groupedSubjectsValues.map((el: PlanSubjectType[]) => ({
-    name: el[0].name,
-    cmk: el[0].cmk,
-    totalHours: el[0].totalHours,
-    semesterNumber: el[0].semesterNumber,
-    semester_1: getSemesterHours(el, 1),
-    semester_2: getSemesterHours(el, 2),
-    semester_3: getSemesterHours(el, 3),
-    semester_4: getSemesterHours(el, 4),
-    semester_5: getSemesterHours(el, 5),
-    semester_6: getSemesterHours(el, 6),
-    semester_7: getSemesterHours(el, 7),
-    semester_8: getSemesterHours(el, 8),
-  }))
+  const planItems = groupedSubjectsValues.map((el: PlanSubjectType[]) => {
+    const totalHours = el.reduce((acc, el) => acc + el.totalHours, 0)
+
+    return {
+      name: el[0].name,
+      cmk: el[0].cmk,
+      totalHours: totalHours,
+      semesterNumber: el[0].semesterNumber,
+      semester_1: getSemesterHours(el, 1),
+      semester_2: getSemesterHours(el, 2),
+      semester_3: getSemesterHours(el, 3),
+      semester_4: getSemesterHours(el, 4),
+      semester_5: getSemesterHours(el, 5),
+      semester_6: getSemesterHours(el, 6),
+      semester_7: getSemesterHours(el, 7),
+      semester_8: getSemesterHours(el, 8),
+    }
+  })
 
   return planItems
 }
