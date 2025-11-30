@@ -20,13 +20,13 @@ export default function HomePage() {
         {navData.navMain.map((el) => (
           <div key={el.id}>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold">{el.title}</h1>
+              <h1 className="text-2xl font-bold">{el.title}</h1>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-3 mt-4 mb-10">
               {el.items.map((item) => (
                 <Link to={item.url} key={item.id}>
-                  <Card className="shadow-none hover:border-primary min-h-[80px] h-full p-2 pl-3 2xl:p-3 2xl:pl-5 cursor-pointer gap-2 2xl:gap-4">
+                  <Card className="shadow-sm hover:shadow-md hover:border-primary min-h-[80px] h-full p-2 pl-3 2xl:p-3 2xl:pl-5 cursor-pointer gap-2 2xl:gap-4">
                     <div className="[&>svg]:w-7 2xl:[&>svg]:w-9 [&>svg]:h-7 2xl:[&>svg]:h-9">
                       {item.icon && <item.icon strokeWidth={1.25} />}
                     </div>

@@ -1,20 +1,13 @@
+import { useSelector } from "react-redux"
 import React, { useMemo, type FC } from "react"
 
-import AbsentIcon from "@/components/ui/icons/absent-icon"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/common/table"
-import type {
-  GradeBookSummaryTypes,
-  GradeBookType,
-  GradeType,
-  StudentGradesType,
-} from "@/store/gradeBook/grade-book-types"
 import { useAppDispatch } from "@/store/store"
-import { gradeBookSelector, updateGradesLocally } from "@/store/gradeBook/grade-book-slice"
-import { updateGrade } from "@/store/gradeBook/grade-book-async-actions"
 import GradeBookTableHead from "./grade-book-table-head"
-import { useSelector } from "react-redux"
 import GradeBookTableCell from "./grade-book-table-cell"
 import { gradeBookSummary } from "@/helpers/grade-book-summary"
+import { updateGrade } from "@/store/gradeBook/grade-book-async-actions"
+import { gradeBookSelector, updateGradesLocally } from "@/store/gradeBook/grade-book-slice"
+import type { GradeBookSummaryTypes, GradeType, StudentGradesType } from "@/store/gradeBook/grade-book-types"
 
 const cellInitialState = {
   lessonNumber: 0,
@@ -78,12 +71,12 @@ export const GradeBookTable: FC<IGradeBookTableProps> = ({ gradeBookLessonDates 
   return (
     <>
       <div className="block max-w-full flex-1">
-        <table className="block w-full overflow-auto border h-full max-h-[calc(100vh-165px)] relative">
+        <table className="block w-full overflow-auto border h-full max-h-[calc(100vh-140px)] relative rounded-md shadow-sm">
           <GradeBookTableHead gradeBook={gradeBook} gradeBookLessonDates={gradeBookLessonDates} />
 
           <tbody>
             {gradeBookGrades.map((grade: StudentGradesType, rowIndex: number) => (
-              <tr key={grade.id} className="border border-b">
+              <tr key={grade.id} className="border border-b !h-[30px]">
                 <td className="truncate max-w-[300px] border-l sticky left-0 z-10 bg-background translate-x-[-1px] p-0 px-2 border-t text-sm">
                   {rowIndex + 1}. {grade.student.name}
                 </td>

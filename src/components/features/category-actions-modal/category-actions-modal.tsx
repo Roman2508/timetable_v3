@@ -115,7 +115,7 @@ const CategoryActionsModal: FC<ICategoryActionsModalProps> = ({
     <Dialog open={modalData.isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="pb-4">
+          <DialogTitle className="text-xl font-bold tracking-tight pb-4">
             {modalData.actionType === "create" ? (title ? title : "Створити новий підрозділ:") : ""}
             {modalData.actionType === "update" ? (title ? title : "Оновити підрозділ:") : ""}
           </DialogTitle>

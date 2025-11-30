@@ -26,6 +26,7 @@ import TimetableCalendarDay from "./timetable-calendar-day"
 import CopyingTimetableModal from "./copying-timetable-modal"
 import type { ISelectedLesson } from "@/pages/timetable-page"
 import { settingsSelector } from "@/store/settings/settings-slice"
+import DropdownSelect from "@/components/ui/custom/dropdown-select"
 import type { TeachersType } from "@/store/teachers/teachers-types"
 import SelectTeacherModal from "../../select-teacher/select-teacher-modal"
 import type { AuditoriesTypes } from "@/store/auditories/auditories-types"
@@ -33,8 +34,6 @@ import getCalendarWeek, { type WeekType } from "@/helpers/get-calendar-week"
 import SelectAuditoryModal from "../../select-auditory/select-auditory-modal"
 import { generalSelector, setTimetableData } from "@/store/general/general-slice"
 import type { ScheduleLessonType } from "@/store/schedule-lessons/schedule-lessons-types"
-import { Select } from "@/components/ui/common/select"
-import DropdownSelect from "@/components/ui/custom/dropdown-select"
 
 export interface ISelectedTimeSlot {
   data: Dayjs
@@ -327,7 +326,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
         setLessonActionsModalVisible={setActionsModalVisible}
       />
 
-      <div className="w-7/10 border-t">
+      <div className="w-7/10 border-t shadow-sm rounded-md overflow-hidden">
         <div className="flex border-x">
           <div className="flex justify-between w-full 2xl:flex-row flex-col items-center">
             <div className="flex gap-2 p-2">

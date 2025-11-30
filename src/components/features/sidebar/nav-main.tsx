@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import { Link, useLocation } from "react-router"
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight, LayoutGrid, type LucideIcon } from "lucide-react"
 
 import {
   SidebarMenu,
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils"
 import { useAppDispatch } from "@/store/store"
 import { changeExpandSidebarItems, generalSelector } from "@/store/general/general-slice"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/common/collapsible"
+import { Button } from "@/components/ui/common/button"
 
 interface INavMainItem {
   id: string
@@ -48,6 +49,17 @@ const NavMain: React.FC<INavMain> = ({ items }) => {
   return (
     <SidebarGroup>
       <SidebarMenu>
+        <Link to="/">
+          <SidebarMenuButton
+            tooltip="Головна"
+            className={cn(pathname === "/" ? "!text-primary !bg-primary-light" : "", "cursor-pointer")}
+          >
+            <LayoutGrid />
+            <span>Головна</span>
+            {/* <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" /> */}
+          </SidebarMenuButton>
+        </Link>
+
         {items.map((item) => (
           <Collapsible
             asChild

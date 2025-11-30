@@ -175,9 +175,9 @@ const StudentsDivideLessons: FC<IStudentsDivideLessonsProps> = ({
 
       <div className="flex gap-2 mb-3 w-full">
         <Tabs defaultValue="all" className="w-full" onValueChange={(value) => setDividingType(value as "all" | "one")}>
-          <TabsList className="w-full">
+          <TabsList className="w-full h-[40px]">
             {lessonsTabs.map((el) => (
-              <TabsTrigger key={el.name} value={el.name} className="h-[40px] w-full flex-1" disabled={!lessons.length}>
+              <TabsTrigger key={el.name} value={el.name} className="w-full flex-1" disabled={!lessons.length}>
                 {el.label}
               </TabsTrigger>
             ))}

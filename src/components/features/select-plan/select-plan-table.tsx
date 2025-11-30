@@ -108,7 +108,7 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
         if (searchValue && !filteredPlans.length) return
 
         return (
-          <Collapsible className="pt-2 border mb-4" key={el.id} defaultOpen>
+          <Collapsible className="pt-2 border mb-4 rounded-md" key={el.id} defaultOpen>
             <div className="flex items-center justify-between pl-4 pb-2 pr-2">
               <h4 className="text-sm font-semibold">{el.name}</h4>
 

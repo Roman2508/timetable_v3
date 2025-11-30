@@ -3,7 +3,6 @@ import type { Dispatch, SetStateAction } from "react"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/common/input"
 import AbsentIcon from "@/components/ui/icons/absent-icon"
-import { Checkbox } from "@/components/ui/common/checkbox"
 import type { GradeBookSummaryTypes, GradeType } from "@/store/gradeBook/grade-book-types"
 
 interface IGradeBookTableCellProps {
@@ -99,7 +98,7 @@ const GradeBookTableCell: React.FC<IGradeBookTableCellProps> = ({
 
             <Input
               type="number"
-              className="p-0 bg-white border-0 h-5 w-[50%] text-sm"
+              className="p-0 bg-white border-0 h-full w-[50%] text-sm rounded-none"
               value={cellData.rating !== 0 ? cellData.rating : ""}
               onChange={(e) => setCellData((prev) => ({ ...prev, rating: Number(e.target.value) }))}
             />
@@ -110,16 +109,7 @@ const GradeBookTableCell: React.FC<IGradeBookTableCellProps> = ({
               <AbsentIcon classNames={cn(currentCellData?.isAbsence ? "opacity-[1]" : "opacity-[0.1]")} />
             )}
 
-            <p
-              className="w-[50%] text-left text-sm"
-              // style={
-              //   showAbsenceCheckbox
-              //     ? { fontWeight: "400" }
-              //     : { fontWeight: "400", display: "flex", justifyContent: "center", alignItems: "center" }
-              // }
-            >
-              {currentCellData?.rating ? currentCellData.rating : ""}
-            </p>
+            <p className="w-[50%] text-left text-sm">{currentCellData?.rating ? currentCellData.rating : ""}</p>
           </>
         )}
       </div>

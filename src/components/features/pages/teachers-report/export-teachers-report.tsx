@@ -71,7 +71,12 @@ const ExportTeachersReport: FC<Props> = ({ showedYear }) => {
   }
 
   return (
-    <Button onClick={generateDocx} disabled={!report || !workload} style={{ textTransform: "initial" }}>
+    <Button
+      onClick={generateDocx}
+      disabled={!report || !workload}
+      style={{ textTransform: "initial" }}
+      className="!h-9"
+    >
       Експортувати звіт в WORD
     </Button>
   )

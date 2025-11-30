@@ -115,7 +115,7 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Потоки</DrawerTitle>
+          <DrawerTitle className="text-xl font-bold tracking-tight">Потоки</DrawerTitle>
           <DrawerDescription>Список навчальних потоків</DrawerDescription>
         </DrawerHeader>
 
@@ -135,7 +135,7 @@ const StreamsListDrawer: FC<IStreamsListDrawerProps> = ({
           {(streams ?? []).map((stream) => (
             <Collapsible
               className={cn(
-                "py-2 px-4 border mb-2 hover:border-primary hover:cursor-pointer",
+                "py-2 px-4 border mb-2 rounded-md hover:border-primary hover:cursor-pointer",
                 preSelectedStream?.id === stream.id ? "border-primary" : "",
               )}
               key={stream.id}

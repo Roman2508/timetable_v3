@@ -14,6 +14,7 @@ import TimetableHeader from "@/components/features/pages/timetable/timetable-hea
 import TimetableCalendar from "@/components/features/pages/timetable/timetable-calendar"
 import { getGroupOverlay } from "@/store/schedule-lessons/schedule-lessons-async-actions"
 import { clearGroupLoad, clearGroupOverlay } from "@/store/schedule-lessons/schedule-lessons-slice"
+import { Card } from "@/components/ui/common/card"
 
 export interface ISelectedLesson {
   id: number
@@ -107,7 +108,7 @@ const TimetablePage = () => {
         />
 
         <div className="flex gap-4">
-          <div className="w-3/10 border">
+          <div className="w-3/10 border rounded-md shadow-sm">
             <LessonsTable
               selectedSemester={semester}
               selectedLesson={selectedLesson}

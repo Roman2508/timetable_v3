@@ -26,7 +26,8 @@ const CategoryCard: React.FC<ICategoryCardProps> = ({
   itemsLabel = "",
 }) => {
   return (
-    <Card className="shadow-none hover:border-primary gap-0 min-h-[100px] py-3">
+    <Card className="bg-card text-card-foreground flex flex-col gap-0 rounded-xl border py-3 shadow-sm group cursor-pointer transition-all hover:shadow-md hover:border-primary/50">
+      {/* <Card className="shadow-none hover:border-primary gap-0 min-h-[100px] py-3"> */}
       <CardHeader className="px-3 flex justify-between items-center">
         <CardDescription className="whitespace-nowrap">{label}</CardDescription>
 

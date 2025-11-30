@@ -300,7 +300,7 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-center my-10 gap-8">
+      <div className="flex items-center justify-center gap-8">
         <Pagination>
           <PaginationContent className="flex gap-4">
             <PaginationItem onClick={() => table.setPageIndex(0)}>

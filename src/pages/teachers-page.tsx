@@ -36,6 +36,8 @@ import { TeachersTable } from "@/components/features/pages/teachers/teachers-tab
 import type { TeachersCategoryType, TeachersType } from "@/store/teachers/teachers-types"
 import type { FormData } from "@/components/features/category-actions-modal/category-actions-modal"
 import CategoryActionsModal from "@/components/features/category-actions-modal/category-actions-modal"
+import { Badge } from "@/components/ui/common/badge"
+import { PageTopTitle } from "@/components/features/page-top-title"
 
 const TeachersPage = () => {
   const dispatch = useAppDispatch()
@@ -162,7 +164,7 @@ const TeachersPage = () => {
 
       <RootContainer classNames="mb-10">
         <div className="flex justify-between mb-6">
-          <h2 className="text-xl">Циклові комісії</h2>
+          <PageTopTitle title="Циклові комісії" description="Управління цикловими комісіями та кадровим складом" />
 
           <div className="flex items-center gap-2">
             <NavLink to="/teachers/create">
@@ -213,33 +215,45 @@ const TeachersPage = () => {
           )}
         </div>
 
-        <h2 className="text-xl mb-4">Кадровий склад</h2>
+        <h2 className="text-2xl font-bold tracking-tight mb-4">Кадровий склад</h2>
 
-        <Tabs
-          className="mb-4"
-          defaultValue={activeStatus}
-          onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
-        >
-          <TabsList>
-            <TabsTrigger value="Всі">Всі ({counts.all})</TabsTrigger>
-            <TabsTrigger value="Активний">Активні ({counts.active})</TabsTrigger>
-            <TabsTrigger value="Архів">Архів ({counts.archive})</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-between items-center mb-4">
+          <Tabs
+            className="mb-4"
+            defaultValue={activeStatus}
+            onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
+          >
+            <TabsList>
+              <TabsTrigger value="Всі">
+                Всі <Badge variant="secondary">{counts.all}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Активний">
+                Активні <Badge variant="secondary">{counts.active}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Архів">
+                Архів <Badge variant="secondary">{counts.archive}</Badge>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <InputSearch
-          className="mb-8"
-          value={globalSearch}
-          placeholder="Пошук..."
-          onChange={(e) => setGlobalSearch(e.target.value)}
-        />
+          <InputSearch
+            value={globalSearch}
+            placeholder="Пошук..."
+            className="max-w-72 w-full"
+            onChange={(e) => setGlobalSearch(e.target.value)}
+          />
+        </div>
 
         {filteredItems.length ? (
-          <TeachersTable teachers={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+          <Card className="p-2">
+            <TeachersTable teachers={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+          </Card>
         ) : loadingStatus === LoadingStatusTypes.LOADING ? (
           <div className="font-mono text-center">Завантаження...</div>
         ) : (
-          <div className="font-mono text-center">Пусто</div>
+          <Card className="py-4 px-2">
+            <div className="font-mono text-center">Пусто</div>
+          </Card>
         )}
       </RootContainer>
     </>

@@ -18,6 +18,7 @@ import { ConfirmWindow } from "@/components/features/confirm-window"
 import type { GroupCategoriesType } from "@/store/groups/groups-types"
 import type { CreateStudentsPayloadType, UpdateStudentsPayloadType } from "@/api/api-types"
 import { createStudent, deleteStudent, updateStudent } from "@/store/students/students-async-actions"
+import { PageTopTitle } from "@/components/features/page-top-title"
 
 interface Props {
   studentId?: string
@@ -192,7 +193,7 @@ const FullStudent: FC<Props> = ({ studentId }) => {
               status={student ? student.status : "student"}
             />
           ) : (
-            <h2 className="flex items-center h-14 text-2xl font-semibold">Створити студента</h2>
+            <PageTopTitle title="Створити студента" />
           )}
 
           <div className="flex gap-3">
@@ -211,7 +212,7 @@ const FullStudent: FC<Props> = ({ studentId }) => {
         </div>
 
         <Card className="px-10 pb-12 mb-10">
-          <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
+          <h3 className="text-2xl font-bold tracking-tight mb-5">Загальна інформація</h3>
           {generalInformationFields.map((input) => {
             const currentValue = formData[input.key as keyof FormData] as FormData[keyof FormData]
 
@@ -235,7 +236,7 @@ const FullStudent: FC<Props> = ({ studentId }) => {
 
       {isUpdate && (
         <Card className="px-10 pb-12 mb-6">
-          <h3 className="text-xl font-semibold mb-5">Видалення студента</h3>
+          <h3 className="text-2xl font-bold tracking-tight mb-5">Видалення студента</h3>
 
           <div className="flex flex-col items-start gap-4 mb-4">
             <div>

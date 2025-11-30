@@ -61,7 +61,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)} key={title}>
         <div className={cn("min-w-90", labelClassNames)}>
-          <h5 className="font-semibold text-md">{title}</h5>
+          <h5 className="font-bold text-md">{title}</h5>
           <p className="text-black/40 text-sm">{text}</p>
         </div>
 
@@ -98,7 +98,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)}>
         <div className={cn("min-w-90", labelClassNames)}>
-          <h5 className="font-semibold text-md">{title}</h5>
+          <h5 className="font-bold text-md">{title}</h5>
           <p className="text-black/40 text-sm">{text}</p>
         </div>
 
@@ -128,7 +128,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)}>
         <div className={cn("min-w-90", labelClassNames)}>
-          <h5 className="font-semibold text-md">{title}</h5>
+          <h5 className="font-bold text-md">{title}</h5>
           <p className="text-black/40 text-sm">{text}</p>
         </div>
 
@@ -165,7 +165,7 @@ const EntityField: React.FC<IEntityFieldProps> = ({
     return (
       <div className={cn("flex items-start gap-4 mb-4", classNames)} key={title}>
         <div className={cn("min-w-90", labelClassNames)}>
-          <h5 className="font-semibold text-md">{title}</h5>
+          <h5 className="font-bold text-md">{title}</h5>
           <p className="text-black/40 text-sm">{text}</p>
         </div>
 

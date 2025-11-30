@@ -327,19 +327,20 @@ const ProfilePage = () => {
   return (
     <RootContainer classNames="mb-10 flex gap-8">
       <div className="w-70">
-        <h2 className="text-xl font-semibold flex items-center gap-2 mb-6">
+        <h2 className="text-3xl font-bold tracking-tight flex items-center gap-2 mb-6">
           <Settings className="w-5" /> Мій профіль
         </h2>
 
         <div className="sticky top-10">
           <Tabs defaultValue={activeTab} className="mb-4" orientation="vertical">
-            <TabsList className="flex gap-2 flex-col w-full h-full">
+            <TabsList className="flex gap-2 flex-col w-full h-full p-1">
               {tabsList.map((el) => (
                 <TabsTrigger
                   key={el.value}
                   value={el.value}
                   onClick={() => setActiveTab(el.value)}
-                  className="w-full py-3 flex justify-start border data-[state=active]:border-primary bg-secondary"
+                  className="w-full py-3 flex justify-start data-[state=active]:text-primary"
+                  // className="w-full py-3 flex justify-start border data-[state=active]:border-primary"
                 >
                   {el.icon} {el.label}
                 </TabsTrigger>

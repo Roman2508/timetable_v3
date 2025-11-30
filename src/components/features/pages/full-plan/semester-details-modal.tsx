@@ -163,7 +163,7 @@ const SemesterDetailsModal: React.FC<ISemesterDetailsModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="px-0 !py-4 max-w-[600px] gap-0">
         <DialogHeader className="px-4 pb-4">
-          <DialogTitle className="flex items-center gap-1">
+          <DialogTitle className="text-xl font-bold tracking-tight">
             {selectedSemesterHours && detailsModalType === "update" && selectedSemesterHours.name}
             {detailsModalType === "create" && "Нова дисципліна"}
           </DialogTitle>

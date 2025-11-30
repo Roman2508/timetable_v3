@@ -25,6 +25,7 @@ import { StreamsLessonsTable } from "@/components/features/pages/streams/streams
 import { addGroupToStream, createStream, getStreams, updateStream } from "@/store/streams/streams-async-actions"
 import StreamLessonDetailsModal from "@/components/features/pages/streams/stream-lesson-details-modal"
 import CombineStreamLessonsModal from "@/components/features/pages/streams/combine-stream-lessons-modal"
+import { PageTopTitle } from "@/components/features/page-top-title"
 
 const semesters = [
   { id: 1, name: "1" },
@@ -147,13 +148,14 @@ const StreamsPage = () => {
             {selectedStream ? (
               <EntityHeader Icon={GraduationCap} label="ПОТІК" status="Активний" name={selectedStream.name} />
             ) : (
-              <h2 className="flex items-center h-14 text-2xl font-semibold">Виберіть потік</h2>
+              <PageTopTitle title="Потоки" description="Управління потоками та їх групами" />
             )}
 
             <div className="flex items-center gap-4">
               <InputSearch
                 value={globalFilter}
                 placeholder="Знайти..."
+                className="lg:h-10 h-9"
                 onChange={(e) => setGlobalFilter(e.target.value)}
               />
 

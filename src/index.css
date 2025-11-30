@@ -17,8 +17,6 @@
 
 html,
 body {
-  /* pointer-events: auto !important; */
-
   @apply bg-white dark:bg-gray-950;
 
   @media (prefers-color-scheme: dark) {
@@ -82,8 +80,8 @@ body {
 
 :root {
   --header-height: 3.2rem;
-  --radius: 0;
-  /* --radius: 0.625rem; */
+  /* --radius: 0; */
+  --radius: 0.625rem;
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -94,8 +92,11 @@ body {
 
   /* --primary: oklch(0.205 0 0); */
   /* --primary: #1d5d9b; */
-  --primary: #8a05ff;
-  --primary-light: #f4f0ff;
+
+  --primary: #0046e0;
+  --primary-light: #ecf4ff;
+  /* --primary: #8a05ff; */
+  /* --primary-light: #f4f0ff; */
   --primary-background: #f4f0ff;
 
   --success: #006d4c;

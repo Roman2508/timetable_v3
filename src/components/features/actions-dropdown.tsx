@@ -56,7 +56,7 @@ const ActionsDropdown: React.FC<IActionsDropdownProps> = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0" onClick={(e) => e.stopPropagation()}>
+        <Button variant="ghost" className="!h-8 !w-8 p-0" onClick={(e) => e.stopPropagation()}>
           <Ellipsis className="w-4" />
         </Button>
       </DropdownMenuTrigger>

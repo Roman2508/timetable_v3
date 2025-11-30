@@ -18,6 +18,7 @@ import SelectPlanModal from "@/components/features/select-plan/select-plan-modal
 import SubgroupsModal from "@/components/features/pages/full-group/subgroups-modal"
 import { createGroup, deleteGroup, updateGroup } from "@/store/groups/groups-async-actions"
 import SpecializationModal from "@/components/features/pages/full-group/specialization-modal"
+import { PageTopTitle } from "@/components/features/page-top-title"
 
 const initialFormState = {
   name: "",
@@ -303,7 +304,7 @@ const FullGroup: FC<Props> = ({ groupId }) => {
                 status={group.status}
               />
             ) : (
-              <h2 className="flex items-center h-14 text-2xl font-semibold">Створити групу</h2>
+              <PageTopTitle title="Створити групу" />
             )}
 
             <div className="flex gap-3">
@@ -321,8 +322,8 @@ const FullGroup: FC<Props> = ({ groupId }) => {
             </div>
           </div>
 
-          <Card className="px-10 pb-12 mb-10">
-            <h3 className="text-xl font-semibold mb-5">Загальна інформація</h3>
+          <Card className="px-10 pb-12 mb-10 shadow-sm">
+            <h3 className="text-2xl font-bold tracking-tight mb-5">Загальна інформація</h3>
             {generalInformationFields.map((input) => {
               const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData]
               return (
@@ -342,8 +343,8 @@ const FullGroup: FC<Props> = ({ groupId }) => {
             })}
           </Card>
 
-          <Card className="px-10 pb-12 mb-10">
-            <h3 className="text-xl font-semibold mb-5">Навантаження групи</h3>
+          <Card className="px-10 pb-12 mb-10 shadow-sm">
+            <h3 className="text-2xl font-bold tracking-tight mb-5">Навантаження групи</h3>
             {educationLoadFormFields.map((input) => {
               const currentValue = formData[input.key as keyof GroupFormData] as GroupFormData[keyof GroupFormData]
               return (
@@ -365,8 +366,8 @@ const FullGroup: FC<Props> = ({ groupId }) => {
         </form>
 
         {isUpdate && (
-          <Card className="px-10 pb-12 mb-6">
-            <h3 className="text-xl font-semibold mb-5">Видалення групи</h3>
+          <Card className="px-10 pb-12 mb-6 shadow-sm">
+            <h3 className="text-2xl font-bold tracking-tight mb-5">Видалення групи</h3>
 
             <div className="flex flex-col items-start gap-4 mb-4">
               <div>

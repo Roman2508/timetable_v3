@@ -45,7 +45,7 @@ const TeacherReportPage: FC = () => {
 
   return (
     <RootContainer classNames="relative">
-      <h1 className="text-center font-semibold text-lg mb-4">Види педагогічної діяльності</h1>
+      <h1 className="text-center font-bold text-3xl tracking-tight mb-4">Види педагогічної діяльності</h1>
 
       <div className="flex justify-center items-center gap-2 mb-4">
         <p>Звіт за</p>

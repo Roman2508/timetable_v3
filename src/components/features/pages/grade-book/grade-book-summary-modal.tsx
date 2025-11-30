@@ -97,7 +97,7 @@ const GradeBookSummaryModal: FC<IGradeBookSummaryModal> = ({ open, setOpen }) =>
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="px-0 pb-4 max-w-[450px] gap-0">
         <DialogHeader className="px-4">
-          <DialogTitle className="pb-4">Підсумки:</DialogTitle>
+          <DialogTitle className="pb-4 text-2xl font-bold tracking-tight">Підсумки:</DialogTitle>
         </DialogHeader>
 
         <DialogDescription>
@@ -106,9 +106,9 @@ const GradeBookSummaryModal: FC<IGradeBookSummaryModal> = ({ open, setOpen }) =>
             defaultValue={summaryType}
             onValueChange={(value) => setSummaryType(value as "add" | "delete")}
           >
-            <TabsList className="w-full">
+            <TabsList className="w-full h-[40px]">
               {lessonsTabs.map((el) => (
-                <TabsTrigger key={el.name} value={el.name} className="h-[40px] w-full flex-1">
+                <TabsTrigger key={el.name} value={el.name} className="w-full flex-1">
                   {el.label}
                 </TabsTrigger>
               ))}

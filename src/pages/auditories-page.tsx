@@ -36,6 +36,8 @@ import { AuditoriesTable } from "@/components/features/pages/auditories/auditori
 import type { AuditoriesTypes, AuditoryCategoriesTypes } from "@/store/auditories/auditories-types"
 import type { FormData } from "@/components/features/category-actions-modal/category-actions-modal"
 import CategoryActionsModal from "@/components/features/category-actions-modal/category-actions-modal"
+import { PageTopTitle } from "@/components/features/page-top-title"
+import { Badge } from "@/components/ui/common/badge"
 
 const AuditoriesPage = () => {
   const dispatch = useAppDispatch()
@@ -164,7 +166,7 @@ const AuditoriesPage = () => {
 
       <RootContainer classNames="mb-10">
         <div className="flex justify-between mb-6">
-          <h2 className="text-xl">Категорії</h2>
+          <PageTopTitle title="Категорії" description="Управління аудиторіями та їх категоріями" />
 
           <div className="flex items-center gap-2">
             <NavLink to="/auditories/create">
@@ -205,7 +207,7 @@ const AuditoriesPage = () => {
           {auditoriCategories && (
             <Card
               onClick={() => setModalData({ isOpen: true, actionType: "create" })}
-              className="shadow-none hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
+              className="hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
             >
               <p className="flex items-center gap-1">
                 <Plus className="w-4" />
@@ -215,33 +217,45 @@ const AuditoriesPage = () => {
           )}
         </div>
 
-        <h2 className="text-xl mb-4">Список аудиторій</h2>
+        <h2 className="text-2xl font-bold tracking-tight mb-4">Список аудиторій</h2>
 
-        <Tabs
-          className="mb-4"
-          defaultValue={activeStatus}
-          onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
-        >
-          <TabsList>
-            <TabsTrigger value="Всі">Всі ({counts.all})</TabsTrigger>
-            <TabsTrigger value="Активний">Активні ({counts.active})</TabsTrigger>
-            <TabsTrigger value="Архів">Архів ({counts.archive})</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-between items-center mb-4">
+          <Tabs
+            className="mb-4"
+            defaultValue={activeStatus}
+            onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
+          >
+            <TabsList>
+              <TabsTrigger value="Всі">
+                Всі <Badge variant="secondary">{counts.all}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Активний">
+                Активні <Badge variant="secondary">{counts.active}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Архів">
+                Архів <Badge variant="secondary">{counts.archive}</Badge>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <InputSearch
-          className="mb-8"
-          value={globalSearch}
-          placeholder="Пошук..."
-          onChange={(e) => setGlobalSearch(e.target.value)}
-        />
+          <InputSearch
+            value={globalSearch}
+            placeholder="Пошук..."
+            className="max-w-72 w-full"
+            onChange={(e) => setGlobalSearch(e.target.value)}
+          />
+        </div>
 
         {filteredItems.length ? (
-          <AuditoriesTable auditories={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+          <Card className="p-2">
+            <AuditoriesTable auditories={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+          </Card>
         ) : loadingStatus === LoadingStatusTypes.LOADING ? (
           <div className="font-mono text-center">Завантаження...</div>
         ) : (
-          <div className="font-mono text-center">Пусто</div>
+          <Card className="py-4 px-2">
+            <div className="font-mono text-center">Пусто</div>
+          </Card>
         )}
       </RootContainer>
     </>

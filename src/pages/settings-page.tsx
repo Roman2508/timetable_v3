@@ -45,7 +45,7 @@ const SettingsPage = () => {
   return (
     <RootContainer classNames="mb-10 flex gap-8">
       <div className="w-70">
-        <h2 className="text-xl font-semibold flex items-center gap-2 mb-6">
+        <h2 className="text-3xl font-bold tracking-tight flex items-center gap-2 mb-6">
           <SettingsIcon className="w-5" /> Налаштування
         </h2>
 
@@ -56,12 +56,12 @@ const SettingsPage = () => {
             orientation="vertical"
             onValueChange={(newValue) => setSearchParams({ tab: newValue })}
           >
-            <TabsList className="flex gap-2 flex-col w-full h-full">
+            <TabsList className="flex gap-2 flex-col w-full h-full p-1">
               {tabsList.map((el) => (
                 <TabsTrigger
                   key={el.value}
                   value={el.value}
-                  className="w-full py-3 flex justify-start border data-[state=active]:border-primary bg-sidebar"
+                  className="w-full py-3 flex justify-start border data-[state=active]:text-primary"
                 >
                   {el.icon} {el.label}
                 </TabsTrigger>

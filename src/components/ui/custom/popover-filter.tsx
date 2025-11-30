@@ -1,4 +1,4 @@
-import { ChevronDown, ListFilter } from "lucide-react"
+import { ChevronDown, Filter, ListFilter } from "lucide-react"
 import { type Dispatch, type FC, type SetStateAction } from "react"
 
 import { Checkbox } from "../common/checkbox"
@@ -71,7 +71,8 @@ export const PopoverFilter: FC<IPopoverFilterProps> = ({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant={filterVariant} size={filterSize} disabled={disabled}>
-          <ListFilter />
+          {/* <ListFilter /> */}
+          <Filter className="h-4 w-4" />
           <span className="hidden lg:inline">{label}</span>
           <span className="lg:hidden">{label}</span>
           <ChevronDown />

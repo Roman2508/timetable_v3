@@ -1,5 +1,5 @@
 import { NavLink } from "react-router"
-import { Plus, User } from "lucide-react"
+import { Plus, Search, User } from "lucide-react"
 import { useSelector } from "react-redux"
 import { useEffect, useState } from "react"
 
@@ -37,6 +37,9 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/common/tabs"
 import { GroupsTable } from "@/components/features/pages/groups/groups-table"
 import { generalSelector, setGroupFilters } from "@/store/general/general-slice"
 import type { GroupCategoriesType, GroupsShortType } from "@/store/groups/groups-types"
+import { Badge } from "@/components/ui/common/badge"
+import { cn } from "@/lib/utils"
+import { PageTopTitle } from "@/components/features/page-top-title"
 
 const GroupsPage = () => {
   const dispatch = useAppDispatch()
@@ -160,7 +163,7 @@ const GroupsPage = () => {
 
       <RootContainer classNames="mb-10">
         <div className="flex justify-center md:justify-between gap-4 flex-col md:flex-row items-center mb-6">
-          <h2 className="text-xl">Структурні підрозділи</h2>
+          <PageTopTitle title="Структурні підрозділи" description="Управління групами та структурними підрозділами" />
 
           <div className="flex items-center gap-2">
             <NavLink to="/groups/create">
@@ -201,7 +204,7 @@ const GroupsPage = () => {
           {groupCategories && (
             <Card
               onClick={() => setModalData({ isOpen: true, actionType: "create" })}
-              className="shadow-none hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
+              className="hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
             >
               <p className="flex items-center gap-1">
                 <Plus className="w-4" />
@@ -211,33 +214,47 @@ const GroupsPage = () => {
           )}
         </div>
 
-        <h2 className="text-xl mb-4">Склад підрозділів</h2>
+        <h2 className="text-2xl font-bold tracking-tight mb-4">Склад підрозділів</h2>
 
-        <Tabs
-          className="mb-4"
-          defaultValue={activeStatus}
-          onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
-        >
-          <TabsList>
-            <TabsTrigger value="Всі">Всі ({counts.all})</TabsTrigger>
-            <TabsTrigger value="Активний">Активні ({counts.active})</TabsTrigger>
-            <TabsTrigger value="Архів">Архів ({counts.archive})</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-between items-center mb-4">
+          <Tabs
+            defaultValue={activeStatus}
+            onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
+          >
+            <TabsList>
+              <TabsTrigger value="Всі">
+                Всі
+                <Badge variant="secondary">{counts.all}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Активний">
+                Активні
+                <Badge variant="secondary">{counts.active}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Архів">
+                Архів
+                <Badge variant="secondary">{counts.archive}</Badge>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <InputSearch
-          className="mb-8"
-          value={globalSearch}
-          placeholder="Пошук..."
-          onChange={(e) => setGlobalSearch(e.target.value)}
-        />
+          <InputSearch
+            value={globalSearch}
+            placeholder="Пошук..."
+            className="max-w-72 w-full"
+            onChange={(e) => setGlobalSearch(e.target.value)}
+          />
+        </div>
 
         {filteredItems.length ? (
-          <GroupsTable groups={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+          <Card className="p-2">
+            <GroupsTable groups={filteredItems} globalSearch={globalSearch} setGlobalSearch={setGlobalSearch} />
+          </Card>
         ) : loadingStatus === LoadingStatusTypes.LOADING ? (
           <div className="font-mono text-center">Завантаження...</div>
         ) : (
-          <div className="font-mono text-center">Пусто</div>
+          <Card className="py-4 px-2">
+            <div className="font-mono text-center">Пусто</div>
+          </Card>
         )}
       </RootContainer>
     </>

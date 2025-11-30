@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/common/
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/common/tooltip"
 import SemesterHoursModal from "@/components/features/pages/full-plan/semester-hours-modal"
 import SemesterDetailsModal from "@/components/features/pages/full-plan/semester-details-modal"
+import { Card } from "@/components/ui/common/card"
 
 const semesters = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
@@ -73,7 +74,7 @@ const FullPlanPage: FC = ({}) => {
 
       <RootContainer>
         <div>
-          <h1 className="text-2xl mb-4 flex items-center gap-1">
+          <h1 className="text-2xl font-bold tracking-tight mb-4 flex items-center gap-1">
             {isEditMode ? (
               <Input
                 value={planName}
@@ -95,7 +96,7 @@ const FullPlanPage: FC = ({}) => {
             </Tooltip>
           </h1>
 
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-4">
             <InputSearch
               className="w-full"
               value={globalSearch}
@@ -153,13 +154,15 @@ const FullPlanPage: FC = ({}) => {
             </Popover>
           </div>
 
-          <FullPlanTable
-            globalSearch={globalSearch}
-            setGlobalSearch={setGlobalSearch}
-            setIsHoursModalOpen={setIsHoursModalOpen}
-            setIsDetailsModalOpen={setIsDetailsModalOpen}
-            setSelectedSemesterHours={setSelectedSemesterHours}
-          />
+          <Card className="pt-2">
+            <FullPlanTable
+              globalSearch={globalSearch}
+              setGlobalSearch={setGlobalSearch}
+              setIsHoursModalOpen={setIsHoursModalOpen}
+              setIsDetailsModalOpen={setIsDetailsModalOpen}
+              setSelectedSemesterHours={setSelectedSemesterHours}
+            />
+          </Card>
         </div>
       </RootContainer>
     </>

@@ -13,8 +13,11 @@ const InputSearch = React.forwardRef<HTMLInputElement, InputProps>(({ className,
   return (
     <div
       className={cn(
-        "flex h-10 items-center rounded-md border border-input bg-white pl-3 text-sm ring-offset-background",
-        "group-has-focus !shadow-none",
+        "flex h-9 items-center rounded-md border bg-white pl-3 text-sm transition-all",
+        "border-input", // обычная граница
+        "has-[:focus-visible]:border-primary", // синяя граница при фокусе внутри
+        "has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-primary/20", // лёгкий glow (по желанию)
+        "has-[:focus-visible]:shadow-[0_0_0_3px_rgba(59,130,246,0.3)]", // альтернатива: внешняя тень-обводка
         className,
       )}
     >
@@ -23,7 +26,10 @@ const InputSearch = React.forwardRef<HTMLInputElement, InputProps>(({ className,
         {...props}
         type="search"
         ref={ref}
-        className="w-full p-2 placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+        className={cn(
+          "w-full p-2 placeholder:text-muted-foreground focus-visible:outline-none ",
+          "disabled:cursor-not-allowed disabled:opacity-50 ",
+        )}
       />
     </div>
   )

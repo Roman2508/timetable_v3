@@ -45,7 +45,7 @@ export default function GradeBookPage() {
       <GradeBookSummaryModal open={isOpenSummaryModal} setOpen={setIsOpenSummaryModal} />
 
       <WideContainer classNames="h-full flex flex-col">
-        <div className="flex justify-between mb-6 items-center">
+        <div className="flex justify-between mb-4 items-center">
           {gradeBook ? (
             <div className="flex gap-5">
               <div className="pr-5 border-r">

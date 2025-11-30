@@ -30,7 +30,8 @@ const EntityHeader: React.FC<IEntityHeaderProps> = ({ label, name, status, Icon,
       </div>
 
       <div className="flex gap-3 items-center">
-        <h2 className="text-2xl font-semibold">{name}</h2>
+        {/* <h2 className="text-2xl font-semibold">{name}</h2> */}
+        <h2 className="text-3xl font-bold tracking-tight">{name}</h2>
         <Badge
           variant="outline"
           className={cn(

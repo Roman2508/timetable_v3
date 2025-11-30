@@ -26,6 +26,9 @@ import ImportStudentsAccounts from "@/components/features/pages/students-account
 import ExportStudentsAccounts from "@/components/features/pages/students-accounts/export-students-accounts"
 import UpdateStudentsAccounts from "@/components/features/pages/students-accounts/update-students-accounts"
 import { StudentsAccountsTable } from "@/components/features/pages/students-accounts/students-accounts-table"
+import { Badge } from "@/components/ui/common/badge"
+import { Card } from "@/components/ui/common/card"
+import { PageTopTitle } from "@/components/features/page-top-title"
 
 const StudentsAccountsPage = () => {
   const dispatch = useAppDispatch()
@@ -126,7 +129,7 @@ const StudentsAccountsPage = () => {
               />
             ) : (
               <div className="flex items-center h-[56px]">
-                <h2 className="text-lg font-semibold">Виберіть групу для перегляду студентів</h2>
+                <h2 className="text-2xl font-bold">Виберіть групу для перегляду студентів</h2>
               </div>
             )}
           </div>
@@ -159,32 +162,44 @@ const StudentsAccountsPage = () => {
           </div>
         </div>
 
-        <Tabs className="mb-4" defaultValue={activeStatus} onValueChange={(value) => changeActiveStatus(value)}>
-          <TabsList>
-            <TabsTrigger value="Всі">Всі ({counts.all})</TabsTrigger>
-            <TabsTrigger value="Навчається">Навчається ({counts.studying})</TabsTrigger>
-            <TabsTrigger value="Відраховано">Відраховано ({counts.expelled})</TabsTrigger>
-            <TabsTrigger value="Академічна відпустка">Академічна відпустка ({counts.academicLeave})</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-between items-center mb-4">
+          <Tabs defaultValue={activeStatus} onValueChange={(value) => changeActiveStatus(value)}>
+            <TabsList>
+              <TabsTrigger value="Всі">
+                Всі <Badge variant="secondary">{counts.all}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Навчається">
+                Навчається <Badge variant="secondary">{counts.studying}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Відраховано">
+                Відраховано <Badge variant="secondary">{counts.expelled}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Академічна відпустка">
+                Академічна відпустка <Badge variant="secondary">{counts.academicLeave}</Badge>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <InputSearch
-          value={globalFilter}
-          className="w-full mb-6"
-          placeholder="Знайти..."
-          onChange={(e) => setGlobalFilter(e.target.value)}
-        />
+          <InputSearch
+            value={globalFilter}
+            placeholder="Знайти..."
+            className="max-w-72 w-full"
+            onChange={(e) => setGlobalFilter(e.target.value)}
+          />
+        </div>
 
-        <StudentsAccountsTable
-          isLoading={isLoading}
-          actionMode={actionMode}
-          students={filteredItems}
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          studentsIdsToDelete={studentsIdsToDelete}
-          setStudentsIdsToDelete={setStudentsIdsToDelete}
-          handleAddStudentToDelete={handleAddStudentToDelete}
-        />
+        <Card className="p-2">
+          <StudentsAccountsTable
+            isLoading={isLoading}
+            actionMode={actionMode}
+            students={filteredItems}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            studentsIdsToDelete={studentsIdsToDelete}
+            setStudentsIdsToDelete={setStudentsIdsToDelete}
+            handleAddStudentToDelete={handleAddStudentToDelete}
+          />
+        </Card>
       </RootContainer>
     </>
   )

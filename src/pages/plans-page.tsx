@@ -17,6 +17,8 @@ import { generalSelector, setPlanFilters } from "@/store/general/general-slice"
 import type { PlansCategoriesType, PlansType } from "@/store/plans/plans-types"
 import PlanActionsModal from "@/components/features/pages/plans/plan-actions-modal"
 import { SelectPlanTable } from "@/components/features/select-plan/select-plan-table"
+import { PageTopTitle } from "@/components/features/page-top-title"
+import { Badge } from "@/components/ui/common/badge"
 
 export type PlanActionModalType = {
   isOpen: boolean
@@ -104,7 +106,7 @@ export default function PlansPage() {
 
       <RootContainer>
         <div className="flex justify-between mb-6">
-          <h2 className="text-xl">Навчальні плани</h2>
+          <PageTopTitle title="Навчальні плани" description="Управління навчальними планами та їх категоріями" />
 
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => setModalData({ isOpen: true, type: "create-plan" })}>
@@ -127,24 +129,32 @@ export default function PlansPage() {
           </div>
         </div>
 
-        <Tabs
-          className="mb-4"
-          defaultValue={activeStatus}
-          onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
-        >
-          <TabsList>
-            <TabsTrigger value="Всі">Всі ({counts.all})</TabsTrigger>
-            <TabsTrigger value="Активний">Активні ({counts.active})</TabsTrigger>
-            <TabsTrigger value="Архів">Архів ({counts.archive})</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex justify-between items-center mb-4">
+          <Tabs
+            className="mb-4"
+            defaultValue={activeStatus}
+            onValueChange={(value) => changeActiveStatus(value as "Всі" | "Активний" | "Архів")}
+          >
+            <TabsList>
+              <TabsTrigger value="Всі">
+                Всі <Badge variant="secondary">{counts.all}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Активний">
+                Активні <Badge variant="secondary">{counts.active}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="Архів">
+                Архів <Badge variant="secondary">{counts.archive}</Badge>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <InputSearch
-          className="mb-4"
-          value={globalSearch}
-          placeholder="Пошук..."
-          onChange={(e) => setGlobalSearch(e.target.value)}
-        />
+          <InputSearch
+            value={globalSearch}
+            placeholder="Пошук..."
+            className="max-w-72 w-full"
+            onChange={(e) => setGlobalSearch(e.target.value)}
+          />
+        </div>
 
         {!plansCategories && loadingStatus === LoadingStatusTypes.LOADING && (
           <div>

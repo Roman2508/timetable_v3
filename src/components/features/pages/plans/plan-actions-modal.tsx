@@ -165,7 +165,7 @@ const PlanActionsModal: FC<IPlanActionsModalProps> = ({
     <Dialog open={modalData.isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="pb-4">
+          <DialogTitle className="text-xl font-bold tracking-tight pb-4">
             {modalData.type === "update-plan" && "Оновити навчальний план:"}
             {modalData.type === "create-plan" && "Створити новий план:"}
             {modalData.type === "create-category" && "Створити нову категорію:"}
