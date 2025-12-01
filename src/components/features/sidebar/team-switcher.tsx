@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { ChevronsUpDown, Plus } from "lucide-react"
 
@@ -39,9 +37,12 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              {/* <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <activeTeam.logo className="size-4" />
-              </div>
+              </div> */}
+
+              <img src={"android-chrome-192x192.png"} alt="logo" width={44} height={44} />
+
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-bold">{activeTeam.name}</span>
                 <span className="truncate text-xs">{activeTeam.plan}</span>
@@ -49,6 +50,7 @@ export function TeamSwitcher({
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             align="start"
