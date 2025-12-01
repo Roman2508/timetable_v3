@@ -155,7 +155,7 @@ const SelectGradeBookModal: FC<ISelectGradeBookModal> = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="px-0 max-w-[450px]">
         <DialogHeader className="px-4">
-          <DialogTitle className="pb-4">Електронний журнал:</DialogTitle>
+          <DialogTitle className="text-2xl font-bold tracking-tight pb-0">Електронний журнал:</DialogTitle>
           <p className="leading-[1.25] opacity-[.6]">Виберіть критерії для пошуку електронного журналу</p>
         </DialogHeader>
 

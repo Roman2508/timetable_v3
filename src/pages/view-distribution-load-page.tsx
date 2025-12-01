@@ -2,27 +2,26 @@ import { Search } from "lucide-react"
 import { useSelector } from "react-redux"
 import { useEffect, useMemo, useState, type FC } from "react"
 
-import { SEMESTERS_LIST, HALF_YEARS_LIST } from "@/constants"
 import { useAppDispatch } from "@/store/store"
 import { Card } from "@/components/ui/common/card"
 import { Button } from "@/components/ui/common/button"
 import { groupsSelector } from "@/store/groups/groups-slice"
+import { SEMESTERS_LIST, HALF_YEARS_LIST } from "@/constants"
+import type { GroupLoadType } from "@/store/groups/groups-types"
+import LoadingSpinner from "@/components/ui/icons/loading-spinner"
 import { teachersSelector } from "@/store/teachers/teachers-slice"
 import type { GroupsShortType } from "@/store/groups/groups-types"
+import { Autocomplete } from "@/components/ui/custom/autocomplete"
 import { PageTopTitle } from "@/components/features/page-top-title"
 import { RootContainer } from "@/components/layouts/root-container"
 import DropdownSelect from "@/components/ui/custom/dropdown-select"
-import { getGroupCategories } from "@/store/groups/groups-async-actions"
-import type { TeachersCategoryType, TeachersType } from "@/store/teachers/teachers-types"
-import { getTeachersCategories } from "@/store/teachers/teachers-async-actions"
-import { Autocomplete } from "@/components/ui/custom/autocomplete"
+import type { TeachersType } from "@/store/teachers/teachers-types"
 import { getTeacherFullname } from "@/helpers/get-teacher-fullname"
-import { findGroupLoadLessonsByGroupIdAndSemester } from "@/store/groups/groups-async-actions"
-import { getTeacherLoadById } from "@/store/teacher-profile/teacher-profile-async-actions"
-import type { GroupLoadType } from "@/store/groups/groups-types"
+import { getGroupCategories } from "@/store/groups/groups-async-actions"
 import { Table, TableCell, TableRow } from "@/components/ui/common/table"
-import LoadingSpinner from "@/components/ui/icons/loading-spinner"
-import { LoadingStatusTypes } from "@/store/app-types"
+import { getTeachersCategories } from "@/store/teachers/teachers-async-actions"
+import { getTeacherLoadById } from "@/store/teacher-profile/teacher-profile-async-actions"
+import { findGroupLoadLessonsByGroupIdAndSemester } from "@/store/groups/groups-async-actions"
 
 const ViewDistributionLoadPage: FC = () => {
   const dispatch = useAppDispatch()
@@ -35,7 +34,6 @@ const ViewDistributionLoadPage: FC = () => {
 
   const [selectedSemester, setSelectedSemester] = useState<number | null>(null)
   const [selectedGroup, setSelectedGroup] = useState<GroupsShortType | null>(null)
-  const [selectedCmk, setSelectedCmk] = useState<TeachersCategoryType | null>(null)
   const [selectedTeacher, setSelectedTeacher] = useState<TeachersType | null>(null)
 
   const [tableData, setTableData] = useState<GroupLoadType[]>([])
