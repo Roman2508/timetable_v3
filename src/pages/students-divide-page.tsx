@@ -107,7 +107,7 @@ const StudentsDividePage = () => {
             <EntityHeader Icon={GraduationCap} label="ГРУПА" name={group.name} status={group.status} />
           ) : (
             <div className="flex items-center h-[56px]">
-              <h2 className="text-lg font-semibold">Виберіть групу для розподілу студентів</h2>
+              <h2 className="text-2xl font-bold tracking-tight">Виберіть групу для розподілу студентів</h2>
             </div>
           )}
         </div>

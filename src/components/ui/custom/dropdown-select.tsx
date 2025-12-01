@@ -19,7 +19,7 @@ interface IDropdownSelectProps {
   items: IItem[]
   classNames?: string
   sortBy?: "name" | "id"
-  size?: "sm" | "lg"
+  size?: "sm" | "lg" | "default"
   isLabelInside?: boolean
   selectedItem?: IItem | null
   onChange: (id: number) => void
@@ -29,7 +29,7 @@ const DropdownSelect: FC<IDropdownSelectProps> = ({
   items,
   onChange,
   label = "",
-  size = "lg",
+  size = "default",
   classNames = "",
   sortBy = "name",
   selectedItem = null,
