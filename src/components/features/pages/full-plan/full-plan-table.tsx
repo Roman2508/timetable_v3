@@ -284,7 +284,7 @@ export const FullPlanTable: FC<IFullPlanTableProps> = ({
                         key={cell.id}
                         onClick={() => handleSelectLesson(cell.column.id, row.original)}
                         className={cn(
-                          index < 2 ? "" : "text-center",
+                          index === 0 ? "" : "text-center",
                           "hover:bg-border/50 cursor-pointer",
                           index === 2 ? "!cursor-default hover:!bg-border/0" : "",
                         )}
