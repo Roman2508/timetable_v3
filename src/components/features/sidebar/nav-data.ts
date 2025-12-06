@@ -31,6 +31,8 @@ import {
   CalendarDays,
 } from "lucide-react"
 
+import { APP_ROUTES } from "@/constants/app-routes"
+
 export const navData = {
   user: {
     name: "Пташник Роман",
@@ -64,19 +66,19 @@ export const navData = {
         {
           id: "1",
           title: "Групи",
-          url: "/groups",
+          url: APP_ROUTES.GROUPS,
           icon: LayoutList,
         },
         {
           id: "2",
           title: "Потоки",
-          url: "/streams",
+          url: APP_ROUTES.STREAMS,
           icon: Group,
         },
         {
           id: "3",
           title: "Аудиторії",
-          url: "/auditories",
+          url: APP_ROUTES.AUDITORIES,
           icon: Building2,
         },
       ],
@@ -90,19 +92,19 @@ export const navData = {
         {
           id: "4",
           title: "Навчальні плани",
-          url: "/plans",
+          url: APP_ROUTES.PLANS,
           icon: LibraryBig,
         },
         {
           id: "5",
           title: "Розподіл навантаження",
-          url: "/distribution",
+          url: APP_ROUTES.DISTRIBUTION,
           icon: Split,
         },
         {
           id: "6",
           title: "Перегляд навантаження",
-          url: "/view-distribution-load",
+          url: APP_ROUTES.VIEW_DISTRIBUTION_LOAD,
           icon: NotebookText,
         },
       ],
@@ -116,19 +118,19 @@ export const navData = {
         {
           id: "7",
           title: "Педагогічний склад",
-          url: "/teachers",
+          url: APP_ROUTES.TEACHERS,
           icon: User,
         },
         {
           id: "8",
           title: "Здобувачі освіти",
-          url: "/students",
+          url: APP_ROUTES.STUDENTS,
           icon: Contact,
         },
         {
           id: "9",
           title: "Поділ на підгрупи",
-          url: "/students-divide",
+          url: APP_ROUTES.STUDENTS_DIVIDE,
           icon: Users,
         },
       ],
@@ -142,7 +144,7 @@ export const navData = {
         {
           id: "10",
           title: "Редактор розкладу",
-          url: "/timetable",
+          url: APP_ROUTES.TIMETABLE,
           icon: CalendarDays,
         },
         {
@@ -160,19 +162,19 @@ export const navData = {
         {
           id: "13",
           title: "Контроль вичитки",
-          url: "/timetable-control",
+          url: APP_ROUTES.TIMETABLE_CONTROL,
           icon: CalendarSearch,
         },
         {
           id: "14",
           title: "Мій розклад",
-          url: "/my-timetable",
+          url: APP_ROUTES.MY_TIMETABLE,
           icon: Calendar,
         },
         {
           id: "15",
           title: "Пошук вільної аудиторії",
-          url: "/find-free-auditory",
+          url: APP_ROUTES.FIND_FREE_AUDITORY,
           icon: FileSearch,
         },
       ],
@@ -186,7 +188,7 @@ export const navData = {
         {
           id: "16",
           title: "Мій профіль",
-          url: "/profile",
+          url: APP_ROUTES.PROFILE,
           icon: SquareUser,
         },
         {
@@ -198,37 +200,37 @@ export const navData = {
         {
           id: "18",
           title: "Електронний журнал",
-          url: "/grade-book",
+          url: APP_ROUTES.GRADE_BOOK,
           icon: BookOpen,
         },
         {
           id: "19",
           title: "Навчально-метдичні комплекси",
-          url: "/instructional-materials",
+          url: APP_ROUTES.INSTRUCTIONAL_MATERIALS,
           icon: LibraryBig,
         },
         {
           id: "20",
           title: "Індивідуальний план роботи викладача",
-          url: "/individual-teacher-work",
+          url: APP_ROUTES.INDIVIDUAL_TEACHER_WORK,
           icon: Notebook,
         },
         {
           id: "21",
           title: "Види педагогічної діяльності",
-          url: "/teacher-activities-types",
+          url: APP_ROUTES.TEACHER_ACTIVITIES_TYPES,
           icon: BookUser,
         },
         {
           id: "22",
           title: "Звіт викладача",
-          url: "/teachers-report",
+          url: APP_ROUTES.TEACHERS_REPORT,
           icon: NotepadText,
         },
         {
           id: "23",
           title: "Моє педагогічне навантаження",
-          url: "/my-teaching-load",
+          url: APP_ROUTES.MY_TEACHING_LOAD,
           icon: SquareChartGantt,
         },
       ],
@@ -242,7 +244,7 @@ export const navData = {
         {
           id: "24",
           title: "Налаштування",
-          url: "/settings",
+          url: APP_ROUTES.SETTINGS,
           icon: Settings,
         },
         {

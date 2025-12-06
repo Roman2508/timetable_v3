@@ -26,6 +26,7 @@ import ViewDistributionLoad from "./routes/view-distribution-load"
 import IndividualTeacherWork from "./routes/individual-teacher-work"
 import InstructionalMaterials from "./routes/instructional-materials"
 import TeacherActivitiesTypes from "./routes/teacher-activities-types"
+import ProtectedRoute from "./components/layouts/protected-route"
 
 export const router = createBrowserRouter([
   {
@@ -34,41 +35,46 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
 
-      { path: "groups", element: <Groups /> },
-      { path: "groups/:id", element: <FullGroup /> },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: "groups", element: <Groups /> },
+          { path: "groups/:id", element: <FullGroup /> },
 
-      { path: "auditories", element: <Auditories /> },
-      { path: "auditories/:id", element: <FullAuditory /> },
+          { path: "auditories", element: <Auditories /> },
+          { path: "auditories/:id", element: <FullAuditory /> },
 
-      { path: "teachers", element: <Teachers /> },
-      { path: "teachers/:id", element: <FullTeacher /> },
+          { path: "teachers", element: <Teachers /> },
+          { path: "teachers/:id", element: <FullTeacher /> },
 
-      { path: "students", element: <StudentsAccounts /> },
-      { path: "students/:id", element: <FullStudent /> },
+          { path: "students", element: <StudentsAccounts /> },
+          { path: "students/:id", element: <FullStudent /> },
 
-      { path: "students-divide", element: <StudentsDivide /> },
+          { path: "students-divide", element: <StudentsDivide /> },
 
-      { path: "plans", element: <Plans /> },
-      { path: "plans/:id", element: <FullPlan /> },
+          { path: "plans", element: <Plans /> },
+          { path: "plans/:id", element: <FullPlan /> },
 
-      { path: "distribution", element: <Distribution /> },
-      { path: "view-distribution-load", element: <ViewDistributionLoad /> },
+          { path: "distribution", element: <Distribution /> },
+          { path: "view-distribution-load", element: <ViewDistributionLoad /> },
 
-      { path: "streams", element: <Streams /> },
+          { path: "streams", element: <Streams /> },
 
-      { path: "timetable", element: <Timetable /> },
+          { path: "timetable", element: <Timetable /> },
 
-      { path: "grade-book", element: <GradeBook /> },
+          { path: "grade-book", element: <GradeBook /> },
 
-      { path: "instructional-materials", element: <InstructionalMaterials /> },
-      { path: "individual-teacher-work", element: <IndividualTeacherWork /> },
-      { path: "teacher-activities-types", element: <TeacherActivitiesTypes /> },
-      { path: "teachers-report", element: <TeachersReport /> },
-      { path: "my-teaching-load", element: <MyTeachingLoad /> },
+          { path: "instructional-materials", element: <InstructionalMaterials /> },
+          { path: "individual-teacher-work", element: <IndividualTeacherWork /> },
+          { path: "teacher-activities-types", element: <TeacherActivitiesTypes /> },
+          { path: "teachers-report", element: <TeachersReport /> },
+          { path: "my-teaching-load", element: <MyTeachingLoad /> },
 
-      { path: "profile", element: <Profile /> },
+          { path: "profile", element: <Profile /> },
 
-      { path: "settings", element: <Settings /> },
+          { path: "settings", element: <Settings /> },
+        ],
+      },
 
       { path: "auth", element: <Auth /> },
     ],

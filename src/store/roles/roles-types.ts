@@ -12,4 +12,9 @@ export type RoleType = {
   name: string
   key: string
   users: number
+  permissions: {
+    id: number
+    page: string
+    action: string
+  }[]
 }

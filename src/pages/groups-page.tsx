@@ -1,7 +1,8 @@
 import { NavLink } from "react-router"
-import { Plus, Search, User } from "lucide-react"
+import { Plus, User } from "lucide-react"
 import { useSelector } from "react-redux"
 import { useEffect, useState } from "react"
+import { usePermission } from "@/hooks/use-permission"
 
 import {
   getGroupCategories,
@@ -38,11 +39,11 @@ import { GroupsTable } from "@/components/features/pages/groups/groups-table"
 import { generalSelector, setGroupFilters } from "@/store/general/general-slice"
 import type { GroupCategoriesType, GroupsShortType } from "@/store/groups/groups-types"
 import { Badge } from "@/components/ui/common/badge"
-import { cn } from "@/lib/utils"
 import { PageTopTitle } from "@/components/features/page-top-title"
 
 const GroupsPage = () => {
   const dispatch = useAppDispatch()
+  const { canEdit } = usePermission("/groups")
 
   const {
     groups: { categories: filtredCategories, status: defaultStatus },
@@ -166,11 +167,13 @@ const GroupsPage = () => {
           <PageTopTitle title="Структурні підрозділи" description="Управління групами та структурними підрозділами" />
 
           <div className="flex items-center gap-2">
-            <NavLink to="/groups/create">
-              <Button variant="outline">
-                <Plus /> Створити нову групу
-              </Button>
-            </NavLink>
+            {canEdit && (
+              <NavLink to="/groups/create">
+                <Button variant="outline">
+                  <Plus /> Створити нову групу
+                </Button>
+              </NavLink>
+            )}
 
             <PopoverFilter
               itemsPrefix=""
@@ -194,14 +197,14 @@ const GroupsPage = () => {
                   label="Підрозділ"
                   itemId={Number(item.id)}
                   count={item.groups.length}
-                  onClickUpdateFunction={onClickUpdateCategory}
-                  onClickDeleteFunction={onClickDeleteCategory}
+                  onClickUpdateFunction={canEdit ? onClickUpdateCategory : undefined}
+                  onClickDeleteFunction={canEdit ? onClickDeleteCategory : undefined}
                   itemsLabel={pluralizeWords(item.groups.length, "group")}
                 />
               ))
             : [...Array(3)].map((_, index) => <Skeleton key={index} className="h-[130px]" />)}
 
-          {groupCategories && (
+          {groupCategories && canEdit && (
             <Card
               onClick={() => setModalData({ isOpen: true, actionType: "create" })}
               className="hover:border-primary min-h-[100px] h-[100%] flex items-center justify-center cursor-pointer border-dashed hover:text-primary"
