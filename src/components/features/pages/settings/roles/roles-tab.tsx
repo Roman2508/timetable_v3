@@ -15,7 +15,7 @@ import RolesModal from "./roles-modal"
 import Permissions from "./permissions"
 import RolesActions from "./roles-actions"
 import { fuzzyFilter } from "@/helpers/fuzzy-filter"
-import type { RoleType } from "@/store/roles/roles-types"
+import type { UserRolesType } from "@/api/api-types"
 import { rolesSelector } from "@/store/roles/roles-slice"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/common/table"
 
@@ -24,7 +24,7 @@ const RolesTab = () => {
 
   const [globalSearch, setGlobalSearch] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editedRole, setEditedRole] = useState<RoleType | null>(null)
+  const [editedRole, setEditedRole] = useState<Omit<UserRolesType, "permissions"> | null>(null)
   const [modalType, setModalType] = useState<"create" | "update">("create")
 
   const onCreateRole = () => {
@@ -42,7 +42,7 @@ const RolesTab = () => {
     setIsModalOpen(true)
   }
 
-  const columnHelper = createColumnHelper<RoleType>()
+  const columnHelper = createColumnHelper<Omit<UserRolesType, "permissions">>()
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -52,7 +52,7 @@ const RolesTab = () => {
           return (
             <div className="flex items-center gap-2">
               {row.original.name}
-              {row.original.key === "root_admin" && <Lock size={14} />}
+              {["root_admin", "admin", "student", "teacher"].includes(row.original.key) && <Lock size={14} />}
             </div>
           )
         },

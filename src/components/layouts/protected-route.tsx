@@ -42,10 +42,12 @@ const ProtectedRoute = () => {
     return <Navigate to="/auth" replace />
   }
 
+  console.log("user.roles", user.roles)
+
   // Check role access
   const hasAccess = user.roles?.some((userRole) => {
     const roleKey = userRole.key?.toUpperCase()
-    return requiredRoles.some((r) => r === (roleKey as any))
+    return requiredRoles.some((r) => r === roleKey)
   })
 
   if (!hasAccess) {

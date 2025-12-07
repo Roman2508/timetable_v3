@@ -16,7 +16,7 @@ import { setLoadingStatus } from "./teachers-slice"
 export const getTeachersCategories = createAsyncThunk(
   "teachers-categories/getTeachersCategories",
   async (_, thunkAPI) => {
-    thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
+    // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
     const promise = teachersAPI.getTeachersCategories()
 
@@ -24,13 +24,13 @@ export const getTeachersCategories = createAsyncThunk(
       // loading: 'Завантаження...',
       // success: 'Завантажено',
       error: (error) => {
-        thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
+        // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
         return (error as any)?.response?.data?.message || error.message
       },
     })
 
     const { data } = await promise
-    thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS))
+    // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS))
     return data
   },
 )
@@ -147,7 +147,6 @@ export const createTeacher = createAsyncThunk(
   async (payload: CreateTeacherPayloadType, thunkAPI) => {
     thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
-    
     const promise = teachersAPI.createTeacher(payload)
 
     toast.promise(promise, {

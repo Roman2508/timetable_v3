@@ -488,7 +488,7 @@ export type CreatePermissionPayloadType = {
 export type RegisterPayloadType = {
   email: string
   password: string
-  role: UserRoles
+  role: UserRolesType
   roleId?: number
 }
 export type LoginPayloadType = {

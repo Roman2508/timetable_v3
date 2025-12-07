@@ -202,24 +202,24 @@ export const updateTeacherPrintedWorks = createAsyncThunk(
 /* USERS */
 
 export const getUsers = createAsyncThunk("users/getUsers", async (payload: GetUsersPayloadType, thunkAPI) => {
-  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
+  // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
   const promise = authAPI.getUsers(payload)
 
   toast.promise(promise, {
     error: (error) => {
-      thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
+      // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
       return (error as any)?.response?.data?.message || error.message
     },
   })
 
   const { data } = await promise
-  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS))
+  // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS))
   return data
 })
 
 export const createUser = createAsyncThunk("users/createUser", async (payload: CreateUserPayloadType, thunkAPI) => {
-  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
+  // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
   const promise = authAPI.createUser(payload)
 
@@ -237,7 +237,7 @@ export const createUser = createAsyncThunk("users/createUser", async (payload: C
 })
 
 export const updateUser = createAsyncThunk("users/updateUser", async (payload: UpdateUserPayloadType, thunkAPI) => {
-  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
+  // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
   const promise = authAPI.updateUser(payload)
 
@@ -256,7 +256,7 @@ export const updateUser = createAsyncThunk("users/updateUser", async (payload: U
 })
 
 export const deleteUser = createAsyncThunk("users/deleteUser", async (id: number, thunkAPI) => {
-  thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
+  // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
   const promise = authAPI.deleteUser(id)
 

@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/common/button"
 import { ConfirmWindow } from "../../../confirm-window"
 import type { UserType } from "@/store/auth/auth-types"
 import { rolesSelector } from "@/store/roles/roles-slice"
-import type { RoleType } from "@/store/roles/roles-types"
+
 import { Separator } from "@/components/ui/common/separator"
 import useTeacherFields from "@/hooks/form/use-teacher-fields"
 import useStudentFields from "@/hooks/form/use-student-fields"
@@ -49,7 +49,7 @@ interface Props {
   setEditedUser: Dispatch<SetStateAction<UserType | null>>
 }
 
-const findRole = (roles: RoleType[], wantedRoleIds: string[], wantedRoleName: string) => {
+const findRole = (roles: { id: number; name: string }[], wantedRoleIds: string[], wantedRoleName: string) => {
   const wantedRole = roles.find((el) => el.name === wantedRoleName)
 
   if (!wantedRole) return false
@@ -62,7 +62,7 @@ const findRole = (roles: RoleType[], wantedRoleIds: string[], wantedRoleName: st
   return false
 }
 
-const setAvailableRoles = (roles: RoleType[], wantedRoleIds: string[]) => {
+const setAvailableRoles = (roles: { id: number; name: string }[], wantedRoleIds: string[]) => {
   const teacherRole = roles.find((el) => el.name === "Викладач")
   const studentRole = roles.find((el) => el.name === "Студент")
 
@@ -216,7 +216,7 @@ const AccountsModal: FC<Props> = ({ user, isOpen, setIsOpen, modalType, setEdite
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="px-0 !py-4 max-w-[600px] gap-0">
         <DialogHeader className="px-4 pb-4">
-          <DialogTitle className="flex items-center gap-1">
+          <DialogTitle className="flex items-center gap-1 text-xl font-bold tracking-tight">
             {user && modalType === "update" && user.name}
             {modalType === "create" && "Новий користувач"}
           </DialogTitle>

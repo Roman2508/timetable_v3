@@ -21,7 +21,7 @@ import { groupLoadLessonsAPI, groupsAPI } from "../../api/api"
 export const getGroupCategories = createAsyncThunk(
   "groups-categories/getGroupCategories",
   async (_, thunkAPI): Promise<GroupCategoriesType[]> => {
-    thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
+    // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
     const promise = groupsAPI.getGroupsCategories()
 
@@ -29,13 +29,13 @@ export const getGroupCategories = createAsyncThunk(
       // loading: "Завантаження...",
       // success: "Групи завантажено",
       error: (error) => {
-        thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
+        // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.ERROR))
         return (error as any)?.response?.data?.message || error.message
       },
     })
 
     const { data } = await promise
-    thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS))
+    // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.SUCCESS))
     return data
   },
 )

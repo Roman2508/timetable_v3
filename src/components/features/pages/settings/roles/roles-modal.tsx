@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/common/dialog"
 import { useAppDispatch } from "@/store/store"
 import EntityField from "../../../entity-field"
+import type { UserRolesType } from "@/api/api-types"
 import { dialogText } from "@/constants/dialogs-text"
 import { Button } from "@/components/ui/common/button"
 import { ConfirmWindow } from "../../../confirm-window"
-import type { RoleType } from "@/store/roles/roles-types"
 import { deleteUser } from "@/store/auth/auth-async-actions"
 import { Separator } from "@/components/ui/common/separator"
 import { createRole, updateRole } from "@/store/roles/roles-async-actions"
@@ -33,10 +33,10 @@ export type FormData = z.infer<typeof formSchema>
 
 interface Props {
   isOpen: boolean
-  editedRole: RoleType | null
   modalType: "create" | "update"
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  setEditedRole: Dispatch<SetStateAction<RoleType | null>>
+  editedRole: Omit<UserRolesType, "permissions"> | null
+  setEditedRole: Dispatch<SetStateAction<Omit<UserRolesType, "permissions"> | null>>
 }
 
 const RolesModal: FC<Props> = ({ editedRole, isOpen, setIsOpen, modalType, setEditedRole }) => {
