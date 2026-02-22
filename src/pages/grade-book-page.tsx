@@ -1,204 +1,28 @@
-import {
-  Users,
-  Printer,
-  BookOpen,
-  BarChart3,
-  ListFilter,
-  TrendingUp,
-  NotebookPen,
-  ChevronDown,
-  GraduationCap,
-  AlertTriangle,
-  UnfoldVertical,
-} from "lucide-react"
 import { useSelector } from "react-redux"
 import { useSearchParams } from "react-router"
 import { useEffect, useMemo, useState } from "react"
+import { Users, BookOpen, BarChart3, TrendingUp, ChevronDown, GraduationCap, AlertTriangle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useAppDispatch } from "@/store/store"
 import { Card } from "@/components/ui/common/card"
-import { Button } from "@/components/ui/common/button"
 import { LoadingStatusTypes } from "@/store/app-types"
+import { calcAvg } from "@/helpers/grade-book-stats/calc-avg"
+import { calcApu } from "@/helpers/grade-book-stats/calc-apu"
+import { calcYapu } from "@/helpers/grade-book-stats/calc-yapu"
 import LoadingSpinner from "@/components/ui/icons/loading-spinner"
 import { WideContainer } from "@/components/layouts/wide-container"
 import { getTeacherFullname } from "@/helpers/get-teacher-fullname"
+import { InfoChip } from "@/components/features/grade-book/info-chip"
 import { gradeBookSelector } from "@/store/gradeBook/grade-book-slice"
+import { calcAbsences } from "@/helpers/grade-book-stats/calc-absences"
 import { getGroupCategories } from "@/store/groups/groups-async-actions"
-import type { StudentGradesType } from "@/store/gradeBook/grade-book-types"
 import { GradeBookTable } from "@/components/features/pages/grade-book/grade-book-table"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/common/tooltip"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/common/popover"
+import { ActionButtons, type StatItem } from "@/components/features/grade-book/action-buttons"
 import SelectGradeBookModal from "@/components/features/pages/grade-book/select-grade-book-modal"
 import GradeBookSummaryModal from "@/components/features/pages/grade-book/grade-book-summary-modal"
 
-/* ───── Stat helpers ───── */
-function calcApu(grades: StudentGradesType[]): string {
-  const THRESHOLD = 5
-  const n = grades.length
-  if (n === 0) return "—"
-  const avgs = grades.map((sg) => {
-    const pos = sg.grades.filter((g) => g.rating > 0)
-    return pos.length > 0 ? pos.reduce((s, g) => s + g.rating, 0) / pos.length : 0
-  })
-  return `${Math.round((avgs.filter((g) => g >= THRESHOLD).length / n) * 100)}%`
-}
-
-function calcYapu(grades: StudentGradesType[]): string {
-  const THRESHOLD = 7
-  const n = grades.length
-  if (n === 0) return "—"
-  const avgs = grades.map((sg) => {
-    const pos = sg.grades.filter((g) => g.rating > 0)
-    return pos.length > 0 ? pos.reduce((s, g) => s + g.rating, 0) / pos.length : 0
-  })
-  return `${Math.round((avgs.filter((g) => g >= THRESHOLD).length / n) * 100)}%`
-}
-
-function calcAbsences(grades: StudentGradesType[]): number {
-  return grades.reduce((t, sg) => t + sg.grades.filter((g) => g.isAbsence).length, 0)
-}
-
-function calcAvg(grades: StudentGradesType[]): string {
-  const all = grades.flatMap((sg) => sg.grades.filter((g) => g.rating > 0).map((g) => g.rating))
-  if (all.length === 0) return "—"
-  return (all.reduce((a, b) => a + b, 0) / all.length).toFixed(1)
-}
-
-/* ───── InfoChip ───── */
-function InfoChip({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex items-center justify-center size-7 rounded-md bg-primary/8 text-primary shrink-0">
-        {icon}
-      </div>
-      <div>
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium leading-none">{label}</p>
-        <p className="text-sm font-medium text-card-foreground truncate max-w-[200px]">{value}</p>
-      </div>
-    </div>
-  )
-}
-
-/* ───── ActionButtons ─────
-   Reusable button strip used in both desktop and mobile InfoBar. */
-type StatItem = {
-  label: string
-  value: string
-  icon: React.ElementType
-  color: string
-}
-
-function ActionButtons({
-  gradeBook,
-  stats,
-  onFilter,
-  onSummary,
-}: {
-  gradeBook: boolean
-  stats: StatItem[]
-  onFilter: () => void
-  onSummary: () => void
-}) {
-  return (
-    <div className="flex items-center gap-0.5 shrink-0">
-      <Tooltip delayDuration={500}>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 text-muted-foreground hover:text-foreground"
-            onClick={onFilter}
-          >
-            <ListFilter className="size-4" />
-            <span className="sr-only">Знайти журнал</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Знайти електронний журнал</TooltipContent>
-      </Tooltip>
-
-      <Tooltip delayDuration={500}>
-        <TooltipTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 text-muted-foreground hover:text-foreground"
-            onClick={onSummary}
-          >
-            <UnfoldVertical className="rotate-[90deg] size-4" />
-            <span className="sr-only">Підсумки</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Додати підсумок</TooltipContent>
-      </Tooltip>
-
-      <Tooltip delayDuration={500}>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-foreground">
-            <NotebookPen className="size-4" />
-            <span className="sr-only">Теми</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Теми</TooltipContent>
-      </Tooltip>
-
-      {/* Statistics popover */}
-      <Popover>
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "size-8 text-muted-foreground hover:text-foreground",
-                  !gradeBook && "opacity-40 pointer-events-none",
-                )}
-              >
-                <BarChart3 className="size-4" />
-                <span className="sr-only">Статистика</span>
-              </Button>
-            </PopoverTrigger>
-          </TooltipTrigger>
-          <TooltipContent>Статистика</TooltipContent>
-        </Tooltip>
-
-        <PopoverContent align="end" className="w-72 p-3">
-          <p className="text-xs font-semibold text-foreground mb-2.5">Статистика журналу</p>
-          <p className="text-[10px] text-muted-foreground mb-2">
-            {"АПУ/ЯПУ розраховані за 12-бальною системою (буде пов'язано з системою оцінювання)"}
-          </p>
-          <div className="grid grid-cols-2 gap-2">
-            {stats.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-2.5 rounded-lg border border-border p-2.5">
-                <div className={`flex items-center justify-center size-8 rounded-md ${stat.color}`}>
-                  <stat.icon className="size-4" />
-                </div>
-                <div>
-                  <p className="text-base font-semibold tracking-tight text-foreground leading-none">{stat.value}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </PopoverContent>
-      </Popover>
-
-      <Tooltip delayDuration={500}>
-        <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-foreground">
-            <Printer className="size-4" />
-            <span className="sr-only">Друк</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Друк</TooltipContent>
-      </Tooltip>
-    </div>
-  )
-}
-
-/* ───── Page ───── */
-export default function GradeBookPage() {
+const GradeBookPage = () => {
   const dispatch = useAppDispatch()
   const [searchParams, setSearchParams] = useSearchParams()
   const { gradeBook, loadingStatus } = useSelector(gradeBookSelector)
@@ -219,12 +43,7 @@ export default function GradeBookPage() {
       { label: "Середній бал", value: calcAvg(g), icon: TrendingUp, color: "text-emerald-600 bg-emerald-500/10" },
       { label: "АПУ", value: calcApu(g), icon: BarChart3, color: "text-amber-600 bg-amber-500/10" },
       { label: "ЯПУ", value: calcYapu(g), icon: BarChart3, color: "text-violet-600 bg-violet-500/10" },
-      {
-        label: "Пропусків",
-        value: String(calcAbsences(g)),
-        icon: AlertTriangle,
-        color: "text-destructive bg-destructive/8",
-      },
+      { label: "Пропусків", value: String(calcAbsences(g)), icon: AlertTriangle, color: "text-destructive bg-destructive/8" },
     ]
   }, [gradeBook?.grades])
 
@@ -239,7 +58,7 @@ export default function GradeBookPage() {
       />
       <GradeBookSummaryModal open={isOpenSummaryModal} setOpen={setIsOpenSummaryModal} />
 
-      <WideContainer classNames="h-full flex flex-col">
+      <WideContainer classNames="h-full flex flex-col max-h-[calc(100vh-51px)]">
         {/* ── InfoBar ── */}
         <div className="shrink-0 border-b border-border bg-card mb-4 -mx-[20px]">
           {/* Desktop (md+) */}
@@ -360,3 +179,5 @@ export default function GradeBookPage() {
     </>
   )
 }
+
+export default GradeBookPage

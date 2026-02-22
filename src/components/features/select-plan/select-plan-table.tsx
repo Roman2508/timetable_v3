@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router"
-import { AlignRight, ChevronsUpDown, PenLine } from "lucide-react"
+import { AlignRight, BookOpen, ChevronsUpDown, FileText, PenLine } from "lucide-react"
 import { Fragment, type Dispatch, type FC, type SetStateAction } from "react"
 
 import { cn } from "@/lib/utils"
@@ -108,41 +108,68 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
         if (searchValue && !filteredPlans.length) return
 
         return (
-          <Collapsible className="pt-2 border mb-4 rounded-md" key={el.id} defaultOpen>
-            <div className="flex items-center justify-between pl-4 pb-2 pr-2">
-              <h4 className="text-sm font-semibold">{el.name}</h4>
+          <Collapsible className="border mb-4 rounded-md" key={el.id} defaultOpen>
+            <CollapsibleTrigger asChild>
+              <button className="flex w-full items-center gap-3 px-0 text-left transition-colors hover:bg-primary-light/60 group bg-card">
+                <div className="flex w-full items-center justify-between px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10">
+                      <BookOpen className="size-4 text-primary" />
+                    </div>
 
-              <div className="flex gap-1">
-                {isEditable && (
-                  <ActionsDropdown
-                    itemId={el.id}
-                    onClickUpdateFunction={onClickCategoryUpdateFunction}
-                    onClickDeleteFunction={onClickCategoryDeleteFunction}
-                  />
-                )}
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-semibold text-foreground truncate">{el.name}</h3>
 
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <ChevronsUpDown className="h-4 w-4" />
-                  </Button>
-                </CollapsibleTrigger>
-              </div>
-            </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {el.plans.length} {el.plans.length === 1 ? "план" : "планів"} &middot; {el.plans.length}{" "}
+                        {/* totalDisciplines */} дисциплін &middot; {el.plans.length} {/* activePlans */} активних
+                      </p>
+                    </div>
+                  </div>
 
-            <CollapsibleContent className="pt-2">
+                  <div className="flex gap-1">
+                    {isEditable && (
+                      <ActionsDropdown
+                        itemId={el.id}
+                        onClickUpdateFunction={onClickCategoryUpdateFunction}
+                        onClickDeleteFunction={onClickCategoryDeleteFunction}
+                      />
+                    )}
+
+                    <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                      <ChevronsUpDown className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </button>
+            </CollapsibleTrigger>
+
+            <CollapsibleContent className="">
               <div className="">
-                <div className="flex px-4 py-2 border-b">
+                <div className="flex px-4 py-2 border-t">
                   {isEditable ? (
                     <>
-                      <div className="flex-5 uppercase opacity-[0.9] font-mono cursor-default">НАЗВА</div>
-                      <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default">ДИСЦИПЛІН</div>
-                      <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default">СТАТУС</div>
-                      <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default text-end">ДІЇ</div>
+                      <div className="flex-5 text-xs font-medium text-muted-foreground uppercase tracking-wider text-left justify-start">
+                        НАЗВА
+                      </div>
+                      <div className="flex-1 text-xs font-medium text-muted-foreground uppercase tracking-wider text-left justify-start">
+                        ДИСЦИПЛІН
+                      </div>
+                      <div className="flex-1 text-xs font-medium text-muted-foreground uppercase tracking-wider text-left justify-start">
+                        СТАТУС
+                      </div>
+                      <div className="flex-1 text-xs font-medium text-muted-foreground uppercase tracking-wider justify-end text-end">
+                        ДІЇ
+                      </div>
                     </>
                   ) : (
                     <>
-                      <div className="flex-9 uppercase opacity-[0.9] font-mono cursor-default">НАЗВА</div>
-                      <div className="flex-1 uppercase opacity-[0.9] font-mono cursor-default">ДИСЦИПЛІН</div>
+                      <div className="flex-9 text-xs font-medium text-muted-foreground uppercase tracking-wider text-left justify-start">
+                        НАЗВА
+                      </div>
+                      <div className="flex-1 text-xs font-medium text-muted-foreground uppercase tracking-wider text-left justify-start">
+                        ДИСЦИПЛІН
+                      </div>
                     </>
                   )}
                 </div>
@@ -159,10 +186,18 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                                 onClickReviewFunction(plan.id)
                               }}
                               className={cn(
-                                "hover:border hover:border-primary cursor-pointer flex items-center px-4 py-1 border border-white border-t-border",
+                                "hover:bg-primary-light/60 cursor-pointer flex items-center px-4 py-1 border border-white border-t-border",
                               )}
                             >
-                              <div className="flex-5">{plan.name}</div>
+                              <div className="flex-5">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className="flex size-7 items-center justify-center rounded-md bg-primary/10 shrink-0">
+                                    <FileText className="size-3.5 text-primary/70" />
+                                  </div>
+                                  <span className="text-sm text-foreground font-medium truncate">{plan.name}</span>
+                                </div>
+                              </div>
+
                               <div className="flex-1">
                                 {plan.subjectsCount > 2 ? plan.subjectsCount - 1 : plan.subjectsCount}
                               </div>
@@ -172,8 +207,8 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                                   className={cn(
                                     "border-0",
                                     plan.status !== "Архів"
-                                      ? "text-success bg-success-background"
-                                      : "text-error bg-error-background",
+                                      ? "text-success bg-success/10 border border-success/20"
+                                      : "text-error bg-error-background border border-error/20",
                                   )}
                                 >
                                   {plan.status}
@@ -215,7 +250,14 @@ export const SelectPlanTable: FC<ISelectPlanTableProps> = ({
                                 "border border-primary text-primary bg-primary-light font-semibold",
                             )}
                           >
-                            <div className="flex-9"> {plan.name}</div>
+                            <div className="flex-9">
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex size-7 items-center justify-center rounded-md bg-primary/10 shrink-0">
+                                  <FileText className="size-3.5 text-primary/70" />
+                                </div>
+                                <span className="text-sm text-foreground font-medium truncate">{plan.name}</span>
+                              </div>
+                            </div>
                             <div className="flex-1 text-right">
                               {plan.subjectsCount > 2 ? plan.subjectsCount - 1 : plan.subjectsCount}
                             </div>

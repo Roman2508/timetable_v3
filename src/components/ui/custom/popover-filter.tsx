@@ -1,4 +1,4 @@
-import { ChevronDown, Filter, ListFilter } from "lucide-react"
+import { ChevronDown, Filter } from "lucide-react"
 import { type Dispatch, type FC, type SetStateAction } from "react"
 
 import { Checkbox } from "../common/checkbox"
@@ -13,6 +13,7 @@ type IPopoverItem = {
 interface IPopoverFilterProps {
   label?: string
   disabled?: boolean
+  className?: string
   items: IPopoverItem[]
   itemsPrefix?: string
   selectAllLabel?: string
@@ -30,6 +31,7 @@ export const PopoverFilter: FC<IPopoverFilterProps> = ({
   label = "Фільтр",
   itemsPrefix = "",
   disabled = false,
+  className = "",
   filterSize = "default",
   filterVariant = "outline",
   selectAllLabel = "Всі",
@@ -70,7 +72,7 @@ export const PopoverFilter: FC<IPopoverFilterProps> = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant={filterVariant} size={filterSize} disabled={disabled}>
+        <Button variant={filterVariant} size={filterSize} disabled={disabled} className={className}>
           {/* <ListFilter /> */}
           <Filter className="h-4 w-4" />
           <span className="hidden lg:inline">{label}</span>

@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux"
+import { FolderPlus, Plus } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 
 import { useAppDispatch } from "@/store/store"
@@ -57,8 +58,8 @@ export default function PlansPage() {
     filtredCategories.length
       ? filtredCategories
       : plansCategories
-      ? plansCategories.map((el: any) => ({ id: el.id }))
-      : [],
+        ? plansCategories.map((el: any) => ({ id: el.id }))
+        : [],
   )
   const [editablePlan, setEditablePlan] = useState<PlansType | null>(null)
   const [editableCategory, setEditableCategory] = useState<{ id: number; name: string } | null>(null)
@@ -110,11 +111,13 @@ export default function PlansPage() {
 
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => setModalData({ isOpen: true, type: "create-plan" })}>
-              Створити новий план
+              <Plus />
+              Новий план
             </Button>
 
             <Button variant="outline" onClick={() => setModalData({ isOpen: true, type: "create-category" })}>
-              Створити нову категорію
+              <FolderPlus />
+              Нова категорія
             </Button>
 
             <PopoverFilter

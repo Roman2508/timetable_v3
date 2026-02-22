@@ -14,9 +14,11 @@ import { TooltipProvider } from "../ui/common/tooltip"
 import { Header } from "@/components/features/header/header"
 import { LoadingBar } from "../features/loading-bar/loading-bar"
 
+const disableFooterPaths = ["/grade-book", "/timetable"]
+const disablePaddingPaths = ["/grade-book", "/streams"]
+
 const RootLayout: FC = () => {
   const { pathname } = useLocation()
-  const disableFooterPaths = ["/grade-book", "/timetable"]
 
   return (
     <CookiesProvider defaultSetOptions={{ path: "/" }}>
@@ -36,7 +38,7 @@ const RootLayout: FC = () => {
                       <div
                         className={cn(
                           "flex flex-col gap-4 flex-1",
-                          pathname !== "/grade-book" && "py-4 md:gap-6 md:py-6",
+                          !disablePaddingPaths.includes(pathname) && "py-4 md:gap-6 md:py-6",
                         )}
                       >
                         <Outlet />
