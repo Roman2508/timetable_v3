@@ -4,6 +4,7 @@ import { Outlet, useLocation } from "react-router"
 import { Provider as ReduxProvider } from "react-redux"
 import { PersistGate } from "redux-persist/integration/react"
 
+import { cn } from "@/lib/utils"
 import AuthLayout from "./auth-layout"
 import SidebarLayout from "./sidebar-layout"
 import { Toaster } from "../ui/common/sonner"
@@ -32,7 +33,12 @@ const RootLayout: FC = () => {
 
                   <main className="flex flex-1 flex-col">
                     <div className="@container/main flex flex-1 flex-col gap-2">
-                      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 flex-1">
+                      <div
+                        className={cn(
+                          "flex flex-col gap-4 flex-1",
+                          pathname !== "/grade-book" && "py-4 md:gap-6 md:py-6",
+                        )}
+                      >
                         <Outlet />
                       </div>
                     </div>

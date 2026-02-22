@@ -185,7 +185,7 @@ const StudentsDivideLessons: FC<IStudentsDivideLessonsProps> = ({
         </Tabs>
       </div>
 
-      <Card className="pt-3 flex-1 h-[calc(100vh-288px)]">
+      <Card className="pt-3 flex-1 h-[calc(100vh-343px)]">
         <div className="overflow-y-auto overflow-x-hidden pr-3">
           {groupLoadLessons.map((lesson) => (
             <Collapsible className="space-y-2" disabled={dividingType === "all"}>

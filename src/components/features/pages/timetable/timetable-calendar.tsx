@@ -396,7 +396,7 @@ const TimetableCalendar: FC<ITimetableCalendarProps> = ({
 
         <div className={cn("flex", loadingStatus === LoadingStatusTypes.LOADING ? "opacity-[0.3]" : "")}>
           <div className="w-6 border-l">
-            <div className="h-8 border-t h-[33px]"></div>
+            <div className="border-t h-[33px]"></div>
 
             {[1, 2, 3, 4, 5, 6, 7].map((lessonNumber) => {
               const classNames = lessonNumber === 7 ? "2xl:h-[101px] h-[81px] border-y" : "2xl:h-25 h-20 border-t"

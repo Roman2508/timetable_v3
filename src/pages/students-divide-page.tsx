@@ -100,7 +100,7 @@ const StudentsDividePage = () => {
   }
 
   return (
-    <RootContainer classNames="max-h-[calc(100vh-160px)] overflow-hidden">
+    <RootContainer /* classNames="max-h-[calc(100vh-160px)] overflow-hidden" */>
       <div className="flex justify-between items-center mb-6">
         <div className="">
           {group.id ? (
@@ -139,7 +139,7 @@ const StudentsDividePage = () => {
         </div>
       </div>
 
-      <div className="flex w-full gap-3 !h-[calc(100vh-240px)]">
+      <div className="flex w-full gap-3">
         <Card className="p-3 pr-0 flex-1">
           {isLoading ? (
             <LoadingSpinner classNames="mt-10" />
@@ -189,8 +189,8 @@ const StudentsDividePage = () => {
                 ? `${selectedLesson.typeRu}. ${selectedLesson.name} 
                   ${selectedLesson.subgroupNumber ? `(${selectedLesson.subgroupNumber} підгрупа)` : "(вся група)"}`
                 : dividingType === "one"
-                ? "Виберіть дисципліну"
-                : "Всі дисципліни"}
+                  ? "Виберіть дисципліну"
+                  : "Всі дисципліни"}
             </h3>
           )}
 

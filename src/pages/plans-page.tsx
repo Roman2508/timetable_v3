@@ -3,12 +3,14 @@ import { useEffect, useMemo, useState } from "react"
 
 import { useAppDispatch } from "@/store/store"
 import { sortByName } from "@/helpers/sort-by-name"
+import { Badge } from "@/components/ui/common/badge"
 import { Button } from "@/components/ui/common/button"
 import { LoadingStatusTypes } from "@/store/app-types"
 import { plansSelector } from "@/store/plans/plans-slice"
 import { Skeleton } from "@/components/ui/common/skeleton"
 import { InputSearch } from "@/components/ui/custom/input-search"
 import { RootContainer } from "@/components/layouts/root-container"
+import { PageTopTitle } from "@/components/features/page-top-title"
 import { PopoverFilter } from "@/components/ui/custom/popover-filter"
 import { getPlansCategories } from "@/store/plans/plans-async-actions"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/common/tabs"
@@ -17,8 +19,6 @@ import { generalSelector, setPlanFilters } from "@/store/general/general-slice"
 import type { PlansCategoriesType, PlansType } from "@/store/plans/plans-types"
 import PlanActionsModal from "@/components/features/pages/plans/plan-actions-modal"
 import { SelectPlanTable } from "@/components/features/select-plan/select-plan-table"
-import { PageTopTitle } from "@/components/features/page-top-title"
-import { Badge } from "@/components/ui/common/badge"
 
 export type PlanActionModalType = {
   isOpen: boolean
