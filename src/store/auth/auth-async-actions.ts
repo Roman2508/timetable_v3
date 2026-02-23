@@ -1,10 +1,7 @@
 import { toast } from "sonner"
-import jwtDecode from "jwt-decode"
-import type { AxiosResponse } from "axios"
 import { createAsyncThunk } from "@reduxjs/toolkit"
 
 import {
-  type SessionType,
   type LoginPayloadType,
   type AuthResponseType,
   type RegisterPayloadType,
@@ -15,9 +12,9 @@ import {
   type GoogleLoginPayloadType,
 } from "../../api/api-types"
 import { authAPI } from "../../api/auth-api"
-import { setLoadingStatus, setUser } from "./auth-slice"
+import { setLoadingStatus } from "./auth-slice"
 import { LoadingStatusTypes } from "../app-types"
-import { clearAccessToken, getAccessToken, setAccessToken } from "@/helpers/session"
+import { clearAccessToken, setAccessToken } from "@/helpers/session"
 
 export const authRegister = createAsyncThunk(
   "auth/authRegister",
@@ -72,7 +69,7 @@ export const authLogin = createAsyncThunk(
 
 let refreshTokenPromise: Promise<string | null> | null = null
 
-export const authRefresh = createAsyncThunk("auth/authRefresh", async (_, thunkAPI): Promise<string | null> => {
+export const authRefresh = createAsyncThunk("auth/authRefresh", async (): Promise<string | null> => {
   if (!refreshTokenPromise) {
     refreshTokenPromise = authAPI
       .refresh()
@@ -201,7 +198,7 @@ export const updateTeacherPrintedWorks = createAsyncThunk(
 
 /* USERS */
 
-export const getUsers = createAsyncThunk("users/getUsers", async (payload: GetUsersPayloadType, thunkAPI) => {
+export const getUsers = createAsyncThunk("users/getUsers", async (payload: GetUsersPayloadType) => {
   // thunkAPI.dispatch(setLoadingStatus(LoadingStatusTypes.LOADING))
 
   const promise = authAPI.getUsers(payload)

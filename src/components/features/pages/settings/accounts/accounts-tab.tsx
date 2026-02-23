@@ -143,7 +143,7 @@ const AccountsTab = () => {
         <InputSearch className="flex-1" placeholder="Знайти..." />
 
         <Button variant="outline" onClick={onCreateUser}>
-          <Plus /> Створити користувача
+          <Plus /> Додати нового
         </Button>
       </div>
 

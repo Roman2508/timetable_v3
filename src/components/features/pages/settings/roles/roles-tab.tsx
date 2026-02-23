@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils"
 import RolesModal from "./roles-modal"
 import Permissions from "./permissions"
 import RolesActions from "./roles-actions"
-import { fuzzyFilter } from "@/helpers/fuzzy-filter"
 import type { UserRolesType } from "@/api/api-types"
+import { fuzzyFilter } from "@/helpers/fuzzy-filter"
 import { rolesSelector } from "@/store/roles/roles-slice"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/common/table"
 
@@ -135,8 +135,8 @@ const RolesTab = () => {
                             ? header.column.getNextSortingOrder() === "asc"
                               ? "Sort ascending"
                               : header.column.getNextSortingOrder() === "desc"
-                              ? "Sort descending"
-                              : "Clear sort"
+                                ? "Sort descending"
+                                : "Clear sort"
                             : undefined
                         }
                       >

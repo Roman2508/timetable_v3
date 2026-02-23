@@ -5,6 +5,7 @@ import { PATHS } from "@/constants/routes-config"
 import ForbiddenPage from "@/pages/forbidden-page"
 import { getAccessToken } from "@/helpers/session"
 import { authSelector } from "@/store/auth/auth-slice"
+import LoadingSpinner from "../ui/icons/loading-spinner"
 
 const ProtectedRoute = () => {
   const { user, loadingStatus } = useSelector(authSelector)
@@ -30,7 +31,8 @@ const ProtectedRoute = () => {
   if (loadingStatus === "LOADING" || isRestoringSession) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        {/* <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" /> */}
+        <LoadingSpinner />
       </div>
     )
   }
@@ -41,8 +43,6 @@ const ProtectedRoute = () => {
   if (!user) {
     return <Navigate to="/auth" replace />
   }
-
-  console.log("user.roles", user.roles)
 
   // Check role access
   const hasAccess = user.roles?.some((userRole) => {

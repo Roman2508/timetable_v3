@@ -35,12 +35,12 @@ const tabsList = [
   { icon: <Palette />, label: "Персоналізація", value: "personalization" },
   { icon: <Info />, label: "Загальна інформація", value: "personal" },
   { icon: <BookMarked />, label: "Видавнича діяльність", value: "printed-works" },
-  { icon: <BookOpenText />, label: "Навчально-методичні комплекси", value: "1" },
-  { icon: <NotebookText />, label: "Індивідуальний план", value: "2" },
-  { icon: <ClipboardMinus />, label: "Звіт викладача", value: "3" },
-  { icon: <Users />, label: "Списки студентів", value: "4" },
-  { icon: <BookOpenCheck />, label: "Електронний журнал", value: "grade-book" },
-  { icon: <Calendar />, label: "Розклад", value: "timetable" },
+  // { icon: <BookOpenText />, label: "Навчально-методичні комплекси", value: "1" },
+  // { icon: <NotebookText />, label: "Індивідуальний план", value: "2" },
+  // { icon: <ClipboardMinus />, label: "Звіт викладача", value: "3" },
+  // { icon: <Users />, label: "Списки студентів", value: "4" },
+  // { icon: <BookOpenCheck />, label: "Електронний журнал", value: "grade-book" },
+  // { icon: <Calendar />, label: "Розклад", value: "timetable" },
 ]
 
 const sessions = [
