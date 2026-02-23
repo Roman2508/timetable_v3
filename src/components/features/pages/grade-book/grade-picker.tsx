@@ -1,6 +1,6 @@
+import { Eraser, X } from "lucide-react"
+
 import { cn } from "@/lib/utils"
-import { X } from "lucide-react"
-import { Eraser } from "lucide-react"
 
 export const GradePicker = ({
   visible,

@@ -1,11 +1,10 @@
+import { type UserType } from "../store/auth/auth-types"
 import type { GroupsType } from "@/store/groups/groups-types"
-// import { summaryTypes } from "../components/GradeBookPage/AddSummaryModal";
-import { userRoles, UserRoles, type UserType } from "../store/auth/auth-types"
+import type { summaryTypes } from "@/constants/summary-types"
 import { LessonsTypeRu } from "../store/schedule-lessons/schedule-lessons-types"
 import { type EditorJSItemType, type TeachersType } from "../store/teachers/teachers-types"
-import { GradeBookSummaryTypes, type GradeType } from "../store/gradeBook/grade-book-types"
+import { type GradeBookSummaryTypes, type GradeType } from "../store/gradeBook/grade-book-types"
 import { IndividualTeacherWordTypes, type TeacherReportFileType } from "../store/teacher-profile/teacher-profile-types"
-import type { summaryTypes } from "@/constants/summary-types"
 
 /* Global */
 

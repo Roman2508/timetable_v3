@@ -8,7 +8,7 @@ import {
 import type { RootState } from "../app-types";
 import { LoadingStatusTypes } from "../app-types";
 import { type InstructionalMaterialsType } from "../teacher-profile/teacher-profile-types";
-import { type GradeBookInitialStateType, GradeBookSummaryTypes, type GradeBookType } from "./grade-book-types";
+import { type GradeBookInitialStateType, type GradeBookSummaryTypes, type GradeBookType } from "./grade-book-types";
 import { addSummary, deleteSummary, getGradeBook, getGrades, getLessonThemes } from "./grade-book-async-actions";
 
 const gradeBookInitialState: GradeBookInitialStateType = {

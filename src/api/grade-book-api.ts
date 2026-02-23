@@ -9,7 +9,7 @@ import {
   type DeleteGradeBookSummaryPayloadType,
 } from "./api-types";
 import { instanse } from "./api";
-import { type GradeBookType } from "../store/gradeBook/grade-book-types";
+import type { GradeBookType } from "@/store/gradeBook/grade-book-types";
 
 export const gradeBookAPI = {
   get(payload: GetGradeBookPayloadType) {

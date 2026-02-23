@@ -276,6 +276,16 @@ body {
 }
 /* // timetable slots */
 
+/* grade book */
+.grade-book-row:hover td,
+.grade-book-row:hover th,
+.grade-book-row:hover td.sticky,
+td[data-col-highlighted]:not(:hover),
+th[data-col-highlighted]:not(:hover) {
+  background-color: rgba(0, 70, 224, 0.06) !important;
+}
+/* // grade book */
+
 /* confirm/alert modal animation */
 .animate__zoomIn,
 .animate__fadeIn,

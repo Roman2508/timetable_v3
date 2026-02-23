@@ -13,12 +13,12 @@ import { calcYapu } from "@/helpers/grade-book-stats/calc-yapu"
 import LoadingSpinner from "@/components/ui/icons/loading-spinner"
 import { WideContainer } from "@/components/layouts/wide-container"
 import { getTeacherFullname } from "@/helpers/get-teacher-fullname"
-import { InfoChip } from "@/components/features/grade-book/info-chip"
+import { InfoChip } from "@/components/features/pages/grade-book/info-chip"
 import { gradeBookSelector } from "@/store/gradeBook/grade-book-slice"
 import { calcAbsences } from "@/helpers/grade-book-stats/calc-absences"
 import { getGroupCategories } from "@/store/groups/groups-async-actions"
 import { GradeBookTable } from "@/components/features/pages/grade-book/grade-book-table"
-import { ActionButtons, type StatItem } from "@/components/features/grade-book/action-buttons"
+import { ActionButtons, type StatItem } from "@/components/features/pages/grade-book/action-buttons"
 import SelectGradeBookModal from "@/components/features/pages/grade-book/select-grade-book-modal"
 import GradeBookSummaryModal from "@/components/features/pages/grade-book/grade-book-summary-modal"
 
@@ -43,7 +43,12 @@ const GradeBookPage = () => {
       { label: "Середній бал", value: calcAvg(g), icon: TrendingUp, color: "text-emerald-600 bg-emerald-500/10" },
       { label: "АПУ", value: calcApu(g), icon: BarChart3, color: "text-amber-600 bg-amber-500/10" },
       { label: "ЯПУ", value: calcYapu(g), icon: BarChart3, color: "text-violet-600 bg-violet-500/10" },
-      { label: "Пропусків", value: String(calcAbsences(g)), icon: AlertTriangle, color: "text-destructive bg-destructive/8" },
+      {
+        label: "Пропусків",
+        value: String(calcAbsences(g)),
+        icon: AlertTriangle,
+        color: "text-destructive bg-destructive/8",
+      },
     ]
   }, [gradeBook?.grades])
 
@@ -56,6 +61,7 @@ const GradeBookPage = () => {
         setSearchParams={setSearchParams}
         setGradeBookLessonDates={setGradeBookLessonDates}
       />
+      
       <GradeBookSummaryModal open={isOpenSummaryModal} setOpen={setIsOpenSummaryModal} />
 
       <WideContainer classNames="h-full flex flex-col max-h-[calc(100vh-51px)]">

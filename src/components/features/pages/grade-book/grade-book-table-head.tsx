@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { customDayjs } from "@/lib/dayjs"
 import { gradeBookSelector } from "@/store/gradeBook/grade-book-slice"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/common/tooltip"
-import { GradeBookSummaryTypes, type GradeBookType } from "@/store/gradeBook/grade-book-types"
+import { GradeBookSummary, type GradeBookType } from "@/store/gradeBook/grade-book-types"
 
 interface IGradeBookTableHeadProps {
   gradeBook: GradeBookType | null
@@ -42,6 +42,7 @@ const GradeBookTableHead: React.FC<IGradeBookTableHeadProps> = ({ gradeBook, gra
             return (
               <React.Fragment key={index}>
                 <th
+                  data-col={index}
                   className={cn(
                     "border-b-2 border-r border-border px-0.5 py-1.5 sm:py-2 text-center font-medium bg-secondary min-w-[80px] sticky top-0 z-20",
                     hoveredCol === index && "!bg-[color:oklch(0.92_0.015_250)]",
@@ -101,19 +102,19 @@ const GradeBookTableHead: React.FC<IGradeBookTableHeadProps> = ({ gradeBook, gra
             )
           })}
 
-        {gradeBook.summary.find((el) => el.type === GradeBookSummaryTypes.EXAM) && (
+        {gradeBook.summary.find((el) => el.type === GradeBookSummary.EXAM) && (
           <th className="border-b-2 border-r border-border px-0.5 py-1.5 sm:py-2 text-center font-medium bg-secondary min-w-[80px] sticky top-0 z-20 text-[10px] sm:text-xs">
             <p>Екзамен</p>
           </th>
         )}
 
-        {gradeBook.summary.find((el) => el.type === GradeBookSummaryTypes.LESSON_AVERAGE) && (
+        {gradeBook.summary.find((el) => el.type === GradeBookSummary.LESSON_AVERAGE) && (
           <th className="border-b-2 border-r border-border px-0.5 py-1.5 sm:py-2 text-center font-medium bg-secondary min-w-[80px] sticky top-0 z-20 text-[10px] sm:text-xs">
             Семестрова
           </th>
         )}
 
-        {gradeBook.summary.find((el) => el.type === GradeBookSummaryTypes.LESSON_SUM) && (
+        {gradeBook.summary.find((el) => el.type === GradeBookSummary.LESSON_SUM) && (
           <>
             <th className="border-b-2 border-r border-border px-0.5 py-1.5 sm:py-2 text-center font-medium bg-secondary min-w-[80px] sticky top-0 z-20 text-[10px] sm:text-xs">
               <p>Рейтинг</p>

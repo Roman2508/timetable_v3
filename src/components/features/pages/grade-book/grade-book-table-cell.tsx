@@ -1,5 +1,4 @@
-import { useCallback, useRef, useState } from "react"
-import type { Dispatch, SetStateAction } from "react"
+import React, { useCallback, useMemo, useRef, useState } from "react"
 
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/common/input"
@@ -10,27 +9,16 @@ interface IGradeBookTableCellProps {
   colIndex: number
   rowIndex: number
   grades: GradeType[]
-  updageGrade: () => void
+  summaryType?: null | GradeBookSummaryTypes
   isDefaultCell?: boolean
   showAbsenceCheckbox?: boolean
-  cellData: GradeType & { student: number }
-  summaryType?: null | GradeBookSummaryTypes
-  backupGrade: (GradeType & { student: number }) | null
-  setCellData: Dispatch<SetStateAction<GradeType & { student: number }>>
-  setBackupGrade: Dispatch<SetStateAction<(GradeType & { student: number }) | null>>
-  hoveredCell: { col: number; row: number; summaryType: null | GradeBookSummaryTypes }
-  setHoveredSell: Dispatch<SetStateAction<{ col: number; row: number; summaryType: null | GradeBookSummaryTypes }>>
   // Design props
   isActive?: boolean
   onActivate?: () => void
-  isColHovered?: boolean
-  onColEnter?: () => void
-  onColLeave?: () => void
-  rowBg?: string
-  // Input focus coordination props (prevent data leak between cells)
-  isInputFocusedElsewhere?: boolean
-  onInputFocus?: () => void
-  onInputBlur?: () => void
+  // Callbacks
+  onSave: (data: { id: number; rating: number; isAbsence: boolean; summaryType: null | GradeBookSummaryTypes; lessonNumber: number }) => void
+  onRegisterCellDataGetter?: (getter: (() => { rating: number; isAbsence: boolean }) | null) => void
+  onNavigate?: (direction: "up" | "down" | "left" | "right", row: number, col: number) => void
 }
 
 const GradeBookTableCell: React.FC<IGradeBookTableCellProps> = ({
@@ -38,133 +26,119 @@ const GradeBookTableCell: React.FC<IGradeBookTableCellProps> = ({
   gradeId,
   colIndex,
   rowIndex,
-  cellData,
-  setCellData,
-  hoveredCell,
-  updageGrade,
-  backupGrade,
-  setHoveredSell,
-  setBackupGrade,
   summaryType = null,
   isDefaultCell = false,
   showAbsenceCheckbox = true,
   isActive = false,
   onActivate,
-  isColHovered = false,
-  onColEnter,
-  onColLeave,
-  rowBg = "",
-  isInputFocusedElsewhere = false,
-  onInputFocus,
-  onInputBlur,
+  onSave,
+  onRegisterCellDataGetter,
+  onNavigate,
 }) => {
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [inputFocused, setInputFocused] = useState(false)
 
-  // Always up-to-date ref so blur handler can call the latest updageGrade
-  const updageGradeRef = useRef(updageGrade)
-  updageGradeRef.current = updageGrade
+  const currentCellData = useMemo(() =>
+    grades.find((el) =>
+      summaryType
+        ? el.lessonNumber === colIndex && el.summaryType === summaryType
+        : el.lessonNumber === colIndex + 1 && el.summaryType === summaryType
+    ),
+    [grades, colIndex, summaryType]
+  )
 
-  const currentCellData = grades.find((el) => {
-    if (summaryType) {
-      return el.lessonNumber === colIndex && el.summaryType === summaryType
-    }
-    return el.lessonNumber === colIndex + 1 && el.summaryType === summaryType
+  const initialData = () => ({
+    rating: currentCellData?.rating ?? 0,
+    isAbsence: currentCellData?.isAbsence ?? false,
+    lessonNumber: currentCellData?.lessonNumber ?? (summaryType ? colIndex : colIndex + 1),
   })
 
-  const isHoveredCell =
-    hoveredCell.col === colIndex && hoveredCell.row === rowIndex && hoveredCell.summaryType === summaryType
+  const [localData, setLocalData] = useState(initialData)
+  const [backupData, setBackupData] = useState(initialData)
+  const localDataRef = useRef(localData)
+  localDataRef.current = localData
 
-  // The input and H button are shown when:
-  //  - mouse is over this cell, OR
-  //  - this cell's input currently has focus
-  const showEditUI = isHoveredCell || inputFocused
+  const showEditUI = isCellHovered || inputFocused
 
-  const onHoverCell = () => {
-    setHoveredSell({ col: colIndex, row: rowIndex, summaryType })
-    if (currentCellData) {
-      const data = {
-        summaryType,
-        student: gradeId,
-        rating: currentCellData.rating,
-        isAbsence: currentCellData.isAbsence,
-        lessonNumber: currentCellData.lessonNumber,
-      }
-      setCellData(data)
-      setBackupGrade(data)
-    } else {
-      const data = {
-        rating: 0,
-        summaryType,
-        student: gradeId,
-        isAbsence: false,
-        lessonNumber: summaryType ? colIndex : colIndex + 1,
-      }
-      setCellData(data)
-      setBackupGrade(data)
+  const syncFromStore = useCallback(() => {
+    const data = {
+      rating: currentCellData?.rating ?? 0,
+      isAbsence: currentCellData?.isAbsence ?? false,
+      lessonNumber: currentCellData?.lessonNumber ?? (summaryType ? colIndex : colIndex + 1),
     }
-  }
+    setLocalData(data)
+    setBackupData(data)
+  }, [currentCellData, summaryType, colIndex])
+
+  const saveGrade = useCallback(() => {
+    const current = localDataRef.current
+    const backup = backupData
+    const hasChanged = current.isAbsence !== backup.isAbsence || current.rating !== backup.rating
+    if (hasChanged) {
+      onSave({
+        id: gradeId,
+        rating: current.rating,
+        isAbsence: current.isAbsence,
+        summaryType,
+        lessonNumber: current.lessonNumber,
+      })
+      setBackupData(current)
+    }
+  }, [backupData, gradeId, summaryType, onSave])
+
+  const saveGradeRef = useRef(saveGrade)
+  saveGradeRef.current = saveGrade
 
   const handleMouseEnter = useCallback(() => {
     setIsCellHovered(true)
-    // When another cell's input is focused, skip updating the shared cellData/hoveredCell.
-    // This prevents the focused cell from reading another cell's grade/isAbsence.
-    if (!isInputFocusedElsewhere) {
-      onHoverCell()
-      onColEnter?.()
+    if (!inputFocused) {
+      syncFromStore()
     }
-  }, [onColEnter, colIndex, rowIndex, isInputFocusedElsewhere])
+  }, [inputFocused, syncFromStore])
 
   const handleMouseLeave = useCallback(() => {
     setIsCellHovered(false)
-    // Do NOT save on mouseLeave if input is focused — save happens on blur instead.
     if (!inputFocused) {
-      updageGradeRef.current()
+      saveGradeRef.current()
     }
-    onColLeave?.()
-  }, [onColLeave, inputFocused])
+  }, [inputFocused])
 
   const handleInputFocus = useCallback(() => {
     setInputFocused(true)
-    onInputFocus?.()
+    syncFromStore()
+    onRegisterCellDataGetter?.(() => localDataRef.current)
     onActivate?.()
-  }, [onActivate, onInputFocus])
+  }, [onActivate, onRegisterCellDataGetter, syncFromStore])
 
   const handleInputBlur = useCallback(() => {
     setInputFocused(false)
-    // Parent clears inputFocusedCell; we save here to guarantee 100% sync
-    // even if mouse already left before blur.
-    updageGradeRef.current()
-    onInputBlur?.()
-  }, [onInputBlur])
+    saveGradeRef.current()
+    onRegisterCellDataGetter?.(null)
+  }, [onRegisterCellDataGetter])
 
-  const handleAbsentToggle = useCallback(
-    (e: React.MouseEvent) => {
-      e.stopPropagation()
-      setCellData((prev) => ({ ...prev, isAbsence: !prev.isAbsence }))
-    },
-    [setCellData],
-  )
+  const handleAbsentToggle = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    setLocalData((prev) => ({ ...prev, isAbsence: !prev.isAbsence }))
+  }, [])
 
-  // Read isAbsence / rating from live cellData while in edit mode
-  // (so H-button flips immediately; input shows what user typed).
-  // Read from currentCellData (stable store snapshot) while not editing.
-  const displayAbsent = showEditUI ? cellData.isAbsence : currentCellData?.isAbsence
+  const displayAbsent = (inputFocused || isCellHovered)
+    ? localData.isAbsence
+    : currentCellData?.isAbsence
+
+  const displayRating = inputFocused
+    ? localData.rating
+    : currentCellData?.rating ?? 0
 
   return (
     <td
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") updageGradeRef.current()
-        if (e.key === "Escape") backupGrade && setCellData(backupGrade)
-      }}
+      data-col={colIndex}
       style={{ position: "relative" }}
       className={cn(
         "border-b border-r border-border text-center cursor-pointer",
         "h-[30px] sm:h-[32px]",
         isDefaultCell ? "" : "bg-sidebar",
-        isColHovered && !isCellHovered && "!bg-primary/[0.03]",
         isCellHovered && "!bg-primary/[0.06]",
         isActive && "ring-2 ring-inset ring-primary/40",
         !isDefaultCell && "min-w-[80px]",
@@ -176,7 +150,6 @@ const GradeBookTableCell: React.FC<IGradeBookTableCellProps> = ({
           showAbsenceCheckbox ? "justify-center gap-1" : "justify-center",
         )}
       >
-        {/* Absent toggle (H) — visible when cell is in edit mode or absence is active */}
         {showAbsenceCheckbox && (
           <button
             type="button"
@@ -197,27 +170,41 @@ const GradeBookTableCell: React.FC<IGradeBookTableCellProps> = ({
           </button>
         )}
 
-        {/* Grade area: Input when in edit mode, plain text otherwise.
-            Input stays mounted even when mouse leaves if it has focus. */}
-        {showEditUI ? (
+        <div className="relative w-[40px] h-full flex items-center justify-center">
           <Input
-            className="p-0 bg-transparent border-0 h-full w-[40px] text-sm rounded-none text-center focus-visible:border-gray-300 focus-visible:ring-0"
-            value={cellData.rating !== 0 ? cellData.rating : ""}
+            data-row={rowIndex}
+            data-col={colIndex}
+            className={cn(
+              "p-0 bg-transparent border-0 h-full w-full text-sm rounded-none text-center focus-visible:border-gray-300 focus-visible:ring-0",
+              !showEditUI && "opacity-0",
+            )}
+            value={displayRating !== 0 ? displayRating : ""}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             onChange={(e) => {
               const isNumber = !isNaN(Number(e.target.value))
               if (!isNumber) return
-              setCellData((prev) => ({ ...prev, rating: Number(e.target.value) }))
+              setLocalData((prev) => ({ ...prev, rating: Number(e.target.value) }))
             }}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") { saveGradeRef.current(); return }
+              if (e.key === "Escape") { setLocalData(backupData); return }
+              if (e.key === "ArrowUp") { e.preventDefault(); onNavigate?.("up", rowIndex, colIndex) }
+              if (e.key === "ArrowDown") { e.preventDefault(); onNavigate?.("down", rowIndex, colIndex) }
+              if (e.key === "ArrowLeft") { e.preventDefault(); onNavigate?.("left", rowIndex, colIndex) }
+              if (e.key === "ArrowRight") { e.preventDefault(); onNavigate?.("right", rowIndex, colIndex) }
+            }}
           />
-        ) : (
-          <p className="w-[40px] text-center text-sm">{currentCellData?.rating ? currentCellData.rating : ""}</p>
-        )}
+          {!showEditUI && (
+            <p className="absolute inset-0 flex items-center justify-center text-sm pointer-events-none">
+              {currentCellData?.rating ? currentCellData.rating : ""}
+            </p>
+          )}
+        </div>
       </div>
     </td>
   )
 }
 
-export default GradeBookTableCell
+export default React.memo(GradeBookTableCell)

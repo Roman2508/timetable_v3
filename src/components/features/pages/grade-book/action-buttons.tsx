@@ -27,7 +27,7 @@ export const ActionButtons = ({ gradeBook, stats, onFilter, onSummary }: Props) 
           <Button
             variant="ghost"
             size="icon"
-            className="size-8 text-muted-foreground hover:text-foreground"
+            className="size-8 hover:text-foreground"
             onClick={onFilter}
           >
             <ListFilter className="size-4" />
@@ -42,7 +42,7 @@ export const ActionButtons = ({ gradeBook, stats, onFilter, onSummary }: Props) 
           <Button
             variant="ghost"
             size="icon"
-            className="size-8 text-muted-foreground hover:text-foreground"
+            className="size-8 hover:text-foreground"
             onClick={onSummary}
           >
             <UnfoldVertical className="rotate-[90deg] size-4" />
@@ -54,7 +54,7 @@ export const ActionButtons = ({ gradeBook, stats, onFilter, onSummary }: Props) 
 
       <Tooltip delayDuration={500}>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="icon" className="size-8 hover:text-foreground">
             <NotebookPen className="size-4" />
             <span className="sr-only">Теми</span>
           </Button>
@@ -71,7 +71,7 @@ export const ActionButtons = ({ gradeBook, stats, onFilter, onSummary }: Props) 
                 variant="ghost"
                 size="icon"
                 className={cn(
-                  "size-8 text-muted-foreground hover:text-foreground",
+                  "size-8 hover:text-foreground",
                   !gradeBook && "opacity-40 pointer-events-none",
                 )}
               >
@@ -85,7 +85,7 @@ export const ActionButtons = ({ gradeBook, stats, onFilter, onSummary }: Props) 
 
         <PopoverContent align="end" className="w-72 p-3">
           <p className="text-xs font-semibold text-foreground mb-2.5">Статистика журналу</p>
-          <p className="text-[10px] text-muted-foreground mb-2">
+          <p className="text-[10px] mb-2">
             {"АПУ/ЯПУ розраховані за 12-бальною системою (буде пов'язано з системою оцінювання)"}
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -96,7 +96,7 @@ export const ActionButtons = ({ gradeBook, stats, onFilter, onSummary }: Props) 
                 </div>
                 <div>
                   <p className="text-base font-semibold tracking-tight text-foreground leading-none">{stat.value}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</p>
+                  <p className="text-[10px] mt-0.5">{stat.label}</p>
                 </div>
               </div>
             ))}
@@ -106,7 +106,7 @@ export const ActionButtons = ({ gradeBook, stats, onFilter, onSummary }: Props) 
 
       <Tooltip delayDuration={500}>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="icon" className="size-8 text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="icon" className="size-8 hover:text-foreground">
             <Printer className="size-4" />
             <span className="sr-only">Друк</span>
           </Button>
